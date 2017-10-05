@@ -110,6 +110,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 			//walkDirection.scl(25f * delta)
 		}
 		walkDirection.y = 0f
+		System.err.println("TRANS------------------------------"+walkDirection)
 
 		val fuerza = delta * 1000f
 		bulletComponent.rigidBody.applyCentralForce(walkDirection.scl(fuerza))
@@ -165,14 +166,15 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 			if(lastDelta > 0.5f) {
 				System.err.println("------ FIRE ! -------------------")
 				lastDelta = 0f
-				fire(delta)
+				fire()
 			}
 		}
+		gun.getComponent(AnimationComponent::class.java).update(delta)
 	}
 	//______________________________________________________________________________________________
 	//TODO: crear pelotilla de fuego
 	//TODO: cambiar de arma y poner animacion
-	private fun fire(delta: Float) {
+	private fun fire() {
 		/*val rayFrom = Vector3()
 		val rayTo = Vector3()
 		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
@@ -199,7 +201,6 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		val shot = EntityFactory.createShot(pos, dir)
 		engine!!.addEntity(shot)*/
 		gun.getComponent(AnimationComponent::class.java).animate("Armature|shoot", 1, 3)
-		gun.getComponent(AnimationComponent::class.java).update(delta)
 	}
 
 	//______________________________________________________________________________________________

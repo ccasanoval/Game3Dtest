@@ -42,8 +42,8 @@ object EntityFactory {
 		//rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
 		rigidBody.userValue = BulletComponent.PLAYER_FLAG
 		//rigidBody.userIndex = BulletComponent.PLAYER_FLAG
-		rigidBody.friction = 10f
-		rigidBody.rollingFriction = 4f
+		rigidBody.friction = 3f
+		rigidBody.rollingFriction = 3f
 
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 		entity.add(PlayerComponent())
@@ -77,8 +77,8 @@ object EntityFactory {
 		//rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
 		rigidBody.userValue = BulletComponent.ENEMY_FLAG
 		//rigidBody.userIndex = BulletComponent.ENEMY_FLAG
-		rigidBody.friction = 10f
-		rigidBody.rollingFriction = 4f
+		rigidBody.friction = 3f
+		rigidBody.rollingFriction = 3f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 
 		return entity

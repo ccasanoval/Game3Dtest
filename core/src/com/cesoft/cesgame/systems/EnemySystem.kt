@@ -79,7 +79,8 @@ class EnemySystem : EntitySystem(), EntityListener {
 
 			/// Movimiento
 			val bullet = e.getComponent(BulletComponent::class.java)
-			bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ).nor().scl(10f))
+			val fuerza = 70f
+			bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ).nor().scl(fuerza))
 			//System.err.println("ENEMY FORCE -----------------"+Vector3(dX, 0f, dZ).nor())
 
 			/// Direccion

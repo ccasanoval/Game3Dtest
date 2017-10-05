@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
+import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
+import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
 import com.cesoft.cesgame.CesGame
 import com.cesoft.cesgame.components.GunComponent
 import com.cesoft.cesgame.components.ModelComponent
@@ -25,16 +27,24 @@ class RenderSystem : EntitySystem() {
 	private val environment: Environment = Environment()
 	var perspectiveCamera: PerspectiveCamera = PerspectiveCamera(FOV, CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
 	private var gunCamera: PerspectiveCamera = PerspectiveCamera(FOV, CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
-	var gun: Entity? = null
+	lateinit var gun: Entity
+
+	var particleSystem: ParticleSystem
+
 
 	init {
 		perspectiveCamera.far = 10000f
 		perspectiveCamera.near = 1f
 
 		gunCamera.far = 100f
-		gunCamera.near = 0.1f
+		//gunCamera.near = 0.1f
 
 		environment.set(ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f))
+
+		particleSystem = ParticleSystem.get()
+		val billboardParticleBatch = BillboardParticleBatch()
+		billboardParticleBatch.setCamera(perspectiveCamera)
+		particleSystem.add(billboardParticleBatch)
 	}
 
 	// Event called when an entity is added to the engine
@@ -52,15 +62,26 @@ class RenderSystem : EntitySystem() {
 			//}
 		}
 		batch.end()
+		renderParticleEffects()
 		drawGun()
 		//drawLaser()
+	}
+
+	private fun renderParticleEffects() {
+		batch.begin(perspectiveCamera)
+		particleSystem.update() // technically not necessary for rendering
+		particleSystem.begin()
+		particleSystem.draw()
+		particleSystem.end()
+		batch.render(particleSystem)
+		batch.end()
 	}
 
 	//______________________________________________________________________________________________
 	private fun drawGun() {
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT)
 		batch.begin(gunCamera)
-		batch.render(gun!!.getComponent(ModelComponent::class.java).instance)
+		batch.render(gun.getComponent(ModelComponent::class.java).instance)
 		batch.end()
 	}
 
