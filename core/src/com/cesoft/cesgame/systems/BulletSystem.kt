@@ -8,11 +8,12 @@ import com.badlogic.ashley.core.Family
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.*
+import com.cesoft.cesgame.GameWorld
 import com.cesoft.cesgame.components.*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Ghost object ???
-class BulletSystem : EntitySystem(), EntityListener {
+class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityListener {
 
 	private val collisionConfig: btCollisionConfiguration = btDefaultCollisionConfiguration()
 	private val dispatcher: btCollisionDispatcher = btCollisionDispatcher(collisionConfig)
@@ -32,46 +33,40 @@ class BulletSystem : EntitySystem(), EntityListener {
 	inner class CesContactListener2 : ContactListener() {
 		override fun onContactProcessed(userValue0: Int, userValue1: Int)
 		{
-			System.err.println("----- COLLISION PRICESSSSS: "+userValue0+"/"+userValue1)
+			//System.err.println("----- COLLISION PRICESSSSS: "+getValor(userValue0)+"/"+getValor(userValue1))
 
-		}
-		override fun onContactAdded(
-			userValue0: Int, partId0: Int, index0: Int,
-			userValue1: Int, partId1: Int, index1: Int): Boolean
-		{
 			if(false)
 
 			/// ARENA + PLAYER
-			/*else if(userValue0 == BulletComponent.ARENA_FLAG && userValue1 == BulletComponent.PLAYER_FLAG)
-			{
-				System.err.println("------aa---- COLLISION: Player + Arena")
-				player.getComponent(PlayerComponent::class.java).isSaltando = false
-			}*/
 			else if(userValue1 == BulletComponent.ARENA_FLAG && userValue0 == BulletComponent.PLAYER_FLAG)
 			{
-				//System.err.println("------bb---- COLLISION: Player + Arena")
+				System.err.println("------bb---- COLLISION: Player + Arena")
 				player.getComponent(PlayerComponent::class.java).isSaltando = false
 			}
 
 			/// PLAYER + ENEMY
-			else if(userValue0 == BulletComponent.PLAYER_FLAG && userValue1 == BulletComponent.ENEMY_FLAG)
+			else if(userValue0 == BulletComponent.PLAYER_FLAG && getValor(userValue1) == BulletComponent.ENEMY_FLAG)
 			{
-				System.err.println("----aa------ COLLISION: Player + Enemy")
-				PlayerComponent.health -= 2
-				PlayerComponent.score -= 25
-				val e = enemies[index1]
-				e?.getComponent(StatusComponent::class.java)?.alive = false
-				enemies.remove(index1)
+				val iEnemy = getIndex(userValue1)
+				val e = enemies[iEnemy]
+				if(e != null && e.getComponent(StatusComponent::class.java).alive) {
+					System.err.println("----aa------ COLLISION: Player + Enemy VIVO")
+					PlayerComponent.health -= 2
+					PlayerComponent.score -= 25
+					e.getComponent(StatusComponent::class.java)?.alive = false
+					enemies.remove(iEnemy)
+				}
 			}
 			else if(userValue1 == BulletComponent.PLAYER_FLAG && userValue0 == BulletComponent.ENEMY_FLAG)
 			{
 				System.err.println("----bb------ COLLISION: Player + Enemy")
+				val iEnemy = getIndex(userValue0)
 				PlayerComponent.health -= 2
 				PlayerComponent.score -= 25
-				val e = enemies[index0]
+				val e = enemies[iEnemy]
 				e?.getComponent(StatusComponent::class.java)?.alive = false
 				//removeBody(e)
-				enemies.remove(index0)
+				enemies.remove(iEnemy)
 			}
 
 			/// ENEMY + SHOT
@@ -79,43 +74,41 @@ class BulletSystem : EntitySystem(), EntityListener {
 			{
 				val iEnemy = getIndex(userValue0)
 				val iShot = getIndex(userValue1)
-				System.err.println("---bb------- COLLISION: Shot ("+iShot+" "+index1+") + enemy ("+iEnemy+" "+index0+")")
+				System.err.println("---bb------- COLLISION: Shot ("+iShot+") + enemy ("+iEnemy+")")
 				//
 				var e = enemies[iEnemy]
 				e?.getComponent(StatusComponent::class.java)?.alive = false
 				enemies.remove(iEnemy)
 				//
 				e = shots[iShot]
-				if(e!=null)removeBody(e)
+				if(e!=null)
+				{
+					gameWorld.remove(e)
+					System.err.println("---bb------- COLLISION: Shot + enemy REMOVE BODY SHOT")
+				}
 				shots.remove(iShot)
 			}
 
 			/// ARENA + SHOT
-			/*else if(userValue0 == BulletComponent.ARENA_FLAG && userValue1 == BulletComponent.SHOT_FLAG)
-			{
-				System.err.println("---aa------- COLLISION: Shot + Arena")
-				/*val e = shots[index1]!!
-				removeBody(e)
-				shots.remove(index1)*/
-			}*/
 			else if(userValue1 == BulletComponent.ARENA_FLAG && getValor(userValue0) == BulletComponent.SHOT_FLAG)
 			{
+				System.err.println("---bb------- COLLISION: Shot + Arena")
+
 				val iShot = getIndex(userValue0)
 				val e = shots[iShot]!!
-				removeBody(e)
+				gameWorld.remove(e)
 				shots.remove(iShot)
 			}
 
 			/// ARENA + ENEMY
 			else if(userValue1 == BulletComponent.ARENA_FLAG && getValor(userValue0) == BulletComponent.ENEMY_FLAG)
 			{
-
+				//System.err.println("---aa------- COLLISION: Shot + Arena")
 			}
 			else
 			{
-				System.err.println("----- COLLISION OTRA: "+userValue0+"/"+userValue1+"  :  "+index0+"/"+index1)
+				System.err.println("----- COLLISION OTRA: "+userValue0+"/"+userValue1)
 			}
-			return true
 		}
 	}
 
@@ -299,7 +292,7 @@ class BulletSystem : EntitySystem(), EntityListener {
 	fun removeBody(entity: Entity)
 	{
 		val comp = entity.getComponent(BulletComponent::class.java)
-			collisionWorld.removeCollisionObject(comp.rigidBody)
+		collisionWorld.removeCollisionObject(comp.rigidBody)
 	}
 
 	//______________________________________________________________________________________________

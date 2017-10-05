@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class BulletComponent(var rigidBody : btRigidBody) : Component
+class BulletComponent(var rigidBody : btRigidBody, val rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo) : Component
 {
 	companion object {
 		const val ARENA_FLAG = 1	//(1 shl 7)

@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.cesoft.cesgame.UI.GameUI
+import com.cesoft.cesgame.components.PlayerComponent
 import com.cesoft.cesgame.managers.EntityFactory
 import com.cesoft.cesgame.systems.*
 
@@ -29,7 +30,7 @@ class GameWorld(gameUI: GameUI) {
 		Bullet.init()
 
 		renderSystem = RenderSystem()
-		bulletSystem = BulletSystem()
+		bulletSystem = BulletSystem(this)
 		enemySystem = EnemySystem()
 		playerSystem = PlayerSystem(gameUI, renderSystem.perspectiveCamera)
 
@@ -46,6 +47,8 @@ class GameWorld(gameUI: GameUI) {
 
 		loadLevel()
 		createPlayer(0f, 20f, 0f)
+		PlayerComponent.health = 100f
+		PlayerComponent.score = 0
 	}
 
 	//______________________________________________________________________________________________

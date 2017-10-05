@@ -26,11 +26,11 @@ import com.cesoft.cesgame.managers.EntityFactory
 class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	: EntitySystem(), EntityListener, InputProcessor
 {
-	private var playerComponent: PlayerComponent ?= null
-	private var bulletComponent : BulletComponent ?= null
+	private lateinit var playerComponent : PlayerComponent
+	private lateinit var bulletComponent : BulletComponent
 
 	//private var rayTestCB: ClosestRayResultCallback = ClosestRayResultCallback(Vector3.Zero, Vector3.Z)
-	var gun: Entity? = null
+	lateinit var gun: Entity
 
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
@@ -112,24 +112,29 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		walkDirection.y = 0f
 
 		val fuerza = delta * 1000f
-		bulletComponent!!.rigidBody.applyCentralForce(walkDirection.scl(fuerza))
+		bulletComponent.rigidBody.applyCentralForce(walkDirection.scl(fuerza))
 
 		updateCamara()
 	}
 	//______________________________________________________________________________________________
 	private fun updateSalto(delta: Float) {
-		if( !playerComponent!!.isSaltando && Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			playerComponent!!.isSaltando = true
-			val fuerza = delta * 50f
-			bulletComponent!!.rigidBody.applyCentralForce(Vector3.Y.scl(fuerza))
-			updateCamara()
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
+		{
+			System.err.println("------------------"+getPosition().y+"----- SALTO :"+playerComponent.isSaltando)
+			if( ! playerComponent.isSaltando) {
+				val fuerza = delta * 60f
+				bulletComponent.rigidBody.applyCentralForce(Vector3.Y.scl(fuerza))
+				updateCamara()
+			}
 		}
+		playerComponent.isSaltando = getPosition().y > ALTURA  //TODO Salvo rampas!!!!
 	}
 	//______________________________________________________________________________________________
+	private val ALTURA = 10f
 	private fun updateCamara()
 	{
 		val pos = getPosition()
-		//pos.y += 10f
+		pos.y += ALTURA
 		camera.position.set(pos)
 		camera.update()
 	}
@@ -137,10 +142,9 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	private fun getPosition() : Vector3
 	{
 		val transform = Matrix4()
-		bulletComponent!!.rigidBody.motionState.getWorldTransform(transform)
+		bulletComponent.rigidBody.motionState.getWorldTransform(transform)
 		val pos = Vector3()
 		transform.getTranslation(pos)
-		pos.y += 10f
 		return pos
 	}
 	//______________________________________________________________________________________________
@@ -161,15 +165,14 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 			if(lastDelta > 0.5f) {
 				System.err.println("------ FIRE ! -------------------")
 				lastDelta = 0f
-				fire()
+				fire(delta)
 			}
 		}
-		gun!!.getComponent(AnimationComponent::class.java).update(delta)
 	}
 	//______________________________________________________________________________________________
 	//TODO: crear pelotilla de fuego
 	//TODO: cambiar de arma y poner animacion
-	private fun fire() {
+	private fun fire(delta: Float) {
 		/*val rayFrom = Vector3()
 		val rayTo = Vector3()
 		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
@@ -191,11 +194,12 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 				}
 			}
 		}*/
-		val dir = getDirection()
-		val pos = getPosition().add(dir)
+		/*val dir = getDirection().cpy()
+		val pos = getPosition().cpy().add(dir)
 		val shot = EntityFactory.createShot(pos, dir)
-		engine!!.addEntity(shot)
-		gun!!.getComponent(AnimationComponent::class.java)?.animate("Armature|shoot", 1, 3)
+		engine!!.addEntity(shot)*/
+		gun.getComponent(AnimationComponent::class.java).animate("Armature|shoot", 1, 3)
+		gun.getComponent(AnimationComponent::class.java).update(delta)
 	}
 
 	//______________________________________________________________________________________________

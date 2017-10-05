@@ -3,6 +3,8 @@ package com.cesoft.cesgame.managers
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
@@ -36,14 +38,14 @@ object EntityFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(Matrix4().setToTranslation(x,y,z))
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG or BulletComponent.ARENA_FLAG
-		rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
+		//rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG or BulletComponent.ARENA_FLAG
+		//rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
 		rigidBody.userValue = BulletComponent.PLAYER_FLAG
-		rigidBody.userIndex = BulletComponent.PLAYER_FLAG
+		//rigidBody.userIndex = BulletComponent.PLAYER_FLAG
 		rigidBody.friction = 10f
 		rigidBody.rollingFriction = 4f
 
-		entity.add(BulletComponent(rigidBody))
+		entity.add(BulletComponent(rigidBody, bodyInfo))
 		entity.add(PlayerComponent())
 
 		return entity
@@ -71,35 +73,33 @@ object EntityFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(enemyModelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		rigidBody.contactCallbackFilter = BulletComponent.PLAYER_FLAG
-		rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
+		//rigidBody.contactCallbackFilter = BulletComponent.PLAYER_FLAG
+		//rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
 		rigidBody.userValue = BulletComponent.ENEMY_FLAG
-		rigidBody.userIndex = BulletComponent.ENEMY_FLAG
+		//rigidBody.userIndex = BulletComponent.ENEMY_FLAG
 		rigidBody.friction = 10f
 		rigidBody.rollingFriction = 4f
-		entity.add(BulletComponent(rigidBody))
+		entity.add(BulletComponent(rigidBody, bodyInfo))
 
 		return entity
 	}
 	//______________________________________________________________________________________________
 	//TODO: Change with laser
+	val mb = ModelBuilder()
+	val material = Material(ColorAttribute.createDiffuse(Color.GREEN))
+	val model : Model = mb.createBox(.5f, .5f, .5f, material, (VertexAttributes.Usage.Position or VertexAttributes.Usage.Normal).toLong())
+
 	fun createShot(pos: Vector3, dir: Vector3, mass: Float = ShotComponent.MASA, force: Float = ShotComponent.FUERZA): Entity {
 		val entity = Entity()
 
 		//System.err.println("--------------- SHOT CREATE : "+pos+" ::: "+dir)
 
 		// MODEL
-		val mb = ModelBuilder()
-		val material = Material()
-		val model : Model = mb.createSphere(.5f, .5f, .5f, 1, 1, material, 1)
-		model.materials.get(0).set(ColorAttribute.createDiffuse(100f, 100f, 100f, 100f))
 		val modelComponent = ModelComponent(model, pos.x, pos.y, pos.z)
 		entity.add(modelComponent)
 
-
-
 		// BULLET
-		val localInertia = Vector3()
+		/*val localInertia = Vector3()
 		val shape = btBoxShape(Vector3(.5f,.5f,.5f))
 		shape.calculateLocalInertia(mass, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mass, null, shape, localInertia)
@@ -112,7 +112,7 @@ object EntityFactory {
 		rigidBody.userValue = BulletComponent.SHOT_FLAG
 		//rigidBody.userIndex = BulletComponent.SHOT_FLAG
 		rigidBody.applyCentralForce(dir.scl(force))
-		entity.add(BulletComponent(rigidBody))
+		entity.add(BulletComponent(rigidBody, bodyInfo))*/
 
 		return entity
 	}
@@ -136,7 +136,7 @@ object EntityFactory {
 		rigidBody.userValue = BulletComponent.ARENA_FLAG
 		//rigidBody.userIndex = BulletComponent.ARENA_FLAG
 		//rigidBody.activationState = Collision.DISABLE_DEACTIVATION
-		entity.add(BulletComponent(rigidBody))
+		entity.add(BulletComponent(rigidBody, bodyInfo))
 		return entity
 	}
 

@@ -7,21 +7,10 @@ import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.PerspectiveCamera
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.math.Interpolation
-import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.utils.Scaling
-import com.badlogic.gdx.utils.viewport.ScalingViewport
 import com.cesoft.cesgame.CesGame
 import com.cesoft.cesgame.components.GunComponent
 import com.cesoft.cesgame.components.ModelComponent
@@ -43,6 +32,7 @@ class RenderSystem : EntitySystem() {
 		perspectiveCamera.near = 1f
 
 		gunCamera.far = 100f
+		gunCamera.near = 0.1f
 
 		environment.set(ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f))
 	}
@@ -56,14 +46,14 @@ class RenderSystem : EntitySystem() {
 	override fun update(delta: Float) {
 		batch.begin(perspectiveCamera)
 		for(i in 0 until entities!!.size()) {
-			if(entities!!.get(i).getComponent(GunComponent::class.java) == null) {
+			//if(entities!!.get(i).getComponent(GunComponent::class.java) == null) {
 				val mod = entities!!.get(i).getComponent(ModelComponent::class.java)
 				batch.render(mod.instance, environment)
-			}
+			//}
 		}
 		batch.end()
 		drawGun()
-		drawLaser()
+		//drawLaser()
 	}
 
 	//______________________________________________________________________________________________
@@ -76,7 +66,7 @@ class RenderSystem : EntitySystem() {
 
 	//______________________________________________________________________________________________
 	//______________________________________________________________________________________________
-	private var shapeRenderer: ShapeRenderer
+	/*private var shapeRenderer: ShapeRenderer
 	private var spriteBatch: SpriteBatch
 
 	private var startBackground: TextureRegion
@@ -200,7 +190,7 @@ class RenderSystem : EntitySystem() {
 		}
 
 		spriteBatch.end()
-	}
+	}*/
 	//______________________________________________________________________________________________
 
 
@@ -215,7 +205,7 @@ class RenderSystem : EntitySystem() {
 	//______________________________________________________________________________________________
 	fun dispose() {
 		batch.dispose()
-		spriteBatch.dispose()
+		//spriteBatch.dispose()
 	}
 
 	companion object {
