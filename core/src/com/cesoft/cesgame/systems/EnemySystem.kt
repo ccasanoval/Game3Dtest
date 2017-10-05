@@ -26,8 +26,8 @@ class EnemySystem : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
 
-	private val xSpawns = floatArrayOf(+10f, +10f, -10f, -10f)
-	private val zSpawns = floatArrayOf(+10f, -10f, +10f, -10f)
+	private val xSpawns = floatArrayOf(+15f, +15f, -15f, -15f)
+	private val zSpawns = floatArrayOf(+15f, -15f, +15f, -15f)
 	private var sm = ComponentMapper.getFor(StatusComponent::class.java)
 
 	private val random = Random()

@@ -76,16 +76,16 @@ object EntityFactory {
 		rigidBody.userIndex = BulletComponent.ENEMY_FLAG
 		rigidBody.friction = 10f
 		rigidBody.rollingFriction = 4f
-
 		entity.add(BulletComponent(rigidBody))
 
 		return entity
 	}
 	//______________________________________________________________________________________________
+	//TODO: Change with laser
 	fun createShot(pos: Vector3, dir: Vector3, mass: Float = ShotComponent.MASA, force: Float = ShotComponent.FUERZA): Entity {
 		val entity = Entity()
 
-		System.err.println("--------------- SHOT CREATE : "+pos+" ::: "+dir)
+		//System.err.println("--------------- SHOT CREATE : "+pos+" ::: "+dir)
 
 		// MODEL
 		val mb = ModelBuilder()

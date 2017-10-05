@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.*
 import com.cesoft.cesgame.components.*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+// TODO: Ghost object ???
 class BulletSystem : EntitySystem(), EntityListener {
 
 	private val collisionConfig: btCollisionConfiguration = btDefaultCollisionConfiguration()
@@ -24,7 +24,7 @@ class BulletSystem : EntitySystem(), EntityListener {
 	init {
 		//broadphase.overlappingPairCache.setInternalGhostPairCallback(ghostPairCallback)
 		collisionWorld.gravity = Vector3(0f, -10f, 0f)
-		CesContactListener().enable()
+		//CesContactListener().enable()
 		CesContactListener2().enable()
 
 	}
@@ -34,10 +34,42 @@ class BulletSystem : EntitySystem(), EntityListener {
 			userValue0: Int, partId0: Int, index0: Int,
 			userValue1: Int, partId1: Int, index1: Int): Boolean
 		{
+
+			/// ARENA + PLAYER
+			if(userValue0 == BulletComponent.ARENA_FLAG && userValue1 == BulletComponent.PLAYER_FLAG)
+			{
+				System.err.println("------aa---- COLLISION: Player + Arena")
+				player.getComponent(PlayerComponent::class.java).isSaltando = false
+			}
+
+			/// PLAYER + ENEMY
 			if(userValue0 == BulletComponent.PLAYER_FLAG && userValue1 == BulletComponent.ENEMY_FLAG)
 			{
+				System.err.println("----aa------ COLLISION: Player + Enemy")
 				PlayerComponent.health -= 2
+				PlayerComponent.score -= 25
+				val e = foes[index1]
+				e.getComponent(StatusComponent::class.java).alive = false
+				removeBody(e)
+				foes.remove(e)
 			}
+
+			/// ENEMY + SHOT
+			if(userValue0 == BulletComponent.ENEMY_FLAG && userValue1 == BulletComponent.SHOT_FLAG)
+			{
+				System.err.println("---bb------- COLLISION: Shot + enemy")
+				//removeBody(eShot)
+				System.err.println("---b2------- COLLISION: Shot + enemy")
+			}
+
+			/// ARENA + SHOT
+			if(userValue0 == BulletComponent.ARENA_FLAG && userValue1 == BulletComponent.SHOT_FLAG)
+			{
+				System.err.println("---bb------- COLLISION: Shot + Arena")
+				//removeBody(eShot)
+				System.err.println("---b2------- COLLISION: Shot + Arena")
+			}
+
 			System.err.println("----A-----CesContactListener-------"+partId0+"--"+index0+"-- -- "+userValue0)
 			System.err.println("----B-----CesContactListener-------"+partId1+"--"+index1+"-- -- "+userValue1)
 			return true
@@ -45,7 +77,7 @@ class BulletSystem : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
-	inner class CesContactListener : ContactListener()
+	/*inner class CesContactListener : ContactListener()
 	{
 		override fun onContactStarted(colObj0: btCollisionObject, colObj1: btCollisionObject)
 		{
@@ -152,7 +184,7 @@ class BulletSystem : EntitySystem(), EntityListener {
 
 			}*/
 		}
-	}
+	}*/
 
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
@@ -175,13 +207,23 @@ class BulletSystem : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
-//	private var index = 0
-//	private lateinit var player : Entity
-//	private val lista = arrayListOf<Entity>()
+	private val foes = arrayListOf<Entity>()
+	private lateinit var arena : Entity
+	private lateinit var player : Entity
 	override fun entityAdded(entity: Entity)
 	{
 		val bulletComponent = entity.getComponent(BulletComponent::class.java)
 		collisionWorld.addRigidBody(bulletComponent.rigidBody)
+		when(bulletComponent.rigidBody.userValue)
+		{
+			BulletComponent.ARENA_FLAG -> arena = entity
+			BulletComponent.PLAYER_FLAG -> player = entity
+			BulletComponent.ENEMY_FLAG -> {
+				foes.add(entity)
+				bulletComponent.rigidBody.userIndex = foes.indexOf(entity)
+			}
+			else -> System.err.println("Collision else added: "+bulletComponent.rigidBody.userValue)
+		}
 		/*
 		bulletComponent.rigidBody.userIndex = index++
 		bulletComponent.rigidBody.userIndex2 = bulletComponent.rigidBody.userIndex
@@ -197,8 +239,9 @@ class BulletSystem : EntitySystem(), EntityListener {
 	{
 		val comp = entity.getComponent(BulletComponent::class.java)
 		if(comp != null) {
-			//collisionWorld.removeCollisionObject(comp.rigidBody)
+			collisionWorld.removeCollisionObject(comp.rigidBody)
 			//comp.rigidBody.dispose()
+
 		}
 	}
 
