@@ -155,10 +155,11 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	private var lastDelta = 0.9f
 	private fun updateDisparo(delta: Float)
 	{
-		System.err.println("FIRE "+lastDelta)
+		//System.err.println("--------------------------------------------FIRE "+lastDelta)
 		lastDelta += delta
 		if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
 			if(lastDelta > 0.5f) {
+				System.err.println("------ FIRE ! -------------------")
 				lastDelta = 0f
 				fire()
 			}

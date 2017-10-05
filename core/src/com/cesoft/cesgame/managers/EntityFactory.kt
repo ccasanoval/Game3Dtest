@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.JsonReader
 import com.badlogic.gdx.utils.UBJsonReader
 import com.cesoft.cesgame.bullet.MotionState
 import com.cesoft.cesgame.components.*
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +35,7 @@ object EntityFactory {
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(Matrix4().setToTranslation(x,y,z))
-		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT// .CF_CUSTOM_MATERIAL_CALLBACK
+		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
 		rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG or BulletComponent.ARENA_FLAG
 		rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
 		rigidBody.userValue = BulletComponent.PLAYER_FLAG
@@ -91,8 +92,11 @@ object EntityFactory {
 		val mb = ModelBuilder()
 		val material = Material()
 		val model : Model = mb.createSphere(.5f, .5f, .5f, 1, 1, material, 1)
+		model.materials.get(0).set(ColorAttribute.createDiffuse(100f, 100f, 100f, 100f))
 		val modelComponent = ModelComponent(model, pos.x, pos.y, pos.z)
 		entity.add(modelComponent)
+
+
 
 		// BULLET
 		val localInertia = Vector3()
@@ -103,13 +107,36 @@ object EntityFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG
-		rigidBody.contactCallbackFlag = BulletComponent.SHOT_FLAG
+		//rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG
+		//rigidBody.contactCallbackFlag = BulletComponent.SHOT_FLAG
 		rigidBody.userValue = BulletComponent.SHOT_FLAG
-		rigidBody.userIndex = BulletComponent.SHOT_FLAG
+		//rigidBody.userIndex = BulletComponent.SHOT_FLAG
 		rigidBody.applyCentralForce(dir.scl(force))
 		entity.add(BulletComponent(rigidBody))
 
+		return entity
+	}
+
+	//______________________________________________________________________________________________
+	fun loadScene(x: Float, y: Float, z: Float): Entity {
+		val entity = Entity()
+		val modelLoader = G3dModelLoader(JsonReader())
+		val modelData = modelLoader.loadModelData(Gdx.files.internal("data/arena.g3dj"))
+		val model = Model(modelData, TextureProvider.FileTextureProvider())
+		val modelComponent = ModelComponent(model, x, y, z)
+		entity.add(modelComponent)
+		val shape = Bullet.obtainStaticNodeShape(model.nodes)
+		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, null, shape, Vector3.Zero)
+		val rigidBody = btRigidBody(bodyInfo)
+		rigidBody.userData = entity
+		rigidBody.motionState = MotionState(modelComponent.instance.transform)
+		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
+		//rigidBody.contactCallbackFilter = 0
+		//rigidBody.contactCallbackFlag = BulletComponent.ARENA_FLAG
+		rigidBody.userValue = BulletComponent.ARENA_FLAG
+		//rigidBody.userIndex = BulletComponent.ARENA_FLAG
+		//rigidBody.activationState = Collision.DISABLE_DEACTIVATION
+		entity.add(BulletComponent(rigidBody))
 		return entity
 	}
 
@@ -137,29 +164,6 @@ object EntityFactory {
 		gunEntity.add(GunComponent())
 		gunEntity.add(AnimationComponent(modelComponent.instance))
 		return gunEntity
-	}
-
-	//______________________________________________________________________________________________
-	fun loadScene(x: Float, y: Float, z: Float): Entity {
-		val entity = Entity()
-		val modelLoader = G3dModelLoader(JsonReader())
-		val modelData = modelLoader.loadModelData(Gdx.files.internal("data/arena.g3dj"))
-		val model = Model(modelData, TextureProvider.FileTextureProvider())
-		val modelComponent = ModelComponent(model, x, y, z)
-		entity.add(modelComponent)
-		val shape = Bullet.obtainStaticNodeShape(model.nodes)
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, null, shape, Vector3.Zero)
-		val rigidBody = btRigidBody(bodyInfo)
-		rigidBody.userData = entity
-		rigidBody.motionState = MotionState(modelComponent.instance.transform)
-		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-		rigidBody.contactCallbackFilter = 0
-		rigidBody.contactCallbackFlag = BulletComponent.ARENA_FLAG
-		rigidBody.userValue = BulletComponent.ARENA_FLAG
-		rigidBody.userIndex = BulletComponent.ARENA_FLAG
-		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
-		entity.add(BulletComponent(rigidBody))
-		return entity
 	}
 
 	//______________________________________________________________________________________________

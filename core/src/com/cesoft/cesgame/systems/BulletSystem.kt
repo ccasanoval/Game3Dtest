@@ -30,48 +30,91 @@ class BulletSystem : EntitySystem(), EntityListener {
 	}
 
 	inner class CesContactListener2 : ContactListener() {
+		override fun onContactProcessed(userValue0: Int, userValue1: Int)
+		{
+			System.err.println("----- COLLISION PRICESSSSS: "+userValue0+"/"+userValue1)
+
+		}
 		override fun onContactAdded(
 			userValue0: Int, partId0: Int, index0: Int,
 			userValue1: Int, partId1: Int, index1: Int): Boolean
 		{
+			if(false)
 
 			/// ARENA + PLAYER
-			if(userValue0 == BulletComponent.ARENA_FLAG && userValue1 == BulletComponent.PLAYER_FLAG)
+			/*else if(userValue0 == BulletComponent.ARENA_FLAG && userValue1 == BulletComponent.PLAYER_FLAG)
 			{
 				System.err.println("------aa---- COLLISION: Player + Arena")
+				player.getComponent(PlayerComponent::class.java).isSaltando = false
+			}*/
+			else if(userValue1 == BulletComponent.ARENA_FLAG && userValue0 == BulletComponent.PLAYER_FLAG)
+			{
+				//System.err.println("------bb---- COLLISION: Player + Arena")
 				player.getComponent(PlayerComponent::class.java).isSaltando = false
 			}
 
 			/// PLAYER + ENEMY
-			if(userValue0 == BulletComponent.PLAYER_FLAG && userValue1 == BulletComponent.ENEMY_FLAG)
+			else if(userValue0 == BulletComponent.PLAYER_FLAG && userValue1 == BulletComponent.ENEMY_FLAG)
 			{
 				System.err.println("----aa------ COLLISION: Player + Enemy")
 				PlayerComponent.health -= 2
 				PlayerComponent.score -= 25
-				val e = foes[index1]
-				e.getComponent(StatusComponent::class.java).alive = false
-				removeBody(e)
-				foes.remove(e)
+				val e = enemies[index1]
+				e?.getComponent(StatusComponent::class.java)?.alive = false
+				enemies.remove(index1)
+			}
+			else if(userValue1 == BulletComponent.PLAYER_FLAG && userValue0 == BulletComponent.ENEMY_FLAG)
+			{
+				System.err.println("----bb------ COLLISION: Player + Enemy")
+				PlayerComponent.health -= 2
+				PlayerComponent.score -= 25
+				val e = enemies[index0]
+				e?.getComponent(StatusComponent::class.java)?.alive = false
+				//removeBody(e)
+				enemies.remove(index0)
 			}
 
 			/// ENEMY + SHOT
-			if(userValue0 == BulletComponent.ENEMY_FLAG && userValue1 == BulletComponent.SHOT_FLAG)
+			else if(getValor(userValue0) == BulletComponent.ENEMY_FLAG && getValor(userValue1) == BulletComponent.SHOT_FLAG)
 			{
-				System.err.println("---bb------- COLLISION: Shot + enemy")
-				//removeBody(eShot)
-				System.err.println("---b2------- COLLISION: Shot + enemy")
+				val iEnemy = getIndex(userValue0)
+				val iShot = getIndex(userValue1)
+				System.err.println("---bb------- COLLISION: Shot ("+iShot+" "+index1+") + enemy ("+iEnemy+" "+index0+")")
+				//
+				var e = enemies[iEnemy]
+				e?.getComponent(StatusComponent::class.java)?.alive = false
+				enemies.remove(iEnemy)
+				//
+				e = shots[iShot]
+				if(e!=null)removeBody(e)
+				shots.remove(iShot)
 			}
 
 			/// ARENA + SHOT
-			if(userValue0 == BulletComponent.ARENA_FLAG && userValue1 == BulletComponent.SHOT_FLAG)
+			/*else if(userValue0 == BulletComponent.ARENA_FLAG && userValue1 == BulletComponent.SHOT_FLAG)
 			{
-				System.err.println("---bb------- COLLISION: Shot + Arena")
-				//removeBody(eShot)
-				System.err.println("---b2------- COLLISION: Shot + Arena")
+				System.err.println("---aa------- COLLISION: Shot + Arena")
+				/*val e = shots[index1]!!
+				removeBody(e)
+				shots.remove(index1)*/
+			}*/
+			else if(userValue1 == BulletComponent.ARENA_FLAG && getValor(userValue0) == BulletComponent.SHOT_FLAG)
+			{
+				val iShot = getIndex(userValue0)
+				val e = shots[iShot]!!
+				removeBody(e)
+				shots.remove(iShot)
 			}
 
-			System.err.println("----A-----CesContactListener-------"+partId0+"--"+index0+"-- -- "+userValue0)
-			System.err.println("----B-----CesContactListener-------"+partId1+"--"+index1+"-- -- "+userValue1)
+			/// ARENA + ENEMY
+			else if(userValue1 == BulletComponent.ARENA_FLAG && getValor(userValue0) == BulletComponent.ENEMY_FLAG)
+			{
+
+			}
+			else
+			{
+				System.err.println("----- COLLISION OTRA: "+userValue0+"/"+userValue1+"  :  "+index0+"/"+index1)
+			}
 			return true
 		}
 	}
@@ -207,44 +250,62 @@ class BulletSystem : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
-	private val foes = arrayListOf<Entity>()
+
+	private var enemyIndex = 0
+	private var shotIndex = 0
+	private val enemies = mutableMapOf<Int, Entity>()
+	private val shots = mutableMapOf<Int, Entity>()
 	private lateinit var arena : Entity
 	private lateinit var player : Entity
 	override fun entityAdded(entity: Entity)
 	{
-		val bulletComponent = entity.getComponent(BulletComponent::class.java)
-		collisionWorld.addRigidBody(bulletComponent.rigidBody)
-		when(bulletComponent.rigidBody.userValue)
+		val bullet = entity.getComponent(BulletComponent::class.java)
+
+		when(bullet.rigidBody.userValue)
 		{
-			BulletComponent.ARENA_FLAG -> arena = entity
-			BulletComponent.PLAYER_FLAG -> player = entity
-			BulletComponent.ENEMY_FLAG -> {
-				foes.add(entity)
-				bulletComponent.rigidBody.userIndex = foes.indexOf(entity)
+			BulletComponent.ARENA_FLAG ->
+			{
+				arena = entity
 			}
-			else -> System.err.println("Collision else added: "+bulletComponent.rigidBody.userValue)
+			BulletComponent.PLAYER_FLAG ->
+			{
+				player = entity
+			}
+			BulletComponent.ENEMY_FLAG -> {
+				enemyIndex++
+				bullet.rigidBody.userIndex = enemyIndex
+				bullet.rigidBody.userIndex2 = enemyIndex
+				enemies[enemyIndex] = entity
+				bullet.rigidBody.userValue = comprimeCodigo(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
+			}
+			BulletComponent.SHOT_FLAG -> {
+				shotIndex++
+				bullet.rigidBody.userIndex = shotIndex
+				bullet.rigidBody.userIndex2 = shotIndex
+				shots[shotIndex] = entity
+				bullet.rigidBody.userValue = comprimeCodigo(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
+			}
+			else -> System.err.println("Collision else added: "+bullet.rigidBody.userValue)
 		}
-		/*
-		bulletComponent.rigidBody.userIndex = index++
-		bulletComponent.rigidBody.userIndex2 = bulletComponent.rigidBody.userIndex
-
-		if(entity.getComponent(PlayerComponent::class.java) != null)
-			player  = entity
-
-		lista.add(entity)*/
+		collisionWorld.addRigidBody(bullet.rigidBody)
 	}
+	private val MASCARA_INDEX = 0x7FFFFF00
+	private val MASCARA_VALUE = 0x000000FF
+	private fun comprimeCodigo(valor: Int, index: Int) = (valor and MASCARA_VALUE) + (index shl 8)
+	private fun getValor(codigo : Int) = codigo and MASCARA_VALUE
+	private fun getIndex(codigo : Int) = (codigo and MASCARA_INDEX) ushr 8
 
 	//______________________________________________________________________________________________
 	fun removeBody(entity: Entity)
 	{
 		val comp = entity.getComponent(BulletComponent::class.java)
-		if(comp != null) {
 			collisionWorld.removeCollisionObject(comp.rigidBody)
-			//comp.rigidBody.dispose()
-
-		}
 	}
 
 	//______________________________________________________________________________________________
-	override fun entityRemoved(entity: Entity) {}
+	override fun entityRemoved(entity: Entity)
+	{
+		val comp = entity.getComponent(BulletComponent::class.java)
+		System.err.println("------COLLISION : REMOVED----"+getValor(comp.rigidBody.userValue)+"-----"+comp.rigidBody.userValue+" : "+comp.rigidBody.userIndex)
+	}
 }

@@ -77,19 +77,18 @@ class EnemySystem : EntitySystem(), EntityListener {
 			val dX = playerPosition.x - enemyPosition.x
 			val dZ = playerPosition.z - enemyPosition.z
 
+			/// Movimiento
 			val bullet = e.getComponent(BulletComponent::class.java)
-			bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ))
+			bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ).nor().scl(10f))
+			//System.err.println("ENEMY FORCE -----------------"+Vector3(dX, 0f, dZ).nor())
 
+			/// Direccion
 			val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
-
-			//Calculate the transforms
 			val quat = Quaternion()
 			val rot = quat.setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat() + 90)
-
 			bullet.rigidBody.getWorldTransform(transf)
 			transf.getTranslation(enemyPosition)
 			model.instance.transform.set(enemyPosition.x, enemyPosition.y, enemyPosition.z, rot.x, rot.y, rot.z, rot.w)
-			//model.instance.transform.set(enemyPosition.x, enemyPosition.y, enemyPosition.z, rot.x, rot.y, rot.z, rot.w)
 		}
 	}
 
