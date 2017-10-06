@@ -40,7 +40,7 @@ object EntityFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(Matrix4().setToTranslation(x,y,z))
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		rigidBody.contactCallbackFilter = 0//BulletComponent.PLAYER_FLAG//BulletComponent.ENEMY_FLAG or BulletComponent.ARENA_FLAG
+		rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG or BulletComponent.ARENA_FLAG
 		rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
 		rigidBody.userValue = BulletComponent.PLAYER_FLAG
 		//rigidBody.userIndex = BulletComponent.PLAYER_FLAG
@@ -54,8 +54,8 @@ object EntityFactory {
 	}
 
 	//______________________________________________________________________________________________
-	private val assetManager = AssetManager()
-	fun createEnemy(enemyModel: Model, x: Float, y: Float, z: Float): Entity {
+	private val assetManager = AssetManager()//TODO: hacer singleton y no object
+	fun createEnemy(enemyModel: Model, x: Float, y: Float, z: Float, index: Int): Entity {
 		val entity = Entity()
 
 		val enemyModelComponent = ModelComponent(enemyModel, x, y, z)
@@ -78,10 +78,10 @@ object EntityFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(enemyModelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		rigidBody.contactCallbackFilter = 0//BulletComponent.ENEMY_FLAG
+		rigidBody.contactCallbackFilter = BulletComponent.SHOT_FLAG
 		rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
 		rigidBody.userValue = BulletComponent.ENEMY_FLAG
-		//rigidBody.userIndex = BulletComponent.ENEMY_FLAG
+		rigidBody.userIndex = index
 		rigidBody.friction = 3f
 		rigidBody.rollingFriction = 3f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
@@ -97,13 +97,14 @@ object EntityFactory {
 	fun createShot(pos: Vector3, dir: Vector3, mass: Float = ShotComponent.MASA, force: Float = ShotComponent.FUERZA): Entity {
 		val entity = Entity()
 
-		//System.err.println("--------------- SHOT CREATE : "+pos+" ::: "+dir)
+		/// SHOT
+		entity.add(ShotComponent())
 
-		// MODEL
+		/// MODEL
 		val modelComponent = ModelComponent(model, pos.x, pos.y, pos.z)
 		entity.add(modelComponent)
 
-		// BULLET
+		/// COLLISION
 		val localInertia = Vector3()
 		val shape = btBoxShape(Vector3(.5f,.5f,.5f))
 		shape.calculateLocalInertia(mass, localInertia)
@@ -112,8 +113,8 @@ object EntityFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		//rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG
-		//rigidBody.contactCallbackFlag = BulletComponent.SHOT_FLAG
+		rigidBody.contactCallbackFilter = BulletComponent.SHOT_FLAG
+		rigidBody.contactCallbackFlag = BulletComponent.SHOT_FLAG
 		rigidBody.userValue = BulletComponent.SHOT_FLAG
 		//rigidBody.userIndex = BulletComponent.SHOT_FLAG
 		rigidBody.applyCentralForce(dir.scl(force))
@@ -136,8 +137,8 @@ object EntityFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-		//rigidBody.contactCallbackFilter = 0
-		//rigidBody.contactCallbackFlag = BulletComponent.ARENA_FLAG
+		rigidBody.contactCallbackFilter = 0
+		rigidBody.contactCallbackFlag = BulletComponent.ARENA_FLAG
 		rigidBody.userValue = BulletComponent.ARENA_FLAG
 		//rigidBody.userIndex = BulletComponent.ARENA_FLAG
 		//rigidBody.activationState = Collision.DISABLE_DEACTIVATION

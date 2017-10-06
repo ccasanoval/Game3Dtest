@@ -11,18 +11,18 @@ import com.cesoft.cesgame.components.StatusComponent
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class StatusSystem(private val gameWorld: GameWorld) : EntitySystem() {
-	private var entities: ImmutableArray<Entity>? = null
+	private lateinit var entities: ImmutableArray<Entity>
 
 	override fun addedToEngine(engine: Engine?) {
 		entities = engine!!.getEntitiesFor(Family.all(StatusComponent::class.java).get())
 	}
 
 	override fun update(delta: Float) {
-		for(i in 0 until entities!!.size()) {
-			val entity = entities!!.get(i)
-			entity.getComponent(StatusComponent::class.java).update(delta)
-			if(entity.getComponent(StatusComponent::class.java).aliveStateTime >= 3.4f)
-				gameWorld.remove(entity)
+		for(e in entities) {
+			val status = e.getComponent(StatusComponent::class.java)
+			status.update(delta)
+			if(status.aliveStateTime >= 3.4f)
+				gameWorld.remove(e)
 		}
 	}
 }

@@ -40,8 +40,6 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	override fun update(deltaTime: Float) {
 		// Calcular colisiones
 		collisionWorld.stepSimulation(Math.min(1f / 30f, deltaTime), 5, 1f / 60f)
-		// Eliminar balas perdidas
-		eliminarBalasPerdidas()
 	}
 
 	//______________________________________________________________________________________________
@@ -55,7 +53,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 			//System.err.println("----- COLLISION PRICESSSSS: "+getValor(userValue0)+"/"+getValor(userValue1))
 			when(getValor(userValue0))
 			{
-				BulletComponent.ARENA_FLAG ->
+				/*BulletComponent.ARENA_FLAG ->
 				{
 					when(getValor(userValue1))
 					{
@@ -63,7 +61,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 						BulletComponent.SHOT_FLAG -> collArenaShot(getIndex(userValue1))
 						//BulletComponent.ENEMY_FLAG -> collArenaEnemy(getIndex(userValue1))
 					}
-				}
+				}*/
 				BulletComponent.PLAYER_FLAG ->
 				{
 					when(getValor(userValue1))
@@ -74,6 +72,8 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 				}
 				BulletComponent.ENEMY_FLAG ->
 				{
+					System.err.println("*****************************************---Enemy  ::: "+index0+" == "+getIndex(userValue0))
+
 					when(getValor(userValue1))
 					{
 						BulletComponent.PLAYER_FLAG -> collPlayerEnemy(getIndex(userValue0))
@@ -82,14 +82,14 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 						//BulletComponent.ENEMY_FLAG -> collArenaEnemy(getIndex(userValue0))
 					}
 				}
-				BulletComponent.SHOT_FLAG ->
+				/*BulletComponent.SHOT_FLAG ->
 				{
 					when(getValor(userValue1))
 					{
 						BulletComponent.ENEMY_FLAG -> collShotEnemy(getIndex(userValue0), getIndex(userValue1))
 						BulletComponent.ARENA_FLAG -> collArenaShot(getIndex(userValue0))
 					}
-				}
+				}*/
 			}
 			return true
 		}
@@ -115,14 +115,13 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	{
 		val e = enemies[index]
 		if(e != null && e.getComponent(StatusComponent::class.java).alive) {
-			System.err.println("----aa------ COLLISION: Player + Enemy VIVO")
+			System.err.println("----aa------ COLLISION: Player + Enemy VIVO ::: "+index)
 			PlayerComponent.health -= 2
 			PlayerComponent.score -= 20
 			e.getComponent(StatusComponent::class.java)?.alive = false
 			enemies.remove(index)
 		}
-		else
-			System.err.println("----aa------ COLLISION: Player + Enemy MUERTO")
+		//else			System.err.println("----aa------ COLLISION: Player + Enemy MUERTO")
 	}
 	//______________________________________________________________________________________________
 	private fun collShotEnemy(iShot: Int, iEnemy: Int)

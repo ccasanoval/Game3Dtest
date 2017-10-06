@@ -18,10 +18,13 @@ class GameWorld(gameUI: GameUI) {
 	private val debug = true
 	private var debugDrawer: DebugDrawer? = null
 
-	var bulletSystem: BulletSystem
+	private var bulletSystem: BulletSystem
 	private var playerSystem: PlayerSystem
 	private var renderSystem: RenderSystem
 	private var enemySystem: EnemySystem
+	private var statusSystem: StatusSystem
+	private var shotSystem: ShotSystem
+
 	private var engine: Engine = Engine()
 	private lateinit var player: Entity
 	private lateinit var gun: Entity
@@ -33,12 +36,15 @@ class GameWorld(gameUI: GameUI) {
 		bulletSystem = BulletSystem(this)
 		enemySystem = EnemySystem()
 		playerSystem = PlayerSystem(gameUI, renderSystem.perspectiveCamera)
+		statusSystem = StatusSystem(this)
+		shotSystem = ShotSystem(this)
 
 		engine.addSystem(renderSystem)
 		engine.addSystem(bulletSystem)
 		engine.addSystem(playerSystem)
 		engine.addSystem(enemySystem)
-		engine.addSystem(StatusSystem(this))
+		engine.addSystem(statusSystem)
+		engine.addSystem(shotSystem)
 		if(debug) {
 			debugDrawer = DebugDrawer()
 			debugDrawer!!.debugMode = btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE
@@ -82,10 +88,18 @@ class GameWorld(gameUI: GameUI) {
 		}
 	}
 	private fun checkPause() {
-		engine.getSystem(PlayerSystem::class.java).setProcessing( ! Settings.paused)
+		/*engine.getSystem(PlayerSystem::class.java).setProcessing( ! Settings.paused)
 		engine.getSystem(EnemySystem::class.java).setProcessing( ! Settings.paused)
 		engine.getSystem(StatusSystem::class.java).setProcessing( ! Settings.paused)
 		engine.getSystem(BulletSystem::class.java).setProcessing( ! Settings.paused)
+		engine.getSystem(ShotSystem::class.java).setProcessing( ! Settings.paused)
+		engine.getSystem(ShotSystem::class.java).setProcessing( ! Settings.paused)*/
+		//renderSystem.setProcessing( ! Settings.paused)
+		bulletSystem.setProcessing( ! Settings.paused)
+		enemySystem.setProcessing( ! Settings.paused)
+		playerSystem.setProcessing( ! Settings.paused)
+		statusSystem.setProcessing( ! Settings.paused)
+		shotSystem.setProcessing( ! Settings.paused)
 	}
 
 	//______________________________________________________________________________________________

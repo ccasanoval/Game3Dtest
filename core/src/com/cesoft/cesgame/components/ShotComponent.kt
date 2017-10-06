@@ -12,6 +12,7 @@ class ShotComponent : Component {
 	fun update(delta: Float) {
 		aliveTime += delta
 	}
+	fun isEnd() = aliveTime > 1f
 
 	companion object {
 		const val MASA = .25f

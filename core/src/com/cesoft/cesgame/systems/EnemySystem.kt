@@ -115,8 +115,9 @@ class EnemySystem : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
+	var index = 0
 	private fun spawnEnemy(randomSpawnIndex: Int) {
-		engine!!.addEntity(EntityFactory.createEnemy(model, xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]))
+		engine!!.addEntity(EntityFactory.createEnemy(model, xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex], ++index))
 	}
 
 	//______________________________________________________________________________________________

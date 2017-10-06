@@ -23,7 +23,7 @@ import com.cesoft.cesgame.components.ModelComponent
 //
 class RenderSystem : EntitySystem() {
 
-	private var entities: ImmutableArray<Entity>? = null
+	private lateinit var entities: ImmutableArray<Entity>
 	private var batch: ModelBatch = ModelBatch()
 	private val environment: Environment = Environment()
 	var perspectiveCamera: PerspectiveCamera = PerspectiveCamera(FOV, CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
@@ -46,26 +46,24 @@ class RenderSystem : EntitySystem() {
 		particleSystem.add(billboardParticleBatch)
 	}
 
-	// Event called when an entity is added to the engine
+	//______________________________________________________________________________________________
 	override fun addedToEngine(e: Engine?) {
-		// Grabs all entities with desired components
 		entities = e!!.getEntitiesFor(Family.all(ModelComponent::class.java).get())
 	}
 
+	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
 		batch.begin(perspectiveCamera)
-		for(i in 0 until entities!!.size()) {
-			//if(entities!!.get(i).getComponent(GunComponent::class.java) == null) {
-				val mod = entities!!.get(i).getComponent(ModelComponent::class.java)
-				batch.render(mod.instance, environment)
-			//}
-		}
+		entities
+			.map { it.getComponent(ModelComponent::class.java) }
+			.forEach { batch.render(it.instance, environment) }
 		batch.end()
 		renderParticleEffects()
 		drawGun()
 		//drawLaser()
 	}
 
+	//______________________________________________________________________________________________
 	private fun renderParticleEffects() {
 		batch.begin(perspectiveCamera)
 		particleSystem.update() // technically not necessary for rendering
