@@ -68,7 +68,7 @@ object EntityFactory {
 		entity.add(animationComponent)
 
 		entity.add(StatusComponent(animationComponent))
-		//entity.add(EnemyDieParticleComponent(RenderSystem.particleSystem, assetManager))
+		entity.add(EnemyDieParticleComponent(RenderSystem.particleSystem, assetManager))
 
 		val localInertia = Vector3()
 		val shape = btSphereShape(5f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)

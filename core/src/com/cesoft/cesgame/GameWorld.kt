@@ -68,7 +68,7 @@ class GameWorld(gameUI: GameUI) {
 		player = EntityFactory.createPlayer(x, y, z)
 		engine.addEntity(player)
 		//gun = EntityFactory.loadGun(x+6, y-9, z-5)
-		gun = EntityFactory.loadGun(3.9f, -2.2f, -5f)
+		gun = EntityFactory.loadGun(3.9f, -2.4f, -5f)
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun

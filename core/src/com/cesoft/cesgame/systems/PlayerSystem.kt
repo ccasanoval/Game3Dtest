@@ -43,8 +43,6 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		updateDisparo(delta)
 		updateStatus()
 		checkGameOver()
-
-		//System.err.println("**********************"+getPosition()+" ::: "+getDirection())
 	}
 
 	//______________________________________________________________________________________________
@@ -61,8 +59,8 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		val tmp = Vector3()
 
 		if(Gdx.app.type == Application.ApplicationType.Android) {
-			deltaX = -ControllerWidget.watchVector.x * 15f * delta
-			deltaY = ControllerWidget.watchVector.y * 12f * delta
+			deltaX = -ControllerWidget.watchVector.x * 80f * delta
+			deltaY = ControllerWidget.watchVector.y * 40f * delta
 		}
 		else {
 			deltaX = -Gdx.input.deltaX * 8f * delta
@@ -77,10 +75,19 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		val v = dir.cpy()
 		val pitch = (Math.atan2(Math.sqrt((v.x * v.x + v.z * v.z).toDouble()), v.y.toDouble()) * MathUtils.radiansToDegrees).toFloat()
 		var pr = deltaY
-		if(pitch - pr > 150)
-			pr = -(150 - pitch)
-		else if(pitch - pr < 30)
-			pr = pitch - 30
+		if(Gdx.app.type == Application.ApplicationType.Android)
+		{
+			if(pitch - pr > 120)
+				pr = -(120 - pitch)
+			else if(pitch - pr < 50)
+				pr = pitch - 50
+		}
+		else {
+			if(pitch - pr > 150)
+				pr = -(150 - pitch)
+			else if(pitch - pr < 30)
+				pr = pitch - 30
+		}
 		dir.rotate(tmp, pr)
 		//
 		camera.direction.set(dir)
@@ -99,7 +106,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 			if(ControllerWidget.movementVector.x < 0) tmp.set(camera.direction).crs(camera.up).scl(-1f)
 			if(ControllerWidget.movementVector.x > 0) tmp.set(camera.direction).crs(camera.up)
 			walkDirection.add(tmp)
-			//walkDirection.scl(10f * delta)
+			walkDirection.scl(600f * delta)
 		}
 		else {
 			if(Gdx.input.isKeyPressed(Input.Keys.UP)) walkDirection.add(camera.direction)
@@ -107,14 +114,10 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) tmp.set(camera.direction).crs(camera.up).scl(-1f)
 			if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) tmp.set(camera.direction).crs(camera.up)
 			walkDirection.add(tmp)
-			//walkDirection.scl(25f * delta)
+			walkDirection.scl(1000f * delta)
 		}
 		walkDirection.y = 0f
-		//System.err.println("TRANS------------------------------"+walkDirection)
-
-		val fuerza = delta * 1000f
-		bulletComponent.rigidBody.applyCentralForce(walkDirection.scl(fuerza))
-
+		bulletComponent.rigidBody.applyCentralForce(walkDirection)
 		updateCamara()
 	}
 	//______________________________________________________________________________________________
@@ -128,7 +131,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 				updateCamara()
 			}
 		}
-		playerComponent.isSaltando = getPosition().y > ALTURA  //TODO Salvo rampas!!!!
+		playerComponent.isSaltando = getPosition().y > ALTURA+1  //TODO Salvo rampas!!!!
 	}
 	//______________________________________________________________________________________________
 	private val ALTURA = 10f

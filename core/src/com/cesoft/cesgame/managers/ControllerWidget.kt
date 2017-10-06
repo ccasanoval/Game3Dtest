@@ -14,11 +14,11 @@ class ControllerWidget {
 	init {
 		val touchpadStyle = Touchpad.TouchpadStyle()
 		touchpadStyle.knob = TextureRegionDrawable(TextureRegion(Texture(Gdx.files.internal("data/touchKnob.png"))))
-		touchpadStyle.knob.minWidth = 64f
-		touchpadStyle.knob.minHeight = 64f
+		touchpadStyle.knob.minWidth = 44f
+		touchpadStyle.knob.minHeight = 44f
 		touchpadStyle.background = TextureRegionDrawable(TextureRegion(Texture(Gdx.files.internal("data/touchBackground.png"))))
-		touchpadStyle.background.minWidth = 64f
-		touchpadStyle.background.minHeight = 64f
+		touchpadStyle.background.minWidth = 44f
+		touchpadStyle.background.minHeight = 44f
 
 		/*movementPad = Touchpad(10f, touchpadStyle)
 		watchPad = Touchpad(10f, touchpadStyle)*/

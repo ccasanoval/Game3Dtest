@@ -23,7 +23,7 @@ class HealthWidget : Actor() {
 				assets.skin.newDrawable("white", Color.GREEN))
 		progressBarStyle.knobBefore = progressBarStyle.knob
 		healthBar = ProgressBar(0f, 100f, 1f, false, progressBarStyle)
-		label = Label("Health", assets.skin)
+		label = Label("Energía", assets.skin)
 		label.setAlignment(Align.center)
 	}
 

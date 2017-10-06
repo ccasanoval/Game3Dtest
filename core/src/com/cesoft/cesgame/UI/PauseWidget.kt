@@ -2,6 +2,8 @@ package com.cesoft.cesgame.UI
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
@@ -18,32 +20,41 @@ import com.cesoft.cesgame.screens.GameScreen
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
+
 	private var window: Window
-	private var closeDialog: TextButton
+	//private var closeDialog: TextButton
 	private var restartButton: TextButton
 	private var quitButton: TextButton
 
-	//private var stage1: Stage = stage
-
+	//______________________________________________________________________________________________
 	init {
 		super.setStage(stage)
 		val assets = Assets()
-		window = Window("Pause", assets.skin)
-		closeDialog = TextButton("X", assets.skin)
-		restartButton = TextButton("Restart", assets.skin)
-		quitButton = TextButton("Quit", assets.skin)
+		val ws = Window.WindowStyle()
+		ws.titleFont = BitmapFont()
+		ws.titleFontColor = Color.BLUE
+		window = Window("", ws)
+		//
+		//closeDialog = TextButton("X", assets.skin)
+		restartButton = TextButton("Racargar", assets.skin)
+		quitButton = TextButton("Salir", assets.skin)
+		restartButton.label.setFontScale(2f)
+		quitButton.label.setFontScale(2f)
+		assets.dispose()
 		//
 		configureWidgets()
 		setListeners()
 	}
 
-
+	//______________________________________________________________________________________________
 	private fun configureWidgets() {
-		window.titleTable.add<TextButton>(closeDialog).height(window.padTop)
-		window.add<TextButton>(restartButton)
-		window.add<TextButton>(quitButton)
+		//window.titleTable.add<TextButton>(closeDialog).width(64f).height(64f).pad(10f)//.height(window.padTop+10f)
+		window.add<TextButton>(restartButton).width(170f).height(80f)
+		window.row().pad(20f)
+		window.add<TextButton>(quitButton).width(170f).height(80f)
 	}
 
+	//______________________________________________________________________________________________
 	private fun setListeners() {
 		super.addListener(object : InputListener() {
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
@@ -54,11 +65,7 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 				return false
 			}
 		})
-		closeDialog.addListener(object : ClickListener() {
-			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				handleUpdates()
-			}
-		})
+
 		restartButton.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
 				game.setScreen(GameScreen(game))
@@ -69,18 +76,25 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 				Gdx.app.exit()
 			}
 		})
+
+//		closeDialog.addListener(object : ClickListener() {
+//			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
+//				handleUpdates()
+//			}
+//		})
 	}
 
+	//______________________________________________________________________________________________
 	private fun handleUpdates() {
 		if(window.stage == null) {
 			Gdx.app.error("CESGAME", "-----------------1----------------- OUT 1 ------------------------------")
-			System.err.println("----------------------2------------ OUT 1 ------------------------------")
+			//System.err.println("----------------------2------------ OUT 1 ------------------------------")
 			stage.addActor(window)
 			Gdx.input.isCursorCatched = false
 			Settings.paused = true
 		}
 		else {
-			System.err.println("---------------------1------------- OUT 2 ------------------------------")
+			//System.err.println("---------------------1------------- OUT 2 ------------------------------")
 			Gdx.app.error("CESGAME", "-----------------2----------------- OUT 2 ------------------------------")
 			window.remove()
 			Gdx.input.isCursorCatched = true
@@ -88,15 +102,18 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 		}
 	}
 
+	//______________________________________________________________________________________________
 	override fun setPosition(x: Float, y: Float) {
 		super.setPosition(x, y)
 		window.setPosition(
-				CesGame.VIRTUAL_WIDTH / 2 - window.width / 2,
-				CesGame.VIRTUAL_HEIGHT / 2 - window.height / 2)
+			CesGame.VIRTUAL_WIDTH / 2 - window.width / 2,
+			CesGame.VIRTUAL_HEIGHT / 2 - window.height / 2)
 	}
 
+	//______________________________________________________________________________________________
 	override fun setSize(width: Float, height: Float) {
 		super.setSize(width, height)
-		window.setSize(width * 2, height * 2)
+		//window.setSize(width * 3f, height * 3)
+		window.setSize(180f, 180f)
 	}
 }
