@@ -110,7 +110,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 			//walkDirection.scl(25f * delta)
 		}
 		walkDirection.y = 0f
-		System.err.println("TRANS------------------------------"+walkDirection)
+		//System.err.println("TRANS------------------------------"+walkDirection)
 
 		val fuerza = delta * 1000f
 		bulletComponent.rigidBody.applyCentralForce(walkDirection.scl(fuerza))
@@ -196,10 +196,11 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 				}
 			}
 		}*/
-		/*val dir = getDirection().cpy()
-		val pos = getPosition().cpy().add(dir)
+		val dir = getDirection().cpy()
+		val pos = getPosition().cpy().add(dir.scl(2f)).add(0f,ALTURA,0f)
 		val shot = EntityFactory.createShot(pos, dir)
-		engine!!.addEntity(shot)*/
+		engine!!.addEntity(shot)
+
 		gun.getComponent(AnimationComponent::class.java).animate("Armature|shoot", 1, 3)
 	}
 

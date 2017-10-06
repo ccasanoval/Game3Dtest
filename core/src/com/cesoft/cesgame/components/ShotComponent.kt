@@ -14,7 +14,7 @@ class ShotComponent : Component {
 	}
 
 	companion object {
-		const val MASA = 1f
+		const val MASA = .25f
 		const val FUERZA = 5000f
 	}
 }

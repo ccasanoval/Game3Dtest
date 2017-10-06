@@ -3,6 +3,7 @@ package com.cesoft.cesgame.managers
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.g3d.Material
@@ -20,6 +21,7 @@ import com.badlogic.gdx.utils.UBJsonReader
 import com.cesoft.cesgame.bullet.MotionState
 import com.cesoft.cesgame.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
+import com.cesoft.cesgame.systems.RenderSystem
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,8 +40,8 @@ object EntityFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(Matrix4().setToTranslation(x,y,z))
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		//rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG or BulletComponent.ARENA_FLAG
-		//rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
+		rigidBody.contactCallbackFilter = 0//BulletComponent.PLAYER_FLAG//BulletComponent.ENEMY_FLAG or BulletComponent.ARENA_FLAG
+		rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
 		rigidBody.userValue = BulletComponent.PLAYER_FLAG
 		//rigidBody.userIndex = BulletComponent.PLAYER_FLAG
 		rigidBody.friction = 3f
@@ -52,6 +54,7 @@ object EntityFactory {
 	}
 
 	//______________________________________________________________________________________________
+	private val assetManager = AssetManager()
 	fun createEnemy(enemyModel: Model, x: Float, y: Float, z: Float): Entity {
 		val entity = Entity()
 
@@ -63,7 +66,9 @@ object EntityFactory {
 		val animationComponent = AnimationComponent(enemyModelComponent.instance)
 		animationComponent.animate(EnemyAnimations.id, EnemyAnimations.offsetRun1, EnemyAnimations.durationRun1, -1, 1)    //TODO variable animationspeed
 		entity.add(animationComponent)
+
 		entity.add(StatusComponent(animationComponent))
+		//entity.add(EnemyDieParticleComponent(RenderSystem.particleSystem, assetManager))
 
 		val localInertia = Vector3()
 		val shape = btSphereShape(5f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
@@ -73,8 +78,8 @@ object EntityFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(enemyModelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		//rigidBody.contactCallbackFilter = BulletComponent.PLAYER_FLAG
-		//rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
+		rigidBody.contactCallbackFilter = 0//BulletComponent.ENEMY_FLAG
+		rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
 		rigidBody.userValue = BulletComponent.ENEMY_FLAG
 		//rigidBody.userIndex = BulletComponent.ENEMY_FLAG
 		rigidBody.friction = 3f
@@ -99,7 +104,7 @@ object EntityFactory {
 		entity.add(modelComponent)
 
 		// BULLET
-		/*val localInertia = Vector3()
+		val localInertia = Vector3()
 		val shape = btBoxShape(Vector3(.5f,.5f,.5f))
 		shape.calculateLocalInertia(mass, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mass, null, shape, localInertia)
@@ -112,7 +117,7 @@ object EntityFactory {
 		rigidBody.userValue = BulletComponent.SHOT_FLAG
 		//rigidBody.userIndex = BulletComponent.SHOT_FLAG
 		rigidBody.applyCentralForce(dir.scl(force))
-		entity.add(BulletComponent(rigidBody, bodyInfo))*/
+		entity.add(BulletComponent(rigidBody, bodyInfo))
 
 		return entity
 	}
@@ -168,6 +173,6 @@ object EntityFactory {
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-
+		assetManager.dispose()
 	}
 }

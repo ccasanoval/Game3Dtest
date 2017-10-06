@@ -10,6 +10,7 @@ import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
+import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter
 import com.badlogic.gdx.graphics.g3d.utils.TextureProvider
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
@@ -62,34 +63,54 @@ class EnemySystem : EntitySystem(), EntityListener {
 			val e = entities!!.get(i)
 			if( ! sm.get(e).alive) return
 
-			val model = e.getComponent(ModelComponent::class.java)
-			model.instance.transform.getTranslation(enemyPosition)
 
+
+			/// Animacion
 			val animat = e.getComponent(AnimationComponent::class.java)
 			animat.update(delta)
 
+			/// Particulas
+			updateParticulas(e)
+
+			/// Movimiento
 			val bulletPlayer = player!!.getComponent(BulletComponent::class.java)
 			val transf = Matrix4()
 			bulletPlayer.rigidBody.getWorldTransform(transf)
 			transf.getTranslation(playerPosition)
 
 			//TODO: user AI ¿?
+			val model = e.getComponent(ModelComponent::class.java)
+			model.instance.transform.getTranslation(enemyPosition)
 			val dX = playerPosition.x - enemyPosition.x
 			val dZ = playerPosition.z - enemyPosition.z
 
-			/// Movimiento
+			// Fuerzas
 			val bullet = e.getComponent(BulletComponent::class.java)
 			val fuerza = 70f
 			bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ).nor().scl(fuerza))
 			//System.err.println("ENEMY FORCE -----------------"+Vector3(dX, 0f, dZ).nor())
 
-			/// Direccion
+			// Orientacion
 			val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
 			val quat = Quaternion()
 			val rot = quat.setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat() + 90)
 			bullet.rigidBody.getWorldTransform(transf)
 			transf.getTranslation(enemyPosition)
 			model.instance.transform.set(enemyPosition.x, enemyPosition.y, enemyPosition.z, rot.x, rot.y, rot.z, rot.w)
+		}
+	}
+
+	private fun updateParticulas(e : Entity)
+	{
+		if( ! e.getComponent(StatusComponent::class.java).alive && !e.getComponent(EnemyDieParticleComponent::class.java).used) {
+			e.getComponent(EnemyDieParticleComponent::class.java).used = true
+			val effect = e.getComponent(EnemyDieParticleComponent::class.java).originalEffect.copy()
+			(effect.getControllers().first().emitter as RegularEmitter).emissionMode = RegularEmitter.EmissionMode.EnabledUntilCycleEnd
+			effect.setTransform(e.getComponent(ModelComponent::class.java).instance.transform)
+			effect.scale(3.25f, 1f, 1.5f)
+			effect.init()
+			effect.start()
+			RenderSystem.particleSystem.add(effect)
 		}
 	}
 

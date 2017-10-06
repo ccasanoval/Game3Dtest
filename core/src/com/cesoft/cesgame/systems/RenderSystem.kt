@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
 import com.cesoft.cesgame.CesGame
@@ -29,19 +30,17 @@ class RenderSystem : EntitySystem() {
 	private var gunCamera: PerspectiveCamera = PerspectiveCamera(FOV, CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
 	lateinit var gun: Entity
 
-	var particleSystem: ParticleSystem
-
-
 	init {
-		perspectiveCamera.far = 10000f
+		/// Camaras
+		perspectiveCamera.far = 50000f
 		perspectiveCamera.near = 1f
+		gunCamera.far = 10f
 
-		gunCamera.far = 100f
-		//gunCamera.near = 0.1f
-
+		/// Luz
 		environment.set(ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f))
+		environment.add(DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f))
 
-		particleSystem = ParticleSystem.get()
+		/// Particulas
 		val billboardParticleBatch = BillboardParticleBatch()
 		billboardParticleBatch.setCamera(perspectiveCamera)
 		particleSystem.add(billboardParticleBatch)
@@ -231,5 +230,6 @@ class RenderSystem : EntitySystem() {
 
 	companion object {
 		private val FOV = 67f
+		var particleSystem: ParticleSystem = ParticleSystem.get()
 	}
 }
