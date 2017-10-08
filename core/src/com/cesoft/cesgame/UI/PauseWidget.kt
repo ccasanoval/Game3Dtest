@@ -36,7 +36,7 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 		window = Window("", ws)
 		//
 		//closeDialog = TextButton("X", assets.skin)
-		restartButton = TextButton("Racargar", assets.skin)
+		restartButton = TextButton("Recargar", assets.skin)
 		quitButton = TextButton("Salir", assets.skin)
 		restartButton.label.setFontScale(2f)
 		quitButton.label.setFontScale(2f)
@@ -49,9 +49,9 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 	//______________________________________________________________________________________________
 	private fun configureWidgets() {
 		//window.titleTable.add<TextButton>(closeDialog).width(64f).height(64f).pad(10f)//.height(window.padTop+10f)
-		window.add<TextButton>(restartButton).width(170f).height(80f)
+		window.add<TextButton>(restartButton).width(170f).height(60f)
 		window.row().pad(20f)
-		window.add<TextButton>(quitButton).width(170f).height(80f)
+		window.add<TextButton>(quitButton).width(170f).height(60f)
 	}
 
 	//______________________________________________________________________________________________

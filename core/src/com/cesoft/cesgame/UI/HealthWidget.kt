@@ -2,9 +2,11 @@ package com.cesoft.cesgame.UI
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesgame.Assets
 import com.cesoft.cesgame.Settings
@@ -16,6 +18,7 @@ class HealthWidget : Actor() {
 	private val progressBarStyle: ProgressBar.ProgressBarStyle
 	private val label: Label
 
+	//______________________________________________________________________________________________
 	init {
 		val assets = Assets()
 		progressBarStyle = ProgressBar.ProgressBarStyle(
@@ -23,27 +26,34 @@ class HealthWidget : Actor() {
 				assets.skin.newDrawable("white", Color.GREEN))
 		progressBarStyle.knobBefore = progressBarStyle.knob
 		healthBar = ProgressBar(0f, 100f, 1f, false, progressBarStyle)
-		label = Label("Energía", assets.skin)
+		val ls = Label.LabelStyle()
+		ls.font = BitmapFont()
+		ls.fontColor = Color.RED
+		label = Label("Energía", ls)
 		label.setAlignment(Align.center)
 	}
 
+	//______________________________________________________________________________________________
 	override fun act(delta: Float) {
 		if(Settings.paused) return
 		healthBar.act(delta)
 		label.act(delta)
 	}
 
+	//______________________________________________________________________________________________
 	override fun draw(batch: Batch?, parentAlpha: Float) {
 		healthBar.draw(batch!!, parentAlpha)
 		label.draw(batch, parentAlpha)
 	}
 
+	//______________________________________________________________________________________________
 	override fun setPosition(x: Float, y: Float) {
 		super.setPosition(x, y)
 		healthBar.setPosition(x, y)
 		label.setPosition(x, y)
 	}
 
+	//______________________________________________________________________________________________
 	override fun setSize(width: Float, height: Float) {
 		super.setSize(width, height)
 		healthBar.setSize(width, height)
@@ -54,6 +64,7 @@ class HealthWidget : Actor() {
 		label.setSize(width, height)
 	}
 
+	//______________________________________________________________________________________________
 	fun setValue(value: Float) {
 		healthBar.value = value
 	}

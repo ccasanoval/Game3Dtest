@@ -22,13 +22,13 @@ import com.cesoft.cesgame.managers.EntityFactory
 import java.util.Random
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+// TODO: movimiento realista, no ir aumentando velocidad!!!!!
 class EnemySystem : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
 
-	private val xSpawns = floatArrayOf(+15f, +15f, -15f, -15f)
-	private val zSpawns = floatArrayOf(+15f, -15f, +15f, -15f)
+	private val xSpawns = floatArrayOf(+135f, +135f, -135f, -135f)
+	private val zSpawns = floatArrayOf(+135f, -135f, +135f, -135f)
 	private var sm = ComponentMapper.getFor(StatusComponent::class.java)
 
 	private val random = Random()
@@ -39,7 +39,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 	private val model : Model
 	init {
 		val modelLoader = G3dModelLoader(JsonReader())
-		val modelData = modelLoader.loadModelData(Gdx.files.internal("data/monster.g3dj"))
+		val modelData = modelLoader.loadModelData(Gdx.files.internal("data/monster/monster.g3dj"))
 		model = Model(modelData, TextureProvider.FileTextureProvider())
 		val nodes = model.nodes
 		for(i in 0 until nodes.size-1)
@@ -55,7 +55,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
-		if(entities!!.size() < 1) spawnEnemy(randomSpawnIndex)
+		//if(entities!!.size() < 2) spawnEnemy(randomSpawnIndex)
 
 		for(i in 0 until entities!!.size()) {
 			val playerPosition = Vector3()
@@ -87,6 +87,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 			// Fuerzas
 			val bullet = e.getComponent(BulletComponent::class.java)
 			val fuerza = 70f
+			//limitar velocidad??? TODO
 			bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ).nor().scl(fuerza))
 			//System.err.println("ENEMY FORCE -----------------"+Vector3(dX, 0f, dZ).nor())
 

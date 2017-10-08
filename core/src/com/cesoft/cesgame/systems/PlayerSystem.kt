@@ -12,13 +12,15 @@ import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
 import com.cesoft.cesgame.Settings
 import com.cesoft.cesgame.UI.GameUI
 import com.cesoft.cesgame.components.*
 import com.cesoft.cesgame.managers.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
+import com.cesoft.cesgame.components.PlayerComponent.ALTURA
+import com.cesoft.cesgame.components.PlayerComponent.FUERZA_MOVIL
 import com.cesoft.cesgame.managers.EntityFactory
+import com.cesoft.cesgame.managers.GunFactory
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,13 +45,14 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		updateDisparo(delta)
 		updateStatus()
 		checkGameOver()
+		updateCamara()
 	}
 
 	//______________________________________________________________________________________________
 	private fun updateMovement(delta: Float) {
 		updateRotacion(delta)
 		updateTraslacion(delta)
-		updateSalto(delta)
+		updateSalto()
 	}
 	//______________________________________________________________________________________________
 	private fun updateRotacion(delta: Float)
@@ -77,10 +80,10 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		var pr = deltaY
 		if(Gdx.app.type == Application.ApplicationType.Android)
 		{
-			if(pitch - pr > 120)
-				pr = -(120 - pitch)
-			else if(pitch - pr < 50)
-				pr = pitch - 50
+			if(pitch - pr > 110)
+				pr = -(110 - pitch)
+			else if(pitch - pr < 60)
+				pr = pitch - 60
 		}
 		else {
 			if(pitch - pr > 150)
@@ -106,7 +109,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 			if(ControllerWidget.movementVector.x < 0) tmp.set(camera.direction).crs(camera.up).scl(-1f)
 			if(ControllerWidget.movementVector.x > 0) tmp.set(camera.direction).crs(camera.up)
 			walkDirection.add(tmp)
-			walkDirection.scl(600f * delta)
+			walkDirection.scl(FUERZA_MOVIL * delta)
 		}
 		else {
 			if(Gdx.input.isKeyPressed(Input.Keys.UP)) walkDirection.add(camera.direction)
@@ -114,31 +117,35 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) tmp.set(camera.direction).crs(camera.up).scl(-1f)
 			if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) tmp.set(camera.direction).crs(camera.up)
 			walkDirection.add(tmp)
-			walkDirection.scl(1000f * delta)
+			walkDirection.scl(PlayerComponent.FUERZA_PC * delta)
 		}
 		walkDirection.y = 0f
-		bulletComponent.rigidBody.applyCentralForce(walkDirection)
-		updateCamara()
+		//walkDirection.nor()
+
+		//bulletComponent.rigidBody.applyCentralForce(walkDirection)
+		//bulletComponent.rigidBody.applyCentralImpulse(walkDirection)
+		walkDirection.y = bulletComponent.rigidBody.linearVelocity.y
+		bulletComponent.rigidBody.linearVelocity = walkDirection
+
 	}
 	//______________________________________________________________________________________________
-	private fun updateSalto(delta: Float) {
+	private fun updateSalto() {
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
 		{
-			System.err.println("------------------"+getPosition().y+"----- SALTO :"+playerComponent.isSaltando)
+			System.err.println("------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isSaltando)
 			if( ! playerComponent.isSaltando) {
-				val fuerza = delta * 60f
-				bulletComponent.rigidBody.applyCentralForce(Vector3.Y.scl(fuerza))
-				updateCamara()
+				val fuerza = 1.025f
+				bulletComponent.rigidBody.applyCentralImpulse(Vector3.Y.scl(fuerza))
+				//updateCamara()
 			}
 		}
-		playerComponent.isSaltando = getPosition().y > ALTURA+1  //TODO Salvo rampas!!!!
+		playerComponent.isSaltando = getPosition().y > 3*ALTURA/4
 	}
 	//______________________________________________________________________________________________
-	private val ALTURA = 10f
 	private fun updateCamara()
 	{
 		val pos = getPosition()
-		pos.y += ALTURA
+		pos.y += 2*ALTURA
 		camera.position.set(pos)
 		camera.update()
 	}
@@ -148,8 +155,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		val transform = Matrix4()
 		bulletComponent.rigidBody.motionState.getWorldTransform(transform)
 		val pos = Vector3()
-		transform.getTranslation(pos)
-		return pos
+		return transform.getTranslation(pos)
 	}
 	//______________________________________________________________________________________________
 	private fun getDirection() = camera.direction
@@ -160,16 +166,25 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	}
 
 	//______________________________________________________________________________________________
-	private var lastDelta = 0.9f
+	private var deltaFire = 100f
+	private var deltaReload = 100f
 	private fun updateDisparo(delta: Float)
 	{
 		//System.err.println("--------------------------------------------FIRE "+lastDelta)
-		lastDelta += delta
+		deltaFire += delta
+		deltaReload += delta
 		if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-			if(lastDelta > 0.5f) {
+			if(deltaFire > 0.15f) {
 				System.err.println("------ FIRE ! -------------------")
-				lastDelta = 0f
+				deltaFire = 0f
 				fire()
+			}
+		}
+		else if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)) {
+			if(deltaReload > 5f) {
+				System.err.println("------ RELOAD ! -------------------")
+				deltaReload = 0f
+				reload()
 			}
 		}
 		gun.getComponent(AnimationComponent::class.java).update(delta)
@@ -178,6 +193,17 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	//TODO: crear pelotilla de fuego
 	//TODO: cambiar de arma y poner animacion
 	private fun fire() {
+		//updateCamara()
+		val dir = camera.direction.cpy()
+		val pos = camera.position.cpy()
+		if(bulletComponent.rigidBody.linearVelocity.x != 0f || bulletComponent.rigidBody.linearVelocity.z != 0f)
+		pos.add(bulletComponent.rigidBody.linearVelocity.nor().scl(5f))
+		val shot = EntityFactory.createShot(pos, dir)
+		engine!!.addEntity(shot)
+
+		//Animacion
+		GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
+
 		/*val rayFrom = Vector3()
 		val rayTo = Vector3()
 		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
@@ -199,12 +225,13 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 				}
 			}
 		}*/
-		val dir = getDirection().cpy()
-		val pos = getPosition().cpy().add(dir.scl(2f)).add(0f,ALTURA,0f)
-		val shot = EntityFactory.createShot(pos, dir)
-		engine!!.addEntity(shot)
+	}
 
-		gun.getComponent(AnimationComponent::class.java).animate("Armature|shoot", 1, 3)
+	//______________________________________________________________________________________________
+	private fun reload() {
+		//TODO: add ammo
+		//Animacion
+		GunFactory.animate(gun, GunComponent.ACTION.RELOAD, 1, 1)
 	}
 
 	//______________________________________________________________________________________________

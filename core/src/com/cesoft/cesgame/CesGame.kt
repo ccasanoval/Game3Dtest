@@ -49,8 +49,8 @@ class CesGame : ApplicationAdapter() {
 	}
 
 	companion object {
-		val VIRTUAL_WIDTH = 960f
-		val VIRTUAL_HEIGHT = 540f
+		val VIRTUAL_WIDTH = 1024f
+		val VIRTUAL_HEIGHT = 720f
 		val SALIR = "Salir"
 		val JUGAR = "Jugar"
 		val PUNTOS = "Puntuaciones"

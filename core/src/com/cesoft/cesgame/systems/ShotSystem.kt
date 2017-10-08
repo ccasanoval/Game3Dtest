@@ -36,10 +36,12 @@ class ShotSystem(private val gameWorld: GameWorld) : EntitySystem() {
 			val world = Matrix4()
 			val pos = Vector3()
 			val model = entity.getComponent(ModelComponent::class.java)
-			val bullet = entity.getComponent(BulletComponent::class.java)
-			bullet.rigidBody.getWorldTransform(world)
-			world.getTranslation(pos)
-			model.instance.transform.translate(pos)
+			if(model != null) {
+				val bullet = entity.getComponent(BulletComponent::class.java)
+				bullet.rigidBody.getWorldTransform(world)
+				world.getTranslation(pos)
+				model.instance.transform.translate(pos)
+			}
 		}
 	}
 }

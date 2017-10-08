@@ -2,6 +2,7 @@ package com.cesoft.cesgame
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
@@ -15,11 +16,12 @@ import com.cesoft.cesgame.systems.*
 //
 class GameWorld(gameUI: GameUI) {
 
-	private val debug = true
+	private val debugCollision = true
 	private var debugDrawer: DebugDrawer? = null
 
 	private var bulletSystem: BulletSystem
 	private var playerSystem: PlayerSystem
+
 	private var renderSystem: RenderSystem
 	private var enemySystem: EnemySystem
 	private var statusSystem: StatusSystem
@@ -45,30 +47,27 @@ class GameWorld(gameUI: GameUI) {
 		engine.addSystem(enemySystem)
 		engine.addSystem(statusSystem)
 		engine.addSystem(shotSystem)
-		if(debug) {
+		if(debugCollision) {
 			debugDrawer = DebugDrawer()
 			debugDrawer!!.debugMode = btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE
 			bulletSystem.collisionWorld.debugDrawer = debugDrawer
 		}
 
-		loadLevel()
-		createPlayer(0f, 20f, 0f)
+		engine.addEntity(EntityFactory.loadSuelo(0f, 0f, 0f))
+		engine.addEntity(EntityFactory.loadDome(0f, 0f, 0f))
+		//engine.addEntity(EntityFactory.loadScene(-500f, -.1f, -500f))
+
+		createPlayer(Vector3(0f,150f,0f))
 		PlayerComponent.health = 100f
 		PlayerComponent.score = 0
 	}
 
-	//______________________________________________________________________________________________
-	private fun loadLevel() {
-		engine.addEntity(EntityFactory.loadScene(0f, 0f, 0f))
-		engine.addEntity(EntityFactory.loadDome(0f, 0f, 0f))
-	}
 
 	//______________________________________________________________________________________________
-	private fun createPlayer(x: Float, y: Float, z: Float) {
-		player = EntityFactory.createPlayer(x, y, z)
+	private fun createPlayer(pos: Vector3) {
+		player = PlayerComponent.createPlayer(pos)
 		engine.addEntity(player)
-		//gun = EntityFactory.loadGun(x+6, y-9, z-5)
-		gun = EntityFactory.loadGun(3.9f, -2.4f, -5f)
+		gun = EntityFactory.loadGun()
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun
@@ -81,7 +80,7 @@ class GameWorld(gameUI: GameUI) {
 	}
 	private fun renderWorld(delta: Float) {
 		engine.update(delta)
-		if(debug) {
+		if(debugCollision) {
 			debugDrawer!!.begin(renderSystem.perspectiveCamera)
 			bulletSystem.collisionWorld.debugDrawWorld()
 			debugDrawer!!.end()
@@ -97,7 +96,7 @@ class GameWorld(gameUI: GameUI) {
 		//renderSystem.setProcessing( ! Settings.paused)
 		bulletSystem.setProcessing( ! Settings.paused)
 		enemySystem.setProcessing( ! Settings.paused)
-		playerSystem.setProcessing( ! Settings.paused)
+		//playerSystem.setProcessing( ! Settings.paused)
 		statusSystem.setProcessing( ! Settings.paused)
 		shotSystem.setProcessing( ! Settings.paused)
 	}

@@ -5,13 +5,11 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.ashley.core.Family
-import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.*
 import com.cesoft.cesgame.GameWorld
 import com.cesoft.cesgame.components.*
-import com.sun.org.apache.xpath.internal.operations.Bool
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Ghost object ???
@@ -27,7 +25,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	//______________________________________________________________________________________________
 	init {
 		//broadphase.overlappingPairCache.setInternalGhostPairCallback(ghostPairCallback)
-		collisionWorld.gravity = Vector3(0f, -10f, 0f)
+		collisionWorld.gravity = Vector3(0f, -50f, 0f)
 		CesContactListener().enable()
 	}
 
@@ -53,62 +51,38 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 			//System.err.println("----- COLLISION PRICESSSSS: "+getValor(userValue0)+"/"+getValor(userValue1))
 			when(getValor(userValue0))
 			{
-				/*BulletComponent.ARENA_FLAG ->
-				{
-					when(getValor(userValue1))
-					{
-						BulletComponent.PLAYER_FLAG -> collArenaPlayer()
-						BulletComponent.SHOT_FLAG -> collArenaShot(getIndex(userValue1))
-						//BulletComponent.ENEMY_FLAG -> collArenaEnemy(getIndex(userValue1))
-					}
-				}*/
 				BulletComponent.PLAYER_FLAG ->
 				{
 					when(getValor(userValue1))
 					{
-						BulletComponent.ARENA_FLAG -> collArenaPlayer()
 						BulletComponent.ENEMY_FLAG -> collPlayerEnemy(getIndex(userValue1))
+						BulletComponent.GROUND_FLAG -> collPlayerGround()
+						BulletComponent.SCENE_FLAG -> collPlayerScene()
 					}
 				}
 				BulletComponent.ENEMY_FLAG ->
 				{
-					System.err.println("*****************************************---Enemy  ::: "+index0+" == "+getIndex(userValue0))
-
 					when(getValor(userValue1))
 					{
 						BulletComponent.PLAYER_FLAG -> collPlayerEnemy(getIndex(userValue0))
 						BulletComponent.SHOT_FLAG -> collShotEnemy(getIndex(userValue1), getIndex(userValue0))
-						//BulletComponent.ENEMY_FLAG -> collEnemyEnemy(getIndex(userValue0), getIndex(userValue1))
-						//BulletComponent.ENEMY_FLAG -> collArenaEnemy(getIndex(userValue0))
 					}
 				}
-				/*BulletComponent.SHOT_FLAG ->
-				{
-					when(getValor(userValue1))
-					{
-						BulletComponent.ENEMY_FLAG -> collShotEnemy(getIndex(userValue0), getIndex(userValue1))
-						BulletComponent.ARENA_FLAG -> collArenaShot(getIndex(userValue0))
-					}
-				}*/
+
 			}
 			return true
 		}
 	}
 	//______________________________________________________________________________________________
-	private fun collArenaPlayer()
+	private fun collPlayerGround()
 	{
-		player.getComponent(PlayerComponent::class.java).isSaltando = false //TODO: Mal, porque arena son paredes tambien
+		System.err.println("--------- COLLISION: Player + Ground ")
+		player.getComponent(PlayerComponent::class.java).isSaltando = false
 	}
 	//______________________________________________________________________________________________
-	private fun collArenaShot(index : Int)
+	private fun collPlayerScene()
 	{
-		System.err.println("----aa------ COLLISION: Arena + Shot "+index)
-
-		val e = shots[index]
-		if(e != null) {
-			gameWorld.remove(e)
-			shots.remove(index)
-		}
+		System.err.println("--------- COLLISION: Player + Scene ")
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerEnemy(index: Int)
@@ -148,24 +122,6 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	}
 
 	//______________________________________________________________________________________________
-	private fun eliminarBalasPerdidas()
-	{
-		shots.forEach { (i, entity) ->
-			run {
-				val trans = Matrix4()
-				entity.getComponent(BulletComponent::class.java).rigidBody.getWorldTransform(trans)
-				val pos = Vector3()
-				trans.getTranslation(pos)
-				if(pos.x*pos.x > 500000 || pos.z*pos.z > 500000 || pos.y*pos.y > 1000)
-				{
-					//shots.remove(i)
-					collArenaShot(i)
-				}
-			}
-		}
-	}
-
-	//______________________________________________________________________________________________
 	fun dispose() {
 		collisionWorld.dispose()
 		solver.dispose()
@@ -180,7 +136,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	private var shotIndex = 0
 	private val enemies = mutableMapOf<Int, Entity>()
 	private val shots = mutableMapOf<Int, Entity>()
-	private lateinit var arena : Entity
+	//private lateinit var arena : Entity
 	private lateinit var player : Entity
 	override fun entityAdded(entity: Entity)
 	{
@@ -188,9 +144,13 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 
 		when(bullet.rigidBody.userValue)
 		{
-			BulletComponent.ARENA_FLAG ->
+			BulletComponent.GROUND_FLAG ->
 			{
-				arena = entity
+				//ground = entity
+			}
+			BulletComponent.SCENE_FLAG ->
+			{
+				//scene = entity
 			}
 			BulletComponent.PLAYER_FLAG ->
 			{

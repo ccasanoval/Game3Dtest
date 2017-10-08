@@ -3,14 +3,17 @@ package com.cesoft.cesgame.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesgame.Assets
 import com.cesoft.cesgame.CesGame
+import java.awt.Font
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -44,10 +47,10 @@ class MainMenuScreen(private var game: CesGame) : Screen {
 		playButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 100)
 		leaderboardsButton.setSize(220f, 70f)
 		leaderboardsButton.label.setFontScale(2f)
-		leaderboardsButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 170)
+		leaderboardsButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 180)
 		quitButton.setSize(220f, 70f)
 		quitButton.label.setFontScale(2f)
-		quitButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 240)
+		quitButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 260)
 
 		stage.addActor(backgroundImage)
 		stage.addActor(titleImage)

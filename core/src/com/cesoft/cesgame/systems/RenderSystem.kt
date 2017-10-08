@@ -34,13 +34,13 @@ class RenderSystem : EntitySystem() {
 		/// Camaras
 		perspectiveCamera.far = 50000f
 		perspectiveCamera.near = 1f
-		gunCamera.far = 10f
+		gunCamera.far = 100f
 
 		/// Luz
 		environment.set(ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f))
 		environment.add(DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f))
 
-		/// Particulas
+		/// Particulas TODO:
 		val billboardParticleBatch = BillboardParticleBatch()
 		billboardParticleBatch.setCamera(perspectiveCamera)
 		particleSystem.add(billboardParticleBatch)
@@ -55,6 +55,7 @@ class RenderSystem : EntitySystem() {
 	override fun update(delta: Float) {
 		batch.begin(perspectiveCamera)
 		entities
+			.filter { it.getComponent(GunComponent::class.java) == null }
 			.map { it.getComponent(ModelComponent::class.java) }
 			.forEach { batch.render(it.instance, environment) }
 		batch.end()
