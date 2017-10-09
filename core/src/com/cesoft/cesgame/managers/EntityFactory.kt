@@ -5,15 +5,12 @@ import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
-import com.badlogic.gdx.graphics.g3d.utils.TextureProvider
-import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.collision.*
@@ -23,7 +20,6 @@ import com.cesoft.cesgame.bullet.MotionState
 import com.cesoft.cesgame.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
-import com.badlogic.gdx.math.Vector
 import com.cesoft.cesgame.systems.RenderSystem
 
 
@@ -73,16 +69,16 @@ object EntityFactory {
 
 
 	//______________________________________________________________________________________________
-	fun load1(pos: Vector3): Entity {
+	/*fun load1(pos: Vector3): Entity {
 		val entity = Entity()
 
 		val modelLoader = G3dModelLoader(UBJsonReader())
 		val modelData = modelLoader.loadModelData(Gdx.files.internal("data/ruins/a.g3db"))
 
-		pos.y -=20
+		//pos.y -=20
 		val model = Model(modelData, TextureProvider.FileTextureProvider())
-		/*for(i in 0 until model.nodes.size - 1)
-			model.nodes[i].scale.scl(.5f)*/
+		for(i in 0 until model.nodes.size - 1)
+			model.nodes[i].scale.scl(510f)
 		val modelComponent = ModelComponent(model, pos)
 		entity.add(modelComponent)
 
@@ -128,7 +124,7 @@ object EntityFactory {
 		//rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 		return entity
-	}
+	}*/
 
 
 	//______________________________________________________________________________________________
@@ -167,14 +163,12 @@ object EntityFactory {
 		return entity
 	}
 
-
 	//______________________________________________________________________________________________
 	fun loadDome(pos: Vector3): Entity {
 		val modelLoader = G3dModelLoader(UBJsonReader())
 		val model = modelLoader.loadModel(Gdx.files.getFileHandle("data/spaceDome/spacedome.g3db", Files.FileType.Internal))
 		return Entity().add(ModelComponent(model, pos))
 	}
-
 
 	//______________________________________________________________________________________________
 	fun dispose() {

@@ -11,6 +11,7 @@ import com.cesoft.cesgame.components.GunComponent
 import com.cesoft.cesgame.components.PlayerComponent
 import com.cesoft.cesgame.managers.EntityFactory
 import com.cesoft.cesgame.managers.GunFactory
+import com.cesoft.cesgame.managers.WarehouseFactory
 import com.cesoft.cesgame.systems.*
 
 
@@ -57,12 +58,13 @@ class GameWorld(gameUI: GameUI) {
 
 		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f)))
 		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
-//		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
-//		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -200f), -45f))
-//		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -200f), +45f))
+		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
+		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -150f), -45f))
+		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -150f), +45f))
 
+		//engine.addEntity(EntityFactory.monstruo(Vector3(0f, 100f, -200f)))
 
-		engine.addEntity(EntityFactory.load1(Vector3(0f, 10f, -200f)))
+		//engine.addEntity(EntityFactory.load1(Vector3(0f, 100f, -200f)))
 		//engine.addEntity(EntityFactory.load2(Vector3(0f, 0f, 0f)))
 
 

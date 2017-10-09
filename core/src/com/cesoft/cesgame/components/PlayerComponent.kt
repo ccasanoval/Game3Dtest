@@ -18,8 +18,8 @@ object PlayerComponent : Component
 	var score: Int = 0 //TODO: pasar a la clase?
 	const val MASA = 65f
 	const val ALTURA = 10f
-	const val FUERZA_MOVIL = 600f
-	const val FUERZA_PC = 10000f
+	const val FUERZA_MOVIL = 1500f
+	const val FUERZA_PC = 5000f
 	const val FRICTION = 10f
 	const val FRICTION_ROLLING = 10f
 

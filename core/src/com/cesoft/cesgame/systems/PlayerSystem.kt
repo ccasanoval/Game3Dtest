@@ -61,12 +61,12 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		val tmp = Vector3()
 
 		if(Gdx.app.type == Application.ApplicationType.Android) {
-			deltaX = -ControllerWidget.watchVector.x * 80f * delta
-			deltaY = ControllerWidget.watchVector.y * 40f * delta
+			deltaX = -ControllerWidget.watchVector.x * 85f * delta
+			deltaY = ControllerWidget.watchVector.y * 45f * delta
 		}
 		else {
-			deltaX = -Gdx.input.deltaX * 8f * delta
-			deltaY = -Gdx.input.deltaY * 5f * delta
+			deltaX = -Gdx.input.deltaX * 5f * delta
+			deltaY = -Gdx.input.deltaY * 2f * delta
 		}
 
 		// Y
@@ -79,10 +79,10 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		var pr = deltaY
 		if(Gdx.app.type == Application.ApplicationType.Android)
 		{
-			if(pitch - pr > 110)
-				pr = -(110 - pitch)
-			else if(pitch - pr < 60)
-				pr = pitch - 60
+			if(pitch - pr > 100)
+				pr = -(100 - pitch)
+			else if(pitch - pr < 70)
+				pr = pitch - 70
 		}
 		else {
 			if(pitch - pr > 150)

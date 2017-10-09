@@ -15,6 +15,8 @@ import com.cesoft.cesgame.components.*
 // TODO: Ghost object ???
 class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityListener {
 
+	private val GRAVEDAD = 100f
+
 	private val collisionConfig: btCollisionConfiguration = btDefaultCollisionConfiguration()
 	private val dispatcher: btCollisionDispatcher = btCollisionDispatcher(collisionConfig)
 	private val broadphase: btBroadphaseInterface = btDbvtBroadphase()//btAxisSweep3(Vector3(-1000f, -1000f, -1000f), Vector3(1000f, 1000f, 1000f))
@@ -25,7 +27,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	//______________________________________________________________________________________________
 	init {
 		//broadphase.overlappingPairCache.setInternalGhostPairCallback(ghostPairCallback)
-		collisionWorld.gravity = Vector3(0f, -50f, 0f)
+		collisionWorld.gravity = Vector3(0f, -GRAVEDAD, 0f)
 		CesContactListener().enable()
 	}
 
