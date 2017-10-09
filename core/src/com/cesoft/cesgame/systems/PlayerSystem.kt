@@ -193,11 +193,17 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	//TODO: crear pelotilla de fuego
 	//TODO: cambiar de arma y poner animacion
 	private fun fire() {
-		//updateCamara()
 		val dir = camera.direction.cpy()
 		val pos = camera.position.cpy()
-		if(bulletComponent.rigidBody.linearVelocity.x != 0f || bulletComponent.rigidBody.linearVelocity.z != 0f)
-		pos.add(bulletComponent.rigidBody.linearVelocity.nor().scl(5f))
+		var vel = bulletComponent.rigidBody.linearVelocity.cpy()
+		vel.y = 0f
+//		if(bulletComponent.rigidBody.linearVelocity.x != 0f
+//			|| bulletComponent.rigidBody.linearVelocity.z != 0f)
+			pos.add(vel.nor().scl(5f))
+
+		if(bulletComponent.rigidBody.linearVelocity.y != 0f)
+			pos.add(Vector3(0f, bulletComponent.rigidBody.linearVelocity.y *0.035f, 0f))
+
 		val shot = EntityFactory.createShot(pos, dir)
 		engine!!.addEntity(shot)
 
