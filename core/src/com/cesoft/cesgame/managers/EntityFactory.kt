@@ -77,13 +77,15 @@ object EntityFactory {
 		val entity = Entity()
 
 		val modelLoader = G3dModelLoader(UBJsonReader())
-		val modelData = modelLoader.loadModelData(Gdx.files.internal("data/zombies/zombie_normal.g3db"))
+		val modelData = modelLoader.loadModelData(Gdx.files.internal("data/ruins/a.g3db"))
 
+		pos.y -=20
 		val model = Model(modelData, TextureProvider.FileTextureProvider())
-		for(i in 0 until model.nodes.size - 1)
-			model.nodes[i].scale.scl(205f)
+		/*for(i in 0 until model.nodes.size - 1)
+			model.nodes[i].scale.scl(.5f)*/
 		val modelComponent = ModelComponent(model, pos)
 		entity.add(modelComponent)
+
 		val shape = Bullet.obtainStaticNodeShape(model.nodes)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, null, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
@@ -96,6 +98,7 @@ object EntityFactory {
 		//rigidBody.userIndex = BulletComponent.ARENA_FLAG
 		//rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		entity.add(BulletComponent(rigidBody, bodyInfo))
+
 		return entity
 	}
 	//______________________________________________________________________________________________
@@ -110,6 +113,8 @@ object EntityFactory {
 		//	model.nodes[i].scale.scl(205f)
 		val modelComponent = ModelComponent(model, pos)
 		entity.add(modelComponent)
+
+
 		val shape = Bullet.obtainStaticNodeShape(model.nodes)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, null, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
@@ -126,52 +131,6 @@ object EntityFactory {
 	}
 
 
-	//______________________________________________________________________________________________
-	fun loadScene(pos: Vector3): Entity {
-		val entity = Entity()
-
-		pos.y += 50f;
-
-		/// MODEL
-		val modelLoader = G3dModelLoader(UBJsonReader())
-		val modelData = modelLoader.loadModelData(Gdx.files.internal("data/warehouse/a.g3db"))
-		val model = Model(modelData)
-		val modelComponent = ModelComponent(model, pos)
-		entity.add(modelComponent)
-
-		/// COLLISION
-		//val shape = Bullet.obtainStaticNodeShape(model.nodes)
-		val shape = btCompoundShape()
-		shape.addChildShape(Matrix4().setTranslation(-90f,	-10f, -5f), btBoxShape(Vector3(5f,40f,85f)))//LEFT_WALL
-		shape.addChildShape(Matrix4().setTranslation(-10f,	15f, -5f), btBoxShape(Vector3(5f,14f,85f)))//RIGHT WALL
-		shape.addChildShape(Matrix4().setTranslation(-10f,	-40f, -5f), btBoxShape(Vector3(5f,7f,85f)))//RIGHT WALL
-		shape.addChildShape(Matrix4().setTranslation(-10f,	-10f, 70f), btBoxShape(Vector3(5f,40f,15f)))//RIGHT WALL
-		shape.addChildShape(Matrix4().setTranslation(-10f,	-10f, -85f), btBoxShape(Vector3(5f,40f,15f)))//RIGHT WALL
-		shape.addChildShape(Matrix4().setTranslation(-80f,	-10f, 77f), btBoxShape(Vector3(14f,40f,5f)))//LEFT_FRONT_COLUMN
-		shape.addChildShape(Matrix4().setTranslation(-20f,	-10f, 77f), btBoxShape(Vector3(14f,40f,5f)))//RIGHT_FRONT_COLUMN
-		shape.addChildShape(Matrix4().setTranslation(-50f,	+12f, +70f), btBoxShape(Vector3(50f,10f,5f)))//FRONT
-		shape.addChildShape(Matrix4().setTranslation(-80f,	-10f, -85f), btBoxShape(Vector3(14f,40f,5f)))//LEFT_BACK_COLUMN
-		shape.addChildShape(Matrix4().setTranslation(-20f,	-10f, -85f), btBoxShape(Vector3(14f,40f,5f)))//RIGHT_BACK_COLUMN
-		shape.addChildShape(Matrix4().setTranslation(-50f,	+12f, -85f), btBoxShape(Vector3(50f,10f,5f)))//BACK
-		shape.addChildShape(Matrix4().setTranslation(-50f,	30f, 0f), btBoxShape(Vector3(60f,5f,100f)))//ROOF
-
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, null, shape, Vector3.Zero)
-		val rigidBody = btRigidBody(bodyInfo)
-		rigidBody.userData = entity
-		rigidBody.motionState = MotionState(modelComponent.instance.transform)
-		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-		rigidBody.contactCallbackFilter = BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
-		rigidBody.contactCallbackFlag = BulletComponent.SCENE_FLAG
-		rigidBody.userValue = BulletComponent.SCENE_FLAG
-		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
-		rigidBody.friction = 1000f
-		rigidBody.rollingFriction = 10000f
-		rigidBody.anisotropicFriction = Vector3(1000f,1000f,1000f)
-		rigidBody.spinningFriction = 10000f
-		entity.add(BulletComponent(rigidBody, bodyInfo))
-
-		return entity
-	}
 	//______________________________________________________________________________________________
 	fun loadSuelo(pos: Vector3): Entity {
 		val entity = Entity()

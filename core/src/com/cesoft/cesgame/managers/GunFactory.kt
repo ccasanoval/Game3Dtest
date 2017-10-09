@@ -15,7 +15,7 @@ import com.cesoft.cesgame.components.ModelComponent
 object GunFactory
 {
 	//______________________________________________________________________________________________
-	fun new(type: GunComponent.TYPE) : Entity
+	fun create(type: GunComponent.TYPE) : Entity
 	{
 		val entity = Entity()
 

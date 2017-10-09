@@ -18,7 +18,7 @@ import com.cesoft.cesgame.systems.*
 //
 class GameWorld(gameUI: GameUI) {
 
-	private val debugCollision = true
+	private val debugCollision = false
 	private var debugDrawer: DebugDrawer? = null
 
 	private var bulletSystem: BulletSystem
@@ -57,8 +57,12 @@ class GameWorld(gameUI: GameUI) {
 
 		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f)))
 		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
-		engine.addEntity(EntityFactory.loadScene(Vector3(0f, 0f, 0f)))
-		//engine.addEntity(EntityFactory.load1(Vector3(0f, 0f, 0f)))
+//		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
+//		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -200f), -45f))
+//		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -200f), +45f))
+
+
+		engine.addEntity(EntityFactory.load1(Vector3(0f, 10f, -200f)))
 		//engine.addEntity(EntityFactory.load2(Vector3(0f, 0f, 0f)))
 
 
@@ -72,7 +76,7 @@ class GameWorld(gameUI: GameUI) {
 	private fun createPlayer(pos: Vector3) {
 		player = PlayerComponent.createPlayer(pos)
 		engine.addEntity(player)
-		gun = GunFactory.new(GunComponent.TYPE.CZ805)
+		gun = GunFactory.create(GunComponent.TYPE.CZ805)
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun
