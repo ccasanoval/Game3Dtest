@@ -7,8 +7,10 @@ import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.cesoft.cesgame.UI.GameUI
+import com.cesoft.cesgame.components.GunComponent
 import com.cesoft.cesgame.components.PlayerComponent
 import com.cesoft.cesgame.managers.EntityFactory
+import com.cesoft.cesgame.managers.GunFactory
 import com.cesoft.cesgame.systems.*
 
 
@@ -53,9 +55,12 @@ class GameWorld(gameUI: GameUI) {
 			bulletSystem.collisionWorld.debugDrawer = debugDrawer
 		}
 
-		engine.addEntity(EntityFactory.loadSuelo(0f, 0f, 0f))
-		engine.addEntity(EntityFactory.loadDome(0f, 0f, 0f))
-		//engine.addEntity(EntityFactory.loadScene(-500f, -.1f, -500f))
+		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f)))
+		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
+		engine.addEntity(EntityFactory.loadScene(Vector3(0f, 0f, 0f)))
+		//engine.addEntity(EntityFactory.load1(Vector3(0f, 0f, 0f)))
+		//engine.addEntity(EntityFactory.load2(Vector3(0f, 0f, 0f)))
+
 
 		createPlayer(Vector3(0f,150f,0f))
 		PlayerComponent.health = 100f
@@ -67,7 +72,7 @@ class GameWorld(gameUI: GameUI) {
 	private fun createPlayer(pos: Vector3) {
 		player = PlayerComponent.createPlayer(pos)
 		engine.addEntity(player)
-		gun = EntityFactory.loadGun()
+		gun = GunFactory.new(GunComponent.TYPE.CZ805)
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun
@@ -87,12 +92,6 @@ class GameWorld(gameUI: GameUI) {
 		}
 	}
 	private fun checkPause() {
-		/*engine.getSystem(PlayerSystem::class.java).setProcessing( ! Settings.paused)
-		engine.getSystem(EnemySystem::class.java).setProcessing( ! Settings.paused)
-		engine.getSystem(StatusSystem::class.java).setProcessing( ! Settings.paused)
-		engine.getSystem(BulletSystem::class.java).setProcessing( ! Settings.paused)
-		engine.getSystem(ShotSystem::class.java).setProcessing( ! Settings.paused)
-		engine.getSystem(ShotSystem::class.java).setProcessing( ! Settings.paused)*/
 		//renderSystem.setProcessing( ! Settings.paused)
 		bulletSystem.setProcessing( ! Settings.paused)
 		enemySystem.setProcessing( ! Settings.paused)

@@ -19,7 +19,6 @@ import com.cesoft.cesgame.managers.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
 import com.cesoft.cesgame.components.PlayerComponent.ALTURA
 import com.cesoft.cesgame.components.PlayerComponent.FUERZA_MOVIL
-import com.cesoft.cesgame.managers.EntityFactory
 import com.cesoft.cesgame.managers.GunFactory
 
 
@@ -120,8 +119,6 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 			walkDirection.scl(PlayerComponent.FUERZA_PC * delta)
 		}
 		walkDirection.y = 0f
-		//walkDirection.nor()
-
 		//bulletComponent.rigidBody.applyCentralForce(walkDirection)
 		//bulletComponent.rigidBody.applyCentralImpulse(walkDirection)
 		walkDirection.y = bulletComponent.rigidBody.linearVelocity.y
@@ -134,7 +131,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		{
 			System.err.println("------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isSaltando)
 			if( ! playerComponent.isSaltando) {
-				val fuerza = 1.025f
+				val fuerza = 1.027f
 				bulletComponent.rigidBody.applyCentralImpulse(Vector3.Y.scl(fuerza))
 				//updateCamara()
 			}
@@ -157,8 +154,6 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		val pos = Vector3()
 		return transform.getTranslation(pos)
 	}
-	//______________________________________________________________________________________________
-	private fun getDirection() = camera.direction
 
 	//______________________________________________________________________________________________
 	private fun updateStatus() {
@@ -190,47 +185,22 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		gun.getComponent(AnimationComponent::class.java).update(delta)
 	}
 	//______________________________________________________________________________________________
-	//TODO: crear pelotilla de fuego
-	//TODO: cambiar de arma y poner animacion
+	//TODO: crear pelotilla de fuego? mostrar fuego en cañon?
 	private fun fire() {
 		val dir = camera.direction.cpy()
 		val pos = camera.position.cpy()
-		var vel = bulletComponent.rigidBody.linearVelocity.cpy()
+		val vel = bulletComponent.rigidBody.linearVelocity.cpy()
 		vel.y = 0f
-//		if(bulletComponent.rigidBody.linearVelocity.x != 0f
-//			|| bulletComponent.rigidBody.linearVelocity.z != 0f)
-			pos.add(vel.nor().scl(5f))
+		pos.add(vel.nor().scl(5f))
 
-		if(bulletComponent.rigidBody.linearVelocity.y != 0f)
-			pos.add(Vector3(0f, bulletComponent.rigidBody.linearVelocity.y *0.035f, 0f))
+		val y = bulletComponent.rigidBody.linearVelocity.y *0.035f
+		if(y != 0f) pos.add(Vector3(0f, y, 0f))
 
-		val shot = EntityFactory.createShot(pos, dir)
+		val shot = ShotComponent.createShot(pos, dir)
 		engine!!.addEntity(shot)
 
 		//Animacion
 		GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
-
-		/*val rayFrom = Vector3()
-		val rayTo = Vector3()
-		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
-		rayFrom.set(ray.origin)
-		rayTo.set(ray.direction).scl(50f).add(rayFrom)
-		rayTestCB.collisionObject = null
-		rayTestCB.closestHitFraction = 1f
-		rayTestCB.setRayFromWorld(rayFrom)
-		rayTestCB.setRayToWorld(rayTo)
-		gameWorld.bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB)
-		if(rayTestCB.hasHit()) {
-			Gdx.app.error("CESGAME", "-------------------------- DISPARO DIO ------------------------------")
-
-			val obj = rayTestCB.collisionObject
-			if((obj.userData as Entity).getComponent(EnemyComponent::class.java) != null) {
-				if((obj.userData as Entity).getComponent(StatusComponent::class.java).alive) {
-					(obj.userData as Entity).getComponent(StatusComponent::class.java).alive = false
-					PlayerComponent.score += 100
-				}
-			}
-		}*/
 	}
 
 	//______________________________________________________________________________________________

@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.UBJsonReader
 import com.cesoft.cesgame.components.AnimationComponent
 import com.cesoft.cesgame.components.GunComponent
@@ -27,33 +28,11 @@ object GunFactory
 				val model = modelLoader.loadModel(Gdx.files.getFileHandle("data/cz805/a.g3db", Files.FileType.Internal))
 				for(i in 0 until model.nodes.size - 1)
 					model.nodes[i].scale.scl(0.03f)
-				val modelComponent = ModelComponent(model, 25f, -10f, -15f)//25f, 10f, 8f)//3.9f, -2.4f, -25f
+				val modelComponent = ModelComponent(model, Vector3(25f, -10f, -15f))
 				modelComponent.instance.transform.rotate(0f, 1f, 0f, 185f)
 				modelComponent.instance.transform.rotate(1f, 0f, 0f, -7f)
 				entity.add(modelComponent).add(AnimationComponent(modelComponent.instance))
 			}
-
-
-				/*val modelLoader = G3dModelLoader(UBJsonReader())
-		val model = modelLoader.loadModel(Gdx.files.getFileHandle("data/cz805/a.g3db", Files.FileType.Internal))
-		for(i in 0 until model.nodes.size-1)
-			model.nodes[i].scale.scl(0.035f)
-		val modelComponent = ModelComponent(model, x+25, y-10, z+8)
-		modelComponent.instance.transform.rotate(0f, 1f, 0f, 185f)
-		modelComponent.instance.transform.rotate(1f, 0f, 0f, -7f)
-		return Entity().add(modelComponent).add(GunComponent()).add(AnimationComponent(modelComponent.instance))
-		*/
-				/*val modelLoader = G3dModelLoader(JsonReader())
-				val modelData = modelLoader.loadModelData(Gdx.files.internal("data/GUNMODEL.g3dj"))
-				val model = Model(modelData, TextureProvider.FileTextureProvider())
-				val modelComponent = ModelComponent(model, x, y, z)
-				modelComponent.instance.transform.rotate(0f, 1f, 0f, 180f)
-				val gunEntity = Entity()
-				gunEntity.add(modelComponent)
-				gunEntity.add(GunComponent())
-				gunEntity.add(AnimationComponent(modelComponent.instance))
-				return gunEntity*/
-
 		}
 
 		return entity
