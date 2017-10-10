@@ -68,6 +68,7 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 
 		restartButton.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
+				game.delScreen()
 				game.setScreen(GameScreen(game))
 			}
 		})
@@ -76,7 +77,6 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 				Gdx.app.exit()
 			}
 		})
-
 //		closeDialog.addListener(object : ClickListener() {
 //			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
 //				handleUpdates()

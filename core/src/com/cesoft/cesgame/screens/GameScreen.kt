@@ -35,6 +35,8 @@ class GameScreen(game: CesGame) : Screen {
 	override fun dispose() {
 		gameWorld.dispose()
 		gameUI.dispose()
+		System.err.println("GameScreen:dispose:----------------------------------------")
+
 	}
 
 	override fun show() {}

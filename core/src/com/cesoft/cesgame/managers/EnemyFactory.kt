@@ -3,15 +3,19 @@ package com.cesoft.cesgame.managers
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
+import com.badlogic.gdx.physics.bullet.collision.btSphereShape
+import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.utils.JsonReader
 import com.badlogic.gdx.utils.UBJsonReader
-import com.cesoft.cesgame.components.AnimationComponent
-import com.cesoft.cesgame.components.EnemyComponent
-import com.cesoft.cesgame.components.ModelComponent
+import com.cesoft.cesgame.bullet.MotionState
+import com.cesoft.cesgame.components.*
+import com.cesoft.cesgame.systems.RenderSystem
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -23,8 +27,8 @@ object EnemyFactory
 	private var files = mutableMapOf<EnemyComponent.TYPE, FileHandle>()
 
 	init {
-		files[EnemyComponent.TYPE.ZOMBIE1] = Gdx.files.getFileHandle("armas/zombie1/a.g3db", Files.FileType.Internal)
-		files[EnemyComponent.TYPE.MONSTER1] = Gdx.files.getFileHandle("armas/monster1/a.g3db", Files.FileType.Internal)
+		files[EnemyComponent.TYPE.ZOMBIE1] = Gdx.files.getFileHandle("foes/zombie1/zombie_normal.g3db", Files.FileType.Internal)
+		files[EnemyComponent.TYPE.MONSTER1] = Gdx.files.getFileHandle("foes/monster1/monster.g3dj", Files.FileType.Internal)
 	}
 
 	//______________________________________________________________________________________________
@@ -32,6 +36,7 @@ object EnemyFactory
 	{
 		for((_, model) in models)
 			model.dispose()
+		models = mutableMapOf()
 	}
 
 	//______________________________________________________________________________________________
@@ -40,8 +45,8 @@ object EnemyFactory
 		when(type) {
 			EnemyComponent.TYPE.ZOMBIE1 -> {
 				model = modelLoader.loadModel(files[type])
-				for(i in 0 until model.nodes.size - 1)
-					model.nodes[i].scale.scl(0.03f)
+				//for(i in 0 until model.nodes.size - 1)
+				//	model.nodes[i].scale.scl(0.03f)
 			}
 			EnemyComponent.TYPE.MONSTER1 -> {
 				model = modelLoaderJSON.loadModel(files[type])
@@ -53,29 +58,56 @@ object EnemyFactory
 	}
 
 	//______________________________________________________________________________________________
-	fun create(type: EnemyComponent.TYPE) : Entity
+	fun create(type: EnemyComponent.TYPE, pos: Vector3, mase: Float = 100f) : Entity
 	{
 		val entity = Entity()
 
+		/// ENEMY
 		val enemy = EnemyComponent(type)
 		entity.add(enemy)
 
+		/// MODEL
 		if(models[type] == null)
 			models[type] = createModel(type)
+
+		val modelComponent: ModelComponent
 		when(type) {
 			EnemyComponent.TYPE.ZOMBIE1 -> {
-				val modelComponent = ModelComponent(models[type]!!, Vector3(25f, -10f, -15f))
-				modelComponent.instance.transform.rotate(0f, 1f, 0f, 185f)
-				modelComponent.instance.transform.rotate(1f, 0f, 0f, -7f)
-				entity.add(modelComponent).add(AnimationComponent(modelComponent.instance))
+				modelComponent = ModelComponent(models[type]!!, pos)
+				entity.add(modelComponent)
+				entity.add(AnimationComponent(modelComponent.instance))
 			}
 			EnemyComponent.TYPE.MONSTER1 -> {
-				val modelComponent = ModelComponent(models[type]!!, Vector3(25f, -10f, -15f))
-				modelComponent.instance.transform.rotate(0f, 1f, 0f, 185f)
-				modelComponent.instance.transform.rotate(1f, 0f, 0f, -7f)
-				entity.add(modelComponent).add(AnimationComponent(modelComponent.instance))
+				modelComponent = ModelComponent(models[type]!!, pos)
+				entity.add(modelComponent)
+
+				val anim = AnimationComponent(modelComponent.instance)
+				anim.animate(EnemyAnimations.id, EnemyAnimations.offsetRun1, EnemyAnimations.durationRun1, -1, 1)
+				entity.add(anim)
+				entity.add(StatusComponent(anim))
+
+				val am = AssetManager()
+				entity.add(EnemyDieParticleComponent(RenderSystem.particleSystem, am))
+				am.dispose()
 			}
 		}
+
+		/// COLLISION
+		val localInertia = Vector3()
+		val shape = btSphereShape(10f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
+		shape.calculateLocalInertia(mase, localInertia)
+		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, localInertia)
+		val rigidBody = btRigidBody(bodyInfo)
+		rigidBody.userData = entity
+		rigidBody.motionState = MotionState(modelComponent.instance.transform)
+		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
+		rigidBody.contactCallbackFilter = BulletComponent.SHOT_FLAG
+		rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
+		rigidBody.userValue = BulletComponent.ENEMY_FLAG
+		//rigidBody.userIndex = index
+		rigidBody.friction = 3f
+		rigidBody.rollingFriction = 3f
+		entity.add(BulletComponent(rigidBody, bodyInfo))
 
 		return entity
 	}

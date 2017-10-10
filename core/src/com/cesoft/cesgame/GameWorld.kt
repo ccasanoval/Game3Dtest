@@ -7,8 +7,10 @@ import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.cesoft.cesgame.UI.GameUI
+import com.cesoft.cesgame.components.EnemyComponent
 import com.cesoft.cesgame.components.GunComponent
 import com.cesoft.cesgame.components.PlayerComponent
+import com.cesoft.cesgame.managers.EnemyFactory
 import com.cesoft.cesgame.managers.EntityFactory
 import com.cesoft.cesgame.managers.GunFactory
 import com.cesoft.cesgame.managers.WarehouseFactory
@@ -35,6 +37,7 @@ class GameWorld(gameUI: GameUI) {
 	private lateinit var gun: Entity
 
 	init {
+		System.err.println("GameWorld: INIT: -------------------------")
 		Bullet.init()
 
 		renderSystem = RenderSystem()
@@ -58,11 +61,11 @@ class GameWorld(gameUI: GameUI) {
 
 		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f)))
 		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
-		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
-		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -150f), -45f))
-		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -150f), +45f))
+//		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
+//		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -150f), -45f))
+//		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -150f), +45f))
 
-		//engine.addEntity(EntityFactory.monstruo(Vector3(0f, 100f, -200f)))
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1, Vector3(0f, 10f, -100f)))
 
 		//engine.addEntity(EntityFactory.load1(Vector3(0f, 100f, -200f)))
 		//engine.addEntity(EntityFactory.load2(Vector3(0f, 0f, 0f)))
@@ -101,7 +104,7 @@ class GameWorld(gameUI: GameUI) {
 		//renderSystem.setProcessing( ! Settings.paused)
 		bulletSystem.setProcessing( ! Settings.paused)
 		enemySystem.setProcessing( ! Settings.paused)
-		//playerSystem.setProcessing( ! Settings.paused)
+		playerSystem.setProcessing( ! Settings.paused)
 		statusSystem.setProcessing( ! Settings.paused)
 		shotSystem.setProcessing( ! Settings.paused)
 	}
@@ -113,10 +116,11 @@ class GameWorld(gameUI: GameUI) {
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-		enemySystem.dispose()
 		bulletSystem.dispose()
 		renderSystem.dispose()
-		//playerSystem.dispose()
+		enemySystem.dispose()
+		playerSystem.dispose()
+		System.err.println("GameWorld:dispose:-----------------------------------------------")
 	}
 
 	//______________________________________________________________________________________________

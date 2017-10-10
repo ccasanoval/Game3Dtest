@@ -37,11 +37,20 @@ class CesGame : ApplicationAdapter() {
 		screen!!.resize(width, height)
 	}
 
-	fun setScreen(screen: Screen) {
+	fun delScreen()//TODO: Estudiar que estoy eliminando que luego no se crea¿? ->GameScreen.dispose
+	{
 		if(this.screen != null) {
 			this.screen!!.hide()
 			this.screen!!.dispose()
 		}
+	}
+	fun setScreen(screen: Screen) {
+		System.err.println("CesGame:setScreen:----------------------------------------")
+
+		/*if(this.screen != null) {
+			this.screen!!.hide()
+			this.screen!!.dispose()
+		}*/
 		this.screen = screen
 		if(this.screen != null) {
 			this.screen!!.show()
@@ -50,6 +59,7 @@ class CesGame : ApplicationAdapter() {
 	}
 
 	override fun dispose() {
+		System.err.println("CesGame:dispose:----------------------------------------")
 		Settings.save()
 	}
 

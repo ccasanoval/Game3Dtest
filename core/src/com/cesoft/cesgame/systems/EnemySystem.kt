@@ -94,6 +94,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 		}
 	}
 
+	//______________________________________________________________________________________________
 	private fun updateParticulas(e : Entity)
 	{
 		if( ! e.getComponent(StatusComponent::class.java).alive && !e.getComponent(EnemyDieParticleComponent::class.java).used) {
@@ -111,7 +112,10 @@ class EnemySystem : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	var index = 0
 	private fun spawnEnemy(randomSpawnIndex: Int) {
-		engine!!.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1))
+		engine!!.addEntity(EnemyFactory.create(
+				EnemyComponent.TYPE.ZOMBIE1,
+				Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]),
+				100f))
 				//EntityFactory.createEnemy(model, Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]), ++index))
 	}
 

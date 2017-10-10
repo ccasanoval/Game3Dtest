@@ -24,10 +24,12 @@ object GunFactory
 		files[GunComponent.TYPE.CZ805] = Gdx.files.getFileHandle("weapons/cz805/a.g3db", Files.FileType.Internal)
 	}
 
+	//______________________________________________________________________________________________
 	fun dispose()
 	{
 		for((_, model) in models)
 			model.dispose()
+		models = mutableMapOf()
 	}
 
 	//______________________________________________________________________________________________

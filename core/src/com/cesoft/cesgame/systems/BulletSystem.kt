@@ -89,12 +89,16 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	//______________________________________________________________________________________________
 	private fun collPlayerEnemy(index: Int)
 	{
+		System.err.println("--------- COLLISION: Player + Enemy --------------------------"+index)
+
 		val e = enemies[index]
-		if(e != null && e.getComponent(StatusComponent::class.java).alive) {
+		if(e?.getComponent(StatusComponent::class.java) != null
+			&& e.getComponent(StatusComponent::class.java).alive)
+		{
 			System.err.println("----aa------ COLLISION: Player + Enemy VIVO ::: "+index)
 			PlayerComponent.health -= 2
 			PlayerComponent.score -= 20
-			e.getComponent(StatusComponent::class.java)?.alive = false
+			e.getComponent(StatusComponent::class.java).alive = false
 			enemies.remove(index)
 		}
 		//else			System.err.println("----aa------ COLLISION: Player + Enemy MUERTO")
