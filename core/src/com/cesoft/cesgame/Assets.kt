@@ -10,13 +10,11 @@ class Assets {
 	var skin: Skin = Skin()
 		private set
 
-
 	//______________________________________________________________________________________________
 	init {
 		if(atlasFile.exists())
 			skin.addRegions(TextureAtlas(atlasFile))
 		skin.load(fileHandle)
-		//
 	}
 
 	//______________________________________________________________________________________________

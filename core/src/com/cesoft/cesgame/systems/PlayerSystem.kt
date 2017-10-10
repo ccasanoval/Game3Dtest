@@ -103,18 +103,18 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		val tmp = Vector3()
 		val walkDirection = Vector3(0f, 0f, 0f)
 		if(Gdx.app.type == Application.ApplicationType.Android) {
-			if(ControllerWidget.movementVector.y > 0) walkDirection.add(camera.direction)
-			if(ControllerWidget.movementVector.y < 0) walkDirection.sub(camera.direction)
-			if(ControllerWidget.movementVector.x < 0) tmp.set(camera.direction).crs(camera.up).scl(-1f)
-			if(ControllerWidget.movementVector.x > 0) tmp.set(camera.direction).crs(camera.up)
+			if(     ControllerWidget.movementVector.y > +0.1) walkDirection.add(camera.direction)
+			else if(ControllerWidget.movementVector.y < -0.1) walkDirection.sub(camera.direction)
+			if(     ControllerWidget.movementVector.x < -0.1) tmp.set(camera.direction).crs(camera.up).scl(-1f)
+			else if(ControllerWidget.movementVector.x > +0.1) tmp.set(camera.direction).crs(camera.up)
 			walkDirection.add(tmp)
 			walkDirection.scl(FUERZA_MOVIL * delta)
 		}
 		else {
 			if(Gdx.input.isKeyPressed(Input.Keys.UP)) walkDirection.add(camera.direction)
-			if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) walkDirection.sub(camera.direction)
+			else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) walkDirection.sub(camera.direction)
 			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) tmp.set(camera.direction).crs(camera.up).scl(-1f)
-			if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) tmp.set(camera.direction).crs(camera.up)
+			else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) tmp.set(camera.direction).crs(camera.up)
 			walkDirection.add(tmp)
 			walkDirection.scl(PlayerComponent.FUERZA_PC * delta)
 		}
@@ -131,9 +131,8 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		{
 			System.err.println("------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isSaltando)
 			if( ! playerComponent.isSaltando) {
-				val fuerza = 1.027f
+				val fuerza = 1.028f
 				bulletComponent.rigidBody.applyCentralImpulse(Vector3.Y.scl(fuerza))
-				//updateCamara()
 			}
 		}
 		playerComponent.isSaltando = getPosition().y > 3*ALTURA/4
@@ -161,14 +160,16 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	}
 
 	//______________________________________________________________________________________________
+	//TODO: quiza depende de GunComponent?
 	private var deltaFire = 100f
 	private var deltaReload = 100f
 	private fun updateDisparo(delta: Float)
 	{
+		// Gdx.input.isTouched
 		//System.err.println("--------------------------------------------FIRE "+lastDelta)
 		deltaFire += delta
 		deltaReload += delta
-		if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+		if(ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
 			if(deltaFire > 0.15f) {
 				System.err.println("------ FIRE ! -------------------")
 				deltaFire = 0f
@@ -205,7 +206,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 
 	//______________________________________________________________________________________________
 	private fun reload() {
-		//TODO: add ammo
+		//TODO: add ammo, que se gaste, mas contador
 		//Animacion
 		GunFactory.animate(gun, GunComponent.ACTION.RELOAD, 1, 1)
 	}
@@ -234,4 +235,10 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = false
 	override fun mouseMoved(screenX: Int, screenY: Int): Boolean = false
 	override fun scrolled(amount: Int): Boolean = false
+
+	//______________________________________________________________________________________________
+	fun dispose()
+	{
+		GunFactory.dispose()
+	}
 }

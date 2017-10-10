@@ -20,29 +20,35 @@ class ControllerWidget {
 		touchpadStyle.background.minWidth = 44f
 		touchpadStyle.background.minHeight = 44f
 
-		/*movementPad = Touchpad(10f, touchpadStyle)
-		watchPad = Touchpad(10f, touchpadStyle)*/
 		movementPad.style = touchpadStyle
 		watchPad.style = touchpadStyle
-		movementPad.setColor(0.5f, 0.5f, 0.5f, 0.5f)
-		watchPad.setColor(0.5f, 0.5f, 0.5f, 0.5f)
+		firePad.style = touchpadStyle //Touchpad.TouchpadStyle()
+		movementPad.setColor(0.25f, 0.25f, 0.25f, 0.25f)
+		watchPad.setColor(0.25f, 0.25f, 0.25f, 0.25f)
+		firePad.setColor(0.25f, 0.25f, 0.25f, 0.25f)
 	}
 
 	fun addToStage(stage: Stage) {
 		movementPad.setBounds(15f, 15f, 300f, 300f)
 		watchPad.setBounds(stage.width - 315, 15f, 300f, 300f)
+		firePad.setBounds(15f, stage.height-215, 200f, 200f)
 		stage.addActor(movementPad)
 		stage.addActor(watchPad)
+		stage.addActor(firePad)
 	}
 
 	companion object {
-		private var movementPad: Touchpad = Touchpad(10f, Touchpad.TouchpadStyle())
-		private var watchPad: Touchpad = Touchpad(10f, Touchpad.TouchpadStyle())
+		private var movementPad: Touchpad = Touchpad(5f, Touchpad.TouchpadStyle())
+		private var watchPad: Touchpad = Touchpad(5f, Touchpad.TouchpadStyle())
+		private var firePad: Touchpad = Touchpad(.1f, Touchpad.TouchpadStyle())
 		var movementVector: Vector2 = Vector2(0f, 0f)
 			get() = Vector2(movementPad.knobPercentX, movementPad.knobPercentY)
 			private set
 		var watchVector: Vector2 = Vector2(0f, 0f)
 			get() = Vector2(watchPad.knobPercentX, watchPad.knobPercentY)
+			private set
+		var isFiring: Boolean = false
+			get() = firePad.isTouched
 			private set
 	}
 }

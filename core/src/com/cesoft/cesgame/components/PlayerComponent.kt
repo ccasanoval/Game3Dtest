@@ -25,7 +25,7 @@ object PlayerComponent : Component
 
 
 	//______________________________________________________________________________________________
-	fun createPlayer(pos: Vector3): Entity {
+	fun create(pos: Vector3): Entity {
 		val entity = Entity()
 
 		val localInertia = Vector3()

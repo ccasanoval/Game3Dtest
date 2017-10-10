@@ -76,9 +76,9 @@ class GameWorld(gameUI: GameUI) {
 
 	//______________________________________________________________________________________________
 	private fun createPlayer(pos: Vector3) {
-		player = PlayerComponent.createPlayer(pos)
+		player = PlayerComponent.create(pos)
 		engine.addEntity(player)
-		gun = GunFactory.create(GunComponent.TYPE.CZ805)
+		gun = GunFactory.create(GunComponent.TYPE.CZ805)//Dentro de playerSystem??
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun
@@ -116,6 +116,7 @@ class GameWorld(gameUI: GameUI) {
 		enemySystem.dispose()
 		bulletSystem.dispose()
 		renderSystem.dispose()
+		//playerSystem.dispose()
 	}
 
 	//______________________________________________________________________________________________

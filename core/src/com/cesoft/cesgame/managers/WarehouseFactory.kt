@@ -21,7 +21,7 @@ import com.cesoft.cesgame.components.ModelComponent
 object WarehouseFactory
 {
 	val modelLoader = G3dModelLoader(UBJsonReader())
-	val modelData = modelLoader.loadModelData(Gdx.files.internal("data/warehouse/a.g3db"))
+	val modelData = modelLoader.loadModelData(Gdx.files.internal("scene/warehouse/a.g3db"))
 
 	//______________________________________________________________________________________________
 	fun create(pos: Vector3, angle: Float = 0f): Entity {

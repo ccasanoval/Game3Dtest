@@ -3,7 +3,6 @@ package com.cesoft.cesgame.managers
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes
@@ -20,7 +19,6 @@ import com.cesoft.cesgame.bullet.MotionState
 import com.cesoft.cesgame.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
-import com.cesoft.cesgame.systems.RenderSystem
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +30,7 @@ object EntityFactory {
 			or VertexAttributes.Usage.TextureCoordinates).toLong()
 
 	//______________________________________________________________________________________________
-	private val assetManager = AssetManager()//TODO: hacer singleton y no object
+	/*private val assetManager = AssetManager()
 	fun createEnemy(enemyModel: Model, pos: Vector3, index: Int): Entity {
 		val entity = Entity()
 
@@ -65,7 +63,7 @@ object EntityFactory {
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 
 		return entity
-	}
+	}*/
 
 
 	//______________________________________________________________________________________________
@@ -166,12 +164,12 @@ object EntityFactory {
 	//______________________________________________________________________________________________
 	fun loadDome(pos: Vector3): Entity {
 		val modelLoader = G3dModelLoader(UBJsonReader())
-		val model = modelLoader.loadModel(Gdx.files.getFileHandle("data/spaceDome/spacedome.g3db", Files.FileType.Internal))
+		val model = modelLoader.loadModel(Gdx.files.getFileHandle("scene/spaceDome/spacedome.g3db", Files.FileType.Internal))
 		return Entity().add(ModelComponent(model, pos))
 	}
 
 	//______________________________________________________________________________________________
-	fun dispose() {
+	/*fun dispose() {
 		assetManager.dispose()
-	}
+	}*/
 }

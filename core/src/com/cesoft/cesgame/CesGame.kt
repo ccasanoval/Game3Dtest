@@ -11,6 +11,11 @@ import com.cesoft.cesgame.screens.MainMenuScreen
 // DESKTOP RUN    : desktop:run
 //
 //https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
+//TODO: Comprobar disparo Android
+//TODO: Configurar joystick Android
+//TODO: Enemigos?
+//TODO: Evitar que chocar haga volar (solo pasa en desktop?)
+//TODO: Reducir tiempo de carga de la escena
 class CesGame : ApplicationAdapter() {
 
 	private var screen: Screen? = null

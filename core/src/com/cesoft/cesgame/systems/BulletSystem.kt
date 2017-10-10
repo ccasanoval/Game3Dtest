@@ -78,7 +78,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	//______________________________________________________________________________________________
 	private fun collPlayerGround()
 	{
-		System.err.println("--------- COLLISION: Player + Ground ")
+		//System.err.println("--------- COLLISION: Player + Ground ")
 		player.getComponent(PlayerComponent::class.java).isSaltando = false
 	}
 	//______________________________________________________________________________________________

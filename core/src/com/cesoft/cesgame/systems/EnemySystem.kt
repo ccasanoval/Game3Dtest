@@ -7,22 +7,17 @@ import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.utils.ImmutableArray
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g3d.Model
-import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
 import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter
-import com.badlogic.gdx.graphics.g3d.utils.TextureProvider
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.utils.JsonReader
 import com.cesoft.cesgame.components.*
-import com.cesoft.cesgame.managers.EntityFactory
+import com.cesoft.cesgame.managers.EnemyFactory
 
 import java.util.Random
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: movimiento realista, no ir aumentando velocidad!!!!!
+//
 class EnemySystem : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
@@ -36,16 +31,16 @@ class EnemySystem : EntitySystem(), EntityListener {
 		get() = random.nextInt(xSpawns.size)
 
 	//______________________________________________________________________________________________
-	private val model : Model
+	/*private val model : Model
 	init {
 		val modelLoader = G3dModelLoader(JsonReader())
-		val modelData = modelLoader.loadModelData(Gdx.files.internal("data/monster/monster.g3dj"))
+		val modelData = modelLoader.loadModelData(Gdx.files.internal("monster/monster.g3dj"))
 		model = Model(modelData, TextureProvider.FileTextureProvider())
 		val nodes = model.nodes
 		for(i in 0 until nodes.size-1)
 			nodes[i].scale.scl(0.0039f)
 		model.calculateTransforms()
-	}
+	}*/
 
 	//______________________________________________________________________________________________
 	override fun addedToEngine(e: Engine) {
@@ -62,8 +57,6 @@ class EnemySystem : EntitySystem(), EntityListener {
 			val enemyPosition = Vector3()
 			val e = entities!!.get(i)
 			if( ! sm.get(e).alive) return
-
-
 
 			/// Animacion
 			val animat = e.getComponent(AnimationComponent::class.java)
@@ -118,7 +111,8 @@ class EnemySystem : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	var index = 0
 	private fun spawnEnemy(randomSpawnIndex: Int) {
-		engine!!.addEntity(EntityFactory.createEnemy(model, Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]), ++index))
+		engine!!.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1))
+				//EntityFactory.createEnemy(model, Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]), ++index))
 	}
 
 	//______________________________________________________________________________________________
@@ -127,11 +121,13 @@ class EnemySystem : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
-	override fun entityRemoved(entity: Entity) {}
+	override fun entityRemoved(entity: Entity)
+	{
+	}
 
 	//______________________________________________________________________________________________
 	fun dispose()
 	{
-		model.dispose()
+		EnemyFactory.dispose()
 	}
 }

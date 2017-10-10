@@ -8,8 +8,8 @@ class GunComponent(val type: TYPE) : Component
 {
 	enum class TYPE {
 		CZ805,
-		COLT1911,
-		AK47
+		//COLT1911,
+		//AK47
 	}
 	enum class ACTION
 	{

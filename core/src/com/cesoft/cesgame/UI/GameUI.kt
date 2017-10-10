@@ -23,12 +23,10 @@ class GameUI(game: CesGame) {
 	private var pauseWidget: PauseWidget = PauseWidget(game, stage)
 	private var crosshairWidget: CrosshairWidget = CrosshairWidget()
 	private var fpsLabel: Label
-	private var controllerWidget: ControllerWidget? = null
 	var gameOverWidget: GameOverWidget = GameOverWidget(game, stage)
 		private set
 
 	init {
-		//
 		val assets = Assets()
 		fpsLabel = Label("", assets.skin)
 		assets.dispose()
@@ -39,32 +37,28 @@ class GameUI(game: CesGame) {
 	private fun configureWidgets() {
 		healthWidget.setSize(140f, 25f)
 		healthWidget.setPosition(CesGame.VIRTUAL_WIDTH / 2 - healthWidget.width / 2, 0f)
-		//      oxygenWidget.setSize(140, 25);
-		//      oxygenWidget.setPosition(CesGame.VIRTUAL_WIDTH / 2 - oxygenWidget.getWidth() / 2, 30);
-		//      energyWidget.setSize(140, 25);
-		//      energyWidget.setPosition(CesGame.VIRTUAL_WIDTH / 2 - energyWidget.getWidth() / 2, 60);
+
 		scoreWidget.setSize(140f, 25f)
 		scoreWidget.setPosition(0f, CesGame.VIRTUAL_HEIGHT - scoreWidget.height)
+
 		pauseWidget.setSize(64f, 64f)
 		pauseWidget.setPosition(CesGame.VIRTUAL_WIDTH - pauseWidget.width, CesGame.VIRTUAL_HEIGHT - pauseWidget.height)
+
 		gameOverWidget.setSize(280f, 100f)
 		gameOverWidget.setPosition(CesGame.VIRTUAL_WIDTH / 2 - 280 / 2, CesGame.VIRTUAL_HEIGHT / 2)
+
 		crosshairWidget.setPosition(CesGame.VIRTUAL_WIDTH / 2 - 16, CesGame.VIRTUAL_HEIGHT / 2 - 16)
 		crosshairWidget.setSize(32f, 32f)
 
 		fpsLabel.setPosition(0f, 10f)
 
 		stage.addActor(healthWidget)
-		//      stage.addActor(oxygenWidget);
-		//      stage.addActor(energyWidget);
 		stage.addActor(scoreWidget)
 		stage.addActor(crosshairWidget)
 		stage.keyboardFocus = pauseWidget
 		stage.addActor(fpsLabel)
-		if(Gdx.app.type == Application.ApplicationType.Android) {
-			controllerWidget = ControllerWidget()
-			controllerWidget!!.addToStage(stage)
-		}
+		if(Gdx.app.type == Application.ApplicationType.Android)
+			ControllerWidget().addToStage(stage)
 	}
 
 	fun update(delta: Float) {

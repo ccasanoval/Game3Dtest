@@ -1,18 +1,23 @@
 package com.cesoft.cesgame.components
 
 import com.badlogic.ashley.core.Component
+import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.utils.Disposable
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class EnemyComponent(var state: STATE) : Component {
-
-	enum class STATE {
-		IDLE,
-		FLEEING,
-		HUNTING
+class EnemyComponent(val type: TYPE) : Component
+{
+	enum class TYPE {
+		ZOMBIE1,
+		MONSTER1,
 	}
-
-	companion object {
-		const val MASA = 4f
+	enum class ACTION
+	{
+		IDLE,
+		DYING,
+		ATTACKING,
+		WALKING,
+		REINCARNATING,
 	}
 }
