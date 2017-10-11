@@ -93,12 +93,12 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 
 		val e = enemies[index]
 		if(e?.getComponent(StatusComponent::class.java) != null
-			&& e.getComponent(StatusComponent::class.java).alive)
+			&& e.getComponent(StatusComponent::class.java).isAlive)
 		{
 			System.err.println("----aa------ COLLISION: Player + Enemy VIVO ::: "+index)
 			PlayerComponent.health -= 2
 			PlayerComponent.score -= 20
-			e.getComponent(StatusComponent::class.java).alive = false
+			e.getComponent(StatusComponent::class.java).isAlive = false
 			enemies.remove(index)
 		}
 		//else			System.err.println("----aa------ COLLISION: Player + Enemy MUERTO")
@@ -110,12 +110,12 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 		//
 		var e = enemies[iEnemy]
 		if(e != null) {
-
 			//if(e.getComponent(StatusComponent::class.java).alive) {
 				PlayerComponent.score += 20
-				e.getComponent(StatusComponent::class.java).alive = false
+				e.getComponent(StatusComponent::class.java).isAlive = false
 			//}
 			enemies.remove(iEnemy)
+			System.err.println("---bb------- COLLISION: Shot + enemy REMOVE BODY ENEMY")
 		}
 		//
 		e = shots[iShot]

@@ -13,12 +13,8 @@ class AnimationComponent(instance: ModelInstance) : Component {
 		animationController.allowSameAnimation = true
 	}
 
-	fun animate(id: String, loops: Int, speed: Float) {
-		animationController.animate(id, loops, speed, null, 0f)
-	}
-
-	fun animate(id: String, offset: Float, duration: Float, loopCount: Int, speed: Float) {
-		animationController.animate(id, offset, duration, loopCount, speed, null, 0f)
+	fun animate(id: String, loops: Int = 1, speed: Float = 1f, offset: Float = 0f, duration: Float = -1f) {
+		animationController.animate(id, offset, duration, loops, speed, null, 0f)
 	}
 
 	fun update(delta: Float) {

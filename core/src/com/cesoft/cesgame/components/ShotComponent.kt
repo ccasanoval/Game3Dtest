@@ -22,8 +22,8 @@ class ShotComponent : Component {
 	fun isEnd() = aliveTime > 1f
 
 	companion object {
-		const val MASA = .25f
-		const val FUERZA = 5000f
+		const val MASA = .15f
+		const val FUERZA = 6000f
 
 		//______________________________________________________________________________________________
 		//TODO: Change again by ray collision¿?
@@ -42,7 +42,7 @@ class ShotComponent : Component {
 
 			/// COLLISION
 			val localInertia = Vector3()
-			val shape = btBoxShape(Vector3(.25f, .25f, .25f))
+			val shape = btBoxShape(Vector3(.2f, .2f, .5f))
 			shape.calculateLocalInertia(mass, localInertia)
 			val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mass, null, shape, localInertia)
 			val rigidBody = btRigidBody(bodyInfo)

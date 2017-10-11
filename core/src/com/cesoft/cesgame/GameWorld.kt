@@ -61,12 +61,14 @@ class GameWorld(gameUI: GameUI) {
 
 		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f)))
 		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
-//		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
+
+		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
 //		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -150f), -45f))
 //		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -150f), +45f))
 
-		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(50f, 50f, -150f)))
-		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1, Vector3(-50f, 50f, -150f)))
+//		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(80f, 150f, -190f)))
+//		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE0, Vector3(0f, 150f, -190f)))
+//		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1, Vector3(-80f, 150f, -190f)))
 
 		//engine.addEntity(EntityFactory.load1(Vector3(0f, 100f, -200f)))
 		//engine.addEntity(EntityFactory.load2(Vector3(0f, 0f, 0f)))

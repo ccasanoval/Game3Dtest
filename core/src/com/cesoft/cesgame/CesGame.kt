@@ -20,6 +20,7 @@ class CesGame : ApplicationAdapter() {
 
 	private var screen: Screen? = null
 
+	//______________________________________________________________________________________________
 	override fun create() {
 		Assets()
 		Settings.load()
@@ -27,30 +28,28 @@ class CesGame : ApplicationAdapter() {
 		setScreen(MainMenuScreen(this))
 	}
 
+	//______________________________________________________________________________________________
 	override fun render() {
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 		screen!!.render(Gdx.graphics.deltaTime)
 	}
 
+	//______________________________________________________________________________________________
 	override fun resize(width: Int, height: Int) {
 		screen!!.resize(width, height)
 	}
 
-	fun delScreen()//TODO: Estudiar que estoy eliminando que luego no se crea¿? ->GameScreen.dispose
+	//______________________________________________________________________________________________
+	fun delScreen()
 	{
 		if(this.screen != null) {
 			this.screen!!.hide()
 			this.screen!!.dispose()
 		}
 	}
+	//______________________________________________________________________________________________
 	fun setScreen(screen: Screen) {
-		System.err.println("CesGame:setScreen:----------------------------------------")
-
-		/*if(this.screen != null) {
-			this.screen!!.hide()
-			this.screen!!.dispose()
-		}*/
 		this.screen = screen
 		if(this.screen != null) {
 			this.screen!!.show()
@@ -58,11 +57,13 @@ class CesGame : ApplicationAdapter() {
 		}
 	}
 
+	//______________________________________________________________________________________________
 	override fun dispose() {
 		System.err.println("CesGame:dispose:----------------------------------------")
 		Settings.save()
 	}
 
+	//______________________________________________________________________________________________
 	companion object {
 		val VIRTUAL_WIDTH = 1024f
 		val VIRTUAL_HEIGHT = 576f

@@ -1,6 +1,5 @@
 package com.cesoft.cesgame.systems
 
-import com.badlogic.ashley.core.ComponentMapper
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
@@ -9,7 +8,6 @@ import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter
 import com.badlogic.gdx.math.Matrix4
-import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesgame.components.*
 import com.cesoft.cesgame.managers.EnemyFactory
@@ -24,23 +22,12 @@ class EnemySystem : EntitySystem(), EntityListener {
 
 	private val xSpawns = floatArrayOf(+135f, +135f, -135f, -135f)
 	private val zSpawns = floatArrayOf(+135f, -135f, +135f, -135f)
-	private var sm = ComponentMapper.getFor(StatusComponent::class.java)
+	//private var maper = ComponentMapper.getFor(StatusComponent::class.java)
 
 	private val random = Random()
 	private val randomSpawnIndex: Int
 		get() = random.nextInt(xSpawns.size)
 
-	//______________________________________________________________________________________________
-	/*private val model : Model
-	init {
-		val modelLoader = G3dModelLoader(JsonReader())
-		val modelData = modelLoader.loadModelData(Gdx.files.internal("monster/monster.g3dj"))
-		model = Model(modelData, TextureProvider.FileTextureProvider())
-		val nodes = model.nodes
-		for(i in 0 until nodes.size-1)
-			nodes[i].scale.scl(0.0039f)
-		model.calculateTransforms()
-	}*/
 
 	//______________________________________________________________________________________________
 	override fun addedToEngine(e: Engine) {
@@ -51,58 +38,42 @@ class EnemySystem : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
 		//if(entities!!.size() < 2) spawnEnemy(randomSpawnIndex)
-
-		for(i in 0 until entities!!.size()) {
-			val playerPosition = Vector3()
-			val enemyPosition = Vector3()
-			val e = entities!!.get(i)
+		//for(i in 0 until entities!!.size()) {
+		if(entities != null)
+		for(entity in entities!!) {
 
 			/// MODEL (desapareciendo)
-			val model = e.getComponent(ModelComponent::class.java)
-			if( ! e.getComponent(StatusComponent::class.java).alive)
+			val model = entity.getComponent(ModelComponent::class.java)
+			val status = entity.getComponent(StatusComponent::class.java)
+			if( ! status.isAlive) {
 				model.update(delta)
+			}
 
 			/// Animacion
-			val animat = e.getComponent(AnimationComponent::class.java)
-			animat.update(delta)
+			val animat = entity.getComponent(AnimationComponent::class.java)
+			if(animat != null)animat.update(delta)
 
 			/// Particulas
-			updateParticulas(e)
+			updateParticulas(entity)
 
 			/// Movimiento
-			if( ! sm.get(e).alive) return
+			//if( ! maper.get(e).alive) return //???
+			if( ! status.isAlive)return
+System.err.println("EnemySystem:update:----------------------------- "+status.isAlive)
 			val bulletPlayer = player!!.getComponent(BulletComponent::class.java)
 			val transf = Matrix4()
 			bulletPlayer.rigidBody.getWorldTransform(transf)
+			val playerPosition = Vector3()
 			transf.getTranslation(playerPosition)
-
-			//TODO: user AI ¿?
-			//val model = e.getComponent(ModelComponent::class.java)
-			model.instance.transform.getTranslation(enemyPosition)
-			val dX = playerPosition.x - enemyPosition.x
-			val dZ = playerPosition.z - enemyPosition.z
-
-			// Fuerzas
-			val bullet = e.getComponent(BulletComponent::class.java)
-			val fuerza = 70f
-			//limitar velocidad??? TODO
-			bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ).nor().scl(fuerza))
-			//System.err.println("ENEMY FORCE -----------------"+Vector3(dX, 0f, dZ).nor())
-
-			// Orientacion
-			val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
-			val quat = Quaternion()
-			val rot = quat.setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat() + 90)
-			bullet.rigidBody.getWorldTransform(transf)
-			transf.getTranslation(enemyPosition)
-			model.instance.transform.set(enemyPosition.x, enemyPosition.y, enemyPosition.z, rot.x, rot.y, rot.z, rot.w)
+			//
+			EnemyFactory.mover(entity, playerPosition)
 		}
 	}
 
 	//______________________________________________________________________________________________
 	private fun updateParticulas(e : Entity)
 	{
-		if( ! e.getComponent(StatusComponent::class.java).alive
+		if( ! e.getComponent(StatusComponent::class.java).isAlive
 			&& e.getComponent(EnemyDieParticleComponent::class.java)?.used == true)
 		{
 			e.getComponent(EnemyDieParticleComponent::class.java).used = true
