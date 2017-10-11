@@ -21,7 +21,7 @@ import com.cesoft.cesgame.systems.*
 //
 class GameWorld(gameUI: GameUI) {
 
-	private val debugCollision = false
+	private val debugCollision = true
 	private var debugDrawer: DebugDrawer? = null
 
 	private var bulletSystem: BulletSystem
@@ -65,7 +65,8 @@ class GameWorld(gameUI: GameUI) {
 //		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -150f), -45f))
 //		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -150f), +45f))
 
-		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1, Vector3(0f, 10f, -100f)))
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(50f, 50f, -150f)))
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1, Vector3(-50f, 50f, -150f)))
 
 		//engine.addEntity(EntityFactory.load1(Vector3(0f, 100f, -200f)))
 		//engine.addEntity(EntityFactory.load2(Vector3(0f, 0f, 0f)))
@@ -120,7 +121,6 @@ class GameWorld(gameUI: GameUI) {
 		renderSystem.dispose()
 		enemySystem.dispose()
 		playerSystem.dispose()
-		System.err.println("GameWorld:dispose:-----------------------------------------------")
 	}
 
 	//______________________________________________________________________________________________

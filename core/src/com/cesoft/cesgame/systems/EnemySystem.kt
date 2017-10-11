@@ -56,7 +56,11 @@ class EnemySystem : EntitySystem(), EntityListener {
 			val playerPosition = Vector3()
 			val enemyPosition = Vector3()
 			val e = entities!!.get(i)
-			if( ! sm.get(e).alive) return
+
+			/// MODEL (desapareciendo)
+			val model = e.getComponent(ModelComponent::class.java)
+			if( ! e.getComponent(StatusComponent::class.java).alive)
+				model.update(delta)
 
 			/// Animacion
 			val animat = e.getComponent(AnimationComponent::class.java)
@@ -66,13 +70,14 @@ class EnemySystem : EntitySystem(), EntityListener {
 			updateParticulas(e)
 
 			/// Movimiento
+			if( ! sm.get(e).alive) return
 			val bulletPlayer = player!!.getComponent(BulletComponent::class.java)
 			val transf = Matrix4()
 			bulletPlayer.rigidBody.getWorldTransform(transf)
 			transf.getTranslation(playerPosition)
 
 			//TODO: user AI ¿?
-			val model = e.getComponent(ModelComponent::class.java)
+			//val model = e.getComponent(ModelComponent::class.java)
 			model.instance.transform.getTranslation(enemyPosition)
 			val dX = playerPosition.x - enemyPosition.x
 			val dZ = playerPosition.z - enemyPosition.z
@@ -97,7 +102,9 @@ class EnemySystem : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	private fun updateParticulas(e : Entity)
 	{
-		if( ! e.getComponent(StatusComponent::class.java).alive && !e.getComponent(EnemyDieParticleComponent::class.java).used) {
+		if( ! e.getComponent(StatusComponent::class.java).alive
+			&& e.getComponent(EnemyDieParticleComponent::class.java)?.used == true)
+		{
 			e.getComponent(EnemyDieParticleComponent::class.java).used = true
 			val effect = e.getComponent(EnemyDieParticleComponent::class.java).originalEffect.copy()
 			(effect.getControllers().first().emitter as RegularEmitter).emissionMode = RegularEmitter.EmissionMode.EnabledUntilCycleEnd

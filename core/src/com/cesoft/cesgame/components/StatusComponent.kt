@@ -1,13 +1,15 @@
 package com.cesoft.cesgame.components
 
 import com.badlogic.ashley.core.Component
+import com.badlogic.ashley.core.Entity
 import com.cesoft.cesgame.managers.EnemyAnimations
+import com.cesoft.cesgame.managers.EnemyFactory
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class StatusComponent(private val animationComponent: AnimationComponent) : Component
+class StatusComponent(private val entity: Entity) : Component//private val animat: AnimationComponent, private val enemy: EnemyComponent) : Component
 {
 	var alive: Boolean = true
-		set(value) {field = value; playDeathAnim2()}
+		set(value) {field = value; playDeathAnim()}
 	var running: Boolean = true
 	var attacking: Boolean = false
 	var aliveStateTime: Float = 0f
@@ -16,7 +18,7 @@ class StatusComponent(private val animationComponent: AnimationComponent) : Comp
 		if( ! alive) aliveStateTime += delta
 	}
 
-	private fun playDeathAnim2() {
-		animationComponent.animate(EnemyAnimations.id, EnemyAnimations.offsetDeath2, EnemyAnimations.durationDeath2, 1, 3)
+	private fun playDeathAnim() {
+		EnemyFactory.animate(entity, EnemyComponent.ACTION.DYING)
 	}
 }

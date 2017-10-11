@@ -67,7 +67,7 @@ object GunFactory
 	}
 
 	//______________________________________________________________________________________________
-	fun animate(entity: Entity, action: GunComponent.ACTION, loops: Int = 1, speed: Int = 3) {
+	fun animate(entity: Entity, action: GunComponent.ACTION, loops: Int = 1, speed: Float = 3f) {
 		val type = entity.getComponent(GunComponent::class.java).type
 		val anim = getAnimation(type, action)
 		entity.getComponent(AnimationComponent::class.java).animate(anim, loops, speed)

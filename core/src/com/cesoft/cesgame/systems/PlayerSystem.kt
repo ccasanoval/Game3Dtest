@@ -208,7 +208,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	private fun reload() {
 		//TODO: add ammo, que se gaste, mas contador
 		//Animacion
-		GunFactory.animate(gun, GunComponent.ACTION.RELOAD, 1, 1)
+		GunFactory.animate(gun, GunComponent.ACTION.RELOAD, 1, 1f)
 	}
 
 	//______________________________________________________________________________________________
