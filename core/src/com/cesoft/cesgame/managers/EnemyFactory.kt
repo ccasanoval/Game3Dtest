@@ -1,7 +1,6 @@
 package com.cesoft.cesgame.managers
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g3d.Model
@@ -10,7 +9,6 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
-import com.badlogic.gdx.utils.JsonReader
 import com.badlogic.gdx.utils.UBJsonReader
 import com.cesoft.cesgame.bullet.MotionState
 import com.cesoft.cesgame.components.*
@@ -23,13 +21,11 @@ import com.badlogic.gdx.math.Quaternion
 //
 object EnemyFactory
 {
-	private val modelLoaderJSON = G3dModelLoader(JsonReader())
+	//private val modelLoaderJSON = G3dModelLoader(JsonReader())
 	private val modelLoader = G3dModelLoader(UBJsonReader())
 	private var models = mutableMapOf<EnemyComponent.TYPE, Model>()
 
-	//private val modelDataZombie0 = modelLoader.loadModelData(Gdx.files.internal("foes/zombie1/a.g3db"))
-	//private val modelDataZombie1 = modelLoader.loadModelData(Gdx.files.internal("foes/zombie1/zombie_normal.g3db"))
-	//private val modelDataMonster1 = modelLoader.loadModelData(Gdx.files.internal("foes/zombie1/a.g3db"))
+	private val modelDataMonster1 = modelLoader.loadModelData(Gdx.files.internal("foes/monster1/a.g3db"))
 
 
 	//______________________________________________________________________________________________
@@ -44,23 +40,12 @@ object EnemyFactory
 	private fun createModel(type: EnemyComponent.TYPE): Model {
 		val model: Model
 		when(type) {
-			/*EnemyComponent.TYPE.ZOMBIE0 -> {
-				model = Model(modelDataZombie0)
-				for(i in 0 until model.nodes.size - 1)
-					model.nodes[i].scale.scl(.25f)
-			}
-			EnemyComponent.TYPE.ZOMBIE1 -> {
-				model = Model(modelDataZombie1)
-//				for(i in 0 until model.nodes.size - 1)
-//					model.nodes[i].scale.scl(5f)
-			}*/
 			EnemyComponent.TYPE.MONSTER1 -> {
-				//model = Model(modelDataMonster1)
-				model = modelLoaderJSON.loadModel(Gdx.files.getFileHandle("foes/monster1/monster.g3dj", Files.FileType.Internal))
-				for(i in 0 until model.nodes.size - 1)
-					model.nodes[i].scale.scl(0.01f)
+				model = Model(modelDataMonster1)
+				//model = modelLoaderJSON.loadModel(Gdx.files.getFileHandle("foes/monster1/monster.g3dj", Files.FileType.Internal))
+//				for(i in 0 until model.nodes.size - 1)
+//					model.nodes[i].scale.scl(0.01f)
 			}
-			else -> model = Model()
 		}
 		return model
 	}
@@ -80,17 +65,6 @@ object EnemyFactory
 		//
 		val modelComponent: ModelComponent
 		when(type) {
-			EnemyComponent.TYPE.ZOMBIE0 -> {
-				modelComponent = ModelComponent(models[type]!!, pos)
-				entity.add(modelComponent)
-			}
-			EnemyComponent.TYPE.ZOMBIE1 -> {
-				modelComponent = ModelComponent(models[type]!!, pos)
-				entity.add(modelComponent)
-				val anim = AnimationComponent(modelComponent.instance)
-				entity.add(anim)
-				setAnimation(entity, EnemyComponent.ACTION.ATTACKING)
-			}
 			EnemyComponent.TYPE.MONSTER1 -> {
 				modelComponent = ModelComponent(models[type]!!, pos)
 				entity.add(modelComponent)
@@ -105,17 +79,20 @@ object EnemyFactory
 			}
 		}
 		// (desaparecer)
-		val material = modelComponent.instance.materials.get(0)
-		val blendingAttribute = BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
-		material.set(blendingAttribute)
-		modelComponent.blendingAttribute = blendingAttribute
+		System.err.println("MAT SIZE-----------------------------------------------"+modelComponent.instance.materials.size)
+		if(modelComponent.instance.materials.size > 0) {
+			val material = modelComponent.instance.materials.get(0)
+			val blendingAttribute = BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+			material.set(blendingAttribute)
+			modelComponent.blendingAttribute = blendingAttribute
+		}
 
 		/// STATUS
 		entity.add(StatusComponent(entity))
 
 		/// COLLISION
 		val localInertia = Vector3()
-		val shape = btSphereShape(20f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
+		val shape = btSphereShape(17f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, localInertia)
 		val rigidBody = btRigidBody(bodyInfo)
@@ -149,42 +126,35 @@ object EnemyFactory
 		val loop = -1
 		val speed = 1f
 		when(type) {
-			EnemyComponent.TYPE.ZOMBIE0 -> return AnimationParams("", loop, speed)
-			EnemyComponent.TYPE.ZOMBIE1 ->
-				return when(action) {
-					EnemyComponent.ACTION.IDLE -> AnimationParams("Idle")
-					EnemyComponent.ACTION.DYING -> AnimationParams("Dying")
-					EnemyComponent.ACTION.ATTACKING -> AnimationParams("Attacking")
-					EnemyComponent.ACTION.WALKING -> AnimationParams("Walking")
-					EnemyComponent.ACTION.RUNNING -> AnimationParams("Walking")
-					EnemyComponent.ACTION.REINCARNATING -> AnimationParams("Reincarnating")
-				}
 			EnemyComponent.TYPE.MONSTER1 ->
-				//TODO: Sacar animaciones...
 				return when(action) {//TODO: Acer estos objetos staticos!!! asi no tienes que crearlos....
-					EnemyComponent.ACTION.IDLE -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 26f, 0f)
-				//FAIL
-					EnemyComponent.ACTION.ATTACKING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 3.32f, 10f)
-					EnemyComponent.ACTION.WALKING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 1.6f, 6f)
-					EnemyComponent.ACTION.RUNNING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 1.6f, 6f)
-					EnemyComponent.ACTION.REINCARNATING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed)
-					EnemyComponent.ACTION.DYING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 3.4f, 22.6f)
+					EnemyComponent.ACTION.WALKING ->
+					{
+						//TODO: Random
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 30f, 0f)
+					}//0-30, 0-120
+					EnemyComponent.ACTION.RUNNING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 40f, 150f)//150-190, 150-210
 
+					EnemyComponent.ACTION.IDLE -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 27f, 0f)
+					EnemyComponent.ACTION.ATTACKING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 83f, 250f)
+
+					EnemyComponent.ACTION.REINCARNATING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed)
+					EnemyComponent.ACTION.DYING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 28f, 390f)
 				}
-				//"MilkShape3D Skele|DefaultAction"
-				//"MilkShape3D Skele|DefaultAction.001",
-				//"MilkShape3D Skeleton|DefaultAction",
-				//"MilkShape3D Skeleton|DefaultAction.001",
 				/*
-					private val duration = 26f
-					companion object {
-						val id = "MilkShape3D Skele|DefaultAction"
-						val offsetDeath2 = 22.6f
-						val durationDeath2 = 3.4f
-						val offsetRun1 = 6f
-						val durationRun1 = 1.6f
-						val offsetAttack1 = 10f
-						val durationAttack1 = 3.32f*/
+				0-30  walk
+				0-120 walk
+				150-190 run
+				150-210 run
+				250-333 attack-01
+				320-400 attack-02
+				390-418 death-01
+				478-500 growl
+				500-550 death-02
+				565-650 death-03
+
+				650 --> 26s ????????????????????????????????????
+				* */
 		}
 	}
 
@@ -217,9 +187,7 @@ object EnemyFactory
 		bullet.rigidBody.getWorldTransform(transf)
 		transf.getTranslation(enemyPosition)
 		val altura = when(enemy.type) {
-			EnemyComponent.TYPE.ZOMBIE0 -> 0f
-			EnemyComponent.TYPE.ZOMBIE1 -> 10f
-			EnemyComponent.TYPE.MONSTER1 -> 1f
+			EnemyComponent.TYPE.MONSTER1 -> 0f
 			//else -> 0f
 		}
 		model.instance.transform.set(enemyPosition.x, enemyPosition.y+altura, enemyPosition.z, rot.x, rot.y, rot.z, rot.w)

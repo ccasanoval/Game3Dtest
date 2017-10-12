@@ -4,13 +4,10 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
-import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
-import com.badlogic.gdx.physics.bullet.collision.btCompoundShape
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.utils.UBJsonReader
 import com.cesoft.cesgame.bullet.MotionState
@@ -21,6 +18,10 @@ import com.cesoft.cesgame.components.ModelComponent
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object WallFactory {
+	const val LONG = 50f
+	const val HIGH = 29f
+	const val THICK = 4f
+
 	private val modelLoader = G3dModelLoader(UBJsonReader())
 	private val modelData = modelLoader.loadModelData(Gdx.files.internal("scene/wall/a.g3db"))
 
@@ -30,9 +31,6 @@ object WallFactory {
 
 		val model = Model(modelData)
 
-//		for(node in model.nodes)
-//			node.scale.scl(.8f)
-
 		pos.y += 0
 		val modelComponent = ModelComponent(model, pos)
 		//modelComponent.instance.transform.translate(pos)
@@ -40,26 +38,29 @@ object WallFactory {
 		entity.add(modelComponent)
 
 		/// COLLISION
+		val transf = modelComponent.instance.transform
 		val pos2 = Vector3()
-		modelComponent.instance.transform.getTranslation(pos)
-		pos.y+=20f
-		val transf = Matrix4().setTranslation(pos)
+		transf.getTranslation(pos2)
+		val transf2 = transf.cpy()
+		pos2.y+=20f
+		transf2.setTranslation(pos2)
 
-		val shape = btBoxShape(Vector3(5.5f,30f,54f))
+		val shape = btBoxShape(Vector3(THICK+1f,HIGH+1f,LONG+4f))
 		//val shape = Bullet.obtainStaticNodeShape(model.nodes)
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, null, shape, Vector3.Zero)
+		val motionState = MotionState(transf2)
+		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
-		rigidBody.motionState = MotionState(transf)//modelComponent.instance.transform)
+		rigidBody.motionState = motionState//modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 		rigidBody.contactCallbackFilter = BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
 		rigidBody.contactCallbackFlag = BulletComponent.SCENE_FLAG
 		rigidBody.userValue = BulletComponent.SCENE_FLAG
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
-		rigidBody.friction = 1000f
-		rigidBody.rollingFriction = 10000f
-		rigidBody.anisotropicFriction = Vector3(1000f,1000f,1000f)
-		rigidBody.spinningFriction = 10000f
+		rigidBody.friction = 1f
+		rigidBody.rollingFriction = 1f
+		rigidBody.anisotropicFriction = Vector3(1f,1f,1f)
+		rigidBody.spinningFriction = 1f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 
 		return entity

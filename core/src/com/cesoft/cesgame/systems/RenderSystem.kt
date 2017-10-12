@@ -37,8 +37,8 @@ class RenderSystem : EntitySystem() {
 		gunCamera.far = 100f
 
 		/// Luz
-		environment.set(ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f))
-		environment.add(DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f))
+		environment.set(ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.7f, 0.7f, 1f))
+		environment.add(DirectionalLight().set(0.7f, 0.4f, 0.4f, -1f, -0.8f, -0.2f))
 
 		/// Particulas TODO:
 		val billboardParticleBatch = BillboardParticleBatch()

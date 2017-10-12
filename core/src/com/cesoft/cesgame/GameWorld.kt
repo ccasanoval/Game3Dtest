@@ -18,7 +18,7 @@ import com.cesoft.cesgame.systems.*
 //
 class GameWorld(gameUI: GameUI) {
 
-	private val debugCollision = true
+	private val debugCollision = false
 	private var debugDrawer: DebugDrawer? = null
 
 	private var bulletSystem: BulletSystem
@@ -34,7 +34,6 @@ class GameWorld(gameUI: GameUI) {
 	private lateinit var gun: Entity
 
 	init {
-		System.err.println("GameWorld: INIT: -------------------------")
 		Bullet.init()
 
 		renderSystem = RenderSystem()
@@ -63,11 +62,17 @@ class GameWorld(gameUI: GameUI) {
 //		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -150f), -45f))
 //		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -150f), +45f))
 
-		//engine.addEntity(EntityFactory.createWall(Vector3(-250f, 0f, -150f), +45f))
-		engine.addEntity(WallFactory.create(Vector3(0f, 0f, -100f)))//, +45f))
+
+		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH, 0f, -100f)))//, +45f))
+		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH, 0f, -100f)))//, +45f))
+		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH, 0f, -100f-2*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH, 0f, -100f-2*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(-2*WallFactory.HIGH-5, 0f, -100f-4*WallFactory.LONG+14), +45f))
+		engine.addEntity(WallFactory.create(Vector3(+2*WallFactory.HIGH+5, 0f, -100f-4*WallFactory.LONG+14), -45f))
 
 
-		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(80f, 150f, -190f)))
+
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -190f)))
 		//engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE0, Vector3(0f, 150f, -190f)))
 		//engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1, Vector3(-80f, 150f, -190f)))
 

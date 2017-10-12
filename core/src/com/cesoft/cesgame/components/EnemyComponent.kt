@@ -9,8 +9,6 @@ import com.badlogic.gdx.utils.Disposable
 class EnemyComponent(val type: TYPE) : Component
 {
 	enum class TYPE {
-		ZOMBIE0,
-		ZOMBIE1,
 		MONSTER1,
 	}
 	enum class ACTION
