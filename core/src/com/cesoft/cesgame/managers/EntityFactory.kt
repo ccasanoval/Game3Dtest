@@ -72,8 +72,4 @@ object EntityFactory {
 		return Entity().add(ModelComponent(model, pos))
 	}
 
-	//______________________________________________________________________________________________
-	/*fun dispose() {
-		assetManager.dispose()
-	}*/
 }

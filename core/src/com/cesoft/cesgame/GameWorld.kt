@@ -10,10 +10,7 @@ import com.cesoft.cesgame.UI.GameUI
 import com.cesoft.cesgame.components.EnemyComponent
 import com.cesoft.cesgame.components.GunComponent
 import com.cesoft.cesgame.components.PlayerComponent
-import com.cesoft.cesgame.managers.EnemyFactory
-import com.cesoft.cesgame.managers.EntityFactory
-import com.cesoft.cesgame.managers.GunFactory
-import com.cesoft.cesgame.managers.WarehouseFactory
+import com.cesoft.cesgame.managers.*
 import com.cesoft.cesgame.systems.*
 
 
@@ -62,13 +59,17 @@ class GameWorld(gameUI: GameUI) {
 		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f)))
 		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
 
-		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
+//		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
 //		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -150f), -45f))
 //		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -150f), +45f))
 
-//		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(80f, 150f, -190f)))
-//		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE0, Vector3(0f, 150f, -190f)))
-//		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1, Vector3(-80f, 150f, -190f)))
+		//engine.addEntity(EntityFactory.createWall(Vector3(-250f, 0f, -150f), +45f))
+		engine.addEntity(WallFactory.create(Vector3(0f, 0f, -100f)))//, +45f))
+
+
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(80f, 150f, -190f)))
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE0, Vector3(0f, 150f, -190f)))
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1, Vector3(-80f, 150f, -190f)))
 
 		//engine.addEntity(EntityFactory.load1(Vector3(0f, 100f, -200f)))
 		//engine.addEntity(EntityFactory.load2(Vector3(0f, 0f, 0f)))

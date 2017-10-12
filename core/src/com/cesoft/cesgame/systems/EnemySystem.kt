@@ -15,7 +15,7 @@ import com.cesoft.cesgame.managers.EnemyFactory
 import java.util.Random
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+// TODO: los enemigos no me persiguen ¿?
 class EnemySystem : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
@@ -57,9 +57,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 			updateParticulas(entity)
 
 			/// Movimiento
-			//if( ! maper.get(e).alive) return //???
 			if( ! status.isAlive)return
-System.err.println("EnemySystem:update:----------------------------- "+status.isAlive)
 			val bulletPlayer = player!!.getComponent(BulletComponent::class.java)
 			val transf = Matrix4()
 			bulletPlayer.rigidBody.getWorldTransform(transf)
