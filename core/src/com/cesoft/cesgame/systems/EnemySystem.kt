@@ -15,7 +15,7 @@ import com.cesoft.cesgame.managers.EnemyFactory
 import java.util.Random
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: los enemigos no me persiguen ¿?
+//
 class EnemySystem : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
@@ -38,7 +38,6 @@ class EnemySystem : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
 		//if(entities!!.size() < 2) spawnEnemy(randomSpawnIndex)
-		//for(i in 0 until entities!!.size()) {
 		if(entities != null)
 		for(entity in entities!!) {
 
@@ -57,19 +56,18 @@ class EnemySystem : EntitySystem(), EntityListener {
 			updateParticulas(entity)
 
 			/// Movimiento
-			if( ! status.isAlive)return
 			val bulletPlayer = player!!.getComponent(BulletComponent::class.java)
 			val transf = Matrix4()
 			bulletPlayer.rigidBody.getWorldTransform(transf)
 			val playerPosition = Vector3()
 			transf.getTranslation(playerPosition)
 			//
-			EnemyFactory.mover(entity, playerPosition)
+			EnemyFactory.mover(entity, playerPosition.cpy(), delta)
 		}
 	}
 
 	//______________________________________________________________________________________________
-	private fun updateParticulas(e : Entity)
+	private fun updateParticulas(e : Entity)//TODO: llamar desde Status?
 	{
 		if( ! e.getComponent(StatusComponent::class.java).isAlive
 			&& e.getComponent(EnemyDieParticleComponent::class.java)?.used == true)

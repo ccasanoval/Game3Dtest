@@ -18,7 +18,7 @@ import com.cesoft.cesgame.systems.*
 //
 class GameWorld(gameUI: GameUI) {
 
-	private val debugCollision = false
+	private val debugCollision = true
 	private var debugDrawer: DebugDrawer? = null
 
 	private var bulletSystem: BulletSystem
@@ -55,14 +55,11 @@ class GameWorld(gameUI: GameUI) {
 			bulletSystem.collisionWorld.debugDrawer = debugDrawer
 		}
 
+		/// SCENE
 		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f), 10000f))
 		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
 
-//		engine.addEntity(WarehouseFactory.create(Vector3(  0f, 0f, -250f), 0f))
-//		engine.addEntity(WarehouseFactory.create(Vector3(+250f, 0f, -150f), -45f))
-//		engine.addEntity(WarehouseFactory.create(Vector3(-250f, 0f, -150f), +45f))
-
-
+		/// MAZE
 		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH, 0f, -100f)))//, +45f))
 		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH, 0f, -100f)))//, +45f))
 		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH, 0f, -100f-2*WallFactory.LONG)))
@@ -71,15 +68,11 @@ class GameWorld(gameUI: GameUI) {
 		engine.addEntity(WallFactory.create(Vector3(+2*WallFactory.HIGH+5, 0f, -100f-4*WallFactory.LONG+14), -45f))
 
 
-
+		/// ENEMIES
 		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -190f)))
-		//engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE0, Vector3(0f, 150f, -190f)))
-		//engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.ZOMBIE1, Vector3(-80f, 150f, -190f)))
-
-		//engine.addEntity(EntityFactory.load1(Vector3(0f, 100f, -200f)))
-		//engine.addEntity(EntityFactory.load2(Vector3(0f, 0f, 0f)))
 
 
+		/// PLAYER
 		createPlayer(Vector3(0f,150f,0f))
 		PlayerComponent.health = 100f
 		PlayerComponent.score = 0

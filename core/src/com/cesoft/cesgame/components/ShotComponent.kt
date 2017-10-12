@@ -32,7 +32,7 @@ class ShotComponent : Component {
 		const val FUERZA = 3000f
 
 		//______________________________________________________________________________________________
-		//TODO: Change again by ray collision¿?
+		//
 		fun createShot(pos: Vector3, dir: Vector3, mass: Float = ShotComponent.MASA, force: Float = ShotComponent.FUERZA): Entity {
 			val entity = Entity()
 
@@ -45,12 +45,20 @@ class ShotComponent : Component {
 			val material = Material(ColorAttribute.createDiffuse(Color.RED))
 			val flags = VertexAttributes.Usage.ColorUnpacked or VertexAttributes.Usage.Position
 			val model : Model = mb.createBox(4.5f, 4.5f, 4.5f, material, flags.toLong())
-			val modelComponent = ModelComponent(model, pos.cpy().add(0f,-15f,0f))
+			val modelComponent = ModelComponent(model, pos)
 			entity.add(modelComponent)
 
 			/// COLLISION
-			val localInertia = Vector3()
+
+			/*val transf = modelComponent.instance.transform
+			val pos2 = Vector3()
+			transf.getTranslation(pos2)
+			val transf2 = transf.cpy()
+			pos2.y+=20f
+			transf2.setTranslation(pos2)*/
+
 			val shape = btBoxShape(Vector3(.35f, .35f, .35f))
+			val localInertia = Vector3()
 			shape.calculateLocalInertia(mass, localInertia)
 			val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mass, null, shape, localInertia)
 			val rigidBody = btRigidBody(bodyInfo)

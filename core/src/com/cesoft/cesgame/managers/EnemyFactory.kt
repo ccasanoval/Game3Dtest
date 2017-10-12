@@ -92,7 +92,7 @@ object EnemyFactory
 
 		/// COLLISION
 		val localInertia = Vector3()
-		val shape = btSphereShape(17f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
+		val shape = btSphereShape(20f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, localInertia)
 		val rigidBody = btRigidBody(bodyInfo)
@@ -120,6 +120,7 @@ object EnemyFactory
 		anim.animate(animParams.id, animParams.loop, animParams.speed, animParams.offset, animParams.duration)
 	}
 	//______________________________________________________________________________________________
+	private val random = java.util.Random()
 	private class AnimationParams(var id: String, var loop: Int = -1, var speed: Float = 1f, var duration: Float = 0f, var offset: Float = -1f)
 	private fun getAnimationParams(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) : AnimationParams
 	{
@@ -128,49 +129,83 @@ object EnemyFactory
 		when(type) {
 			EnemyComponent.TYPE.MONSTER1 ->
 				return when(action) {//TODO: Acer estos objetos staticos!!! asi no tienes que crearlos....
-					EnemyComponent.ACTION.WALKING ->
-					{
-						//TODO: Random
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 30f, 0f)
-					}//0-30, 0-120
-					EnemyComponent.ACTION.RUNNING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 40f, 150f)//150-190, 150-210
-
-					EnemyComponent.ACTION.IDLE -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 27f, 0f)
-					EnemyComponent.ACTION.ATTACKING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 83f, 250f)
-
-					EnemyComponent.ACTION.REINCARNATING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed)
-					EnemyComponent.ACTION.DYING -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 28f, 390f)
+					EnemyComponent.ACTION.WALKING -> //TODO: Random
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 4.8f, 0f)
+					EnemyComponent.ACTION.RUNNING ->
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 2.4f, 6f)
+					EnemyComponent.ACTION.ATTACKING -> {
+						when(random.nextInt(1))
+						{
+							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 3.32f, 10f)
+							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 3.2f, 12.8f)
+						}
+					}
+					EnemyComponent.ACTION.IDLE ->
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 0.88f, 19.12f)
+					EnemyComponent.ACTION.REINCARNATING ->
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 26f, 0f)
+					EnemyComponent.ACTION.DYING -> {
+						when(random.nextInt(2))
+						{
+							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 1.12f, 15.6f)
+							1 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 2f, 20f)
+							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 3.4f, 22.6f)
+						}
+					}
 				}
 				/*
-				0-30  walk
-				0-120 walk
-				150-190 run
-				150-210 run
-				250-333 attack-01
-				320-400 attack-02
-				390-418 death-01
-				478-500 growl
-				500-550 death-02
-				565-650 death-03
-
-				650 --> 26s ????????????????????????????????????
-				* */
+				0-30  walk				0-1.2
+				0-120 walk				0-4.8
+				150-190 run				6-7.6
+				150-210 run				6-8.4
+				250-333 attack-01		10-13.32
+				320-400 attack-02		12.8-16
+				390-418 death-01		15.6-16.72
+				478-500 growl			19.12-20
+				500-550 death-02		20-22
+				565-650 death-03		22.6-26
+				//
+				650 --> 26s   ==> 25 fps */
 		}
 	}
 
 	//______________________________________________________________________________________________
-	fun mover(entity: Entity, playerPosition: Vector3)
+	fun mover(entity: Entity, playerPosition: Vector3, delta: Float)
 	{
+		val status = entity.getComponent(StatusComponent::class.java)
+		if( ! status.isAlive)return
+
 		val enemyPosition = Vector3()
 		val model = entity.getComponent(ModelComponent::class.java)
 		model.instance.transform.getTranslation(enemyPosition)
 		val dX = playerPosition.x - enemyPosition.x
 		val dZ = playerPosition.z - enemyPosition.z
+		val dire = playerPosition.add(enemyPosition.scl(-1f)).nor()
+
+		val fuerza: Float
+		/// Esta lejos, camina buscando
+		if( !status.walking && enemyPosition.dst(playerPosition) > 100f)
+		{
+			//TODO: Wandering ?
+			//TODO: Movil?
+			//TODO: dX,dZ tienes que normalizarlas
+			fuerza = 500f
+			status.walking = true
+		}
+		/// Esta cerca, corre a por el
+		else if( !status.running && enemyPosition.dst(playerPosition) < 100f)
+		{
+			fuerza = 1900f
+			status.running = true
+		}
+		else fuerza = 0f
 
 		// Fuerzas // TODO: cambiar por velocidad lineal?
-		val fuerza = 70f
 		val bullet = entity.getComponent(BulletComponent::class.java)
-		bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ).nor().scl(fuerza))
+		val dir = dire.scl(fuerza*delta)
+		dir.y = bullet.rigidBody.linearVelocity.y
+		bullet.rigidBody.linearVelocity = dir
+		//bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ).nor().scl(fuerza))
 
 		// Orientacion
 		val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
@@ -180,7 +215,6 @@ object EnemyFactory
 		val angulo0 :Float
 		angulo0 = when(enemy.type) {
 			EnemyComponent.TYPE.MONSTER1 -> 90f
-			else -> 0f
 		}
 		val rot = quat.setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat() + angulo0)
 		val transf = Matrix4()

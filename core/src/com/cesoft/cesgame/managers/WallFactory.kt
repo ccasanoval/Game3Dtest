@@ -29,15 +29,14 @@ object WallFactory {
 	fun create(pos: Vector3, angle: Float = 0f): Entity {
 		val entity = Entity()
 
+		/// MODELO
 		val model = Model(modelData)
-
-		pos.y += 0
 		val modelComponent = ModelComponent(model, pos)
 		//modelComponent.instance.transform.translate(pos)
 		modelComponent.instance.transform.rotate(Vector3.Y, angle)
 		entity.add(modelComponent)
 
-		/// COLLISION
+		/// COLISION
 		val transf = modelComponent.instance.transform
 		val pos2 = Vector3()
 		transf.getTranslation(pos2)

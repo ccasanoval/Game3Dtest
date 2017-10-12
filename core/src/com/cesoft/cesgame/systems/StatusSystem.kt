@@ -21,7 +21,7 @@ class StatusSystem(private val gameWorld: GameWorld) : EntitySystem() {
 		for(e in entities) {
 			val status = e.getComponent(StatusComponent::class.java)
 			status.update(delta)
-			if(status.aliveStateTime >= 3.4f)
+			if(status.isOut())
 				gameWorld.remove(e)
 		}
 	}

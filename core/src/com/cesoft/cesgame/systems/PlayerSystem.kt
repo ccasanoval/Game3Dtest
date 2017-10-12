@@ -196,7 +196,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 
 		val y = bulletComponent.rigidBody.linearVelocity.y *0.035f
 		if(y != 0f) pos.add(Vector3(0f, y, 0f))
-		pos.y += 1.5f*ALTURA
+		//pos.y += 1.5f*ALTURA
 
 		val shot = ShotComponent.createShot(pos, dir)
 		engine!!.addEntity(shot)

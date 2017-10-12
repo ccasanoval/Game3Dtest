@@ -15,7 +15,7 @@ import com.cesoft.cesgame.components.*
 // TODO: Ghost object ???
 class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityListener {
 
-	private val GRAVEDAD = 100f
+	private val GRAVEDAD = 200f
 
 	private val collisionConfig: btCollisionConfiguration = btDefaultCollisionConfiguration()
 	private val dispatcher: btCollisionDispatcher = btCollisionDispatcher(collisionConfig)
@@ -70,7 +70,6 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 						BulletComponent.SHOT_FLAG -> collShotEnemy(getIndex(userValue1), getIndex(userValue0))
 					}
 				}
-
 			}
 			return true
 		}
@@ -84,21 +83,22 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	//______________________________________________________________________________________________
 	private fun collPlayerScene()
 	{
-		System.err.println("--------- COLLISION: Player + Scene --------------------------")
+		//System.err.println("--------- COLLISION: Player + Scene --------------------------")
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerEnemy(index: Int)
 	{
-		System.err.println("--------- COLLISION: Player + Enemy --------------------------"+index)
+		//System.err.println("--------- COLLISION: Player + Enemy --------------------------"+index)
 
 		val e = enemies[index]
 		if(e?.getComponent(StatusComponent::class.java) != null
 			&& e.getComponent(StatusComponent::class.java).isAlive)
 		{
-			System.err.println("----aa------ COLLISION: Player + Enemy VIVO ::: "+index)
-			PlayerComponent.health -= 2
-			PlayerComponent.score -= 20
-			e.getComponent(StatusComponent::class.java).isAlive = false
+			//System.err.println("----aa------ COLLISION: Player + Enemy VIVO ::: "+index)
+			PlayerComponent.health -= 0.1f//delay
+			//PlayerComponent.score -= 20
+			//TODO: delay para que no mate al tipo enseguida..........
+			e.getComponent(StatusComponent::class.java).hurt() //.isAlive = false
 			enemies.remove(index)
 		}
 		//else			System.err.println("----aa------ COLLISION: Player + Enemy MUERTO")
@@ -106,23 +106,21 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	//______________________________________________________________________________________________
 	private fun collShotEnemy(iShot: Int, iEnemy: Int)
 	{
-		System.err.println("---bb------- COLLISION: Shot ("+iShot+") + enemy ("+iEnemy+")")
+		//System.err.println("---bb------- COLLISION: Shot ("+iShot+") + enemy ("+iEnemy+")")
 		//
 		var e = enemies[iEnemy]
 		if(e != null) {
-			//if(e.getComponent(StatusComponent::class.java).alive) {
-				PlayerComponent.score += 20
-				e.getComponent(StatusComponent::class.java).isAlive = false
-			//}
-			enemies.remove(iEnemy)
-			System.err.println("---bb------- COLLISION: Shot + enemy REMOVE BODY ENEMY")
+			PlayerComponent.score += 20
+			e.getComponent(StatusComponent::class.java).hurt()
+			//enemies.remove(iEnemy)
+			//System.err.println("---bb------- COLLISION: Shot + enemy REMOVE BODY ENEMY")
 		}
 		//
 		e = shots[iShot]
 		if(e!=null)
 		{
 			gameWorld.remove(e)
-			System.err.println("---bb------- COLLISION: Shot + enemy REMOVE BODY SHOT")
+			//System.err.println("---bb------- COLLISION: Shot + enemy REMOVE BODY SHOT")
 		}
 		shots.remove(iShot)
 	}
