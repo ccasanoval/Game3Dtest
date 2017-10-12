@@ -30,7 +30,8 @@ object EntityFactory {
 			or VertexAttributes.Usage.TextureCoordinates).toLong()
 
 	//______________________________________________________________________________________________
-	fun loadSuelo(pos: Vector3): Entity {
+	// TODO: Arbolitos o coches quemados.. para no ver fin mundo
+	fun loadSuelo(pos: Vector3, len: Float): Entity {
 		val entity = Entity()
 
 		/// MODEL
@@ -42,7 +43,7 @@ object EntityFactory {
 		textureAttribute1.scaleU = 80f
 		textureAttribute1.scaleV = 80f
 		material.set(textureAttribute1)
-		val modelo : Model = mb.createBox(20000f, 1f, 20000f, material, POSITION_NORMAL)
+		val modelo : Model = mb.createBox(len, 1f, len, material, POSITION_NORMAL)
 		val modelComponent = ModelComponent(modelo, pos)
 		modelComponent.instance.materials.get(0).set(textureAttribute1)
 		entity.add(modelComponent)

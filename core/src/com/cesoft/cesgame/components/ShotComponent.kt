@@ -2,6 +2,12 @@ package com.cesoft.cesgame.components
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.VertexAttributes
+import com.badlogic.gdx.graphics.g3d.Material
+import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
@@ -23,7 +29,7 @@ class ShotComponent : Component {
 
 	companion object {
 		const val MASA = .15f
-		const val FUERZA = 6000f
+		const val FUERZA = 3000f
 
 		//______________________________________________________________________________________________
 		//TODO: Change again by ray collision¿?
@@ -33,22 +39,24 @@ class ShotComponent : Component {
 			/// SHOT
 			entity.add(ShotComponent())
 
+			//https://stackoverflow.com/questions/31211829/add-glow-to-image-actor-in-libgdx
 			/// MODEL
-			//val mb = ModelBuilder()
-			//val material = Material(ColorAttribute.createDiffuse(Color.GREEN))
-			//val model : Model = mb.createBox(.5f, .5f, .5f, material, POSITION_NORMAL)
-			//val modelComponent = ModelComponent(model, pos.x, pos.y, pos.z)
-			//entity.add(modelComponent)
+			val mb = ModelBuilder()
+			val material = Material(ColorAttribute.createDiffuse(Color.RED))
+			val flags = VertexAttributes.Usage.ColorUnpacked or VertexAttributes.Usage.Position
+			val model : Model = mb.createBox(4.5f, 4.5f, 4.5f, material, flags.toLong())
+			val modelComponent = ModelComponent(model, pos.cpy().add(0f,-15f,0f))
+			entity.add(modelComponent)
 
 			/// COLLISION
 			val localInertia = Vector3()
-			val shape = btBoxShape(Vector3(.2f, .2f, .5f))
+			val shape = btBoxShape(Vector3(.35f, .35f, .35f))
 			shape.calculateLocalInertia(mass, localInertia)
 			val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mass, null, shape, localInertia)
 			val rigidBody = btRigidBody(bodyInfo)
 			rigidBody.userData = entity
-			//rigidBody.motionState = MotionState(modelComponent.instance.transform)
-			rigidBody.motionState = MotionState(Matrix4().setTranslation(pos))
+			rigidBody.motionState = MotionState(modelComponent.instance.transform)
+			//rigidBody.motionState = MotionState(Matrix4().setTranslation(pos))
 			rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
 			rigidBody.contactCallbackFilter = 0
 			rigidBody.contactCallbackFlag = BulletComponent.SHOT_FLAG

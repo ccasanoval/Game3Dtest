@@ -27,8 +27,8 @@ object EnemyFactory
 	private val modelLoader = G3dModelLoader(UBJsonReader())
 	private var models = mutableMapOf<EnemyComponent.TYPE, Model>()
 
-	private val modelDataZombie0 = modelLoader.loadModelData(Gdx.files.internal("foes/zombie1/a.g3db"))
-	private val modelDataZombie1 = modelLoader.loadModelData(Gdx.files.internal("foes/zombie1/zombie_normal.g3db"))
+	//private val modelDataZombie0 = modelLoader.loadModelData(Gdx.files.internal("foes/zombie1/a.g3db"))
+	//private val modelDataZombie1 = modelLoader.loadModelData(Gdx.files.internal("foes/zombie1/zombie_normal.g3db"))
 	//private val modelDataMonster1 = modelLoader.loadModelData(Gdx.files.internal("foes/zombie1/a.g3db"))
 
 
@@ -44,7 +44,7 @@ object EnemyFactory
 	private fun createModel(type: EnemyComponent.TYPE): Model {
 		val model: Model
 		when(type) {
-			EnemyComponent.TYPE.ZOMBIE0 -> {
+			/*EnemyComponent.TYPE.ZOMBIE0 -> {
 				model = Model(modelDataZombie0)
 				for(i in 0 until model.nodes.size - 1)
 					model.nodes[i].scale.scl(.25f)
@@ -53,13 +53,14 @@ object EnemyFactory
 				model = Model(modelDataZombie1)
 //				for(i in 0 until model.nodes.size - 1)
 //					model.nodes[i].scale.scl(5f)
-			}
+			}*/
 			EnemyComponent.TYPE.MONSTER1 -> {
 				//model = Model(modelDataMonster1)
 				model = modelLoaderJSON.loadModel(Gdx.files.getFileHandle("foes/monster1/monster.g3dj", Files.FileType.Internal))
 				for(i in 0 until model.nodes.size - 1)
 					model.nodes[i].scale.scl(0.01f)
 			}
+			else -> model = Model()
 		}
 		return model
 	}

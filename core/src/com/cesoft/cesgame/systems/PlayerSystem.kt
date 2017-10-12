@@ -103,10 +103,10 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		val tmp = Vector3()
 		val walkDirection = Vector3(0f, 0f, 0f)
 		if(Gdx.app.type == Application.ApplicationType.Android) {
-			if(     ControllerWidget.movementVector.y > +0.15) walkDirection.add(camera.direction)
-			else if(ControllerWidget.movementVector.y < -0.15) walkDirection.sub(camera.direction)
-			if(     ControllerWidget.movementVector.x < -0.15) tmp.set(camera.direction).crs(camera.up).scl(-1f)
-			else if(ControllerWidget.movementVector.x > +0.15) tmp.set(camera.direction).crs(camera.up)
+			if(     ControllerWidget.movementVector.y > +0.1) walkDirection.add(camera.direction)
+			else if(ControllerWidget.movementVector.y < -0.1) walkDirection.sub(camera.direction)
+			if(     ControllerWidget.movementVector.x < -0.1) tmp.set(camera.direction).crs(camera.up).scl(-1f)
+			else if(ControllerWidget.movementVector.x > +0.1) tmp.set(camera.direction).crs(camera.up)
 			walkDirection.add(tmp)
 			walkDirection.scl(FUERZA_MOVIL * delta)
 		}
@@ -196,6 +196,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 
 		val y = bulletComponent.rigidBody.linearVelocity.y *0.035f
 		if(y != 0f) pos.add(Vector3(0f, y, 0f))
+		pos.y += 1.5f*ALTURA
 
 		val shot = ShotComponent.createShot(pos, dir)
 		engine!!.addEntity(shot)
