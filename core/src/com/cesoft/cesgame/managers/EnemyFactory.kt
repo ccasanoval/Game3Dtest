@@ -16,6 +16,8 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 
+import com.cesoft.cesgame.components.EnemyComponent.ACTION.*
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -23,7 +25,7 @@ object EnemyFactory
 {
 	//private val modelLoaderJSON = G3dModelLoader(JsonReader())
 	private val modelLoader = G3dModelLoader(UBJsonReader())
-	private var models = mutableMapOf<EnemyComponent.TYPE, Model>()
+	private val models = mutableMapOf<EnemyComponent.TYPE, Model>()
 
 	private val modelDataMonster1 = modelLoader.loadModelData(Gdx.files.internal("foes/monster1/a.g3db"))
 
@@ -33,7 +35,7 @@ object EnemyFactory
 	{
 		for((_, model) in models)
 			model.dispose()
-		models = mutableMapOf()
+		models.clear()
 	}
 
 	//______________________________________________________________________________________________
@@ -126,31 +128,32 @@ object EnemyFactory
 	{
 		val loop = -1
 		val speed = 1f
+		val time = getActionDuration(type, action)
 		when(type) {
 			EnemyComponent.TYPE.MONSTER1 ->
 				return when(action) {//TODO: Acer estos objetos staticos!!! asi no tienes que crearlos....
 					EnemyComponent.ACTION.WALKING -> //TODO: Random
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 4.8f, 0f)
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 0f)
 					EnemyComponent.ACTION.RUNNING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 2.4f, 6f)
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 6f)
 					EnemyComponent.ACTION.ATTACKING -> {
 						when(random.nextInt(1))
 						{
-							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 3.32f, 10f)
-							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 3.2f, 12.8f)
+							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 10f)
+							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 12.8f)
 						}
 					}
 					EnemyComponent.ACTION.IDLE ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 0.88f, 19.12f)
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 19.12f)
 					EnemyComponent.ACTION.REINCARNATING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 26f, 0f)
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 0f)
+					EnemyComponent.ACTION.ACHING ->
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 22.6f)
 					EnemyComponent.ACTION.DYING -> {
-						when(random.nextInt(2))
-						{
-							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 1.12f, 15.6f)
-							1 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 2f, 20f)
-							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 3.4f, 22.6f)
-						}
+						if(random.nextInt(1) == 0)
+							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 15.6f)
+						else
+							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 20f)
 					}
 				}
 				/*
@@ -168,63 +171,121 @@ object EnemyFactory
 				650 --> 26s   ==> 25 fps */
 		}
 	}
+	//______________________________________________________________________________________________
+
+	private object ActDuration
+	{
+		val actionDuration = mapOf(
+				WALKING to 4.8f,
+				RUNNING to 2.4f,
+				ATTACKING to 3.32f,
+				IDLE to 0.88f,
+				REINCARNATING to 26f,//TODO
+				ACHING to 3.4f,
+				DYING to 2f
+		)
+	}
+	private val typeActionDuration = mapOf(
+			EnemyComponent.TYPE.MONSTER1 to ActDuration
+	)
+	fun getActionDuration(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) : Float
+	{
+		return typeActionDuration[type]!!.actionDuration[action]!!
+		/*when(type) {
+			EnemyComponent.TYPE.MONSTER1 ->
+				return when(action) {
+					EnemyComponent.ACTION.WALKING -> 4.8f
+					EnemyComponent.ACTION.RUNNING -> 2.4f
+					EnemyComponent.ACTION.ATTACKING -> 3.32f
+					EnemyComponent.ACTION.IDLE -> 0.88f
+					EnemyComponent.ACTION.REINCARNATING -> 26f//TODO
+					EnemyComponent.ACTION.ACHING -> 3.4f
+					EnemyComponent.ACTION.DYING -> 2f
+					}
+				}*/
+	}
 
 	//______________________________________________________________________________________________
 	fun mover(entity: Entity, playerPosition: Vector3, delta: Float)
 	{
+		val bullet = entity.getComponent(BulletComponent::class.java)
 		val status = entity.getComponent(StatusComponent::class.java)
-		if( ! status.isAlive)return
+
+		/*if(status.isDead() || status.isAching()) {
+			//bullet.rigidBody.linearVelocity = Vector3(0f,0f,0f)
+			return
+		}*/
 
 		val enemyPosition = Vector3()
 		val model = entity.getComponent(ModelComponent::class.java)
 		model.instance.transform.getTranslation(enemyPosition)
 		val dX = playerPosition.x - enemyPosition.x
 		val dZ = playerPosition.z - enemyPosition.z
-		val dire = playerPosition.add(enemyPosition.scl(-1f)).nor()
 
-		val fuerza: Float
+		var fuerza = 0f
+		val distanciaConPlayer = enemyPosition.dst(playerPosition)
+
+		/// Esta al lado, atacale
+		if(distanciaConPlayer < 30f)
+		{
+			status.setAttacking()//TODO: pero como hacer que le duela a player si no hay colision?
+		}
+		/// Esta cerca, corre a por el
+		else if(distanciaConPlayer < 150f)
+		{
+			fuerza = 1900f
+			status.setRunning()
+		}
 		/// Esta lejos, camina buscando
-		if( !status.walking && enemyPosition.dst(playerPosition) > 100f)
+		else //if(distanciaConPlayer > 100f)
 		{
 			//TODO: Wandering ?
 			//TODO: Movil?
-			//TODO: dX,dZ tienes que normalizarlas
 			fuerza = 500f
-			status.walking = true
+			status.setWalking()
 		}
-		/// Esta cerca, corre a por el
-		else if( !status.running && enemyPosition.dst(playerPosition) < 100f)
-		{
-			fuerza = 1900f
-			status.running = true
-		}
-		else fuerza = 0f
-
-		// Fuerzas // TODO: cambiar por velocidad lineal?
-		val bullet = entity.getComponent(BulletComponent::class.java)
-		val dir = dire.scl(fuerza*delta)
+		if(status.isAttacking() || status.isAching() || status.isDead())fuerza = 0f
+		val dir = playerPosition.add(enemyPosition.scl(-1f)).nor().scl(fuerza*delta)
 		dir.y = bullet.rigidBody.linearVelocity.y
 		bullet.rigidBody.linearVelocity = dir
-		//bullet.rigidBody.applyCentralForce(Vector3(dX, 0f, dZ).nor().scl(fuerza))
 
-		// Orientacion
-		val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
-		val quat = Quaternion()
+		System.err.println("----------------- LIN VEL:"+dir)
 
-		val enemy = entity.getComponent(EnemyComponent::class.java)
-		val angulo0 :Float
-		angulo0 = when(enemy.type) {
-			EnemyComponent.TYPE.MONSTER1 -> 90f
-		}
-		val rot = quat.setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat() + angulo0)
 		val transf = Matrix4()
 		bullet.rigidBody.getWorldTransform(transf)
 		transf.getTranslation(enemyPosition)
-		val altura = when(enemy.type) {
-			EnemyComponent.TYPE.MONSTER1 -> 0f
-			//else -> 0f
+
+		if( !status.isAching() && !status.isDead())
+		{
+			// Orientacion
+			val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
+			val rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
+			model.instance.transform.set(enemyPosition, rot)
 		}
-		model.instance.transform.set(enemyPosition.x, enemyPosition.y+altura, enemyPosition.z, rot.x, rot.y, rot.z, rot.w)
+		else
+			model.instance.transform.setTranslation(enemyPosition)
+	}
+
+
+	//______________________________________________________________________________________________
+	fun playRunning(entity: Entity) {
+		setAnimation(entity, EnemyComponent.ACTION.RUNNING)
+	}
+	//______________________________________________________________________________________________
+	fun playWalking(entity: Entity) {
+		setAnimation(entity, EnemyComponent.ACTION.WALKING)
+	}
+	//______________________________________________________________________________________________
+	fun playAttack(entity: Entity) {
+		setAnimation(entity, EnemyComponent.ACTION.ATTACKING)
+	}
+	//______________________________________________________________________________________________
+	fun playAching(entity: Entity) {
+		setAnimation(entity, EnemyComponent.ACTION.ACHING)
+	}
+	//______________________________________________________________________________________________
+	fun playDying(entity: Entity) {
+		setAnimation(entity, EnemyComponent.ACTION.DYING)
 	}
 
 }

@@ -29,7 +29,7 @@ class ShotComponent : Component {
 
 	companion object {
 		const val MASA = .15f
-		const val FUERZA = 3000f
+		const val FUERZA = 3500f
 
 		//______________________________________________________________________________________________
 		//
@@ -71,6 +71,8 @@ class ShotComponent : Component {
 			rigidBody.userValue = BulletComponent.SHOT_FLAG
 			//rigidBody.applyCentralForce(dir.scl(force))
 			entity.add(BulletComponent(rigidBody, bodyInfo))
+
+			/// Fuerza
 			rigidBody.applyCentralForce(dir.scl(force))
 
 			return entity

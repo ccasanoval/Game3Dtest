@@ -86,41 +86,37 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 		//System.err.println("--------- COLLISION: Player + Scene --------------------------")
 	}
 	//______________________________________________________________________________________________
-	private fun collPlayerEnemy(index: Int)
+	private fun collPlayerEnemy(iEnemy: Int)
 	{
 		//System.err.println("--------- COLLISION: Player + Enemy --------------------------"+index)
 
-		val e = enemies[index]
-		if(e?.getComponent(StatusComponent::class.java) != null
-			&& e.getComponent(StatusComponent::class.java).isAlive)
+		val entityEnemy = enemies[iEnemy]
+		val statusEnemy = entityEnemy?.getComponent(StatusComponent::class.java)
+		if(statusEnemy?.isDead() == false)
 		{
-			//System.err.println("----aa------ COLLISION: Player + Enemy VIVO ::: "+index)
-			PlayerComponent.health -= 0.1f//delay
-			//PlayerComponent.score -= 20
-			//TODO: delay para que no mate al tipo enseguida..........
-			e.getComponent(StatusComponent::class.java).hurt() //.isAlive = false
-			enemies.remove(index)
+			statusEnemy.setAttacking()
+			PlayerComponent.hurt(10f)
 		}
-		//else			System.err.println("----aa------ COLLISION: Player + Enemy MUERTO")
+		else
+			enemies.remove(iEnemy)
 	}
 	//______________________________________________________________________________________________
 	private fun collShotEnemy(iShot: Int, iEnemy: Int)
 	{
 		//System.err.println("---bb------- COLLISION: Shot ("+iShot+") + enemy ("+iEnemy+")")
-		//
-		var e = enemies[iEnemy]
-		if(e != null) {
-			PlayerComponent.score += 20
-			e.getComponent(StatusComponent::class.java).hurt()
-			//enemies.remove(iEnemy)
-			//System.err.println("---bb------- COLLISION: Shot + enemy REMOVE BODY ENEMY")
+		// Enemy
+		var entity = enemies[iEnemy]
+		if(entity != null) {
+			val estado = entity.getComponent(StatusComponent::class.java)
+			estado.hurt()
+			if(estado.isDead())
+				enemies.remove(iEnemy)
 		}
-		//
-		e = shots[iShot]
-		if(e!=null)
+		// Shot
+		entity = shots[iShot]
+		if(entity!=null)
 		{
-			gameWorld.remove(e)
-			//System.err.println("---bb------- COLLISION: Shot + enemy REMOVE BODY SHOT")
+			gameWorld.remove(entity)
 		}
 		shots.remove(iShot)
 	}

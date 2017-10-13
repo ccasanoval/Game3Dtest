@@ -13,16 +13,20 @@ import com.cesoft.cesgame.components.StatusComponent
 class StatusSystem(private val gameWorld: GameWorld) : EntitySystem() {
 	private lateinit var entities: ImmutableArray<Entity>
 
+	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		entities = engine!!.getEntitiesFor(Family.all(StatusComponent::class.java).get())
 	}
 
+	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
-		for(e in entities) {
-			val status = e.getComponent(StatusComponent::class.java)
+		for(entity in entities)
+		{
+			val status = entity.getComponent(StatusComponent::class.java)
 			status.update(delta)
-			if(status.isOut())
-				gameWorld.remove(e)
+			if(status.isDeadOver()) {
+				gameWorld.enemyDied(entity)
+			}
 		}
 	}
 }

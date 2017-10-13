@@ -44,7 +44,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 			/// MODEL (desapareciendo)
 			val model = entity.getComponent(ModelComponent::class.java)
 			val status = entity.getComponent(StatusComponent::class.java)
-			if( ! status.isAlive) {
+			if(status.isDead()) {
 				model.update(delta)
 			}
 
@@ -67,15 +67,15 @@ class EnemySystem : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
-	private fun updateParticulas(e : Entity)//TODO: llamar desde Status?
+	private fun updateParticulas(entity : Entity)//TODO: llamar desde Status?
 	{
-		if( ! e.getComponent(StatusComponent::class.java).isAlive
-			&& e.getComponent(EnemyDieParticleComponent::class.java)?.used == true)
+		if(entity.getComponent(StatusComponent::class.java).isDead()
+			&& entity.getComponent(EnemyDieParticleComponent::class.java)?.used == true)
 		{
-			e.getComponent(EnemyDieParticleComponent::class.java).used = true
-			val effect = e.getComponent(EnemyDieParticleComponent::class.java).originalEffect.copy()
+			entity.getComponent(EnemyDieParticleComponent::class.java).used = true
+			val effect = entity.getComponent(EnemyDieParticleComponent::class.java).originalEffect.copy()
 			(effect.getControllers().first().emitter as RegularEmitter).emissionMode = RegularEmitter.EmissionMode.EnabledUntilCycleEnd
-			effect.setTransform(e.getComponent(ModelComponent::class.java).instance.transform)
+			effect.setTransform(entity.getComponent(ModelComponent::class.java).instance.transform)
 			effect.scale(3.25f, 1f, 1.5f)
 			effect.init()
 			effect.start()

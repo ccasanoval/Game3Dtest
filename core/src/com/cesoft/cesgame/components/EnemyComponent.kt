@@ -1,8 +1,6 @@
 package com.cesoft.cesgame.components
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.gdx.graphics.g3d.Model
-import com.badlogic.gdx.utils.Disposable
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -15,6 +13,7 @@ class EnemyComponent(val type: TYPE) : Component
 	{
 		IDLE,
 		DYING,
+		ACHING,
 		ATTACKING,
 		WALKING,
 		RUNNING,

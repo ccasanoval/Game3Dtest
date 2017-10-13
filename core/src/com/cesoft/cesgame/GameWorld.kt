@@ -130,4 +130,10 @@ class GameWorld(gameUI: GameUI) {
 		bulletSystem.removeBody(entity)
 	}
 
+
+	fun enemyDied(entity: Entity)
+	{
+		remove(entity)
+		PlayerComponent.score += 20
+	}
 }
