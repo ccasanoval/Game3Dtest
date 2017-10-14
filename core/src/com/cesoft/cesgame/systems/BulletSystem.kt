@@ -95,7 +95,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 		if(statusEnemy?.isDead() == false)
 		{
 			statusEnemy.setAttacking()
-			PlayerComponent.hurt(10f)
+			PlayerComponent.hurt(5f)
 		}
 		else
 			enemies.remove(iEnemy)
@@ -108,7 +108,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 		var entity = enemies[iEnemy]
 		if(entity != null) {
 			val estado = entity.getComponent(StatusComponent::class.java)
-			estado.hurt()
+			estado.hurt(20f)
 			if(estado.isDead())
 				enemies.remove(iEnemy)
 		}

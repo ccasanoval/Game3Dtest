@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesgame.Assets
 import com.cesoft.cesgame.Settings
@@ -28,7 +27,7 @@ class HealthWidget : Actor() {
 		healthBar = ProgressBar(0f, 100f, 1f, false, progressBarStyle)
 		val ls = Label.LabelStyle()
 		ls.font = BitmapFont()
-		ls.fontColor = Color.RED
+		ls.fontColor = Color.BLUE
 		label = Label("Energía", ls)
 		label.setAlignment(Align.center)
 	}

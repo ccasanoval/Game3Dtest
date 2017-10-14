@@ -41,11 +41,11 @@ class GameUI(game: CesGame) {
 		scoreWidget.setSize(140f, 25f)
 		scoreWidget.setPosition(0f, CesGame.VIRTUAL_HEIGHT - scoreWidget.height)
 
-		pauseWidget.setSize(64f, 64f)
+		pauseWidget.setSize(500f, 250f)
 		pauseWidget.setPosition(CesGame.VIRTUAL_WIDTH - pauseWidget.width, CesGame.VIRTUAL_HEIGHT - pauseWidget.height)
 
-		gameOverWidget.setSize(280f, 100f)
-		gameOverWidget.setPosition(CesGame.VIRTUAL_WIDTH / 2 - 280 / 2, CesGame.VIRTUAL_HEIGHT / 2)
+		gameOverWidget.setSize(480f, 190f)
+		gameOverWidget.setPosition((CesGame.VIRTUAL_WIDTH - 480)/2, (CesGame.VIRTUAL_HEIGHT-190)/2)
 
 		crosshairWidget.setPosition(CesGame.VIRTUAL_WIDTH / 2 - 16, CesGame.VIRTUAL_HEIGHT / 2 - 16)
 		crosshairWidget.setSize(32f, 32f)

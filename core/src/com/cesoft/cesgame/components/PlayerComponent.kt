@@ -2,6 +2,8 @@ package com.cesoft.cesgame.components
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
+import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
@@ -22,14 +24,17 @@ object PlayerComponent : Component
 	const val FUERZA_PC = 5000f
 	//const val FRICTION = 10f
 	//const val FRICTION_ROLLING = 10f
+	private val camera: Camera = OrthographicCamera()
 
 	//______________________________________________________________________________________________
 	private var lastHurt = 0L
 	fun hurt(pain: Float)
 	{
-		if(System.currentTimeMillis() > lastHurt+500) {
+		if(System.currentTimeMillis() > lastHurt+800) {
 			health -= pain
 			lastHurt = System.currentTimeMillis()
+			// TODO: show RED PAIN-T
+			// Maybe by adding red light to renderSystem...¿?
 		}
 	}
 
@@ -38,7 +43,7 @@ object PlayerComponent : Component
 		val entity = Entity()
 
 		val localInertia = Vector3()
-		val shape = btSphereShape(ALTURA)//btCylinderShape(Vector3(3f,ALTURA/2,3f))//btCapsuleShape(1f, ALTURA)////
+		val shape = btSphereShape(ALTURA-2f)//btCylinderShape(Vector3(3f,ALTURA/2,3f))//btCapsuleShape(1f, ALTURA)////
 		shape.calculateLocalInertia(PlayerComponent.MASA, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(PlayerComponent.MASA, null, shape, localInertia)
 		val rigidBody = btRigidBody(bodyInfo)

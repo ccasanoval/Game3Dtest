@@ -130,7 +130,7 @@ class GameWorld(gameUI: GameUI) {
 		bulletSystem.removeBody(entity)
 	}
 
-
+	//______________________________________________________________________________________________
 	fun enemyDied(entity: Entity)
 	{
 		remove(entity)

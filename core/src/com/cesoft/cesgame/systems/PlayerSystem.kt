@@ -135,13 +135,13 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 				bulletComponent.rigidBody.applyCentralImpulse(Vector3.Y.scl(fuerza))
 			}
 		}
-		playerComponent.isSaltando = getPosition().y > 3*ALTURA/4
+		playerComponent.isSaltando = getPosition().y > ALTURA/4
 	}
 	//______________________________________________________________________________________________
 	private fun updateCamara()
 	{
 		val pos = getPosition()
-		pos.y += 2*ALTURA
+		pos.y += ALTURA
 		camera.position.set(pos)
 		camera.update()
 	}
@@ -221,6 +221,10 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	//______________________________________________________________________________________________
 	private fun checkGameOver() {
 		if(PlayerComponent.health <= 0 && !Settings.paused) {
+
+			//TODO: disable user movement, show camera droping to the ground and red light
+
+			// only then...
 			Settings.paused = true
 			gameUI.gameOverWidget.gameOver()
 		}

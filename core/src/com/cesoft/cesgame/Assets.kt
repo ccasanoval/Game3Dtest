@@ -24,7 +24,9 @@ class Assets {
 
 	//______________________________________________________________________________________________
 	companion object {
-		val fileHandle = Gdx.files.internal("data/uiskin.json")!!
-		val atlasFile = fileHandle.sibling("uiskin.atlas")!!
+		//val fileHandle = Gdx.files.internal("data/uiskin.json")!!
+		//val atlasFile = fileHandle.sibling("uiskin.atlas")!!
+		val fileHandle = Gdx.files.internal("skin/star-soldier-ui.json")!!
+		val atlasFile = fileHandle.sibling("star-soldier-ui.atlas")!!
 	}
 }

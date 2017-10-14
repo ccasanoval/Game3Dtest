@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
-import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
@@ -28,8 +27,8 @@ class ShotComponent : Component {
 	fun isEnd() = aliveTime > 1f
 
 	companion object {
-		const val MASA = .15f
-		const val FUERZA = 3500f
+		const val MASA = .10f
+		const val FUERZA = 3900f
 
 		//______________________________________________________________________________________________
 		//
@@ -44,19 +43,11 @@ class ShotComponent : Component {
 			val mb = ModelBuilder()
 			val material = Material(ColorAttribute.createDiffuse(Color.RED))
 			val flags = VertexAttributes.Usage.ColorUnpacked or VertexAttributes.Usage.Position
-			val model : Model = mb.createBox(4.5f, 4.5f, 4.5f, material, flags.toLong())
+			val model : Model = mb.createBox(2.5f, 2.5f, 2.5f, material, flags.toLong())
 			val modelComponent = ModelComponent(model, pos)
 			entity.add(modelComponent)
 
 			/// COLLISION
-
-			/*val transf = modelComponent.instance.transform
-			val pos2 = Vector3()
-			transf.getTranslation(pos2)
-			val transf2 = transf.cpy()
-			pos2.y+=20f
-			transf2.setTranslation(pos2)*/
-
 			val shape = btBoxShape(Vector3(.35f, .35f, .35f))
 			val localInertia = Vector3()
 			shape.calculateLocalInertia(mass, localInertia)
@@ -69,7 +60,6 @@ class ShotComponent : Component {
 			rigidBody.contactCallbackFilter = 0
 			rigidBody.contactCallbackFlag = BulletComponent.SHOT_FLAG
 			rigidBody.userValue = BulletComponent.SHOT_FLAG
-			//rigidBody.applyCentralForce(dir.scl(force))
 			entity.add(BulletComponent(rigidBody, bodyInfo))
 
 			/// Fuerza
@@ -77,7 +67,8 @@ class ShotComponent : Component {
 
 			return entity
 		}
-		/*val rayFrom = Vector3()
+		/* COLLISION BY RAY
+		val rayFrom = Vector3()
 		val rayTo = Vector3()
 		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
 		rayFrom.set(ray.origin)

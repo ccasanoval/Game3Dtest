@@ -49,9 +49,9 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 	//______________________________________________________________________________________________
 	private fun configureWidgets() {
 		//window.titleTable.add<TextButton>(closeDialog).width(64f).height(64f).pad(10f)//.height(window.padTop+10f)
-		window.add<TextButton>(restartButton).width(170f).height(60f)
+		window.add<TextButton>(restartButton).width(370f).height(95f)
 		window.row().pad(20f)
-		window.add<TextButton>(quitButton).width(170f).height(60f)
+		window.add<TextButton>(quitButton).width(300f).height(95f)
 	}
 
 	//______________________________________________________________________________________________
@@ -113,7 +113,6 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 	//______________________________________________________________________________________________
 	override fun setSize(width: Float, height: Float) {
 		super.setSize(width, height)
-		//window.setSize(width * 3f, height * 3)
-		window.setSize(180f, 180f)
+		window.setSize(width, height)
 	}
 }

@@ -63,7 +63,6 @@ class StatusComponent(private val entity: Entity) : Component//private val anima
 	private fun setAttackingState() {estado = EnemyComponent.ACTION.ATTACKING}
 	fun setAttacking()
 	{
-		System.err.println("------------------------ setAttacking....1")
 		if(isDead() || isAching())return
 		if( ! isAttacking()) {
 			setAttackingState()

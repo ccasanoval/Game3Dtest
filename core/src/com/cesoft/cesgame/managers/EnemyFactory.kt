@@ -73,7 +73,7 @@ object EnemyFactory
 
 				val anim = AnimationComponent(modelComponent.instance)
 				entity.add(anim)
-				setAnimation(entity, EnemyComponent.ACTION.IDLE)
+				setAnimation(entity, EnemyComponent.ACTION.ATTACKING)
 				//TODO: Peta al reiniciar
 //				val am = AssetManager()
 //				entity.add(EnemyDieParticleComponent(RenderSystem.particleSystem, am))
@@ -94,7 +94,7 @@ object EnemyFactory
 
 		/// COLLISION
 		val localInertia = Vector3()
-		val shape = btSphereShape(20f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
+		val shape = btSphereShape(18f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, localInertia)
 		val rigidBody = btRigidBody(bodyInfo)
@@ -126,18 +126,18 @@ object EnemyFactory
 	private class AnimationParams(var id: String, var loop: Int = -1, var speed: Float = 1f, var duration: Float = 0f, var offset: Float = -1f)
 	private fun getAnimationParams(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) : AnimationParams
 	{
-		val loop = -1
+		val loop = -1	//Continuously = -1 , OnlyOnce = 0
 		val speed = 1f
 		val time = getActionDuration(type, action)
 		when(type) {
 			EnemyComponent.TYPE.MONSTER1 ->
 				return when(action) {//TODO: Acer estos objetos staticos!!! asi no tienes que crearlos....
-					EnemyComponent.ACTION.WALKING -> //TODO: Random
+					EnemyComponent.ACTION.WALKING ->
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 0f)
 					EnemyComponent.ACTION.RUNNING ->
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 6f)
 					EnemyComponent.ACTION.ATTACKING -> {
-						when(random.nextInt(1))
+						when(random.nextInt(2))
 						{
 							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 10f)
 							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 12.8f)
@@ -150,10 +150,10 @@ object EnemyFactory
 					EnemyComponent.ACTION.ACHING ->
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 22.6f)
 					EnemyComponent.ACTION.DYING -> {
-						if(random.nextInt(1) == 0)
-							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 15.6f)
+						if(random.nextInt(2) == 0)
+							AnimationParams("MilkShape3D Skele|DefaultAction", 0, speed, time, 15.6f)
 						else
-							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 20f)
+							AnimationParams("MilkShape3D Skele|DefaultAction", 0, speed, time, 20f)
 					}
 				}
 				/*
@@ -172,38 +172,22 @@ object EnemyFactory
 		}
 	}
 	//______________________________________________________________________________________________
-
 	private object ActDuration
 	{
 		val actionDuration = mapOf(
 				WALKING to 4.8f,
 				RUNNING to 2.4f,
-				ATTACKING to 3.32f,
+				ATTACKING to 3.15f,
 				IDLE to 0.88f,
 				REINCARNATING to 26f,//TODO
 				ACHING to 3.4f,
 				DYING to 2f
 		)
 	}
-	private val typeActionDuration = mapOf(
-			EnemyComponent.TYPE.MONSTER1 to ActDuration
-	)
-	fun getActionDuration(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) : Float
-	{
-		return typeActionDuration[type]!!.actionDuration[action]!!
-		/*when(type) {
-			EnemyComponent.TYPE.MONSTER1 ->
-				return when(action) {
-					EnemyComponent.ACTION.WALKING -> 4.8f
-					EnemyComponent.ACTION.RUNNING -> 2.4f
-					EnemyComponent.ACTION.ATTACKING -> 3.32f
-					EnemyComponent.ACTION.IDLE -> 0.88f
-					EnemyComponent.ACTION.REINCARNATING -> 26f//TODO
-					EnemyComponent.ACTION.ACHING -> 3.4f
-					EnemyComponent.ACTION.DYING -> 2f
-					}
-				}*/
-	}
+	private val typeActionDuration = mapOf(EnemyComponent.TYPE.MONSTER1 to ActDuration)
+	fun getActionDuration(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) =
+		typeActionDuration[type]!!.actionDuration[action]!!
+
 
 	//______________________________________________________________________________________________
 	fun mover(entity: Entity, playerPosition: Vector3, delta: Float)
@@ -226,9 +210,11 @@ object EnemyFactory
 		val distanciaConPlayer = enemyPosition.dst(playerPosition)
 
 		/// Esta al lado, atacale
-		if(distanciaConPlayer < 30f)
+		if(distanciaConPlayer < 38f)
 		{
 			status.setAttacking()//TODO: pero como hacer que le duela a player si no hay colision?
+			val pain = 10
+			PlayerComponent.hurt(delta * pain)
 		}
 		/// Esta cerca, corre a por el
 		else if(distanciaConPlayer < 150f)
@@ -255,15 +241,19 @@ object EnemyFactory
 		bullet.rigidBody.getWorldTransform(transf)
 		transf.getTranslation(enemyPosition)
 
-		if( !status.isAching() && !status.isDead())
-		{
+		//if( !status.isAching() && !status.isDead())	{
 			// Orientacion
 			val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
 			val rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
 			model.instance.transform.set(enemyPosition, rot)
-		}
+		/*}
 		else
-			model.instance.transform.setTranslation(enemyPosition)
+		{
+			// Orientacion
+			val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
+			val rot = Quaternion().setFromAxis(0f, 1f, 0f, 0f)
+			model.instance.transform.set(enemyPosition, rot)
+		}*/
 	}
 
 
