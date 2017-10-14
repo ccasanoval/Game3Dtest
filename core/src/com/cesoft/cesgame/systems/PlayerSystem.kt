@@ -31,6 +31,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	private lateinit var bulletComponent : BulletComponent
 
 	//private var rayTestCB: ClosestRayResultCallback = ClosestRayResultCallback(Vector3.Zero, Vector3.Z)
+	private var altura = ALTURA
 	lateinit var gun: Entity
 
 	//______________________________________________________________________________________________
@@ -43,7 +44,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		updateMovement(delta)
 		updateDisparo(delta)
 		updateStatus()
-		checkGameOver()
+		checkGameOver(delta)
 		updateCamara()
 	}
 
@@ -56,6 +57,8 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	//______________________________________________________________________________________________
 	private fun updateRotacion(delta: Float)
 	{
+		if(PlayerComponent.health <= 0f)return
+
 		val deltaX: Float
 		val deltaY: Float
 		val tmp = Vector3()
@@ -98,10 +101,18 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	//______________________________________________________________________________________________
 	private fun updateTraslacion(delta: Float)
 	{
+		val walkDirection = Vector3(0f, 0f, 0f)
+
+		/// Esta muerto...
+		if(PlayerComponent.health <= 0f)//TODO: idem en rotacion
+		{
+			altura -= delta*10f
+			return
+		}
+
 		//TODO: no mover si esta saltando?
 		//if(playerComponent!!.isSaltando)return
 		val tmp = Vector3()
-		val walkDirection = Vector3(0f, 0f, 0f)
 		if(Gdx.app.type == Application.ApplicationType.Android) {
 			if(     ControllerWidget.movementVector.y > +0.15) walkDirection.add(camera.direction)
 			else if(ControllerWidget.movementVector.y < -0.15) walkDirection.sub(camera.direction)
@@ -141,7 +152,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	private fun updateCamara()
 	{
 		val pos = getPosition()
-		pos.y += ALTURA
+		pos.y += altura
 		camera.position.set(pos)
 		camera.update()
 	}
@@ -191,18 +202,12 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		val dir = camera.direction.cpy()
 		val pos = camera.position.cpy()
 		val vel = bulletComponent.rigidBody.linearVelocity.cpy()
-		System.err.println("FIRE: --1---- "+dir+" : "+pos+" : "+vel)
 
 		vel.y = 0f
 		pos.add(vel.nor().scl(5f))
 
-		System.err.println("FIRE: --2---- "+dir+" : "+pos+" : "+vel)
-
 		val y = bulletComponent.rigidBody.linearVelocity.y *0.035f
 		if(y != 0f) pos.add(Vector3(0f, y, 0f))
-		//pos.y += 1.5f*ALTURA
-
-		System.err.println("FIRE: --3---- "+dir+" : "+pos+" : "+vel)
 
 		val shot = ShotComponent.createShot(pos, dir)
 		engine!!.addEntity(shot)
@@ -219,14 +224,15 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 	}
 
 	//______________________________________________________________________________________________
-	private fun checkGameOver() {
+	private var delayDeath = 0f
+	private fun checkGameOver(delta: Float) {
 		if(PlayerComponent.health <= 0 && !Settings.paused) {
-
-			//TODO: disable user movement, show camera droping to the ground and red light
-
-			// only then...
-			Settings.paused = true
-			gameUI.gameOverWidget.gameOver()
+			if(delayDeath > 2f)
+			{
+				Settings.paused = true
+				gameUI.gameOverWidget.gameOver()
+			}
+			delayDeath += delta
 		}
 	}
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
+import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesgame.Assets
 import com.cesoft.cesgame.Settings
@@ -20,14 +21,16 @@ class HealthWidget : Actor() {
 	//______________________________________________________________________________________________
 	init {
 		val assets = Assets()
+
 		progressBarStyle = ProgressBar.ProgressBarStyle(
-				assets.skin.newDrawable("white", Color.RED),
+				assets.skin.newDrawable("progress-bar-back", Color.RED),
 				assets.skin.newDrawable("white", Color.GREEN))
 		progressBarStyle.knobBefore = progressBarStyle.knob
 		healthBar = ProgressBar(0f, 100f, 1f, false, progressBarStyle)
+
 		val ls = Label.LabelStyle()
 		ls.font = BitmapFont()
-		ls.fontColor = Color.BLUE
+		ls.fontColor = Color.YELLOW
 		label = Label("Energía", ls)
 		label.setAlignment(Align.center)
 	}
@@ -56,15 +59,16 @@ class HealthWidget : Actor() {
 	override fun setSize(width: Float, height: Float) {
 		super.setSize(width, height)
 		healthBar.setSize(width, height)
-		progressBarStyle.background.minWidth = width
-		progressBarStyle.background.minHeight = height
-		progressBarStyle.knob.minWidth = healthBar.value
-		progressBarStyle.knob.minHeight = height
+		progressBarStyle.background.minWidth = width+1
+		progressBarStyle.background.minHeight = height+1
+		//progressBarStyle.knob.minWidth = 0f//healthBar.value
+		progressBarStyle.knob.minHeight = height-23f
 		label.setSize(width, height)
 	}
 
 	//______________________________________________________________________________________________
 	fun setValue(value: Float) {
-		healthBar.value = value
+		healthBar.value = value-3
+		label.setText(value.toInt().toString()+" %")
 	}
 }

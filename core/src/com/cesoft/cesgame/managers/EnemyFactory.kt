@@ -190,6 +190,7 @@ object EnemyFactory
 
 
 	//______________________________________________________________________________________________
+	//TODO: IA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	fun mover(entity: Entity, playerPosition: Vector3, delta: Float)
 	{
 		val bullet = entity.getComponent(BulletComponent::class.java)
@@ -212,8 +213,8 @@ object EnemyFactory
 		/// Esta al lado, atacale
 		if(distanciaConPlayer < 38f)
 		{
-			status.setAttacking()//TODO: pero como hacer que le duela a player si no hay colision?
-			val pain = 10
+			status.setAttacking()
+			val pain = 20f
 			PlayerComponent.hurt(delta * pain)
 		}
 		/// Esta cerca, corre a por el

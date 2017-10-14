@@ -56,10 +56,10 @@ class GameOverWidget(private val game: CesGame, stage: Stage) : Actor() {
 	//______________________________________________________________________________________________
 	override fun setPosition(x: Float, y: Float) {
 		super.setPosition(0f, 0f)
-		image.setPosition(x, y+30)
+		image.setPosition(x, y+50)
 		val x0 = (CesGame.VIRTUAL_WIDTH - retryB.width - quitB.width - 10)/2
-		retryB.setPosition(x0, y-40)
-		quitB.setPosition(retryB.x+retryB.width+10, y-40)
+		retryB.setPosition(x0, y-50)
+		quitB.setPosition(retryB.x+retryB.width+10, y-50)
 		//leaderB.setPosition(x + retryB.width - 25, y - 96)
 	}
 
@@ -67,8 +67,8 @@ class GameOverWidget(private val game: CesGame, stage: Stage) : Actor() {
 	override fun setSize(width: Float, height: Float) {
 		super.setSize(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
 		image.setSize(width, height)
-		retryB.setSize(width/1.5f, height/2)
-		quitB.setSize(width/1.5f, height/2)
+		retryB.setSize(width/1.75f, height/2.5f)
+		quitB.setSize(width/1.75f, height/2.5f)
 		//leaderB.setSize(width / 2.5f, height / 2)
 	}
 

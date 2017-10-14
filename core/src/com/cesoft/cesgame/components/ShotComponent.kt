@@ -35,6 +35,8 @@ class ShotComponent : Component {
 		fun createShot(pos: Vector3, dir: Vector3, mass: Float = ShotComponent.MASA, force: Float = ShotComponent.FUERZA): Entity {
 			val entity = Entity()
 
+			pos.add(dir.scl(3f))
+
 			/// SHOT
 			entity.add(ShotComponent())
 

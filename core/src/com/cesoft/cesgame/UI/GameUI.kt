@@ -35,17 +35,17 @@ class GameUI(game: CesGame) {
 	}
 
 	private fun configureWidgets() {
-		healthWidget.setSize(140f, 25f)
-		healthWidget.setPosition(CesGame.VIRTUAL_WIDTH / 2 - healthWidget.width / 2, 0f)
+		healthWidget.setSize(200f, 60f)
+		healthWidget.setPosition(CesGame.VIRTUAL_WIDTH/2 - healthWidget.width/2, 0f)
 
-		scoreWidget.setSize(140f, 25f)
+		scoreWidget.setSize(220f, 25f)
 		scoreWidget.setPosition(0f, CesGame.VIRTUAL_HEIGHT - scoreWidget.height)
 
 		pauseWidget.setSize(500f, 250f)
 		pauseWidget.setPosition(CesGame.VIRTUAL_WIDTH - pauseWidget.width, CesGame.VIRTUAL_HEIGHT - pauseWidget.height)
 
-		gameOverWidget.setSize(480f, 190f)
-		gameOverWidget.setPosition((CesGame.VIRTUAL_WIDTH - 480)/2, (CesGame.VIRTUAL_HEIGHT-190)/2)
+		gameOverWidget.setSize(500f, 210f)
+		gameOverWidget.setPosition((CesGame.VIRTUAL_WIDTH - 500)/2, (CesGame.VIRTUAL_HEIGHT-210)/2)
 
 		crosshairWidget.setPosition(CesGame.VIRTUAL_WIDTH / 2 - 16, CesGame.VIRTUAL_HEIGHT / 2 - 16)
 		crosshairWidget.setSize(32f, 32f)

@@ -16,15 +16,12 @@ import com.cesoft.cesgame.bullet.MotionState
 object PlayerComponent : Component
 {
 	var isSaltando = false
-	var health: Float = 100f //TODO: pasar a la clase
-	var score: Int = 0 //TODO: pasar a la clase?
+	var health: Float = 100f
+	var score: Int = 0
 	const val MASA = 65f
 	const val ALTURA = 15f
 	const val FUERZA_MOVIL = 2000f
 	const val FUERZA_PC = 5000f
-	//const val FRICTION = 10f
-	//const val FRICTION_ROLLING = 10f
-	private val camera: Camera = OrthographicCamera()
 
 	//______________________________________________________________________________________________
 	private var lastHurt = 0L
