@@ -24,7 +24,6 @@ object GunFactory
 
 	init {
 		files[GunComponent.TYPE.CZ805] = Gdx.files.getFileHandle("weapons/cz805/a.g3db", Files.FileType.Internal)
-		files[GunComponent.TYPE.AK47] = Gdx.files.getFileHandle("weapons/ak47/a.g3db", Files.FileType.Internal)
 	}
 
 	//______________________________________________________________________________________________
@@ -43,7 +42,6 @@ object GunFactory
 				for(i in 0 until model.nodes.size - 1)
 					model.nodes[i].scale.scl(0.03f)
 			}
-			GunComponent.TYPE.AK47 -> {}
 		}
 		return model
 	}
@@ -66,13 +64,7 @@ object GunFactory
 				GunFireWidget.setPosition(30f, -60f)
 
 			}
-			GunComponent.TYPE.AK47 -> {
-				val modelComponent = ModelComponent(models[type]!!, Vector3(25f, 0f, -5f))
-				modelComponent.instance.transform.rotate(0f, 1f, 0f, 100f)
-				//modelComponent.instance.transform.rotate(1f, 0f, 0f, -7f)
-				entity.add(modelComponent).add(AnimationComponent(modelComponent.instance))
-				GunFireWidget.setPosition(20f, -100f)
-			}
+
 		}
 
 		return entity
@@ -99,19 +91,12 @@ object GunFactory
 		when(type) {
 			GunComponent.TYPE.CZ805 ->
 				return when(action) {
-						//var id: String, var loop: Int = 1, var speed: Float = 1f, var duration: Float = 0f, var offset: Float = -1f)
 					GunComponent.ACTION.IDLE -> AnimationParams("cz|idle")
 					GunComponent.ACTION.SHOOT -> AnimationParams("cz|shoot")
 					GunComponent.ACTION.RELOAD -> AnimationParams("cz|reload")
 					GunComponent.ACTION.DRAW -> AnimationParams("cz|draw")
 				}
-			GunComponent.TYPE.AK47 ->
-				return when(action) {
-					GunComponent.ACTION.IDLE -> AnimationParams("")
-					GunComponent.ACTION.SHOOT -> AnimationParams("")
-					GunComponent.ACTION.RELOAD -> AnimationParams("Take 001")
-					GunComponent.ACTION.DRAW -> AnimationParams("")
-				}
+
 		}
 	}
 

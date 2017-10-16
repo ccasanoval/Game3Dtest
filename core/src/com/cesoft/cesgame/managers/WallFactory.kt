@@ -18,12 +18,12 @@ import com.cesoft.cesgame.components.ModelComponent
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object WallFactory {
-	const val LONG = 50f
-	const val HIGH = 29f
-	const val THICK = 4f
+	const val LONG = 48f
+	const val HIGH = 27f
+	const val THICK = 3f
 
 	private val modelLoader = G3dModelLoader(UBJsonReader())
-	private val modelData = modelLoader.loadModelData(Gdx.files.internal("scene/wall/a.g3db"))
+	private val modelData = modelLoader.loadModelData(Gdx.files.internal("scene/wall/wall.g3db"))
 
 	//______________________________________________________________________________________________
 	fun create(pos: Vector3, angle: Float = 0f): Entity {
@@ -44,7 +44,7 @@ object WallFactory {
 		pos2.y+=20f
 		transf2.setTranslation(pos2)
 
-		val shape = btBoxShape(Vector3(THICK+1f,HIGH+1f,LONG+4f))
+		val shape = btBoxShape(Vector3(THICK+1f,HIGH+1f,LONG+2f))
 		//val shape = Bullet.obtainStaticNodeShape(model.nodes)
 		val motionState = MotionState(transf2)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)

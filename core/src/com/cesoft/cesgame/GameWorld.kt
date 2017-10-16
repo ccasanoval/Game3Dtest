@@ -55,6 +55,7 @@ class GameWorld(gameUI: GameUI) {
 			bulletSystem.collisionWorld.debugDrawer = debugDrawer
 		}
 
+		// TODO: Cargar desde constructor...
 		/// SCENE
 		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f), 10000f))
 		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
@@ -66,6 +67,16 @@ class GameWorld(gameUI: GameUI) {
 		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH, 0f, -100f-2*WallFactory.LONG)))
 		engine.addEntity(WallFactory.create(Vector3(-2*WallFactory.HIGH-5, 0f, -100f-4*WallFactory.LONG+14), +45f))
 		engine.addEntity(WallFactory.create(Vector3(+2*WallFactory.HIGH+5, 0f, -100f-4*WallFactory.LONG+14), -45f))
+
+		/// RAMPAS
+		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG, 2*WallFactory.HIGH, -100f+RampFactory.LONG), 90f, 0f))
+		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG, 2*WallFactory.HIGH, -100f+RampFactory.LONG), 90f, 0f))
+		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG, 2*WallFactory.HIGH, -100f), 90f, 0f))
+		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG, 2*WallFactory.HIGH, -100f), 90f, 0f))
+		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG, 2*WallFactory.HIGH, -100f-2*RampFactory.LONG), 90f, 0f))
+		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG, 2*WallFactory.HIGH, -100f-2*RampFactory.LONG), 90f, 0f))
+
+		//engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG, 2*WallFactory.HIGH, -100f+RampFactory.LONG), 90f, 0f))
 
 
 		/// ENEMIES
@@ -83,7 +94,7 @@ class GameWorld(gameUI: GameUI) {
 	private fun createPlayer(pos: Vector3) {
 		player = PlayerComponent.create(pos)
 		engine.addEntity(player)
-		gun = GunFactory.create(GunComponent.TYPE.AK47)//Dentro de playerSystem??
+		gun = GunFactory.create(GunComponent.TYPE.CZ805)//Dentro de playerSystem??
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun

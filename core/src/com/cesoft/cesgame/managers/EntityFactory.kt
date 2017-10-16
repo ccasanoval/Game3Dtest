@@ -37,7 +37,7 @@ object EntityFactory {
 		/// MODEL
 		val mb = ModelBuilder()
 		val material = Material(ColorAttribute.createDiffuse(Color.DARK_GRAY))
-		val texture = Texture(Gdx.files.internal("data/ground.jpg"))
+		val texture = Texture(Gdx.files.internal("scene/ground.jpg"))
 		texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture)
 		textureAttribute1.scaleU = 80f

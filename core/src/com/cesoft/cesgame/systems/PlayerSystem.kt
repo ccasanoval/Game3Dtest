@@ -53,7 +53,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 	private fun updateMovement(delta: Float) {
 		updateRotacion(delta)
 		updateTraslacion(delta)
-		updateSalto()
+		updateSaltando()
 	}
 	//______________________________________________________________________________________________
 	private fun updateRotacion(delta: Float)
@@ -66,7 +66,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 
 		if(Gdx.app.type == Application.ApplicationType.Android) {
 			deltaX = -ControllerWidget.watchVector.x * 85f * delta
-			deltaY = ControllerWidget.watchVector.y * 45f * delta
+			deltaY = ControllerWidget.watchVector.y * 55f * delta
 		}
 		else {
 			deltaX = -Gdx.input.deltaX * 5f * delta
@@ -85,8 +85,8 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 		{
 			if(pitch - pr > 100)
 				pr = -(100 - pitch)
-			else if(pitch - pr < 70)
-				pr = pitch - 70
+			else if(pitch - pr < 50)
+				pr = pitch - 50
 		}
 		else {
 			if(pitch - pr > 150)
@@ -131,23 +131,26 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 			walkDirection.scl(PlayerComponent.FUERZA_PC * delta)
 		}
 		walkDirection.y = 0f
-		//bulletComponent.rigidBody.applyCentralForce(walkDirection)
-		//bulletComponent.rigidBody.applyCentralImpulse(walkDirection)
 		walkDirection.y = bulletComponent.rigidBody.linearVelocity.y
 		bulletComponent.rigidBody.linearVelocity = walkDirection
 
 	}
 	//______________________________________________________________________________________________
-	private fun updateSalto() {
+	private fun updateSaltando() {
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
 		{
 			System.err.println("------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isSaltando)
 			if( ! playerComponent.isSaltando) {
-				val fuerza = 1.028f
-				bulletComponent.rigidBody.applyCentralImpulse(Vector3.Y.scl(fuerza))
+				playerComponent.isSaltando = true
+				val fuerza = 40f
+				val vel = bulletComponent.rigidBody.linearVelocity.cpy()
+				vel.y += fuerza
+				bulletComponent.rigidBody.linearVelocity = vel
+				//bulletComponent.rigidBody.applyCentralImpulse(Vector3.Y.scl(fuerza))
 			}
 		}
-		playerComponent.isSaltando = getPosition().y > ALTURA/4
+		//TODO: utilizar Ray ?
+		//playerComponent.isSaltando = getPosition().y > ALTURA/6 ==> No vale con rampas!!!
 	}
 	//______________________________________________________________________________________________
 	private fun updateCamara()
@@ -254,7 +257,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 			/// Enemy
 			entity.getComponent(StatusComponent::class.java)?.hurt()
 			/// Draw shot on Wall or Enemy
-			//TODO: draw nubecilla de humo !!!!!!!!!!!!!!!!1
+			//TODO: draw nubecilla de humo !!!!!!!!!!!!!!!! con particles?
 			/*val pos = Vector3()
 			rayTestCB.getHitPointWorld(pos)
 

@@ -15,6 +15,8 @@ import com.cesoft.cesgame.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
+import com.badlogic.gdx.physics.bullet.collision.btBoxShape
+import com.badlogic.gdx.physics.bullet.collision.btCylinderShape
 
 import com.cesoft.cesgame.components.EnemyComponent.ACTION.*
 
@@ -94,7 +96,7 @@ object EnemyFactory
 
 		/// COLLISION
 		val localInertia = Vector3()
-		val shape = btSphereShape(18f)//btCylinderShape(Vector3(4f,4f,4f))//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
+		val shape = btBoxShape(Vector3(10f,9f,10f))//btCylinderShape(Vector3(14f,5f,14f))//btSphereShape(18f)//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, localInertia)
 		val rigidBody = btRigidBody(bodyInfo)

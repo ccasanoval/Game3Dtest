@@ -40,7 +40,7 @@ object PlayerComponent : Component
 		val entity = Entity()
 
 		val localInertia = Vector3()
-		val shape = btSphereShape(ALTURA-2f)//btCylinderShape(Vector3(3f,ALTURA/2,3f))//btCapsuleShape(1f, ALTURA)////
+		val shape = btSphereShape(ALTURA-4f)//btCylinderShape(Vector3(3f,ALTURA/2,3f))//btCapsuleShape(1f, ALTURA)////
 		shape.calculateLocalInertia(PlayerComponent.MASA, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(PlayerComponent.MASA, null, shape, localInertia)
 		val rigidBody = btRigidBody(bodyInfo)

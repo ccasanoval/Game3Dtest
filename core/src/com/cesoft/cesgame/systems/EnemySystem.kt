@@ -37,20 +37,21 @@ class EnemySystem : EntitySystem(), EntityListener {
 
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
-		//if(entities!!.size() < 2) spawnEnemy(randomSpawnIndex)
+		//TODO: humo donde aparece bicho...
+		if(entities!!.size() < 5) spawnEnemy(randomSpawnIndex)
+
 		if(entities != null)
 		for(entity in entities!!) {
 
 			/// MODEL (desapareciendo)
 			val model = entity.getComponent(ModelComponent::class.java)
 			val status = entity.getComponent(StatusComponent::class.java)
-			if(status.isDead()) {
+			if(status.isDead())
 				model.update(delta)
-			}
 
 			/// Animacion
 			val animat = entity.getComponent(AnimationComponent::class.java)
-			if(animat != null)animat.update(delta)
+			animat?.update(delta)
 
 			/// Particulas
 			updateParticulas(entity)
