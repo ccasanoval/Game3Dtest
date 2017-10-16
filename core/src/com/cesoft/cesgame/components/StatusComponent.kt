@@ -21,17 +21,18 @@ class StatusComponent(private val entity: Entity) : Component//private val anima
 	private var achingStateTime: Float = 0f
 	fun isAching() = estado == EnemyComponent.ACTION.ACHING
 	private fun setAchingState() {estado = EnemyComponent.ACTION.ACHING}
-	fun hurt(pain: Float = 34f)
+	fun hurt(pain: Float = 30f)
 	{
 		if(isDead())return
-		health -= pain
-		System.err.println("-------------- HURT ----------------"+health)
-		if( ! isAching() && health > 0)
+		if( ! isAching())
 		{
+			health -= pain
 			achingStateTime = 0f
 			setAchingState()
 			EnemyFactory.playAching(entity)
 		}
+		else
+			health -= 1f
 	}
 
 	/// RUNNING
@@ -92,7 +93,7 @@ class StatusComponent(private val entity: Entity) : Component//private val anima
 				setWalking()
 			}
 		}
-		System.err.println("STATUS UPDATE--"+health+"------"+achingStateTime+"----ATTACK:"+isAttacking()+"-----DEAD:"+isDead()+" : ACHE:"+isAching()+" : WALK"+isWalking()+" : RUN"+isRunning())
+		//System.err.println("STATUS UPDATE--"+health+"------"+achingStateTime+"----ATTACK:"+isAttacking()+"-----DEAD:"+isDead()+" : ACHE:"+isAching()+" : WALK"+isWalking()+" : RUN"+isRunning())
 	}
 
 	//______________________________________________________________________________________________

@@ -70,6 +70,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 						BulletComponent.SHOT_FLAG -> collShotEnemy(getIndex(userValue1), getIndex(userValue0))
 					}
 				}
+				//BulletComponent.SHOT_FLAG -> collShotWall() //TODO: dejar marca de disparo en pared
 			}
 			return true
 		}

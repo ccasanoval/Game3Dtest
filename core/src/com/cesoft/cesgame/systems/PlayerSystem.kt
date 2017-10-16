@@ -17,6 +17,7 @@ import com.cesoft.cesgame.UI.GameUI
 import com.cesoft.cesgame.components.*
 import com.cesoft.cesgame.managers.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
 import com.cesoft.cesgame.components.PlayerComponent.ALTURA
 import com.cesoft.cesgame.components.PlayerComponent.FUERZA_MOVIL
 import com.cesoft.cesgame.managers.GunFactory
@@ -24,13 +25,13 @@ import com.cesoft.cesgame.managers.GunFactory
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
+class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, private val bulletSystem: BulletSystem)
 	: EntitySystem(), EntityListener, InputProcessor
 {
 	private lateinit var playerComponent : PlayerComponent
 	private lateinit var bulletComponent : BulletComponent
 
-	//private var rayTestCB: ClosestRayResultCallback = ClosestRayResultCallback(Vector3.Zero, Vector3.Z)
+	private var rayTestCB: ClosestRayResultCallback = ClosestRayResultCallback(Vector3.Zero, Vector3.Z)
 	private var altura = ALTURA
 	lateinit var gun: Entity
 
@@ -187,19 +188,34 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 				fire()
 			}
 		}
+		//TODO: add ammo, que se gaste, mas contador
 		else if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)) {
 			if(deltaReload > 5f) {
 				System.err.println("------ RELOAD ! -------------------")
 				deltaReload = 0f
-				reload()
+				GunFactory.animate(gun, GunComponent.ACTION.RELOAD)
+			}
+		}
+		else if(Gdx.input.isKeyPressed(Input.Keys.ALT_RIGHT)) {
+			if(deltaReload > 5f) {
+				System.err.println("------ RELOAD 2! -------------------")
+				deltaReload = 0f
+				GunFactory.animate(gun, GunComponent.ACTION.IDLE)
+			}
+		}
+		else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)) {
+			if(deltaReload > 5f) {
+				System.err.println("------ RELOAD 2! -------------------")
+				deltaReload = 0f
+				GunFactory.animate(gun, GunComponent.ACTION.DRAW)
 			}
 		}
 		gun.getComponent(AnimationComponent::class.java).update(delta)
 	}
 	//______________________________________________________________________________________________
-	//TODO: crear pelotilla de fuego? mostrar fuego en cañon?
+	//
 	private fun fire() {
-		val dir = camera.direction.cpy()
+		/*val dir = camera.direction.cpy()
 		val pos = camera.position.cpy()
 		val vel = bulletComponent.rigidBody.linearVelocity.cpy()
 
@@ -210,17 +226,47 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera)
 		if(y != 0f) pos.add(Vector3(0f, y, 0f))
 
 		val shot = ShotComponent.createShot(pos, dir)
-		engine!!.addEntity(shot)
+		engine!!.addEntity(shot)*/
+
+		disparar()
 
 		//Animacion
 		GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
 	}
+	fun disparar()
+	{
+		//-------------------
+		/// COLLISION BY RAY
+		val rayFrom = Vector3()
+		val rayTo = Vector3()
+		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
+		rayFrom.set(ray.origin)
+		rayTo.set(ray.direction).scl(250f).add(rayFrom)
+		rayTestCB.collisionObject = null
+		rayTestCB.closestHitFraction = 1f
+		rayTestCB.setRayFromWorld(rayFrom)
+		rayTestCB.setRayToWorld(rayTo)
+		bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB)
+		if(rayTestCB.hasHit())
+		{
+			Gdx.app.error("CESGAME", "-------------------------- DISPARO DIO ------------------------------")
+			val entity = rayTestCB.collisionObject.userData as Entity
+			/// Enemy
+			entity.getComponent(StatusComponent::class.java)?.hurt()
+			/// Draw shot on Wall or Enemy
+			//TODO: draw nubecilla de humo !!!!!!!!!!!!!!!!1
+			/*val pos = Vector3()
+			rayTestCB.getHitPointWorld(pos)
 
-	//______________________________________________________________________________________________
-	private fun reload() {
-		//TODO: add ammo, que se gaste, mas contador
-		//Animacion
-		GunFactory.animate(gun, GunComponent.ACTION.RELOAD, 1, 1f)
+			val mb = ModelBuilder()
+			val material = Material(ColorAttribute.createDiffuse(Color.RED))
+			val flags = VertexAttributes.Usage.ColorUnpacked or VertexAttributes.Usage.Position
+			val model : Model = mb.createBox(.5f, .5f, .5f, material, flags.toLong())
+			val modelComponent = ModelComponent(model, pos)
+			val entityDest = Entity()
+			entityDest.add(modelComponent)
+			engine!!.addEntity(entityDest)*/
+		}
 	}
 
 	//______________________________________________________________________________________________

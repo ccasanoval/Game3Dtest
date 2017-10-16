@@ -19,6 +19,7 @@ import com.cesoft.cesgame.components.GunComponent
 import com.cesoft.cesgame.components.ModelComponent
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class RenderSystem : EntitySystem() {
@@ -61,7 +62,6 @@ class RenderSystem : EntitySystem() {
 		batch.end()
 		renderParticleEffects()
 		drawGun()
-		//drawLaser()
 	}
 
 	//______________________________________________________________________________________________
@@ -84,136 +84,6 @@ class RenderSystem : EntitySystem() {
 	}
 
 	//______________________________________________________________________________________________
-	//______________________________________________________________________________________________
-	/*private var shapeRenderer: ShapeRenderer
-	private var spriteBatch: SpriteBatch
-
-	private var startBackground: TextureRegion
-	private var startOverlay: TextureRegion
-	private var midBackground: TextureRegion
-	private var midOverlay: TextureRegion
-	private var endBackground: TextureRegion
-	private var endOverlay: TextureRegion
-	private var animation: TextureRegion
-
-	private var rotation: Float = 0.toFloat()
-	private var distance: Float = 0.toFloat()
-	var isFiring: Boolean = false
-	private var laserDrawnTill: Long = 0
-	private var duration: Long = 0
-	private var tracker = 0f
-
-	init{
-		shapeRenderer = ShapeRenderer()
-		spriteBatch = SpriteBatch()
-		startBackground = TextureRegion(Texture("laser/start/background.png"))
-		startOverlay = TextureRegion(Texture("laser/start/overlay.png"))
-
-		midBackground = TextureRegion(Texture("laser/middle/background.png"))
-		midOverlay = TextureRegion(Texture("laser/middle/overlay.png"))
-
-		endBackground = TextureRegion(Texture("laser/end/background.png"))
-		endOverlay = TextureRegion(Texture("laser/end/overlay.png"))
-
-		animation = TextureRegion(Texture("laser/overlay-animation.png"))
-
-		isFiring = true
-		duration = 4000
-		laserDrawnTill = 0
-	}
-	private fun drawLaser()
-	{
-		shapeRenderer.setProjectionMatrix(perspectiveCamera.combined)
-		spriteBatch.setProjectionMatrix(perspectiveCamera.combined)
-
-		spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE)
-
-		spriteBatch.begin()
-
-//        y=Asin(2π(k+o)/p)+b
-//        A is the amplitude of the sine wave.
-//        p is the number of time samples per sine wave period.
-//                k is a repeating integer value that ranges from 0 to p–1.
-//        o is the offset (phase shift) of the signal.
-//                b is the signal bias.
-//        float val = (float)( Math.sin(tracker * 0.1) + 1) / 2;
-//        val = MathUtils.clamp(val, 0.1f, 0.9f);
-
-		if(System.currentTimeMillis() > laserDrawnTill) {
-			isFiring = false
-		}
-
-		if(isFiring) {
-
-			val posGun = Vector3()
-			gun!!.getComponent(ModelComponent::class.java).instance.transform.getTranslation(posGun)
-            val posGun2D = gunCamera.project(posGun)
-			val posEye = perspectiveCamera.direction
-			val posEye2D = perspectiveCamera.project(posEye)
-
-			val timeleft = laserDrawnTill - System.currentTimeMillis()
-			var decay = 1.0f
-
-			if(timeleft < duration - 100)
-				decay = Interpolation.linear.apply(0.0f, 1.0f, timeleft.toFloat() / (duration - 100))
-
-			// overlay
-			spriteBatch.setColor(1f, 0.78f, 0f, decay)
-			spriteBatch.draw(startOverlay,
-					posGun2D.x - startBackground.getRegionWidth(), posGun2D.y - startBackground.getRegionHeight(),
-					(startOverlay.getRegionWidth() / 2).toFloat(), (startOverlay.getRegionHeight() / 2).toFloat(),
-					startOverlay.getRegionWidth().toFloat(), startOverlay.getRegionHeight().toFloat(),
-					1.0f, 1.0f, rotation)
-
-			spriteBatch.draw(midOverlay,
-					posGun2D.x - startBackground.getRegionWidth(), posGun2D.y + startBackground.getRegionHeight() - startBackground.getRegionHeight(),
-					(midOverlay.getRegionWidth() / 2).toFloat(), (-(midOverlay.getRegionHeight() / 2)).toFloat(),
-					midOverlay.getRegionWidth().toFloat(), distance,
-					1.0f, 1.0f, rotation)
-
-			spriteBatch.draw(endOverlay,
-					posGun2D.x - startBackground.getRegionWidth(), posGun2D.y + endOverlay.getRegionHeight().toFloat() + distance - startBackground.getRegionHeight(),
-					(endOverlay.getRegionWidth() / 2).toFloat(), -(endOverlay.getRegionHeight() / 2 + distance),
-					endOverlay.getRegionWidth().toFloat(), endOverlay.getRegionHeight().toFloat(),
-					1.0f, 1.0f, rotation)
-
-			tracker += 0.6f
-			val foo = MathUtils.lerp(0.5f, 1.0f, tracker)
-			var fade = Interpolation.sine.apply(0.9f, 1.0f, foo)
-
-			if(fade - (1 - decay) < 0.01f) {
-				fade = decay
-			}
-			else {
-				fade -= (1 - decay)
-			}
-
-			// beam
-			spriteBatch.setColor(0f, 0f, 1f, fade)
-			spriteBatch.draw(startBackground,
-					posGun2D.x - startBackground.getRegionWidth(), posGun2D.y - startBackground.getRegionHeight(),
-					(startBackground.getRegionWidth() / 2).toFloat(), (startBackground.getRegionHeight() / 2).toFloat(),
-					startBackground.getRegionWidth().toFloat(), startBackground.getRegionHeight().toFloat(),
-					1.0f, 1.0f, rotation)
-			spriteBatch.draw(midBackground,
-					posGun2D.x - startBackground.getRegionWidth(), posGun2D.y + startBackground.getRegionHeight() - startBackground.getRegionHeight(),
-					(midBackground.getRegionWidth() / 2).toFloat(), (-(startBackground.getRegionHeight() / 2)).toFloat(),
-					midBackground.getRegionWidth().toFloat(), distance,
-					1.0f, 1.0f, rotation)
-			spriteBatch.draw(endBackground,
-					posGun2D.x - startBackground.getRegionWidth(), posGun2D.y + endBackground.getRegionHeight().toFloat() + distance - startBackground.getRegionHeight(),
-					(endBackground.getRegionWidth() / 2).toFloat(), -(endBackground.getRegionHeight() / 2 + distance),
-					endBackground.getRegionWidth().toFloat(), endBackground.getRegionHeight().toFloat(),
-					1.0f, 1.0f, rotation)
-
-		}
-
-		spriteBatch.end()
-	}*/
-	//______________________________________________________________________________________________
-
-
-	//______________________________________________________________________________________________
 	fun resize(width: Int, height: Int) {
 		perspectiveCamera.viewportHeight = height.toFloat()
 		perspectiveCamera.viewportWidth = width.toFloat()
@@ -224,7 +94,6 @@ class RenderSystem : EntitySystem() {
 	//______________________________________________________________________________________________
 	fun dispose() {
 		batch.dispose()
-		//spriteBatch.dispose()
 	}
 
 	companion object {

@@ -38,6 +38,7 @@ class GameUI(game: CesGame) {
 		healthWidget.setSize(200f, 60f)
 		healthWidget.setPosition(CesGame.VIRTUAL_WIDTH/2 - healthWidget.width/2, 0f)
 
+		//TODO: ammoWidget -> Muestra la municion disponible ¿recargar?
 		scoreWidget.setSize(220f, 25f)
 		scoreWidget.setPosition(0f, CesGame.VIRTUAL_HEIGHT - scoreWidget.height)
 

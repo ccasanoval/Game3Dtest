@@ -27,7 +27,7 @@ class GameWorld(gameUI: GameUI) {
 	private var renderSystem: RenderSystem
 	private var enemySystem: EnemySystem
 	private var statusSystem: StatusSystem
-	private var shotSystem: ShotSystem
+	//private var shotSystem: ShotSystem
 
 	private var engine: Engine = Engine()
 	private lateinit var player: Entity
@@ -39,16 +39,16 @@ class GameWorld(gameUI: GameUI) {
 		renderSystem = RenderSystem()
 		bulletSystem = BulletSystem(this)
 		enemySystem = EnemySystem()
-		playerSystem = PlayerSystem(gameUI, renderSystem.perspectiveCamera)
+		playerSystem = PlayerSystem(gameUI, renderSystem.perspectiveCamera, bulletSystem)
 		statusSystem = StatusSystem(this)
-		shotSystem = ShotSystem(this)
+		//shotSystem = ShotSystem(this)
 
 		engine.addSystem(renderSystem)
 		engine.addSystem(bulletSystem)
 		engine.addSystem(playerSystem)
 		engine.addSystem(enemySystem)
 		engine.addSystem(statusSystem)
-		engine.addSystem(shotSystem)
+		//engine.addSystem(shotSystem)
 		if(debugCollision) {
 			debugDrawer = DebugDrawer()
 			debugDrawer!!.debugMode = btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE
@@ -83,7 +83,7 @@ class GameWorld(gameUI: GameUI) {
 	private fun createPlayer(pos: Vector3) {
 		player = PlayerComponent.create(pos)
 		engine.addEntity(player)
-		gun = GunFactory.create(GunComponent.TYPE.CZ805)//Dentro de playerSystem??
+		gun = GunFactory.create(GunComponent.TYPE.AK47)//Dentro de playerSystem??
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun
@@ -108,7 +108,7 @@ class GameWorld(gameUI: GameUI) {
 		enemySystem.setProcessing( ! Settings.paused)
 		playerSystem.setProcessing( ! Settings.paused)
 		statusSystem.setProcessing( ! Settings.paused)
-		shotSystem.setProcessing( ! Settings.paused)
+		//shotSystem.setProcessing( ! Settings.paused)
 	}
 
 	//______________________________________________________________________________________________

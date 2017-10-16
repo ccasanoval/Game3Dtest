@@ -118,12 +118,10 @@ object EnemyFactory
 		val type = entity.getComponent(EnemyComponent::class.java).type
 		val animParams = getAnimationParams(type, action)
 		if(animParams.id.isEmpty())return
-		val anim = entity.getComponent(AnimationComponent::class.java)
-		anim.animate(animParams.id, animParams.loop, animParams.speed, animParams.offset, animParams.duration)
+		entity.getComponent(AnimationComponent::class.java).animate(animParams)
 	}
 	//______________________________________________________________________________________________
 	private val random = java.util.Random()
-	private class AnimationParams(var id: String, var loop: Int = -1, var speed: Float = 1f, var duration: Float = 0f, var offset: Float = -1f)
 	private fun getAnimationParams(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) : AnimationParams
 	{
 		val loop = -1	//Continuously = -1 , OnlyOnce = 0
@@ -133,27 +131,27 @@ object EnemyFactory
 			EnemyComponent.TYPE.MONSTER1 ->
 				return when(action) {//TODO: Acer estos objetos staticos!!! asi no tienes que crearlos....
 					EnemyComponent.ACTION.WALKING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 0f)
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 0f, time)
 					EnemyComponent.ACTION.RUNNING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 6f)
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 6f, time)
 					EnemyComponent.ACTION.ATTACKING -> {
 						when(random.nextInt(2))
 						{
-							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 10f)
-							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 12.8f)
+							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 10f, time)
+							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 12.8f, time)
 						}
 					}
 					EnemyComponent.ACTION.IDLE ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 19.12f)
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 19.12f, time)
 					EnemyComponent.ACTION.REINCARNATING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 0f)
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 0f, time)
 					EnemyComponent.ACTION.ACHING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, time, 22.6f)
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 22.6f, time)
 					EnemyComponent.ACTION.DYING -> {
 						if(random.nextInt(2) == 0)
-							AnimationParams("MilkShape3D Skele|DefaultAction", 0, speed, time, 15.6f)
+							AnimationParams("MilkShape3D Skele|DefaultAction", 0, speed, 15.6f, time)
 						else
-							AnimationParams("MilkShape3D Skele|DefaultAction", 0, speed, time, 20f)
+							AnimationParams("MilkShape3D Skele|DefaultAction", 0, speed, 20f, time)
 					}
 				}
 				/*
@@ -235,8 +233,6 @@ object EnemyFactory
 		val dir = playerPosition.add(enemyPosition.scl(-1f)).nor().scl(fuerza*delta)
 		dir.y = bullet.rigidBody.linearVelocity.y
 		bullet.rigidBody.linearVelocity = dir
-
-		System.err.println("----------------- LIN VEL:"+dir)
 
 		val transf = Matrix4()
 		bullet.rigidBody.getWorldTransform(transf)

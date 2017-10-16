@@ -28,14 +28,16 @@ class ShotComponent : Component {
 
 	companion object {
 		const val MASA = .10f
-		const val FUERZA = 3900f
+		const val FUERZA = 3500f
 
 		//______________________________________________________________________________________________
 		//
-		fun createShot(pos: Vector3, dir: Vector3, mass: Float = ShotComponent.MASA, force: Float = ShotComponent.FUERZA): Entity {
+		/*fun createShot(pos: Vector3, dir: Vector3, mass: Float = ShotComponent.MASA, force: Float = ShotComponent.FUERZA): Entity {
+			///----------------------------
+			/// COLLISION BY BULLETS
 			val entity = Entity()
 
-			pos.add(dir.scl(3f))
+			pos.add(dir.scl(2f))
 
 			/// SHOT
 			entity.add(ShotComponent())
@@ -45,7 +47,7 @@ class ShotComponent : Component {
 			val mb = ModelBuilder()
 			val material = Material(ColorAttribute.createDiffuse(Color.RED))
 			val flags = VertexAttributes.Usage.ColorUnpacked or VertexAttributes.Usage.Position
-			val model : Model = mb.createBox(2.5f, 2.5f, 2.5f, material, flags.toLong())
+			val model : Model = mb.createBox(.5f, .5f, .5f, material, flags.toLong())
 			val modelComponent = ModelComponent(model, pos)
 			entity.add(modelComponent)
 
@@ -68,28 +70,9 @@ class ShotComponent : Component {
 			rigidBody.applyCentralForce(dir.scl(force))
 
 			return entity
-		}
-		/* COLLISION BY RAY
-		val rayFrom = Vector3()
-		val rayTo = Vector3()
-		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
-		rayFrom.set(ray.origin)
-		rayTo.set(ray.direction).scl(50f).add(rayFrom)
-		rayTestCB.collisionObject = null
-		rayTestCB.closestHitFraction = 1f
-		rayTestCB.setRayFromWorld(rayFrom)
-		rayTestCB.setRayToWorld(rayTo)
-		gameWorld.bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB)
-		if(rayTestCB.hasHit()) {
-			Gdx.app.error("CESGAME", "-------------------------- DISPARO DIO ------------------------------")
 
-			val obj = rayTestCB.collisionObject
-			if((obj.userData as Entity).getComponent(EnemyComponent::class.java) != null) {
-				if((obj.userData as Entity).getComponent(StatusComponent::class.java).alive) {
-					(obj.userData as Entity).getComponent(StatusComponent::class.java).alive = false
-					PlayerComponent.score += 100
-				}
-			}
 		}*/
+
+
 	}
 }
