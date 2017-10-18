@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
-import com.badlogic.gdx.physics.bullet.collision.btSphereShape
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.utils.UBJsonReader
 import com.cesoft.cesgame.bullet.MotionState
@@ -16,7 +15,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
-import com.badlogic.gdx.physics.bullet.collision.btCylinderShape
 
 import com.cesoft.cesgame.components.EnemyComponent.ACTION.*
 
@@ -72,10 +70,9 @@ object EnemyFactory
 			EnemyComponent.TYPE.MONSTER1 -> {
 				modelComponent = ModelComponent(models[type]!!, pos)
 				entity.add(modelComponent)
-
-				val anim = AnimationComponent(modelComponent.instance)
-				entity.add(anim)
-				setAnimation(entity, EnemyComponent.ACTION.ATTACKING)
+				/// ANIMATION
+				entity.add(AnimationComponent(modelComponent.instance))
+				setAnimation(entity, EnemyComponent.ACTION.WALKING)
 				//TODO: Peta al reiniciar
 //				val am = AssetManager()
 //				entity.add(EnemyDieParticleComponent(RenderSystem.particleSystem, am))
@@ -83,7 +80,6 @@ object EnemyFactory
 			}
 		}
 		// (desaparecer)
-		System.err.println("MAT SIZE-----------------------------------------------"+modelComponent.instance.materials.size)
 		if(modelComponent.instance.materials.size > 0) {
 			val material = modelComponent.instance.materials.get(0)
 			val blendingAttribute = BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
@@ -92,18 +88,24 @@ object EnemyFactory
 		}
 
 		/// STATUS
-		entity.add(StatusComponent(entity))
+		val stat = StatusComponent(entity)
+		stat.setWalking()
+		entity.add(stat)
+		//setWalkin()
+
+		/// STEERIN
+		//entity.add(SteeringComponent())
 
 		/// COLLISION
 		val localInertia = Vector3()
-		val shape = btBoxShape(Vector3(10f,9f,10f))//btCylinderShape(Vector3(14f,5f,14f))//btSphereShape(18f)//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
+		val shape = btBoxShape(Vector3(9f,9f,9f))//btCylinderShape(Vector3(14f,5f,14f))//btSphereShape(18f)//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, localInertia)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		rigidBody.contactCallbackFilter = BulletComponent.SHOT_FLAG
+		rigidBody.contactCallbackFilter = BulletComponent.SHOT_FLAG //or BulletComponent.GROUND_FLAG
 		rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
 		rigidBody.userValue = BulletComponent.ENEMY_FLAG
 		//rigidBody.userIndex = index
@@ -147,13 +149,23 @@ object EnemyFactory
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 19.12f, time)
 					EnemyComponent.ACTION.REINCARNATING ->
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 0f, time)
-					EnemyComponent.ACTION.ACHING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 22.6f, time)
-					EnemyComponent.ACTION.DYING -> {
+					EnemyComponent.ACTION.ACHING -> {
 						if(random.nextInt(2) == 0)
-							AnimationParams("MilkShape3D Skele|DefaultAction", 0, speed, 15.6f, time)
+							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 15.6f, time)
 						else
-							AnimationParams("MilkShape3D Skele|DefaultAction", 0, speed, 20f, time)
+							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 20f, time)
+					}
+					EnemyComponent.ACTION.DYING -> {
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 22.6f, time)
+
+						/*if(random.nextInt(2) == 0) {
+							System.err.println("----******************--------- Enemy Factory DYING 1")
+							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 15.6f, time)
+						}
+						else {
+							System.err.println("-----*********************-------- Enemy Factory DYING 2")
+							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 20f, time)
+						}*/
 					}
 				}
 				/*
@@ -180,8 +192,8 @@ object EnemyFactory
 				ATTACKING to 3.15f,
 				IDLE to 0.88f,
 				REINCARNATING to 26f,//TODO
-				ACHING to 3.4f,
-				DYING to 2f
+				ACHING to 2.5f,
+				DYING to 3.4f
 		)
 	}
 	private val typeActionDuration = mapOf(EnemyComponent.TYPE.MONSTER1 to ActDuration)
@@ -195,6 +207,7 @@ object EnemyFactory
 	{
 		val bullet = entity.getComponent(BulletComponent::class.java)
 		val status = entity.getComponent(StatusComponent::class.java)
+System.err.println("-------------------------MOVER: ")
 
 		/*if(status.isDead() || status.isAching()) {
 			//bullet.rigidBody.linearVelocity = Vector3(0f,0f,0f)
@@ -227,11 +240,12 @@ object EnemyFactory
 		else //if(distanciaConPlayer > 100f)
 		{
 			//TODO: Wandering ?
-			//TODO: Movil?
+			//TODO: ajustar para Movil?
 			fuerza = 500f
 			status.setWalking()
 		}
 		if(status.isAttacking() || status.isAching() || status.isDead())fuerza = 0f
+	System.err.println("-------------------------FUERZA: "+fuerza)
 		val dir = playerPosition.add(enemyPosition.scl(-1f)).nor().scl(fuerza*delta)
 		dir.y = bullet.rigidBody.linearVelocity.y
 		bullet.rigidBody.linearVelocity = dir

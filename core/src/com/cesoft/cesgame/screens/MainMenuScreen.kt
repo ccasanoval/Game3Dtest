@@ -14,7 +14,7 @@ import com.cesoft.cesgame.CesGame
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class MainMenuScreen(private var game: CesGame) : Screen {
+class MainMenuScreen(private val game: CesGame, private val assets: Assets) : Screen {
 	private var stage: Stage = Stage(FitViewport(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/backgroundMN.png")))
 	private var titleImage: Image = Image(Texture(Gdx.files.internal("data/title.png")))
@@ -23,12 +23,9 @@ class MainMenuScreen(private var game: CesGame) : Screen {
 	private var quitButton: TextButton
 
 	init {
-		val assets = Assets()
-		playButton = TextButton(CesGame.JUGAR, assets.skin)
-		//leaderboardsButton = TextButton(CesGame.PUNTOS, assets.skin)
-		quitButton = TextButton(CesGame.SALIR, assets.skin)
-		assets.dispose()
-
+		playButton = TextButton(assets.getString("JUGAR"), assets.skin)
+		//leaderboardsButton = TextButton(assets.getString("PUNTOS"), assets.skin)
+		quitButton = TextButton(assets.getString("SALIR"), assets.skin)
 		configureWidgers()
 		setListeners()
 		Gdx.input.inputProcessor = stage
@@ -59,7 +56,7 @@ class MainMenuScreen(private var game: CesGame) : Screen {
 	private fun setListeners() {
 		playButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(GameScreen(game))
+				game.setScreen(GameScreen(game, assets))
 			}
 		})
 //		leaderboardsButton.addListener(object : ClickListener() {

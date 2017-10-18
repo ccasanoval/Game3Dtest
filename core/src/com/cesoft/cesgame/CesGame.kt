@@ -12,20 +12,22 @@ import com.cesoft.cesgame.screens.MainMenuScreen
 //
 //https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
 //TODO: Comprobar disparo Android
-//TODO: Configurar joystick Android
-//TODO: Enemigos?
-//TODO: Evitar que chocar haga volar (solo pasa en desktop?)
+//TODO: Configurar joystick Android -> Ampliar y cambiar por recuadro con flechas, añadir recarga y salto?
 //TODO: Reducir tiempo de carga de la escena
+//TODO: splash mientras carga recursos con AssetManager, que ventaja tiene?
+//TODO: IA
+//TODO i18n
 class CesGame : ApplicationAdapter() {
 
+	private lateinit var assets: Assets
 	private var screen: Screen? = null
 
 	//______________________________________________________________________________________________
 	override fun create() {
-		Assets()
+		assets = Assets()
 		Settings.load()
 		Gdx.input.isCatchBackKey = true
-		setScreen(MainMenuScreen(this))
+		setScreen(MainMenuScreen(this, assets))
 	}
 
 	//______________________________________________________________________________________________
@@ -61,14 +63,12 @@ class CesGame : ApplicationAdapter() {
 	override fun dispose() {
 		System.err.println("CesGame:dispose:----------------------------------------")
 		Settings.save()
+		assets.dispose()
 	}
 
 	//______________________________________________________________________________________________
 	companion object {
 		val VIRTUAL_WIDTH = 1024f
 		val VIRTUAL_HEIGHT = 576f
-		val SALIR = "Salir"
-		val JUGAR = "Jugar"
-		val PUNTOS = "Puntuaciones"
 	}
 }

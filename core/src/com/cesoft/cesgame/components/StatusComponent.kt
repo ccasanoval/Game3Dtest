@@ -7,6 +7,7 @@ import com.cesoft.cesgame.managers.EnemyFactory
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class StatusComponent(private val entity: Entity) : Component//private val animat: AnimationComponent, private val enemy: EnemyComponent) : Component
 {
+	var isSaltando = true
 	private var estado = EnemyComponent.ACTION.WALKING
 	val type = entity.getComponent(EnemyComponent::class.java).type
 
@@ -16,12 +17,12 @@ class StatusComponent(private val entity: Entity) : Component//private val anima
 	private fun setDeadState() { estado = EnemyComponent.ACTION.DYING }
 
 	/// ACHING
-	var health: Float = 100f
+	private var health: Float = 100f
 		private set
 	private var achingStateTime: Float = 0f
 	fun isAching() = estado == EnemyComponent.ACTION.ACHING
 	private fun setAchingState() {estado = EnemyComponent.ACTION.ACHING}
-	fun hurt(pain: Float = 30f)
+	fun hurt(pain: Float = 50f)
 	{
 		if(isDead())return
 		if( ! isAching())
@@ -32,7 +33,7 @@ class StatusComponent(private val entity: Entity) : Component//private val anima
 			EnemyFactory.playAching(entity)
 		}
 		else
-			health -= 1f
+			health -= 5f
 	}
 
 	/// RUNNING
@@ -68,7 +69,6 @@ class StatusComponent(private val entity: Entity) : Component//private val anima
 		if( ! isAttacking()) {
 			setAttackingState()
 			EnemyFactory.playAttack(entity)
-			System.err.println("------------------------ setAttacking....9")
 		}
 	}
 
@@ -98,6 +98,8 @@ class StatusComponent(private val entity: Entity) : Component//private val anima
 
 	//______________________________________________________________________________________________
 	fun isDeadOver() = deadStateTime > EnemyFactory.getActionDuration(type, EnemyComponent.ACTION.DYING)
+	fun deathProgres() = deadStateTime / EnemyFactory.getActionDuration(type, EnemyComponent.ACTION.DYING)
+
 	//______________________________________________________________________________________________
 	fun isAchingOver() = achingStateTime > EnemyFactory.getActionDuration(type, EnemyComponent.ACTION.ACHING)
 }

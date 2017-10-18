@@ -16,7 +16,7 @@ import com.cesoft.cesgame.Settings
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class LeaderboardsScreen(internal var game: CesGame) : Screen {
+class LeaderboardsScreen(internal var game: CesGame, private val assets: Assets) : Screen {
 	private var stage: Stage = Stage(FitViewport(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/backgroundMN.png")))
 	private var backButton: TextButton
@@ -24,7 +24,6 @@ class LeaderboardsScreen(internal var game: CesGame) : Screen {
 	private var loaded: Boolean = false
 
 	init {
-		val assets = Assets()
 		backButton = TextButton("Back", assets.skin)
 
 
@@ -35,7 +34,6 @@ class LeaderboardsScreen(internal var game: CesGame) : Screen {
 		Settings.load(label)
 		//        for (int i = 0; i < label.length; i++) label[i] = new Label(i + 1 + ") " + Settings.highscores[i], Assets.skin);
 
-		assets.dispose()
 
 		configureWidgers()
 		setListeners()
@@ -58,7 +56,7 @@ class LeaderboardsScreen(internal var game: CesGame) : Screen {
 	private fun setListeners() {
 		backButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(MainMenuScreen(game))
+				game.setScreen(MainMenuScreen(game, assets))
 			}
 		})
 	}

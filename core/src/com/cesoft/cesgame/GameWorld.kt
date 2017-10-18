@@ -18,7 +18,7 @@ import com.cesoft.cesgame.systems.*
 //
 class GameWorld(gameUI: GameUI) {
 
-	private val debugCollision = true
+	private val debugCollision = false
 	private var debugDrawer: DebugDrawer? = null
 
 	private var bulletSystem: BulletSystem
@@ -60,23 +60,34 @@ class GameWorld(gameUI: GameUI) {
 		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f), 10000f))
 		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
 
+
 		/// MAZE
-		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH, 0f, -100f)))//, +45f))
-		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH, 0f, -100f)))//, +45f))
-		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH, 0f, -100f-2*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH, 0f, -100f-2*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(-2*WallFactory.HIGH-5, 0f, -100f-4*WallFactory.LONG+14), +45f))
-		engine.addEntity(WallFactory.create(Vector3(+2*WallFactory.HIGH+5, 0f, -100f-4*WallFactory.LONG+14), -45f))
+		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH-5.5f, 0f, 4*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH+5.5f, 0f, 4*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH-5.5f, 0f, 2*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH+5.5f, 0f, 2*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(-2.1f*WallFactory.HIGH-10, 0f, 10f), +40f))
+		engine.addEntity(WallFactory.create(Vector3(+2.1f*WallFactory.HIGH+10, 0f, 10f), -40f))
+
+		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH-5.5f, 0f, -6f*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH+5.5f, 0f, -6f*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH-5.5f, 0f, -4f*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH+5.5f, 0f, -4f*WallFactory.LONG)))
+		engine.addEntity(WallFactory.create(Vector3(-2*WallFactory.HIGH-10, 0f, -2f*WallFactory.LONG-10), -40f))
+		engine.addEntity(WallFactory.create(Vector3(+2*WallFactory.HIGH+10, 0f, -2f*WallFactory.LONG-10), +40f))
 
 		/// RAMPAS
-		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG, 2*WallFactory.HIGH, -100f+RampFactory.LONG), 90f, 0f))
-		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG, 2*WallFactory.HIGH, -100f+RampFactory.LONG), 90f, 0f))
-		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG, 2*WallFactory.HIGH, -100f), 90f, 0f))
-		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG, 2*WallFactory.HIGH, -100f), 90f, 0f))
-		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG, 2*WallFactory.HIGH, -100f-2*RampFactory.LONG), 90f, 0f))
-		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG, 2*WallFactory.HIGH, -100f-2*RampFactory.LONG), 90f, 0f))
+		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG+2f, 2f*WallFactory.HIGH, 3*RampFactory.LONG), angleZ=90f))
+		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG-2f, 2f*WallFactory.HIGH, 3*RampFactory.LONG), angleZ=90f))
+		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG+2f, 2f*WallFactory.HIGH, 4*RampFactory.LONG), angleZ=90f))
+		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG-2f, 2f*WallFactory.HIGH, 4*RampFactory.LONG), angleZ=90f))
+		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG+2f, 2f*WallFactory.HIGH, 5*RampFactory.LONG+14f), angleZ=90f))
+		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG-2f, 2f*WallFactory.HIGH, 5*RampFactory.LONG+14f), angleZ=90f))
 
-		//engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG, 2*WallFactory.HIGH, -100f+RampFactory.LONG), 90f, 0f))
+		engine.addEntity(RampFactory.create(Vector3(-3.5f*RampFactory.LONG, .5f*WallFactory.HIGH, 4*RampFactory.LONG+7f), angleZ=-40f))
+		engine.addEntity(RampFactory.create(Vector3(-2.4f*RampFactory.LONG, 1.5f*WallFactory.HIGH, 4*RampFactory.LONG+7f), angleZ=-40f))
+		engine.addEntity(RampFactory.create(Vector3(+3.5f*RampFactory.LONG, .5f*WallFactory.HIGH, 4*RampFactory.LONG+7f), angleZ=+40f))
+		engine.addEntity(RampFactory.create(Vector3(+2.4f*RampFactory.LONG, 1.5f*WallFactory.HIGH, 4*RampFactory.LONG+7f), angleZ=+40f))
 
 
 		/// ENEMIES

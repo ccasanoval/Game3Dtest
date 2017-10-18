@@ -201,14 +201,14 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 		}
 		else if(Gdx.input.isKeyPressed(Input.Keys.ALT_RIGHT)) {
 			if(deltaReload > 5f) {
-				System.err.println("------ RELOAD 2! -------------------")
+				System.err.println("------ IDLE ! -------------------")
 				deltaReload = 0f
 				GunFactory.animate(gun, GunComponent.ACTION.IDLE)
 			}
 		}
 		else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)) {
 			if(deltaReload > 5f) {
-				System.err.println("------ RELOAD 2! -------------------")
+				System.err.println("------ DRAW ! -------------------")
 				deltaReload = 0f
 				GunFactory.animate(gun, GunComponent.ACTION.DRAW)
 			}

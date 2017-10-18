@@ -66,7 +66,8 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 				{
 					when(getValor(userValue1))
 					{
-						BulletComponent.PLAYER_FLAG -> collPlayerEnemy(getIndex(userValue0))
+						//BulletComponent.PLAYER_FLAG -> collPlayerEnemy(getIndex(userValue0))
+						BulletComponent.GROUND_FLAG -> collEnemyGround(getIndex(userValue0))
 						BulletComponent.SHOT_FLAG -> collShotEnemy(getIndex(userValue1), getIndex(userValue0))
 					}
 				}
@@ -74,6 +75,14 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 			}
 			return true
 		}
+	}
+	//______________________________________________________________________________________________
+	private fun collEnemyGround(iEnemy: Int)
+	{
+		System.err.println("------------------------- ENEMY  +  GROUND")
+		val entityEnemy = enemies[iEnemy]
+		val statusEnemy = entityEnemy?.getComponent(StatusComponent::class.java)
+		statusEnemy?.isSaltando = false
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerGround()

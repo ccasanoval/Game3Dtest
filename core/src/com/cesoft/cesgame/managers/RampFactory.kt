@@ -25,13 +25,14 @@ object RampFactory {
 	private val modelData = modelLoader.loadModelData(Gdx.files.internal("scene/wall/ramp.g3db"))
 
 	//______________________________________________________________________________________________
-	fun create(pos: Vector3, angleZ: Float = 0f, angleY: Float = 0f): Entity {
+	fun create(pos: Vector3, angleX: Float = 0f, angleY: Float = 0f, angleZ: Float = 0f): Entity {
 		val entity = Entity()
 
 		/// MODELO
 		val model = Model(modelData)
 		val modelComponent = ModelComponent(model, pos)
 		//modelComponent.instance.transform.translate(pos)
+		modelComponent.instance.transform.rotate(Vector3.X, angleX)
 		modelComponent.instance.transform.rotate(Vector3.Y, angleY)
 		modelComponent.instance.transform.rotate(Vector3.Z, angleZ)
 

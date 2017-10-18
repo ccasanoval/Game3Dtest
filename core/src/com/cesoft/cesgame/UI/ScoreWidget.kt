@@ -8,18 +8,16 @@ import com.cesoft.cesgame.components.PlayerComponent
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class ScoreWidget : Actor() {
+class ScoreWidget(private val assets: Assets) : Actor() {
 	private var score: TextField
 
 	init {
-		val assets = Assets()
 		score = TextField("", assets.skin)
-		assets.dispose()
 	}
 
 	override fun act(delta: Float) {
 		score.act(delta)
-		score.setText("Creditos: " + PlayerComponent.score)
+		score.text = assets.formatString("CREDITOS", PlayerComponent.score)
 	}
 
 	override fun draw(batch: Batch?, parentAlpha: Float) {

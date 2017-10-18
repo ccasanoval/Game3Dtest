@@ -19,7 +19,7 @@ import com.cesoft.cesgame.screens.GameScreen
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
+class PauseWidget(private val game: CesGame, stage: Stage, private val assets: Assets) : Actor() {
 
 	private var window: Window
 	//private var closeDialog: TextButton
@@ -29,7 +29,6 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 	//______________________________________________________________________________________________
 	init {
 		super.setStage(stage)
-		val assets = Assets()
 		val ws = Window.WindowStyle()
 		ws.titleFont = BitmapFont()
 		ws.titleFontColor = Color.BLUE
@@ -40,7 +39,6 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 		quitButton = TextButton("Salir", assets.skin)
 		restartButton.label.setFontScale(2f)
 		quitButton.label.setFontScale(2f)
-		assets.dispose()
 		//
 		configureWidgets()
 		setListeners()
@@ -69,7 +67,7 @@ class PauseWidget(private val game: CesGame, stage: Stage) : Actor() {
 		restartButton.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
 				game.delScreen()
-				game.setScreen(GameScreen(game))
+				game.setScreen(GameScreen(game, assets))
 			}
 		})
 		quitButton.addListener(object : ClickListener() {

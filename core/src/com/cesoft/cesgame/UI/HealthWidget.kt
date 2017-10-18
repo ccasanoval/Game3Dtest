@@ -13,15 +13,13 @@ import com.cesoft.cesgame.Settings
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class HealthWidget : Actor() {
+class HealthWidget(assets: Assets) : Actor() {
 	private val healthBar: ProgressBar
 	private val progressBarStyle: ProgressBar.ProgressBarStyle
 	private val label: Label
 
 	//______________________________________________________________________________________________
 	init {
-		val assets = Assets()
-
 		progressBarStyle = ProgressBar.ProgressBarStyle(
 				assets.skin.newDrawable("progress-bar-back", Color.RED),
 				assets.skin.newDrawable("white", Color.GREEN))

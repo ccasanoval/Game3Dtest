@@ -19,7 +19,7 @@ import com.cesoft.cesgame.components.ModelComponent
 //
 object WallFactory {
 	const val LONG = 48f
-	const val HIGH = 27f
+	const val HIGH = 25.5f
 	const val THICK = 3f
 
 	private val modelLoader = G3dModelLoader(UBJsonReader())

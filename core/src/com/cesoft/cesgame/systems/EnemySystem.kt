@@ -20,8 +20,8 @@ class EnemySystem : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
 
-	private val xSpawns = floatArrayOf(+135f, +135f, -135f, -135f)
-	private val zSpawns = floatArrayOf(+135f, -135f, +135f, -135f)
+	private val xSpawns = floatArrayOf(+335f, +335f, -335f, -335f)
+	private val zSpawns = floatArrayOf(+335f, -335f, +335f, -335f)
 	//private var maper = ComponentMapper.getFor(StatusComponent::class.java)
 
 	private val random = Random()
@@ -38,7 +38,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
 		//TODO: humo donde aparece bicho...
-		if(entities!!.size() < 5) spawnEnemy(randomSpawnIndex)
+		//if(entities!!.size() < 5) spawnEnemy(randomSpawnIndex)
 
 		if(entities != null)
 		for(entity in entities!!) {
@@ -46,17 +46,22 @@ class EnemySystem : EntitySystem(), EntityListener {
 			/// MODEL (desapareciendo)
 			val model = entity.getComponent(ModelComponent::class.java)
 			val status = entity.getComponent(StatusComponent::class.java)
-			if(status.isDead())
-				model.update(delta)
+			if(status.isDead() && model.blendingAttribute != null)
+			{
+				model.blendingAttribute!!.opacity = 1 - status.deathProgres()
+				//model.blendingAttribute!!.opacity -= delta / 3
+				// model.update(delta)
+			}
 
 			/// Animacion
 			val animat = entity.getComponent(AnimationComponent::class.java)
 			animat?.update(delta)
-
+System.err.println("EnemySystem:UPDATE:-------------------------------------DEAD:"+status.isDead())
 			/// Particulas
 			updateParticulas(entity)
 
 			/// Movimiento
+			//if(status.isSaltando)return
 			val bulletPlayer = player!!.getComponent(BulletComponent::class.java)
 			val transf = Matrix4()
 			bulletPlayer.rigidBody.getWorldTransform(transf)
@@ -70,7 +75,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	private fun updateParticulas(entity : Entity)//TODO: llamar desde Status?
 	{
-		if(entity.getComponent(StatusComponent::class.java).isDead()
+		/*if(entity.getComponent(StatusComponent::class.java).isDead()
 			&& entity.getComponent(EnemyDieParticleComponent::class.java)?.used == true)
 		{
 			entity.getComponent(EnemyDieParticleComponent::class.java).used = true
@@ -81,7 +86,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 			effect.init()
 			effect.start()
 			RenderSystem.particleSystem.add(effect)
-		}
+		}*/
 	}
 
 	//______________________________________________________________________________________________
@@ -95,14 +100,10 @@ class EnemySystem : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
-	override fun entityAdded(entity: Entity) {
-		player = entity
-	}
+	override fun entityAdded(entity: Entity) { player = entity }
 
 	//______________________________________________________________________________________________
-	override fun entityRemoved(entity: Entity)
-	{
-	}
+	override fun entityRemoved(entity: Entity) { }
 
 	//______________________________________________________________________________________________
 	fun dispose()

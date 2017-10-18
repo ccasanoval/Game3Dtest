@@ -17,28 +17,26 @@ import com.cesoft.cesgame.screens.GameScreen
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Cambiar estilo botones : imagenes?
-class GameOverWidget(private val game: CesGame, stage: Stage) : Actor() {
+class GameOverWidget(private val game: CesGame, stage: Stage, private val assets: Assets) : Actor() {
 	private var image: Image = Image(Texture(Gdx.files.internal("data/gameOver.png")))
-	private var retryB: TextButton
+	private var btnJugar: TextButton
 	//private var leaderB: TextButton
-	private var quitB: TextButton
+	private var btnSalir: TextButton
 
 	init {
 		super.setStage(stage)
-		val assets = Assets()
-		retryB = TextButton(CesGame.JUGAR, assets.skin)
-		//leaderB = TextButton(CesGame.PUNTOS, assets.skin)
-		quitB = TextButton(CesGame.SALIR, assets.skin)
-		assets.dispose()
+		btnJugar = TextButton(assets.getString("JUGAR"), assets.skin)
+		//leaderB = TextButton(assets.getString("PUNTOS"), assets.skin)
+		btnSalir = TextButton(assets.getString("SALIR"), assets.skin)
 		//
 		setListeners()
 	}
 
 	//______________________________________________________________________________________________
 	private fun setListeners() {
-		retryB.addListener(object : ClickListener() {
+		btnJugar.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(GameScreen(game))
+				game.setScreen(GameScreen(game, assets))
 			}
 		})
 //		leaderB.addListener(object : ClickListener() {
@@ -46,7 +44,7 @@ class GameOverWidget(private val game: CesGame, stage: Stage) : Actor() {
 //				game.setScreen(LeaderboardsScreen(game))
 //			}
 //		})
-		quitB.addListener(object : ClickListener() {
+		btnSalir.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
 				Gdx.app.exit()
 			}
@@ -57,9 +55,9 @@ class GameOverWidget(private val game: CesGame, stage: Stage) : Actor() {
 	override fun setPosition(x: Float, y: Float) {
 		super.setPosition(0f, 0f)
 		image.setPosition(x, y+50)
-		val x0 = (CesGame.VIRTUAL_WIDTH - retryB.width - quitB.width - 10)/2
-		retryB.setPosition(x0, y-50)
-		quitB.setPosition(retryB.x+retryB.width+10, y-50)
+		val x0 = (CesGame.VIRTUAL_WIDTH - btnJugar.width - btnSalir.width - 10)/2
+		btnJugar.setPosition(x0, y-50)
+		btnSalir.setPosition(btnJugar.x+btnJugar.width+10, y-50)
 		//leaderB.setPosition(x + retryB.width - 25, y - 96)
 	}
 
@@ -67,17 +65,17 @@ class GameOverWidget(private val game: CesGame, stage: Stage) : Actor() {
 	override fun setSize(width: Float, height: Float) {
 		super.setSize(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
 		image.setSize(width, height)
-		retryB.setSize(width/1.75f, height/2.5f)
-		quitB.setSize(width/1.75f, height/2.5f)
+		btnJugar.setSize(width/1.75f, height/2.5f)
+		btnSalir.setSize(width/1.75f, height/2.5f)
 		//leaderB.setSize(width / 2.5f, height / 2)
 	}
 
 	//______________________________________________________________________________________________
 	fun gameOver() {
 		stage.addActor(image)
-		stage.addActor(retryB)
+		stage.addActor(btnJugar)
 		//stage.addActor(leaderB)
-		stage.addActor(quitB)
+		stage.addActor(btnSalir)
 		stage.unfocus(stage.keyboardFocus)
 		Gdx.input.isCursorCatched = false
 		Settings.sendScore(PlayerComponent.score)

@@ -12,25 +12,22 @@ import com.cesoft.cesgame.managers.ControllerWidget
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameUI(game: CesGame) {
+class GameUI(game: CesGame, assets: Assets) {
 
 	var stage: Stage = Stage(FitViewport(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT))
-	var healthWidget: HealthWidget = HealthWidget()
+	var healthWidget: HealthWidget = HealthWidget(assets)
 		private set
 	//  public OxygenWidget oxygenWidget;
 	//  public EnergyWidget energyWidget;
-	private var scoreWidget: ScoreWidget = ScoreWidget()
-	private var pauseWidget: PauseWidget = PauseWidget(game, stage)
+	private var scoreWidget: ScoreWidget = ScoreWidget(assets)
+	private var pauseWidget: PauseWidget = PauseWidget(game, stage, assets)
 	private var crosshairWidget: CrosshairWidget = CrosshairWidget()
 	private var fpsLabel: Label
-	var gameOverWidget: GameOverWidget = GameOverWidget(game, stage)
+	var gameOverWidget: GameOverWidget = GameOverWidget(game, stage, assets)
 		private set
 
 	init {
-		val assets = Assets()
 		fpsLabel = Label("", assets.skin)
-		assets.dispose()
-		//
 		configureWidgets()
 	}
 
