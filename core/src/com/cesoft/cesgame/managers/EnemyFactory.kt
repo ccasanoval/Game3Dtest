@@ -2,6 +2,8 @@ package com.cesoft.cesgame.managers
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.ai.steer.SteeringAcceleration
+import com.badlogic.gdx.ai.steer.behaviors.Seek
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
@@ -14,7 +16,8 @@ import com.cesoft.cesgame.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
-import com.badlogic.gdx.physics.bullet.collision.btBoxShape
+import com.badlogic.gdx.physics.bullet.collision.btSphereShape
+import com.cesoft.cesgame.bullet.BulletLocation
 
 import com.cesoft.cesgame.components.EnemyComponent.ACTION.*
 
@@ -23,6 +26,10 @@ import com.cesoft.cesgame.components.EnemyComponent.ACTION.*
 //
 object EnemyFactory
 {
+	private val RADIO = 15f
+	private val FUERZA_DESKTOP = 2000f
+	private val FUERZA_MOBILE = 0f
+
 	//private val modelLoaderJSON = G3dModelLoader(JsonReader())
 	private val modelLoader = G3dModelLoader(UBJsonReader())
 	private val models = mutableMapOf<EnemyComponent.TYPE, Model>()
@@ -93,25 +100,25 @@ object EnemyFactory
 		entity.add(stat)
 		//setWalkin()
 
-		/// STEERIN
-		//entity.add(SteeringComponent())
-
 		/// COLLISION
 		val localInertia = Vector3()
-		val shape = btBoxShape(Vector3(9f,9f,9f))//btCylinderShape(Vector3(14f,5f,14f))//btSphereShape(18f)//btBoxShape(Vector3(3f,3f,3f))// btCapsuleShape(3f, 6f)
+		val shape = btSphereShape(RADIO)//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, localInertia)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, localInertia)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-		rigidBody.contactCallbackFilter = BulletComponent.SHOT_FLAG //or BulletComponent.GROUND_FLAG
+		rigidBody.contactCallbackFilter = BulletComponent.SHOT_FLAG or BulletComponent.PLAYER_FLAG
 		rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
 		rigidBody.userValue = BulletComponent.ENEMY_FLAG
 		//rigidBody.userIndex = index
-		rigidBody.friction = 3f
-		rigidBody.rollingFriction = 3f
+		rigidBody.friction = 0f
+		rigidBody.rollingFriction = 1000000f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
+
+		/// STEERIN
+		entity.add(SteeringComponent(rigidBody, RADIO))
 
 		return entity
 	}
@@ -213,7 +220,16 @@ System.err.println("-------------------------MOVER: ")
 			//bullet.rigidBody.linearVelocity = Vector3(0f,0f,0f)
 			return
 		}*/
+		/// Steering
+		val steering = entity.getComponent(SteeringComponent::class.java)
+		val orientation = 0f //TODO: Camara?
+		val target = BulletLocation(playerPosition, orientation)
+		val seekSB = Seek<Vector3>(steering, target)
+		val res : SteeringAcceleration<Vector3> = steering.procesar(seekSB)
+		System.err.println("-------------- PlayerSystem: update: res.linear="+res.linear)
+		System.err.println("-------------- PlayerSystem: update: res.angular="+res.angular)
 
+		///
 		val enemyPosition = Vector3()
 		val model = entity.getComponent(ModelComponent::class.java)
 		model.instance.transform.getTranslation(enemyPosition)
@@ -223,17 +239,17 @@ System.err.println("-------------------------MOVER: ")
 		var fuerza = 0f
 		val distanciaConPlayer = enemyPosition.dst(playerPosition)
 
-		/// Esta al lado, atacale
-		if(distanciaConPlayer < 38f)
+		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
+		if(distanciaConPlayer < RADIO+PlayerComponent.RADIO+1)//
 		{
 			status.setAttacking()
 			val pain = 20f
 			PlayerComponent.hurt(delta * pain)
 		}
 		/// Esta cerca, corre a por el
-		else if(distanciaConPlayer < 150f)
+		else if(distanciaConPlayer < 180f)
 		{
-			fuerza = 1900f
+			fuerza = 2000f
 			status.setRunning()
 		}
 		/// Esta lejos, camina buscando
@@ -241,7 +257,7 @@ System.err.println("-------------------------MOVER: ")
 		{
 			//TODO: Wandering ?
 			//TODO: ajustar para Movil?
-			fuerza = 500f
+			fuerza = 600f
 			status.setWalking()
 		}
 		if(status.isAttacking() || status.isAching() || status.isDead())fuerza = 0f

@@ -43,7 +43,7 @@ object EntityFactory {
 		textureAttribute1.scaleU = 80f
 		textureAttribute1.scaleV = 80f
 		material.set(textureAttribute1)
-		val modelo : Model = mb.createBox(len, 1f, len, material, POSITION_NORMAL)
+		val modelo : Model = mb.createBox(len, 5f, len, material, POSITION_NORMAL)
 		val modelComponent = ModelComponent(modelo, pos)
 		modelComponent.instance.materials.get(0).set(textureAttribute1)
 		entity.add(modelComponent)

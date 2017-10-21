@@ -6,13 +6,16 @@ import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.utils.ImmutableArray
-import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter
+import com.badlogic.gdx.ai.steer.SteeringAcceleration
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesgame.components.*
 import com.cesoft.cesgame.managers.EnemyFactory
 
 import java.util.Random
+import com.badlogic.gdx.ai.steer.behaviors.Seek
+import com.cesoft.cesgame.bullet.BulletLocation
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -41,9 +44,9 @@ class EnemySystem : EntitySystem(), EntityListener {
 		//if(entities!!.size() < 5) spawnEnemy(randomSpawnIndex)
 
 		if(entities != null)
-		for(entity in entities!!) {
-
-			/// MODEL (desapareciendo)
+		for(entity in entities!!)
+		{
+			///----- MODEL (desapareciendo)
 			val model = entity.getComponent(ModelComponent::class.java)
 			val status = entity.getComponent(StatusComponent::class.java)
 			if(status.isDead() && model.blendingAttribute != null)
@@ -53,24 +56,50 @@ class EnemySystem : EntitySystem(), EntityListener {
 				// model.update(delta)
 			}
 
-			/// Animacion
+			///----- ANIMATION
 			val animat = entity.getComponent(AnimationComponent::class.java)
 			animat?.update(delta)
-System.err.println("EnemySystem:UPDATE:-------------------------------------DEAD:"+status.isDead())
 			/// Particulas
 			updateParticulas(entity)
 
-			/// Movimiento
-			//if(status.isSaltando)return
+			///----- BULLET
+			/// Player position
 			val bulletPlayer = player!!.getComponent(BulletComponent::class.java)
 			val transf = Matrix4()
 			bulletPlayer.rigidBody.getWorldTransform(transf)
 			val playerPosition = Vector3()
 			transf.getTranslation(playerPosition)
+			val orientation = 0f //TODO: Camara?
+			//orientation = Math.atan2(-playerPosition.z.toDouble(), playerPosition.x.toDouble()).toFloat()
+
 			//
 			EnemyFactory.mover(entity, playerPosition.cpy(), delta)
 		}
 	}
+
+
+
+	//______________________________________________________________________________________________
+	var index = 0
+	private fun spawnEnemy(randomSpawnIndex: Int) {
+		engine!!.addEntity(EnemyFactory.create(
+				EnemyComponent.TYPE.MONSTER1,
+				Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]),
+				100f))
+				//EntityFactory.createEnemy(model, Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]), ++index))
+	}
+
+	//______________________________________________________________________________________________
+	override fun entityAdded(entity: Entity) { player = entity }
+	override fun entityRemoved(entity: Entity) { }
+
+	//______________________________________________________________________________________________
+	fun dispose()
+	{
+		EnemyFactory.dispose()
+	}
+
+
 
 	//______________________________________________________________________________________________
 	private fun updateParticulas(entity : Entity)//TODO: llamar desde Status?
@@ -87,27 +116,5 @@ System.err.println("EnemySystem:UPDATE:-------------------------------------DEAD
 			effect.start()
 			RenderSystem.particleSystem.add(effect)
 		}*/
-	}
-
-	//______________________________________________________________________________________________
-	var index = 0
-	private fun spawnEnemy(randomSpawnIndex: Int) {
-		engine!!.addEntity(EnemyFactory.create(
-				EnemyComponent.TYPE.MONSTER1,
-				Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]),
-				100f))
-				//EntityFactory.createEnemy(model, Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]), ++index))
-	}
-
-	//______________________________________________________________________________________________
-	override fun entityAdded(entity: Entity) { player = entity }
-
-	//______________________________________________________________________________________________
-	override fun entityRemoved(entity: Entity) { }
-
-	//______________________________________________________________________________________________
-	fun dispose()
-	{
-		EnemyFactory.dispose()
 	}
 }

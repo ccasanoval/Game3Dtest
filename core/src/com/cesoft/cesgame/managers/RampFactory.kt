@@ -45,7 +45,7 @@ object RampFactory {
 		val transf2 = transf.cpy()
 		transf2.setTranslation(pos2)
 
-		val shape = btBoxShape(Vector3(THICK + 1f, HIGH + 1f, LONG + 1f))
+		val shape = btBoxShape(Vector3(THICK + 2f, HIGH + 2f, LONG + 2f))
 		//val shape = Bullet.obtainStaticNodeShape(model.nodes)
 		val motionState = MotionState(transf2)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)

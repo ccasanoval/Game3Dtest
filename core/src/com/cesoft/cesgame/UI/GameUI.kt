@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesgame.Assets
 import com.cesoft.cesgame.CesGame
-import com.cesoft.cesgame.managers.ControllerWidget
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17,8 +16,6 @@ class GameUI(game: CesGame, assets: Assets) {
 	var stage: Stage = Stage(FitViewport(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT))
 	var healthWidget: HealthWidget = HealthWidget(assets)
 		private set
-	//  public OxygenWidget oxygenWidget;
-	//  public EnergyWidget energyWidget;
 	private var scoreWidget: ScoreWidget = ScoreWidget(assets)
 	private var pauseWidget: PauseWidget = PauseWidget(game, stage, assets)
 	private var crosshairWidget: CrosshairWidget = CrosshairWidget()
@@ -32,11 +29,11 @@ class GameUI(game: CesGame, assets: Assets) {
 	}
 
 	private fun configureWidgets() {
-		healthWidget.setSize(200f, 60f)
+		healthWidget.setSize(225f, 60f)
 		healthWidget.setPosition(CesGame.VIRTUAL_WIDTH/2 - healthWidget.width/2, 0f)
 
 		//TODO: ammoWidget -> Muestra la municion disponible ¿recargar?
-		scoreWidget.setSize(220f, 25f)
+		scoreWidget.setSize(225f, 25f)
 		scoreWidget.setPosition(0f, CesGame.VIRTUAL_HEIGHT - scoreWidget.height)
 
 		pauseWidget.setSize(500f, 250f)

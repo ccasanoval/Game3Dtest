@@ -1,4 +1,4 @@
-package com.cesoft.cesgame.managers
+package com.cesoft.cesgame.UI
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
@@ -13,24 +13,39 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 class ControllerWidget {
 	init {
 		val touchpadStyle = Touchpad.TouchpadStyle()
-		touchpadStyle.knob = TextureRegionDrawable(TextureRegion(Texture(Gdx.files.internal("data/touchKnob.png"))))
+		touchpadStyle.knob = TextureRegionDrawable(TextureRegion(Texture(Gdx.files.internal("touchpads/touchKnob.png"))))
 		touchpadStyle.knob.minWidth = 44f
 		touchpadStyle.knob.minHeight = 44f
-		touchpadStyle.background = TextureRegionDrawable(TextureRegion(Texture(Gdx.files.internal("data/touchBackground.png"))))
+		touchpadStyle.background = TextureRegionDrawable(TextureRegion(Texture(Gdx.files.internal("touchpads/watch.png"))))
 		touchpadStyle.background.minWidth = 44f
 		touchpadStyle.background.minHeight = 44f
 
-		movementPad.style = touchpadStyle
+		val moveStyle = Touchpad.TouchpadStyle()
+		moveStyle.knob = TextureRegionDrawable(TextureRegion(Texture(Gdx.files.internal("touchpads/touchKnob.png"))))
+		moveStyle.knob.minWidth = 44f
+		moveStyle.knob.minHeight = 44f
+		moveStyle.background = TextureRegionDrawable(TextureRegion(Texture(Gdx.files.internal("touchpads/move.png"))))
+		moveStyle.background.minWidth = 44f
+		moveStyle.background.minHeight = 44f
+
+		val fireStyle = Touchpad.TouchpadStyle()
+		fireStyle.background = TextureRegionDrawable(TextureRegion(Texture(Gdx.files.internal("touchpads/fire.png"))))
+		fireStyle.background.minWidth = 44f
+		fireStyle.background.minHeight = 44f
+
+		movementPad.style = moveStyle
 		watchPad.style = touchpadStyle
-		firePad.style = touchpadStyle //Touchpad.TouchpadStyle()
-		movementPad.setColor(0.25f, 0.25f, 0.25f, 0.25f)
-		watchPad.setColor(0.25f, 0.25f, 0.25f, 0.25f)
-		firePad.setColor(0.25f, 0.25f, 0.25f, 0.25f)
+		firePad.style = fireStyle
+		val alfa = 0.5f
+		val color = 1f
+		movementPad.setColor(color, color, color, alfa)
+		watchPad.setColor(color, color, color, alfa)
+		firePad.setColor(color, color, color, alfa)
 	}
 
 	fun addToStage(stage: Stage) {
-		movementPad.setBounds(15f, 15f, 300f, 300f)
-		watchPad.setBounds(stage.width - 315, 15f, 300f, 300f)
+		movementPad.setBounds(15f, 15f, 350f, 350f)
+		watchPad.setBounds(stage.width - 315, 15f, 350f, 350f)
 		firePad.setBounds(15f, stage.height-215, 200f, 200f)
 		stage.addActor(movementPad)
 		stage.addActor(watchPad)

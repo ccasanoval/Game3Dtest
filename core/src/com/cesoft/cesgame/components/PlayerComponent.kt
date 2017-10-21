@@ -18,8 +18,9 @@ object PlayerComponent : Component
 	var isSaltando = false
 	var health: Float = 100f
 	var score: Int = 0
-	const val MASA = 65f
+	const val MASA = .65f
 	const val ALTURA = 15f
+	const val RADIO = 12f
 	const val FUERZA_MOVIL = 2000f
 	const val FUERZA_PC = 5000f
 
@@ -40,9 +41,9 @@ object PlayerComponent : Component
 		val entity = Entity()
 
 		val localInertia = Vector3()
-		val shape = btSphereShape(ALTURA-4f)//btCylinderShape(Vector3(3f,ALTURA/2,3f))//btCapsuleShape(1f, ALTURA)////
-		shape.calculateLocalInertia(PlayerComponent.MASA, localInertia)
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(PlayerComponent.MASA, null, shape, localInertia)
+		val shape = btSphereShape(RADIO)//btCylinderShape(Vector3(3f,ALTURA/2,3f))//btCapsuleShape(6f, ALTURA)//
+		shape.calculateLocalInertia(MASA, localInertia)
+		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(MASA, null, shape, localInertia)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(Matrix4().translate(pos))
@@ -50,9 +51,9 @@ object PlayerComponent : Component
 		rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG or BulletComponent.SCENE_FLAG or BulletComponent.GROUND_FLAG
 		rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
 		rigidBody.userValue = BulletComponent.PLAYER_FLAG
-		//rigidBody.friction = FRICTION
-		//rigidBody.rollingFriction = FRICTION_ROLLING
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
+		rigidBody.friction = 0f
+		rigidBody.rollingFriction = 1000000000f
 
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 		entity.add(this)

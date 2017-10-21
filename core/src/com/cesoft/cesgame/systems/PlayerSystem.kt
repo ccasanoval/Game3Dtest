@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesgame.Settings
 import com.cesoft.cesgame.UI.GameUI
 import com.cesoft.cesgame.components.*
-import com.cesoft.cesgame.managers.ControllerWidget
+import com.cesoft.cesgame.UI.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
 import com.cesoft.cesgame.components.PlayerComponent.ALTURA
@@ -156,7 +156,9 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 	private fun updateCamara()
 	{
 		val pos = getPosition()
-		pos.y += altura
+		pos.y += altura/1.5f
+		pos.x += camera.direction.x*PlayerComponent.RADIO/2 // camara adelantada a colision, para no disparar a self bullet body
+		pos.z += camera.direction.z*PlayerComponent.RADIO/2
 		camera.position.set(pos)
 		camera.update()
 	}

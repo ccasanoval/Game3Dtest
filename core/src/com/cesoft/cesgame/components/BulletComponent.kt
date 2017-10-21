@@ -5,8 +5,10 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class BulletComponent(var rigidBody : btRigidBody, val rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo) : Component
+class BulletComponent(var rigidBody: btRigidBody, val rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo) : Component
 {
+	// Si no usas rigidBodyInfo, se destruye y puede dar lugar a problemas en las colisiones¿?
+	// Bullet: Disposing btRigidBodyConstructionInfo(452913408,true) due to garbage collection.
 	companion object {
 		const val GROUND_FLAG = 1 shl 3
 		const val SCENE_FLAG = 1 shl 4

@@ -15,7 +15,7 @@ import com.cesoft.cesgame.systems.*
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+// TODO: al reiniciar en MOBILE peta !!!!!!!!!!!!!!!!!!!
 class GameWorld(gameUI: GameUI) {
 
 	private val debugCollision = false
@@ -91,7 +91,7 @@ class GameWorld(gameUI: GameUI) {
 
 
 		/// ENEMIES
-		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -190f)))
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
 
 
 		/// PLAYER

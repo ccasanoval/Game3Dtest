@@ -44,7 +44,7 @@ object WallFactory {
 		pos2.y+=20f
 		transf2.setTranslation(pos2)
 
-		val shape = btBoxShape(Vector3(THICK+1f,HIGH+1f,LONG+2f))
+		val shape = btBoxShape(Vector3(THICK+2f,HIGH+2f,LONG+3f))
 		//val shape = Bullet.obtainStaticNodeShape(model.nodes)
 		val motionState = MotionState(transf2)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
