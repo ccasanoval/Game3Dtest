@@ -214,7 +214,7 @@ object EnemyFactory
 	{
 		val bullet = entity.getComponent(BulletComponent::class.java)
 		val status = entity.getComponent(StatusComponent::class.java)
-System.err.println("-------------------------MOVER: ")
+//System.err.println("-------------------------MOVER: ")
 
 		/*if(status.isDead() || status.isAching()) {
 			//bullet.rigidBody.linearVelocity = Vector3(0f,0f,0f)
@@ -226,8 +226,8 @@ System.err.println("-------------------------MOVER: ")
 		val target = BulletLocation(playerPosition, orientation)
 		val seekSB = Seek<Vector3>(steering, target)
 		val res : SteeringAcceleration<Vector3> = steering.procesar(seekSB)
-		System.err.println("-------------- PlayerSystem: update: res.linear="+res.linear)
-		System.err.println("-------------- PlayerSystem: update: res.angular="+res.angular)
+//		System.err.println("-------------- PlayerSystem: update: res.linear="+res.linear)
+//		System.err.println("-------------- PlayerSystem: update: res.angular="+res.angular)
 
 		///
 		val enemyPosition = Vector3()
@@ -261,7 +261,7 @@ System.err.println("-------------------------MOVER: ")
 			status.setWalking()
 		}
 		if(status.isAttacking() || status.isAching() || status.isDead())fuerza = 0f
-	System.err.println("-------------------------FUERZA: "+fuerza)
+//System.err.println("-------------------------FUERZA: "+fuerza)
 		val dir = playerPosition.add(enemyPosition.scl(-1f)).nor().scl(fuerza*delta)
 		dir.y = bullet.rigidBody.linearVelocity.y
 		bullet.rigidBody.linearVelocity = dir

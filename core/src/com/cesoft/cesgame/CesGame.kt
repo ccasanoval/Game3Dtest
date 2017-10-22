@@ -4,6 +4,8 @@ import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
+import com.cesoft.cesgame.UI.GameUI
+import com.cesoft.cesgame.screens.GameScreen
 import com.cesoft.cesgame.screens.MainMenuScreen
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,12 +21,14 @@ import com.cesoft.cesgame.screens.MainMenuScreen
 //TODO i18n
 class CesGame : ApplicationAdapter() {
 
-	private lateinit var assets: Assets
 	private var screen: Screen? = null
+	private lateinit var assets: Assets
+	lateinit var gameUI: GameUI
 
 	//______________________________________________________________________________________________
 	override fun create() {
 		assets = Assets()
+		gameUI = GameUI(this, assets)
 		Settings.load()
 		Gdx.input.isCatchBackKey = true
 		setScreen(MainMenuScreen(this, assets))
@@ -58,12 +62,21 @@ class CesGame : ApplicationAdapter() {
 			this.screen!!.resize(Gdx.graphics.width, Gdx.graphics.height)
 		}
 	}
+	//______________________________________________________________________________________________
+	fun reset()
+	{
+		delScreen()
+		System.err.println("CesGame:reset:------2----------------------------------")
+		setScreen(GameScreen(gameUI))//TODO: Exception...Only once load of object 3d...
+		System.err.println("CesGame:reset:------3----------------------------------")
+	}
 
 	//______________________________________________________________________________________________
 	override fun dispose() {
 		System.err.println("CesGame:dispose:----------------------------------------")
 		Settings.save()
 		assets.dispose()
+		gameUI.dispose()
 	}
 
 	//______________________________________________________________________________________________

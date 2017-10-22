@@ -35,5 +35,12 @@ class Assets {
 		private val fileHandle = Gdx.files.internal("skin/star-soldier-ui.json")!!
 		private val atlasFile = fileHandle.sibling("star-soldier-ui.atlas")!!
 		private var i18n = Gdx.files.internal("i18n/cesdoom")
+
+		// I18n
+		val SALIR="SALIR"
+		val JUGAR="JUGAR"
+		val PUNTUACIONES="PUNTUACIONES"
+		val CREDITOS="CREDITOS"
+		val RECARGAR="RECARGAR"
 	}
 }

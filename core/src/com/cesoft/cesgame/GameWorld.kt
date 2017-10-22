@@ -16,6 +16,9 @@ import com.cesoft.cesgame.systems.*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: al reiniciar en MOBILE peta !!!!!!!!!!!!!!!!!!!
+// TODO: Steering AI !!!!!!
+// TODO: Constructor
+// TODO: Velocidad carga
 class GameWorld(gameUI: GameUI) {
 
 	private val debugCollision = false

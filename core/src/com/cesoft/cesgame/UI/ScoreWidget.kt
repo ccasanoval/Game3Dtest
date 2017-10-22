@@ -17,7 +17,7 @@ class ScoreWidget(private val assets: Assets) : Actor() {
 
 	override fun act(delta: Float) {
 		score.act(delta)
-		score.text = assets.formatString("CREDITOS", PlayerComponent.score)
+		score.text = assets.formatString(Assets.CREDITOS, PlayerComponent.score)
 	}
 
 	override fun draw(batch: Batch?, parentAlpha: Float) {
