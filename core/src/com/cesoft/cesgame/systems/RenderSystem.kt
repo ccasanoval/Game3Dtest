@@ -14,15 +14,15 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
+import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesgame.CesGame
 import com.cesoft.cesgame.components.GunComponent
 import com.cesoft.cesgame.components.ModelComponent
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class RenderSystem : EntitySystem() {
+class RenderSystem(colorAmbiente: ColorAttribute) : EntitySystem() {
 
 	private lateinit var entities: ImmutableArray<Entity>
 	private var batch: ModelBatch = ModelBatch()
@@ -30,6 +30,8 @@ class RenderSystem : EntitySystem() {
 	var perspectiveCamera: PerspectiveCamera = PerspectiveCamera(FOV, CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
 	private var gunCamera: PerspectiveCamera = PerspectiveCamera(FOV, CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
 	lateinit var gun: Entity
+	private var isDisposed = false
+	//val colorAmbiente = ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.4f, 0.4f, 1f)
 
 	init {
 		/// Camaras
@@ -38,8 +40,9 @@ class RenderSystem : EntitySystem() {
 		gunCamera.far = 100f
 
 		/// Luz
-		environment.set(ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.7f, 0.7f, 1f))
-		environment.add(DirectionalLight().set(0.7f, 0.2f, 0.2f, -1f, -0.8f, -0.4f))
+		//colorAmbiente.color.set( 0.7f, 0.4f, 0.4f, 1f)
+		environment.set(colorAmbiente)
+		environment.add(DirectionalLight().set(0.7f, 0.4f, 0.2f, -1f, -0.8f, -0.4f))
 
 		/// Particulas TODO:
 		val billboardParticleBatch = BillboardParticleBatch()
@@ -54,14 +57,47 @@ class RenderSystem : EntitySystem() {
 
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
+		if(isDisposed)return
 		batch.begin(perspectiveCamera)
-		entities
-			.filter { it.getComponent(GunComponent::class.java) == null }
-			.map { it.getComponent(ModelComponent::class.java) }
-			.forEach { batch.render(it.instance, environment) }
+		/*entities
+			.filter {
+				it.getComponent(GunComponent::class.java) == null && isVisible()
+			}
+			.map {
+				it.getComponent(ModelComponent::class.java) }
+			.forEach {
+				if(true)
+				batch.render(it.instance, environment)
+			}*/
+		var countDrawn = 0
+		for(it in entities)
+		{
+			if(it.getComponent(GunComponent::class.java) == null)
+			{
+				val model = it.getComponent(ModelComponent::class.java)
+				if(isVisible(perspectiveCamera, model))
+				{
+					batch.render(model.instance, environment)
+					countDrawn++
+				}
+			}
+		}
+		System.err.println("-------------------------------RENDER---"+countDrawn)
 		batch.end()
 		renderParticleEffects()
 		drawGun()
+	}
+	//______________________________________________________________________________________________
+	// Frustrum culling
+	private val pos = Vector3()
+	private fun isVisible(cam: PerspectiveCamera, model: ModelComponent): Boolean {
+		if(model.isMustShow)return true
+		model.instance.transform.getTranslation(pos)
+		pos.add(model.center)
+		return cam.frustum.sphereInFrustum(pos, model.radius)
+		/*model.instance.transform.getTranslation(pos)
+		pos.add(model.center)
+		return cam.frustum.boundsInFrustum(pos, model.dimensions)*/
 	}
 
 	//______________________________________________________________________________________________
@@ -77,6 +113,7 @@ class RenderSystem : EntitySystem() {
 
 	//______________________________________________________________________________________________
 	private fun drawGun() {
+		//TODO: guardar posicion ondulatoria al andar
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT)
 		batch.begin(gunCamera)
 		batch.render(gun.getComponent(ModelComponent::class.java).instance)
@@ -93,6 +130,7 @@ class RenderSystem : EntitySystem() {
 
 	//______________________________________________________________________________________________
 	fun dispose() {
+		isDisposed = true
 		batch.dispose()
 	}
 

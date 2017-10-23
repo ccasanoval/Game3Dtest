@@ -1,6 +1,5 @@
 package com.cesoft.cesgame.UI
 
-import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -52,7 +51,7 @@ class GameUI(game: CesGame, assets: Assets) {
 		stage.addActor(crosshairWidget)
 		stage.keyboardFocus = pauseWidget
 		stage.addActor(fpsLabel)
-		if(Gdx.app.type == Application.ApplicationType.Android)
+		if(CesGame.isMobile)
 			ControllerWidget().addToStage(stage)
 	}
 

@@ -8,7 +8,7 @@ import com.cesoft.cesgame.UI.GameUI
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: peta al recargar esto
+//
 class GameScreen(private var gameUI: GameUI) : Screen {
 	//private var gameUI: GameUI = GameUI(game, assets)
 	private var gameWorld: GameWorld = GameWorld(gameUI)
@@ -32,7 +32,6 @@ class GameScreen(private var gameUI: GameUI) : Screen {
 
 	override fun dispose() {
 		gameWorld.dispose()
-		System.err.println("GameScreen:dispose:----------------------------------------")
 	}
 
 	override fun show() {}

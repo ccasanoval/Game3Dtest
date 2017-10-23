@@ -71,7 +71,6 @@ class PauseWidget(private val game: CesGame, stage: Stage, assets: Assets) : Act
 		})
 		btnQuit.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				//TODO: dispose ???
 				Gdx.app.exit()
 			}
 		})

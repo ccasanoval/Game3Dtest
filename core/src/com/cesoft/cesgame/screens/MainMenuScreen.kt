@@ -32,7 +32,9 @@ class MainMenuScreen(private val game: CesGame, assets: Assets) : Screen {
 	private fun configureWidgers() {
 		backgroundImage.setSize(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
 		//titleImage.setSize(620f, 200f)
-		titleImage.setPosition(CesGame.VIRTUAL_WIDTH / 2 - titleImage.width / 2, CesGame.VIRTUAL_HEIGHT / 2)
+		titleImage.setPosition(
+				(CesGame.VIRTUAL_WIDTH - titleImage.width) / 2,
+				(CesGame.VIRTUAL_HEIGHT - titleImage.height) / 2 +50)
 		playButton.setSize(280f, 90f)
 		playButton.label.setFontScale(2f)
 		playButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 120)

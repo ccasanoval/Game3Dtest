@@ -1,5 +1,6 @@
 package com.cesoft.cesgame
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
@@ -13,12 +14,6 @@ import com.cesoft.cesgame.screens.MainMenuScreen
 // DESKTOP RUN    : desktop:run
 //
 //https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
-//TODO: Comprobar disparo Android
-//TODO: Configurar joystick Android -> Ampliar y cambiar por recuadro con flechas, añadir recarga y salto?
-//TODO: Reducir tiempo de carga de la escena
-//TODO: splash mientras carga recursos con AssetManager, que ventaja tiene?
-//TODO: IA
-//TODO i18n
 class CesGame : ApplicationAdapter() {
 
 	private var screen: Screen? = null
@@ -27,6 +22,8 @@ class CesGame : ApplicationAdapter() {
 
 	//______________________________________________________________________________________________
 	override fun create() {
+		isMobile = Gdx.app.type == Application.ApplicationType.Android
+
 		assets = Assets()
 		gameUI = GameUI(this, assets)
 		Settings.load()
@@ -66,22 +63,31 @@ class CesGame : ApplicationAdapter() {
 	fun reset()
 	{
 		delScreen()
-		System.err.println("CesGame:reset:------2----------------------------------")
-		setScreen(GameScreen(gameUI))//TODO: Exception...Only once load of object 3d...
-		System.err.println("CesGame:reset:------3----------------------------------")
+		setScreen(GameScreen(gameUI))
 	}
 
 	//______________________________________________________________________________________________
 	override fun dispose() {
-		System.err.println("CesGame:dispose:----------------------------------------")
+		System.err.println("CesGame:dispose:-----------1-----------------------------")
+
 		Settings.save()
-		assets.dispose()
+		delScreen()
+		System.err.println("CesGame:dispose:-----------4-----------------------------")
+
 		gameUI.dispose()
+		System.err.println("CesGame:dispose:-----------5-----------------------------")
+
+		assets.dispose()
+		System.err.println("CesGame:dispose:-----------9-----------------------------")
+
 	}
 
 	//______________________________________________________________________________________________
 	companion object {
 		val VIRTUAL_WIDTH = 1024f
 		val VIRTUAL_HEIGHT = 576f
+
+		var isMobile = false
+			private set
 	}
 }

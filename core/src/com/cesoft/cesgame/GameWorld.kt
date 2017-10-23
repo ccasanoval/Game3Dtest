@@ -2,6 +2,7 @@ package com.cesoft.cesgame
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
@@ -15,10 +16,15 @@ import com.cesoft.cesgame.systems.*
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: al reiniciar en MOBILE peta !!!!!!!!!!!!!!!!!!!
 // TODO: Steering AI !!!!!!
-// TODO: Constructor
-// TODO: Velocidad carga
+// TODO: Constructor para laberinto
+// TODO: Velocidad carga y velocidad ejecucion (mobile 20 fps !!!)
+// TODO: cuando te mueves, camara gun se mueve a los lados
+// TODO: VR Glasses !!!!!!
+
+//TODO: Configurar joystick Android -> Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga y salto?
+//TODO: splash mientras carga .... recursos con AssetManager, que ventaja tiene?
+//TODO: about screen...
 class GameWorld(gameUI: GameUI) {
 
 	private val debugCollision = false
@@ -36,22 +42,28 @@ class GameWorld(gameUI: GameUI) {
 	private lateinit var player: Entity
 	private lateinit var gun: Entity
 
+	private val colorAmbiente = ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.4f, 0.4f, 1f)
+
 	init {
 		Bullet.init()
 
-		renderSystem = RenderSystem()
+		///----
+		renderSystem = RenderSystem(colorAmbiente)
 		bulletSystem = BulletSystem(this)
 		enemySystem = EnemySystem()
-		playerSystem = PlayerSystem(gameUI, renderSystem.perspectiveCamera, bulletSystem)
+		val playerSystem1 = PlayerSystem(gameUI, renderSystem.perspectiveCamera, bulletSystem)
+		playerSystem = playerSystem1
 		statusSystem = StatusSystem(this)
 		//shotSystem = ShotSystem(this)
 
+		///----
 		engine.addSystem(renderSystem)
 		engine.addSystem(bulletSystem)
 		engine.addSystem(playerSystem)
 		engine.addSystem(enemySystem)
 		engine.addSystem(statusSystem)
-		//engine.addSystem(shotSystem)
+
+		///---
 		if(debugCollision) {
 			debugDrawer = DebugDrawer()
 			debugDrawer!!.debugMode = btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE
@@ -60,47 +72,26 @@ class GameWorld(gameUI: GameUI) {
 
 		// TODO: Cargar desde constructor...
 		/// SCENE
-		engine.addEntity(EntityFactory.loadSuelo(Vector3(0f, 0f, 0f), 10000f))
-		engine.addEntity(EntityFactory.loadDome(Vector3(0f, 0f, 0f)))
-
+		engine.addEntity(SceneFactory.loadDome())
+		engine.addEntity(SceneFactory.loadSuelo(4000f))
+		SceneFactory.loadSkyline(engine, 2000f)
+		SceneFactory.loadJunk(engine, 1200f)
 
 		/// MAZE
-		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH-5.5f, 0f, 4*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH+5.5f, 0f, 4*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH-5.5f, 0f, 2*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH+5.5f, 0f, 2*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(-2.1f*WallFactory.HIGH-10, 0f, 10f), +40f))
-		engine.addEntity(WallFactory.create(Vector3(+2.1f*WallFactory.HIGH+10, 0f, 10f), -40f))
-
-		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH-5.5f, 0f, -6f*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH+5.5f, 0f, -6f*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(-WallFactory.HIGH-5.5f, 0f, -4f*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(+WallFactory.HIGH+5.5f, 0f, -4f*WallFactory.LONG)))
-		engine.addEntity(WallFactory.create(Vector3(-2*WallFactory.HIGH-10, 0f, -2f*WallFactory.LONG-10), -40f))
-		engine.addEntity(WallFactory.create(Vector3(+2*WallFactory.HIGH+10, 0f, -2f*WallFactory.LONG-10), +40f))
-
-		/// RAMPAS
-		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG+2f, 2f*WallFactory.HIGH, 3*RampFactory.LONG), angleZ=90f))
-		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG-2f, 2f*WallFactory.HIGH, 3*RampFactory.LONG), angleZ=90f))
-		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG+2f, 2f*WallFactory.HIGH, 4*RampFactory.LONG), angleZ=90f))
-		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG-2f, 2f*WallFactory.HIGH, 4*RampFactory.LONG), angleZ=90f))
-		engine.addEntity(RampFactory.create(Vector3(-RampFactory.LONG+2f, 2f*WallFactory.HIGH, 5*RampFactory.LONG+14f), angleZ=90f))
-		engine.addEntity(RampFactory.create(Vector3(+RampFactory.LONG-2f, 2f*WallFactory.HIGH, 5*RampFactory.LONG+14f), angleZ=90f))
-
-		engine.addEntity(RampFactory.create(Vector3(-3.5f*RampFactory.LONG, .5f*WallFactory.HIGH, 4*RampFactory.LONG+7f), angleZ=-40f))
-		engine.addEntity(RampFactory.create(Vector3(-2.4f*RampFactory.LONG, 1.5f*WallFactory.HIGH, 4*RampFactory.LONG+7f), angleZ=-40f))
-		engine.addEntity(RampFactory.create(Vector3(+3.5f*RampFactory.LONG, .5f*WallFactory.HIGH, 4*RampFactory.LONG+7f), angleZ=+40f))
-		engine.addEntity(RampFactory.create(Vector3(+2.4f*RampFactory.LONG, 1.5f*WallFactory.HIGH, 4*RampFactory.LONG+7f), angleZ=+40f))
-
+		MazeFactory.create(engine)
 
 		/// ENEMIES
 		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
 
+		System.err.println("---------------GameWorld:init:7-----------------------")
 
 		/// PLAYER
 		createPlayer(Vector3(0f,150f,0f))
 		PlayerComponent.health = 100f
 		PlayerComponent.score = 0
+		PlayerComponent.colorAmbiente = colorAmbiente
+		System.err.println("---------------GameWorld:init:8-----------------------")
+
 	}
 
 

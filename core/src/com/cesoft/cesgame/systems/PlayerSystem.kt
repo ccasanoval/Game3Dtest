@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.ashley.core.Family
-import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
@@ -18,6 +17,7 @@ import com.cesoft.cesgame.components.*
 import com.cesoft.cesgame.UI.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
+import com.cesoft.cesgame.CesGame
 import com.cesoft.cesgame.components.PlayerComponent.ALTURA
 import com.cesoft.cesgame.components.PlayerComponent.FUERZA_MOVIL
 import com.cesoft.cesgame.managers.GunFactory
@@ -25,7 +25,11 @@ import com.cesoft.cesgame.managers.GunFactory
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, private val bulletSystem: BulletSystem)
+class PlayerSystem(
+	private val gameUI: GameUI,
+	private val camera: Camera,
+	private val bulletSystem: BulletSystem
+	)
 	: EntitySystem(), EntityListener, InputProcessor
 {
 	private lateinit var playerComponent : PlayerComponent
@@ -47,6 +51,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 		updateStatus()
 		checkGameOver(delta)
 		updateCamara()
+		PlayerComponent.update()
 	}
 
 	//______________________________________________________________________________________________
@@ -64,9 +69,9 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 		val deltaY: Float
 		val tmp = Vector3()
 
-		if(Gdx.app.type == Application.ApplicationType.Android) {
+		if(CesGame.isMobile) {
 			deltaX = -ControllerWidget.watchVector.x * 85f * delta
-			deltaY = ControllerWidget.watchVector.y * 55f * delta
+			deltaY = ControllerWidget.watchVector.y * 85f * delta
 		}
 		else {
 			deltaX = -Gdx.input.deltaX * 5f * delta
@@ -81,13 +86,15 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 		val v = dir.cpy()
 		val pitch = (Math.atan2(Math.sqrt((v.x * v.x + v.z * v.z).toDouble()), v.y.toDouble()) * MathUtils.radiansToDegrees).toFloat()
 		var pr = deltaY
-		if(Gdx.app.type == Application.ApplicationType.Android)
+		/// MOBILE
+		if(CesGame.isMobile)
 		{
-			if(pitch - pr > 100)
-				pr = -(100 - pitch)
-			else if(pitch - pr < 50)
-				pr = pitch - 50
+			if(pitch - pr > 150)
+				pr = -(150 - pitch)
+			else if(pitch - pr < 30)
+				pr = pitch - 30
 		}
+		/// DESKTOP
 		else {
 			if(pitch - pr > 150)
 				pr = -(150 - pitch)
@@ -114,11 +121,11 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 		//TODO: no mover si esta saltando?
 		//if(playerComponent!!.isSaltando)return
 		val tmp = Vector3()
-		if(Gdx.app.type == Application.ApplicationType.Android) {
-			if(     ControllerWidget.movementVector.y > +0.15) walkDirection.add(camera.direction)
-			else if(ControllerWidget.movementVector.y < -0.15) walkDirection.sub(camera.direction)
-			if(     ControllerWidget.movementVector.x < -0.15) tmp.set(camera.direction).crs(camera.up).scl(-1f)
-			else if(ControllerWidget.movementVector.x > +0.15) tmp.set(camera.direction).crs(camera.up)
+		if(CesGame.isMobile) {
+			if(     ControllerWidget.movementVector.y > +0.20f) walkDirection.add(camera.direction)
+			else if(ControllerWidget.movementVector.y < -0.20f) walkDirection.sub(camera.direction)
+			if(     ControllerWidget.movementVector.x < -0.20f) tmp.set(camera.direction).crs(camera.up).scl(-1f)
+			else if(ControllerWidget.movementVector.x > +0.20f) tmp.set(camera.direction).crs(camera.up)
 			walkDirection.add(tmp)
 			walkDirection.scl(FUERZA_MOVIL * delta)
 		}
@@ -149,7 +156,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 				//bulletComponent.rigidBody.applyCentralImpulse(Vector3.Y.scl(fuerza))
 			}
 		}
-		//TODO: utilizar Ray ?
+		//TODO: utilizar Ray para saltando?
 		//playerComponent.isSaltando = getPosition().y > ALTURA/6 ==> No vale con rampas!!!
 	}
 	//______________________________________________________________________________________________
@@ -188,7 +195,6 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 		deltaReload += delta
 		if(ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
 			if(deltaFire > 0.15f) {
-				System.err.println("------ FIRE ! -------------------")
 				deltaFire = 0f
 				fire()
 			}
@@ -219,27 +225,10 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 	}
 	//______________________________________________________________________________________________
 	//
-	private fun fire() {
-		/*val dir = camera.direction.cpy()
-		val pos = camera.position.cpy()
-		val vel = bulletComponent.rigidBody.linearVelocity.cpy()
-
-		vel.y = 0f
-		pos.add(vel.nor().scl(5f))
-
-		val y = bulletComponent.rigidBody.linearVelocity.y *0.035f
-		if(y != 0f) pos.add(Vector3(0f, y, 0f))
-
-		val shot = ShotComponent.createShot(pos, dir)
-		engine!!.addEntity(shot)*/
-
-		disparar()
-
-		//Animacion
-		GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
-	}
-	fun disparar()
+	fun fire()
 	{
+		GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
+
 		//-------------------
 		/// COLLISION BY RAY
 		val rayFrom = Vector3()
@@ -254,7 +243,7 @@ class PlayerSystem(private val gameUI: GameUI, private val camera: Camera, priva
 		bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB)
 		if(rayTestCB.hasHit())
 		{
-			Gdx.app.error("CESGAME", "-------------------------- DISPARO DIO ------------------------------")
+			//Gdx.app.error("CESGAME", "-------------------------- DISPARO DIO ------------------------------")
 			val entity = rayTestCB.collisionObject.userData as Entity
 			/// Enemy
 			entity.getComponent(StatusComponent::class.java)?.hurt()

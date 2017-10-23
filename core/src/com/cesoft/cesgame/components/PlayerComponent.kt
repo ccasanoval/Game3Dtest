@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
@@ -24,16 +25,26 @@ object PlayerComponent : Component
 	const val FUERZA_MOVIL = 2000f
 	const val FUERZA_PC = 5000f
 
+	lateinit var colorAmbiente : ColorAttribute
+
 	//______________________________________________________________________________________________
 	private var lastHurt = 0L
 	fun hurt(pain: Float)
 	{
 		if(System.currentTimeMillis() > lastHurt+800) {
 			health -= pain
+			colorAmbiente.color.set(.8f, 0f, 0f, 1f)//Pasar RenderObject y llamar a CamaraRoja(true)...
 			lastHurt = System.currentTimeMillis()
-			// TODO: show RED PAIN-T
-			// Maybe by adding red light to renderSystem...¿?
 		}
+		//else if(lastHurt+50 < System.currentTimeMillis())
+		//	colorAmbiente.color.set(.8f, .8f, .8f, 1f)//Pasar RenderObject y llamar a CamaraRoja(false)...
+	}
+
+	//______________________________________________________________________________________________
+	fun update()
+	{
+		if(lastHurt+50 < System.currentTimeMillis())
+			colorAmbiente.color.set(.8f, .8f, .8f, 1f)//Pasar RenderObject y llamar a CamaraRoja(false)...
 	}
 
 	//______________________________________________________________________________________________

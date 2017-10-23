@@ -1,6 +1,7 @@
 package com.cesoft.cesgame.managers
 
 import com.badlogic.ashley.core.Entity
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.steer.SteeringAcceleration
 import com.badlogic.gdx.ai.steer.behaviors.Seek
@@ -17,6 +18,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
+import com.cesoft.cesgame.CesGame
 import com.cesoft.cesgame.bullet.BulletLocation
 
 import com.cesoft.cesgame.components.EnemyComponent.ACTION.*
@@ -239,8 +241,11 @@ object EnemyFactory
 		var fuerza = 0f
 		val distanciaConPlayer = enemyPosition.dst(playerPosition)
 
+		/// No está en condiciones de atacar
+		if(status.isAching() || status.isDead())
+			fuerza = 0f
 		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
-		if(distanciaConPlayer < RADIO+PlayerComponent.RADIO+1)//
+		else if(distanciaConPlayer < RADIO+PlayerComponent.RADIO+2)
 		{
 			status.setAttacking()
 			val pain = 20f
@@ -249,19 +254,17 @@ object EnemyFactory
 		/// Esta cerca, corre a por el
 		else if(distanciaConPlayer < 180f)
 		{
-			fuerza = 2000f
+			fuerza = if(CesGame.isMobile) 1800f else 2200f
 			status.setRunning()
 		}
 		/// Esta lejos, camina buscando
-		else //if(distanciaConPlayer > 100f)
+		else
 		{
 			//TODO: Wandering ?
-			//TODO: ajustar para Movil?
-			fuerza = 600f
+			fuerza = if(CesGame.isMobile) 600f else 800f
 			status.setWalking()
 		}
-		if(status.isAttacking() || status.isAching() || status.isDead())fuerza = 0f
-//System.err.println("-------------------------FUERZA: "+fuerza)
+
 		val dir = playerPosition.add(enemyPosition.scl(-1f)).nor().scl(fuerza*delta)
 		dir.y = bullet.rigidBody.linearVelocity.y
 		bullet.rigidBody.linearVelocity = dir

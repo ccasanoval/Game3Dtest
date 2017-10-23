@@ -86,7 +86,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 				EnemyComponent.TYPE.MONSTER1,
 				Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]),
 				100f))
-				//EntityFactory.createEnemy(model, Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]), ++index))
+				//SceneFactory.createEnemy(model, Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]), ++index))
 	}
 
 	//______________________________________________________________________________________________
