@@ -1,10 +1,7 @@
 package com.cesoft.cesgame.managers
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.ai.steer.SteeringAcceleration
-import com.badlogic.gdx.ai.steer.behaviors.Seek
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
@@ -19,7 +16,6 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
 import com.cesoft.cesgame.CesGame
-import com.cesoft.cesgame.bullet.BulletLocation
 
 import com.cesoft.cesgame.components.EnemyComponent.ACTION.*
 
@@ -78,6 +74,8 @@ object EnemyFactory
 		when(type) {
 			EnemyComponent.TYPE.MONSTER1 -> {
 				modelComponent = ModelComponent(models[type]!!, pos)
+				modelComponent.frustumCullingData =
+					FrustumCullingData.create(Vector3(0f,0f,0f), Vector3(RADIO,RADIO,RADIO), modelComponent.instance)
 				entity.add(modelComponent)
 				/// ANIMATION
 				entity.add(AnimationComponent(modelComponent.instance))
@@ -212,7 +210,7 @@ object EnemyFactory
 
 	//______________________________________________________________________________________________
 	//TODO: IA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	fun mover(entity: Entity, playerPosition: Vector3, delta: Float)
+	fun mover(entity: Entity, playerPosition: Vector3, playerOrientation: Vector3, delta: Float)
 	{
 		val bullet = entity.getComponent(BulletComponent::class.java)
 		val status = entity.getComponent(StatusComponent::class.java)
@@ -222,15 +220,16 @@ object EnemyFactory
 			//bullet.rigidBody.linearVelocity = Vector3(0f,0f,0f)
 			return
 		}*/
+
 		/// Steering
-		val steering = entity.getComponent(SteeringComponent::class.java)
-		val orientation = 0f //TODO: Camara?
+		/*val steering = entity.getComponent(SteeringComponent::class.java)
+		val orientation = Math.atan2(-playerOrientation.z.toDouble(), playerOrientation.x.toDouble()).toFloat()
 		val target = BulletLocation(playerPosition, orientation)
 		val seekSB = Seek<Vector3>(steering, target)
 		val res : SteeringAcceleration<Vector3> = steering.procesar(seekSB)
-//		System.err.println("-------------- PlayerSystem: update: res.linear="+res.linear)
-//		System.err.println("-------------- PlayerSystem: update: res.angular="+res.angular)
-
+		System.err.println("-------------- PlayerSystem: update: res.linear="+res.linear)
+		System.err.println("-------------- PlayerSystem: update: res.angular="+res.angular)
+*/
 		///
 		val enemyPosition = Vector3()
 		val model = entity.getComponent(ModelComponent::class.java)

@@ -89,10 +89,11 @@ class PlayerSystem(
 		/// MOBILE
 		if(CesGame.isMobile)
 		{
-			if(pitch - pr > 150)
-				pr = -(150 - pitch)
-			else if(pitch - pr < 30)
-				pr = pitch - 30
+			if(pitch - pr > 120)//Angulo mirando abajo
+				pr = pitch - 120
+			else if(pitch - pr < 40)//Angulo mirando arriba
+				pr = pitch - 40
+			//System.err.println("-------------------------------- PITCH: "+pitch)
 		}
 		/// DESKTOP
 		else {

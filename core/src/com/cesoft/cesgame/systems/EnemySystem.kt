@@ -73,7 +73,7 @@ class EnemySystem : EntitySystem(), EntityListener {
 			//orientation = Math.atan2(-playerPosition.z.toDouble(), playerPosition.x.toDouble()).toFloat()
 
 			//
-			EnemyFactory.mover(entity, playerPosition.cpy(), delta)
+			EnemyFactory.mover(entity, playerPosition.cpy(), Vector3(0f,0f,-1f), delta)
 		}
 	}
 

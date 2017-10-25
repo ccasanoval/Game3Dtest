@@ -68,18 +68,10 @@ class CesGame : ApplicationAdapter() {
 
 	//______________________________________________________________________________________________
 	override fun dispose() {
-		System.err.println("CesGame:dispose:-----------1-----------------------------")
-
 		Settings.save()
 		delScreen()
-		System.err.println("CesGame:dispose:-----------4-----------------------------")
-
 		gameUI.dispose()
-		System.err.println("CesGame:dispose:-----------5-----------------------------")
-
 		assets.dispose()
-		System.err.println("CesGame:dispose:-----------9-----------------------------")
-
 	}
 
 	//______________________________________________________________________________________________

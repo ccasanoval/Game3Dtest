@@ -25,9 +25,10 @@ import com.cesoft.cesgame.systems.*
 //TODO: Configurar joystick Android -> Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga y salto?
 //TODO: splash mientras carga .... recursos con AssetManager, que ventaja tiene?
 //TODO: about screen...
+//TODO: Login solo en debug
 class GameWorld(gameUI: GameUI) {
 
-	private val debugCollision = false
+	private val debugCollision = true
 	private var debugDrawer: DebugDrawer? = null
 
 	private var bulletSystem: BulletSystem
@@ -47,8 +48,10 @@ class GameWorld(gameUI: GameUI) {
 	init {
 		Bullet.init()
 
+		val lonMundo = 4000f
+
 		///----
-		renderSystem = RenderSystem(colorAmbiente)
+		renderSystem = RenderSystem(colorAmbiente, lonMundo)
 		bulletSystem = BulletSystem(this)
 		enemySystem = EnemySystem()
 		val playerSystem1 = PlayerSystem(gameUI, renderSystem.perspectiveCamera, bulletSystem)
@@ -73,15 +76,16 @@ class GameWorld(gameUI: GameUI) {
 		// TODO: Cargar desde constructor...
 		/// SCENE
 		engine.addEntity(SceneFactory.loadDome())
-		engine.addEntity(SceneFactory.loadSuelo(4000f))
-		SceneFactory.loadSkyline(engine, 2000f)
-		SceneFactory.loadJunk(engine, 1200f)
+		engine.addEntity(SceneFactory.loadSuelo(lonMundo))
+		SceneFactory.loadSkyline(engine, lonMundo/2f)
+		SceneFactory.loadJunk(engine, lonMundo/3f)
 
 		/// MAZE
 		MazeFactory.create(engine)
+		engine.addEntity(WallFactory.create(Vector3(0f,0f,0f)))
 
 		/// ENEMIES
-		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
+		//engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
 
 		System.err.println("---------------GameWorld:init:7-----------------------")
 

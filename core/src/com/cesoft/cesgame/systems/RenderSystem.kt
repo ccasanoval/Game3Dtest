@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
-import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesgame.CesGame
 import com.cesoft.cesgame.components.GunComponent
 import com.cesoft.cesgame.components.ModelComponent
@@ -22,7 +21,7 @@ import com.cesoft.cesgame.components.ModelComponent
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class RenderSystem(colorAmbiente: ColorAttribute) : EntitySystem() {
+class RenderSystem(colorAmbiente: ColorAttribute, largoMundo: Float) : EntitySystem() {
 
 	private lateinit var entities: ImmutableArray<Entity>
 	private var batch: ModelBatch = ModelBatch()
@@ -35,9 +34,10 @@ class RenderSystem(colorAmbiente: ColorAttribute) : EntitySystem() {
 
 	init {
 		/// Camaras
-		perspectiveCamera.far = 50000f
+		//perspectiveCamera.far = Math.sqrt((2*largoMundo*largoMundo).toDouble()).toFloat()+1	// Lado mundo = 4000 => SQRT(4000*4000+4000*4000) = 5700
+		perspectiveCamera.far = 10000f // Para que vea el cielo (dome)
 		perspectiveCamera.near = 1f
-		gunCamera.far = 100f
+		gunCamera.far = 50f
 
 		/// Luz
 		//colorAmbiente.color.set( 0.7f, 0.4f, 0.4f, 1f)
@@ -56,6 +56,7 @@ class RenderSystem(colorAmbiente: ColorAttribute) : EntitySystem() {
 	}
 
 	//______________________________________________________________________________________________
+	var countMax = 0
 	override fun update(delta: Float) {
 		if(isDisposed)return
 		batch.begin(perspectiveCamera)
@@ -75,29 +76,18 @@ class RenderSystem(colorAmbiente: ColorAttribute) : EntitySystem() {
 			if(it.getComponent(GunComponent::class.java) == null)
 			{
 				val model = it.getComponent(ModelComponent::class.java)
-				if(isVisible(perspectiveCamera, model))
+				if(model.frustumCullingData.isVisible(perspectiveCamera))
 				{
 					batch.render(model.instance, environment)
 					countDrawn++
 				}
 			}
 		}
-		System.err.println("-------------------------------RENDER---"+countDrawn)
+		if(countDrawn > countMax)countMax = countDrawn
+		System.err.println("-------------------------------RENDER---"+countDrawn+"  / "+countMax)
 		batch.end()
 		renderParticleEffects()
 		drawGun()
-	}
-	//______________________________________________________________________________________________
-	// Frustrum culling
-	private val pos = Vector3()
-	private fun isVisible(cam: PerspectiveCamera, model: ModelComponent): Boolean {
-		if(model.isMustShow)return true
-		model.instance.transform.getTranslation(pos)
-		pos.add(model.center)
-		return cam.frustum.sphereInFrustum(pos, model.radius)
-		/*model.instance.transform.getTranslation(pos)
-		pos.add(model.center)
-		return cam.frustum.boundsInFrustum(pos, model.dimensions)*/
 	}
 
 	//______________________________________________________________________________________________
@@ -134,6 +124,7 @@ class RenderSystem(colorAmbiente: ColorAttribute) : EntitySystem() {
 		batch.dispose()
 	}
 
+	//______________________________________________________________________________________________
 	companion object {
 		private val FOV = 67f
 		var particleSystem: ParticleSystem = ParticleSystem.get()

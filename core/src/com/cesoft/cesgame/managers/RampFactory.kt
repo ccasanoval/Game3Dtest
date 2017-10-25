@@ -20,7 +20,8 @@ import com.cesoft.cesgame.bullet.MotionState
 import com.cesoft.cesgame.components.BulletComponent
 import com.cesoft.cesgame.components.ModelComponent
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
-
+import com.badlogic.gdx.math.collision.BoundingBox
+import com.cesoft.cesgame.components.FrustumCullingData
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,6 +30,7 @@ object RampFactory {
 	const val LONG = 30f
 	const val HIGH = 20f
 	const val THICK = 1f
+	private val dim = Vector3(THICK *2, HIGH *2, LONG *2)
 
 	private val text1 = Gdx.files.internal("scene/wall/metal2.png")
 	private val text2 = Gdx.files.internal("scene/wall/metal3.png")
@@ -69,8 +71,23 @@ object RampFactory {
 		/// MODELO
 		//modelComponent.instance.materials.get(0).set(textureAttribute1)
 		val material = if(type) material1 else material2
-		val modelo : Model = modelBuilder.createBox(THICK *2, HIGH *2, LONG *2, material, POSITION_NORMAL)
+		val modelo : Model = modelBuilder.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
 		val modelComponent = ModelComponent(modelo, pos)
+		//
+		if(angleX == 0f && angleY == 0f && angleZ == 0f) {
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, Vector3(THICK*2, HIGH*2, LONG*2))
+		}
+		else if(angleX == 0f && angleY == 90f && angleZ == 90f) {
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, Vector3(LONG*2, THICK*2, HIGH*2))
+		}
+		else {
+			//TODO: ? por que no funciona  con esferica ? Quiza eliminar esferica ?
+			/*val boundingBox = BoundingBox()
+			modelComponent.instance.calculateBoundingBox(boundingBox)
+			frustrumCullingData = FrustumCullingData.create(boundingBox)*/
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, Vector3(LONG*2, LONG*2, LONG*2))
+		}
+
 		//
 		modelComponent.instance.transform.rotate(Vector3.X, angleX)
 		modelComponent.instance.transform.rotate(Vector3.Y, angleY)
