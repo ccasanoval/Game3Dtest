@@ -36,9 +36,9 @@ object WallFactory {
 
 	private val dimCollision = Vector3(THICK+0f,HIGH+0f,LONG+0f)
 
-	val mb = ModelBuilder()
+	private val mb = ModelBuilder()
 	private val fileTexture = Gdx.files.internal("scene/wall/metal1.jpg")
-	val POSITION_NORMAL =
+	private val POSITION_NORMAL =
 			(VertexAttributes.Usage.Position
 			or VertexAttributes.Usage.Normal
 			or VertexAttributes.Usage.TextureCoordinates).toLong()
@@ -81,14 +81,9 @@ object WallFactory {
 
 		/// COLISION
 		val transf = modelComponent.instance.transform
-		val pos2 = Vector3()
-		transf.getTranslation(pos2)
-		val transf2 = transf.cpy()
-		transf2.setTranslation(pos2)
-
 		val shape = btBoxShape(dimCollision)
 		//val shape = Bullet.obtainStaticNodeShape(model.nodes)
-		val motionState = MotionState(transf2)
+		val motionState = MotionState(transf)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity

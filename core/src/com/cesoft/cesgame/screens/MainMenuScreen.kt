@@ -16,10 +16,11 @@ import com.cesoft.cesgame.CesGame
 //
 class MainMenuScreen(private val game: CesGame, private val assets: Assets) : Screen {
 	private var stage: Stage = Stage(FitViewport(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT))
-	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/backgroundMN.png")))
+	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/background.png")))
 	private var titleImage: Image = Image(Texture(Gdx.files.internal("data/title.png")))
 	private var playButton: TextButton = TextButton(assets.getString(Assets.JUGAR), assets.skin)
 	private var quitButton: TextButton = TextButton(assets.getString(Assets.SALIR), assets.skin)
+	private var aboutButton: TextButton = TextButton(assets.getString(Assets.SOBRE), assets.skin)
 
 	init {
 		configureWidgers()
@@ -32,20 +33,25 @@ class MainMenuScreen(private val game: CesGame, private val assets: Assets) : Sc
 		backgroundImage.setSize(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
 		titleImage.setPosition(
 				(CesGame.VIRTUAL_WIDTH - titleImage.width) / 2,
-				(CesGame.VIRTUAL_HEIGHT - titleImage.height) / 2 +50)
+				(CesGame.VIRTUAL_HEIGHT - titleImage.height) / 2 +80)
 		//
 		playButton.setSize(280f, 90f)
 		playButton.label.setFontScale(2f)
-		playButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 120)
+		playButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 130)
+		//
+		aboutButton.setSize(280f, 90f)
+		aboutButton.label.setFontScale(1.5f)
+		aboutButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 200)
 		//
 		quitButton.setSize(280f, 90f)
 		quitButton.label.setFontScale(2f)
-		quitButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 200)
+		quitButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 270)
 		//
 		stage.addActor(backgroundImage)
 		stage.addActor(titleImage)
 		stage.addActor(playButton)
 		stage.addActor(quitButton)
+		stage.addActor(aboutButton)
 	}
 
 	private fun setListeners() {
@@ -57,6 +63,11 @@ class MainMenuScreen(private val game: CesGame, private val assets: Assets) : Sc
 		quitButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
 				Gdx.app.exit()
+			}
+		})
+		aboutButton.addListener(object : ClickListener() {
+			override fun clicked(event: InputEvent?, x: Float, y: Float) {
+				game.setScreen(AboutScreen(game, assets))
 			}
 		})
 	}

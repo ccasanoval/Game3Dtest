@@ -17,8 +17,7 @@ import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesgame.Assets
 import com.cesoft.cesgame.CesGame
-import com.cesoft.cesgame.components.GunComponent
-import com.cesoft.cesgame.components.ModelComponent
+import com.cesoft.cesgame.components.*
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +31,8 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem
 	private var gunCamera: PerspectiveCamera = PerspectiveCamera(FOV, CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
 	lateinit var gun: Entity
 	private var isDisposed = false
-	//var particleSystem = ParticleSystem()
+	//private val shadowLight: DirectionalShadowLight
+
 
 	//______________________________________________________________________________________________
 	init {
@@ -49,10 +49,13 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem
 		assets.iniParticulas(particleSystem.batches)
 
 		/// Ambiente
-		//colorAmbiente.color.set( 0.7f, 0.4f, 0.4f, 1f)
 		environment.set(colorAmbiente)
 		environment.add(DirectionalLight().set(0.7f, 0.4f, 0.2f, -1f, -0.8f, -0.4f))
-		//environment.set(ColorAttribute(ColorAttribute.Fog, 0.7f, 0.4f, 0.0f, 1f))
+		/// Sombras
+//		shadowLight = DirectionalShadowLight(1024 * 5, 1024 * 5, 200f, 200f, 1f, 300f)
+//		shadowLight.set(0.9f, 0.9f, 0.9f, 0f, -0.1f, 0.1f)
+//		environment.add(shadowLight)
+//		environment.shadowMap = shadowLight
 	}
 
 	//______________________________________________________________________________________________
@@ -83,6 +86,7 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem
 //System.err.println("-------------------------------RENDER---"+countDrawn+"  / "+countMax)
 		batch.end()
 
+		//drawShadows(delta)
 		renderParticleEffects()
 		drawGun(delta)
 	}
@@ -131,6 +135,25 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem
 		}
 		modelo.instance.transform.setTranslation(pos)
 	}
+
+	//______________________________________________________________________________________________
+//	private fun drawShadows(delta: Float) {
+//		shadowLight.begin(Vector3.Zero, perspectiveCamera.direction)
+//		batch.begin(shadowLight.camera)
+//		for(x in 0 until entities.size()) {
+//			//if(entities.get(x).getComponent(PlayerComponent::class.java) != null ||
+//			if(entities.get(x).getComponent(EnemyComponent::class.java) != null)
+//			{
+//				val model = entities.get(x).getComponent(ModelComponent::class.java)
+//				if(model.frustumCullingData.isVisible(perspectiveCamera))
+//					batch.render(model.instance)
+//			}
+//			//if(entities.get(x).getComponent(AnimationComponent::class.java) != null && !Settings.paused)
+//			//	entities.get(x).getComponent(AnimationComponent::class.java).update(delta)
+//		}
+//		batch.end()
+//		shadowLight.end()
+//	}
 
 	//______________________________________________________________________________________________
 	fun resize(width: Int, height: Int) {

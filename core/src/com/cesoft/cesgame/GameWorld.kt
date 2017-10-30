@@ -18,7 +18,7 @@ import com.cesoft.cesgame.systems.*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //TODO: Steering AI !!!!!!
 //TODO: Velocidad carga y velocidad ejecucion (mobile 20 fps !!!)
-//TODO: VR Glasses !!!!!!
+//TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
 
 //TODO: Configurar joystick Android -> Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga y salto?
 //TODO: splash mientras carga .... recursos con AssetManager, que ventaja tiene?
@@ -30,6 +30,7 @@ import com.cesoft.cesgame.systems.*
 //TODO: Dependeci Injection?
 //TODO: cuando te mueves, camara gun se mueve a los lados
 //TODO: Shadows? Fog?
+//TODO: Columnas en maze, maze cerrado !!
 
 class GameWorld(gameUI: GameUI, assets: Assets) {
 

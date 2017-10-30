@@ -55,16 +55,14 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 				if( ! enemy.isShowingParticles) {
 					enemy.isShowingParticles = true
 					val effect = assets.getParticulas()
-					//if(effect != null) {
 					(effect.controllers.first().emitter as RegularEmitter).emissionMode =
 							//RegularEmitter.EmissionMode.Enabled
 							RegularEmitter.EmissionMode.EnabledUntilCycleEnd
 					effect.setTransform(model.instance.transform)
-					effect.scale(5f, 5f, 5f)
+					effect.scale(5f, 8f, 5f)
 					effect.init()
 					effect.start()
 					RenderSystem.particleSystem.add(effect)
-					//}
 				}
 			}
 
