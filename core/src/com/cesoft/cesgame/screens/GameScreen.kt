@@ -2,6 +2,7 @@ package com.cesoft.cesgame.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.cesoft.cesgame.Assets
 import com.cesoft.cesgame.GameWorld
 import com.cesoft.cesgame.Settings
 import com.cesoft.cesgame.UI.GameUI
@@ -9,9 +10,9 @@ import com.cesoft.cesgame.UI.GameUI
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameScreen(private var gameUI: GameUI) : Screen {
+class GameScreen(private var gameUI: GameUI, assets: Assets) : Screen {
 	//private var gameUI: GameUI = GameUI(game, assets)
-	private var gameWorld: GameWorld = GameWorld(gameUI)
+	private var gameWorld: GameWorld = GameWorld(gameUI, assets)
 
 	init {
 		Settings.paused = false

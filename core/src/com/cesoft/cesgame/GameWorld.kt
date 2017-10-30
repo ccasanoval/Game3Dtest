@@ -16,19 +16,24 @@ import com.cesoft.cesgame.systems.*
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: Steering AI !!!!!!
-// TODO: Constructor para laberinto
-// TODO: Velocidad carga y velocidad ejecucion (mobile 20 fps !!!)
-// TODO: cuando te mueves, camara gun se mueve a los lados
-// TODO: VR Glasses !!!!!!
+//TODO: Steering AI !!!!!!
+//TODO: Velocidad carga y velocidad ejecucion (mobile 20 fps !!!)
+//TODO: VR Glasses !!!!!!
 
 //TODO: Configurar joystick Android -> Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga y salto?
 //TODO: splash mientras carga .... recursos con AssetManager, que ventaja tiene?
 //TODO: about screen...
-//TODO: Login solo en debug
-class GameWorld(gameUI: GameUI) {
 
-	private val debugCollision = true
+//TODO: Logs solo en debug
+//TODO: Letrero LOADING... cuando le das a play
+//TODO: Constructor para laberinto¿?
+//TODO: Dependeci Injection?
+//TODO: cuando te mueves, camara gun se mueve a los lados
+//TODO: Shadows? Fog?
+
+class GameWorld(gameUI: GameUI, assets: Assets) {
+
+	private val debugCollision = false
 	private var debugDrawer: DebugDrawer? = null
 
 	private var bulletSystem: BulletSystem
@@ -37,7 +42,6 @@ class GameWorld(gameUI: GameUI) {
 	private var renderSystem: RenderSystem
 	private var enemySystem: EnemySystem
 	private var statusSystem: StatusSystem
-	//private var shotSystem: ShotSystem
 
 	private var engine: Engine = Engine()
 	private lateinit var player: Entity
@@ -45,19 +49,19 @@ class GameWorld(gameUI: GameUI) {
 
 	private val colorAmbiente = ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.4f, 0.4f, 1f)
 
+
+	//______________________________________________________________________________________________
 	init {
 		Bullet.init()
 
 		val lonMundo = 4000f
 
 		///----
-		renderSystem = RenderSystem(colorAmbiente, lonMundo)
+		renderSystem = RenderSystem(colorAmbiente, assets)
 		bulletSystem = BulletSystem(this)
-		enemySystem = EnemySystem()
-		val playerSystem1 = PlayerSystem(gameUI, renderSystem.perspectiveCamera, bulletSystem)
-		playerSystem = playerSystem1
+		enemySystem = EnemySystem(assets)
+		playerSystem = PlayerSystem(gameUI, renderSystem.perspectiveCamera, bulletSystem)
 		statusSystem = StatusSystem(this)
-		//shotSystem = ShotSystem(this)
 
 		///----
 		engine.addSystem(renderSystem)
@@ -82,12 +86,9 @@ class GameWorld(gameUI: GameUI) {
 
 		/// MAZE
 		MazeFactory.create(engine)
-		engine.addEntity(WallFactory.create(Vector3(0f,0f,0f)))
 
 		/// ENEMIES
-		//engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
-
-		System.err.println("---------------GameWorld:init:7-----------------------")
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
 
 		/// PLAYER
 		createPlayer(Vector3(0f,150f,0f))
@@ -95,7 +96,6 @@ class GameWorld(gameUI: GameUI) {
 		PlayerComponent.score = 0
 		PlayerComponent.colorAmbiente = colorAmbiente
 		System.err.println("---------------GameWorld:init:8-----------------------")
-
 	}
 
 

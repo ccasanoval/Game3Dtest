@@ -17,16 +17,14 @@ import com.cesoft.cesgame.screens.GameScreen
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Cambiar estilo botones : imagenes?
-class GameOverWidget(private val game: CesGame, stage: Stage, assets: Assets) : Actor() {
+class GameOverWidget(private val game: CesGame, stage: Stage, private val assets: Assets) : Actor() {
 	private var image: Image = Image(Texture(Gdx.files.internal("data/gameOver.png")))
 	private var btnJugar: TextButton
-	//private var btnPuntuaciones: TextButton
 	private var btnSalir: TextButton
 
 	init {
 		super.setStage(stage)
 		btnJugar = TextButton(assets.getString(Assets.JUGAR), assets.skin)
-		//btnPuntuaciones = TextButton(assets.getString(Assets.PUNTOS), assets.skin)
 		btnSalir = TextButton(assets.getString(Assets.SALIR), assets.skin)
 		//
 		setListeners()
@@ -36,14 +34,10 @@ class GameOverWidget(private val game: CesGame, stage: Stage, assets: Assets) : 
 	private fun setListeners() {
 		btnJugar.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(GameScreen(game.gameUI))
+				game.setScreen(GameScreen(game.gameUI, assets))
 			}
 		})
-//		btnPuntuaciones.addListener(object : ClickListener() {
-//			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-//				game.setScreen(LeaderboardsScreen(game))
-//			}
-//		})
+
 		btnSalir.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
 				Gdx.app.exit()
@@ -58,7 +52,6 @@ class GameOverWidget(private val game: CesGame, stage: Stage, assets: Assets) : 
 		val x0 = (CesGame.VIRTUAL_WIDTH - btnJugar.width - btnSalir.width - 10)/2
 		btnJugar.setPosition(x0, y-50)
 		btnSalir.setPosition(btnJugar.x+btnJugar.width+10, y-50)
-		//btnPuntuaciones.setPosition(x + retryB.width - 25, y - 96)
 	}
 
 	//______________________________________________________________________________________________
@@ -67,7 +60,6 @@ class GameOverWidget(private val game: CesGame, stage: Stage, assets: Assets) : 
 		image.setSize(width, height)
 		btnJugar.setSize(width/1.75f, height/2.5f)
 		btnSalir.setSize(width/1.75f, height/2.5f)
-		//btnPuntuaciones.setSize(width / 2.5f, height / 2)
 	}
 
 	//______________________________________________________________________________________________

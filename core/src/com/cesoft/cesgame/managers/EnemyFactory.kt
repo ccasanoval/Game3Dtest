@@ -25,10 +25,7 @@ import com.cesoft.cesgame.components.EnemyComponent.ACTION.*
 object EnemyFactory
 {
 	private val RADIO = 15f
-	private val FUERZA_DESKTOP = 2000f
-	private val FUERZA_MOBILE = 0f
 
-	//private val modelLoaderJSON = G3dModelLoader(JsonReader())
 	private val modelLoader = G3dModelLoader(UBJsonReader())
 	private val models = mutableMapOf<EnemyComponent.TYPE, Model>()
 
@@ -80,10 +77,9 @@ object EnemyFactory
 				/// ANIMATION
 				entity.add(AnimationComponent(modelComponent.instance))
 				setAnimation(entity, EnemyComponent.ACTION.WALKING)
-				//TODO: Peta al reiniciar
-//				val am = AssetManager()
-//				entity.add(EnemyDieParticleComponent(RenderSystem.particleSystem, am))
-//				am.dispose()
+				/// PARTICLES
+				//entity.add(EnemyDieParticleComponent())//TODO:meter ese boolean en otros sition
+				//entity.add(EnemyDieParticleComponent())
 			}
 		}
 		// (desaparecer)

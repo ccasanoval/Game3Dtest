@@ -59,6 +59,7 @@ class FrustumCullingData
 			FrustumCullingData.TYPE.NONE -> true
 			FrustumCullingData.TYPE.BOX -> camera.frustum.boundsInFrustum(getCenter(), _dimension)
 			FrustumCullingData.TYPE.SPHERE -> camera.frustum.sphereInFrustum(getCenter(), radius)
+			//camera.frustum.pointInFrustum(getCenter())
 		}
 
 }

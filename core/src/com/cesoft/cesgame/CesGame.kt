@@ -17,7 +17,7 @@ import com.cesoft.cesgame.screens.MainMenuScreen
 class CesGame : ApplicationAdapter() {
 
 	private var screen: Screen? = null
-	private lateinit var assets: Assets
+	lateinit var assets: Assets
 	lateinit var gameUI: GameUI
 
 	//______________________________________________________________________________________________
@@ -63,7 +63,7 @@ class CesGame : ApplicationAdapter() {
 	fun reset()
 	{
 		delScreen()
-		setScreen(GameScreen(gameUI))
+		setScreen(GameScreen(gameUI, assets))
 	}
 
 	//______________________________________________________________________________________________

@@ -111,17 +111,13 @@ object SceneFactory {
 		val modelComponentZ_ = ModelComponent(modelo, pos)
 		modelComponentZ_.frustumCullingData = FrustumCullingData.create(pos, dim)
 		modelComponentZ_.instance.transform.rotate(Vector3.Y, 90f)
-		val entityZ_ = Entity()
-		entityZ_.add(modelComponentZ_)
-		engine.addEntity(entityZ_)
+		engine.addEntity(Entity().add(modelComponentZ_))
 		/// +Z
 		pos = Vector3(0f, UP, +len)
 		val modelComponentZ = ModelComponent(modelo, pos)
-		modelComponentX_.frustumCullingData = FrustumCullingData.create(pos, dim)
+		modelComponentZ.frustumCullingData = FrustumCullingData.create(pos, dim)
 		modelComponentZ.instance.transform.rotate(Vector3.Y, 90f)
-		val entityZ = Entity()
-		entityZ.add(modelComponentZ)
-		engine.addEntity(entityZ)
+		engine.addEntity(Entity().add(modelComponentZ))
 	}
 
 	//______________________________________________________________________________________________

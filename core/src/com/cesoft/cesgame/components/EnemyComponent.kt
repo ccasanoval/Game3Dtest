@@ -6,6 +6,8 @@ import com.badlogic.ashley.core.Component
 //
 class EnemyComponent(val type: TYPE) : Component
 {
+	var isShowingParticles = false
+
 	enum class TYPE {
 		MONSTER1,
 	}
