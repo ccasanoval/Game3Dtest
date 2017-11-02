@@ -18,8 +18,9 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesgame.bullet.MotionState
 import com.cesoft.cesgame.components.BulletComponent
-import com.cesoft.cesgame.components.FrustumCullingData
+import com.cesoft.cesgame.RenderUtils.FrustumCullingData
 import com.cesoft.cesgame.components.ModelComponent
+import com.cesoft.cesgame.systems.RenderSystem
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,13 +90,13 @@ object WallFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = motionState//modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-		rigidBody.contactCallbackFilter = BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
-		rigidBody.contactCallbackFlag = BulletComponent.SCENE_FLAG
+		rigidBody.contactCallbackFilter = 0//BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
+		rigidBody.contactCallbackFlag = BulletComponent.SCENE_FLAG or RenderSystem.CF_OCCLUDER_OBJECT
 		rigidBody.userValue = BulletComponent.SCENE_FLAG
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f
 		rigidBody.rollingFriction = 1f
-		rigidBody.anisotropicFriction = Vector3(1f,1f,1f)
+		//rigidBody.anisotropicFriction = Vector3(1f,1f,1f)
 		rigidBody.spinningFriction = 1f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 

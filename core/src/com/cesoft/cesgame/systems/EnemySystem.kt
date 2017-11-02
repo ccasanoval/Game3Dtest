@@ -29,6 +29,8 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 	private val randomSpawnIndex: Int
 		get() = random.nextInt(xSpawns.size)
 
+	val posPlayerTemp = Vector3()
+
 
 	//______________________________________________________________________________________________
 	override fun addedToEngine(e: Engine) {
@@ -75,13 +77,13 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 			val bulletPlayer = player!!.getComponent(BulletComponent::class.java)
 			val transf = Matrix4()
 			bulletPlayer.rigidBody.getWorldTransform(transf)
-			val playerPosition = Vector3()
-			transf.getTranslation(playerPosition)
+
+			transf.getTranslation(posPlayerTemp)
 			val orientation = 0f //TODO: Camara?
 			//orientation = Math.atan2(-playerPosition.z.toDouble(), playerPosition.x.toDouble()).toFloat()
 
 			//
-			EnemyFactory.mover(entity, playerPosition.cpy(), Vector3(0f,0f,-1f), delta)
+			EnemyFactory.mover(entity, posPlayerTemp.cpy(), delta)
 		}
 	}
 

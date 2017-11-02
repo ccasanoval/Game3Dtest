@@ -19,7 +19,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 
 	private val collisionConfig: btCollisionConfiguration = btDefaultCollisionConfiguration()
 	private val dispatcher: btCollisionDispatcher = btCollisionDispatcher(collisionConfig)
-	private val broadphase: btBroadphaseInterface = btDbvtBroadphase()//btAxisSweep3(Vector3(-1000f, -1000f, -1000f), Vector3(1000f, 1000f, 1000f))
+	val broadphase = btDbvtBroadphase()//btAxisSweep3(Vector3(-1000f, -1000f, -1000f), Vector3(1000f, 1000f, 1000f))
 	private val solver: btConstraintSolver = btSequentialImpulseConstraintSolver()
 	//private val ghostPairCallback: btGhostPairCallback = btGhostPairCallback()
 	val collisionWorld: btDiscreteDynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig)

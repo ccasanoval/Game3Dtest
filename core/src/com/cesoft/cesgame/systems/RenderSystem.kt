@@ -18,11 +18,15 @@ import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesgame.Assets
 import com.cesoft.cesgame.CesGame
 import com.cesoft.cesgame.components.*
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
+import com.cesoft.cesgame.RenderUtils.OcclusionCuller
+import com.cesoft.cesgame.RenderUtils.OcclusionBuffer
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem() {
+class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val bulletSystem: BulletSystem) : EntitySystem() {
 
 	private lateinit var entities: ImmutableArray<Entity>
 	private var batch: ModelBatch = ModelBatch()
@@ -33,6 +37,12 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem
 	private var isDisposed = false
 	//private val shadowLight: DirectionalShadowLight
 
+	// For occlusion culling
+	private var oclBuffer: OcclusionBuffer
+	private var occlusionCuller: OcclusionCuller
+	//private var frustumCam: PerspectiveCamera
+	private val OCL_BUFFER_EXTENTS = intArrayOf(128, 256, 512, 32, 64)
+	val visibleEntities = arrayListOf<Entity?>()
 
 	//______________________________________________________________________________________________
 	init {
@@ -56,6 +66,23 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem
 //		shadowLight.set(0.9f, 0.9f, 0.9f, 0f, -0.1f, 0.1f)
 //		environment.add(shadowLight)
 //		environment.shadowMap = shadowLight
+
+		oclBuffer = OcclusionBuffer(OCL_BUFFER_EXTENTS[0], OCL_BUFFER_EXTENTS[0])
+		occlusionCuller = object : OcclusionCuller() {
+			override fun isOccluder(obj: btCollisionObject): Boolean {
+				//System.err.println("OcclusionCuller : isOccluder ---"+(obj.collisionFlags and CF_OCCLUDER_OBJECT != 0))
+				return obj.collisionFlags and CF_OCCLUDER_OBJECT != 0
+			}
+			override fun onObjectVisible(obj: btCollisionObject) {
+				val entity = obj.userData as Entity
+				//val model = entity.getComponent(ModelComponent::class.java)
+				visibleEntities.add(entity)
+				//System.err.println("OcclusionCuller : onObjectVisible : -----------")
+			}
+		}
+//		frustumCam = PerspectiveCamera(FRUSTUM_CAMERA_FOV, perspectiveCamera.viewportWidth, perspectiveCamera.viewportHeight)
+//		frustumCam.far = FRUSTUM_CAMERA_FAR
+//		frustumCam.update(true)
 	}
 
 	//______________________________________________________________________________________________
@@ -68,22 +95,32 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem
 	override fun update(delta: Float) {
 		if(isDisposed)return
 
+		/// Occlusion Culling
+		visibleEntities.clear()
+		oclBuffer.clear()
+		occlusionCuller.performOcclusionCulling(bulletSystem.broadphase, oclBuffer, perspectiveCamera)
+
 		batch.begin(perspectiveCamera)
 		var countDrawn = 0
-		for(it in entities)
+		System.err.println("RenderSystem:update:NUM-----------"+entities.size()+"-------------"+visibleEntities.size)
+		//for(it in entities)
+		for(it in visibleEntities)
 		{
-			if(it.getComponent(GunComponent::class.java) == null)
+			//if(it == null)continue
+			if(it!!.getComponent(GunComponent::class.java) == null)
 			{
-				val model = it.getComponent(ModelComponent::class.java)
-				if(model.frustumCullingData.isVisible(perspectiveCamera))
+				val model = it.getComponent(ModelComponent::class.java) ?: continue
+				try
 				{
-					batch.render(model.instance, environment)
-					countDrawn++
-				}
+					if(model.frustumCullingData.isVisible(perspectiveCamera)) {
+						batch.render(model.instance, environment)
+						countDrawn++
+					}
+				}catch(e: Exception){System.err.println("RenderSystem:update:e:-----------"+model+"-------------"+e)}
 			}
 		}
 		if(countDrawn > countMax)countMax = countDrawn
-//System.err.println("-------------------------------RENDER---"+countDrawn+"  / "+countMax)
+System.err.println("-------------------------------RENDER---"+countDrawn+"  / "+countMax)
 		batch.end()
 
 		//drawShadows(delta)
@@ -117,23 +154,23 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem
 		batch.end()
 	}
 	//______________________________________________________________________________________________
+	private val posTemp = Vector3()
 	private fun animGunRespiracion(modelo: ModelComponent, delta: Float)
 	{
-		val pos = Vector3()
-		modelo.instance.transform.getTranslation(pos)
-		if(yDrawGunOrg == -999f)yDrawGunOrg=pos.y
+		modelo.instance.transform.getTranslation(posTemp)
+		if(yDrawGunOrg == -999f)yDrawGunOrg=posTemp.y
 		if(isDrawGunUp) {
-			pos.y += delta*2
-			if(pos.y > yDrawGunOrg+2.5f)
+			posTemp.y += delta*2
+			if(posTemp.y > yDrawGunOrg+2.5f)
 				isDrawGunUp = false
 		}
 		else
 		{
-			pos.y -= delta*2
-			if(pos.y < yDrawGunOrg-2.5f)
+			posTemp.y -= delta*2
+			if(posTemp.y < yDrawGunOrg-2.5f)
 				isDrawGunUp = true
 		}
-		modelo.instance.transform.setTranslation(pos)
+		modelo.instance.transform.setTranslation(posTemp)
 	}
 
 	//______________________________________________________________________________________________
@@ -167,11 +204,14 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets) : EntitySystem
 	fun dispose() {
 		isDisposed = true
 		batch.dispose()
+		visibleEntities.clear()
 	}
 
 	//______________________________________________________________________________________________
 	companion object {
 		private val FOV = 67f
 		var particleSystem = ParticleSystem()
+
+		val CF_OCCLUDER_OBJECT: Int = 512
 	}
 }

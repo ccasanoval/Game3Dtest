@@ -58,8 +58,8 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 		val lonMundo = 4000f
 
 		///----
-		renderSystem = RenderSystem(colorAmbiente, assets)
 		bulletSystem = BulletSystem(this)
+		renderSystem = RenderSystem(colorAmbiente, assets, bulletSystem)
 		enemySystem = EnemySystem(assets)
 		playerSystem = PlayerSystem(gameUI, renderSystem.perspectiveCamera, bulletSystem)
 		statusSystem = StatusSystem(this)

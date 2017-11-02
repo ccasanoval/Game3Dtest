@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
 import com.cesoft.cesgame.CesGame
+import com.cesoft.cesgame.RenderUtils.FrustumCullingData
 
 import com.cesoft.cesgame.components.EnemyComponent.ACTION.*
 
@@ -55,6 +56,7 @@ object EnemyFactory
 	}
 
 	//______________________________________________________________________________________________
+	private val posTemp = Vector3()
 	fun create(type: EnemyComponent.TYPE, pos: Vector3, mase: Float = 100f) : Entity
 	{
 		val entity = Entity()
@@ -97,10 +99,9 @@ object EnemyFactory
 		//setWalkin()
 
 		/// COLLISION
-		val localInertia = Vector3()
 		val shape = btSphereShape(RADIO)//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
-		shape.calculateLocalInertia(mase, localInertia)
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, localInertia)
+		shape.calculateLocalInertia(mase, posTemp)
+		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, posTemp)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
@@ -206,7 +207,8 @@ object EnemyFactory
 
 	//______________________________________________________________________________________________
 	//TODO: IA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	fun mover(entity: Entity, playerPosition: Vector3, playerOrientation: Vector3, delta: Float)
+	private val posTempEnemy = Vector3()
+	fun mover(entity: Entity, playerPosition: Vector3, delta: Float)
 	{
 		val bullet = entity.getComponent(BulletComponent::class.java)
 		val status = entity.getComponent(StatusComponent::class.java)
@@ -227,14 +229,14 @@ object EnemyFactory
 		System.err.println("-------------- PlayerSystem: update: res.angular="+res.angular)
 */
 		///
-		val enemyPosition = Vector3()
+
 		val model = entity.getComponent(ModelComponent::class.java)
-		model.instance.transform.getTranslation(enemyPosition)
-		val dX = playerPosition.x - enemyPosition.x
-		val dZ = playerPosition.z - enemyPosition.z
+		model.instance.transform.getTranslation(posTempEnemy)
+		val dX = playerPosition.x - posTempEnemy.x
+		val dZ = playerPosition.z - posTempEnemy.z
 
 		var fuerza = 0f
-		val distanciaConPlayer = enemyPosition.dst(playerPosition)
+		val distanciaConPlayer = posTempEnemy.dst(playerPosition)
 
 		/// No está en condiciones de atacar
 		if(status.isAching() || status.isDead())
@@ -260,19 +262,19 @@ object EnemyFactory
 			status.setWalking()
 		}
 
-		val dir = playerPosition.add(enemyPosition.scl(-1f)).nor().scl(fuerza*delta)
+		val dir = playerPosition.add(posTempEnemy.scl(-1f)).nor().scl(fuerza*delta)
 		dir.y = bullet.rigidBody.linearVelocity.y
 		bullet.rigidBody.linearVelocity = dir
 
 		val transf = Matrix4()
 		bullet.rigidBody.getWorldTransform(transf)
-		transf.getTranslation(enemyPosition)
+		transf.getTranslation(posTempEnemy)
 
 		//if( !status.isAching() && !status.isDead())	{
 			// Orientacion
 			val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
 			val rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
-			model.instance.transform.set(enemyPosition, rot)
+			model.instance.transform.set(posTempEnemy, rot)
 		/*}
 		else
 		{

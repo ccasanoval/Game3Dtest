@@ -39,6 +39,9 @@ class PlayerSystem(
 	private var altura = ALTURA
 	lateinit var gun: Entity
 
+	private val posTemp = Vector3()
+	private val posTemp2 = Vector3()
+
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		engine!!.addEntityListener(Family.all(PlayerComponent::class.java).get(), this)
@@ -67,7 +70,7 @@ class PlayerSystem(
 
 		val deltaX: Float
 		val deltaY: Float
-		val tmp = Vector3()
+
 
 		if(CesGame.isMobile) {
 			deltaX = -ControllerWidget.watchVector.x * 85f * delta
@@ -82,7 +85,7 @@ class PlayerSystem(
 		val dir = camera.direction.cpy()
 		dir.rotate(camera.up, deltaX)
 		// X Z
-		tmp.set(dir).crs(camera.up).nor()
+		posTemp.set(dir).crs(camera.up).nor()
 		val v = dir.cpy()
 		val pitch = (Math.atan2(Math.sqrt((v.x * v.x + v.z * v.z).toDouble()), v.y.toDouble()) * MathUtils.radiansToDegrees).toFloat()
 		var pr = deltaY
@@ -102,7 +105,7 @@ class PlayerSystem(
 			else if(pitch - pr < 30)
 				pr = pitch - 30
 		}
-		dir.rotate(tmp, pr)
+		dir.rotate(posTemp, pr)
 		//
 		camera.direction.set(dir)
 		camera.update()
@@ -110,7 +113,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private fun updateTraslacion(delta: Float)
 	{
-		val walkDirection = Vector3(0f, 0f, 0f)
+		posTemp.set(0f, 0f, 0f)
 
 		/// Esta muerto...
 		if(PlayerComponent.health <= 0f)//TODO: idem en rotacion
@@ -121,26 +124,27 @@ class PlayerSystem(
 
 		//TODO: no mover si esta saltando?
 		//if(playerComponent!!.isSaltando)return
-		val tmp = Vector3()
 		if(CesGame.isMobile) {
-			if(     ControllerWidget.movementVector.y > +0.20f) walkDirection.add(camera.direction)
-			else if(ControllerWidget.movementVector.y < -0.20f) walkDirection.sub(camera.direction)
-			if(     ControllerWidget.movementVector.x < -0.20f) tmp.set(camera.direction).crs(camera.up).scl(-1f)
-			else if(ControllerWidget.movementVector.x > +0.20f) tmp.set(camera.direction).crs(camera.up)
-			walkDirection.add(tmp)
-			walkDirection.scl(FUERZA_MOVIL * delta)
+			if(     ControllerWidget.movementVector.y > +0.20f) posTemp.add(camera.direction)
+			else if(ControllerWidget.movementVector.y < -0.20f) posTemp.sub(camera.direction)
+			if(     ControllerWidget.movementVector.x < -0.25f) posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
+			else if(ControllerWidget.movementVector.x > +0.25f) posTemp2.set(camera.direction).crs(camera.up)
+			else posTemp2.set(0f,0f,0f)
+			posTemp.add(posTemp2)
+			posTemp.scl(FUERZA_MOVIL * delta)
 		}
 		else {
-			if(Gdx.input.isKeyPressed(Input.Keys.UP)) walkDirection.add(camera.direction)
-			else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) walkDirection.sub(camera.direction)
-			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) tmp.set(camera.direction).crs(camera.up).scl(-1f)
-			else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) tmp.set(camera.direction).crs(camera.up)
-			walkDirection.add(tmp)
-			walkDirection.scl(PlayerComponent.FUERZA_PC * delta)
+			if(Gdx.input.isKeyPressed(Input.Keys.UP)) posTemp.add(camera.direction)
+			else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) posTemp.sub(camera.direction)
+			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
+			else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) posTemp2.set(camera.direction).crs(camera.up)
+			else posTemp2.set(0f,0f,0f)
+			posTemp.add(posTemp2)
+			posTemp.scl(PlayerComponent.FUERZA_PC * delta)
 		}
-		walkDirection.y = 0f
-		walkDirection.y = bulletComponent.rigidBody.linearVelocity.y
-		bulletComponent.rigidBody.linearVelocity = walkDirection
+		posTemp.y = 0f
+		posTemp.y = bulletComponent.rigidBody.linearVelocity.y
+		bulletComponent.rigidBody.linearVelocity = posTemp
 
 	}
 	//______________________________________________________________________________________________
@@ -175,8 +179,8 @@ class PlayerSystem(
 	{
 		val transform = Matrix4()
 		bulletComponent.rigidBody.motionState.getWorldTransform(transform)
-		val pos = Vector3()
-		return transform.getTranslation(pos)
+		//val pos = Vector3()
+		return transform.getTranslation(posTemp)
 	}
 
 	//______________________________________________________________________________________________
@@ -226,14 +230,14 @@ class PlayerSystem(
 	}
 	//______________________________________________________________________________________________
 	//
-	fun fire()
+	private val rayFrom = Vector3()
+	private val rayTo = Vector3()
+	private fun fire()
 	{
 		GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
 
 		//-------------------
 		/// COLLISION BY RAY
-		val rayFrom = Vector3()
-		val rayTo = Vector3()
 		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
 		rayFrom.set(ray.origin)
 		rayTo.set(ray.direction).scl(250f).add(rayFrom)

@@ -5,6 +5,8 @@ import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
@@ -31,6 +33,11 @@ class MainMenuScreen(private val game: CesGame, private val assets: Assets) : Sc
 	//______________________________________________________________________________________________
 	private fun configureWidgers() {
 		backgroundImage.setSize(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT)
+		backgroundImage.setColor(1f, 1f, 1f, 0f)
+		backgroundImage.addAction(Actions.fadeIn(0.65f))
+		//
+		titleImage.setColor(1f, 1f, 1f, 0f)
+		titleImage.addAction(SequenceAction(Actions.delay(0.65f), Actions.fadeIn(0.75f)))
 		titleImage.setPosition(
 				(CesGame.VIRTUAL_WIDTH - titleImage.width) / 2,
 				(CesGame.VIRTUAL_HEIGHT - titleImage.height) / 2 +80)
@@ -38,14 +45,20 @@ class MainMenuScreen(private val game: CesGame, private val assets: Assets) : Sc
 		playButton.setSize(280f, 90f)
 		playButton.label.setFontScale(2f)
 		playButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 130)
+		playButton.setColor(1f, 1f, 1f, 0f)
+		playButton.addAction(SequenceAction(Actions.delay(1.20f), Actions.fadeIn(0.75f)))
 		//
 		aboutButton.setSize(280f, 90f)
 		aboutButton.label.setFontScale(1.5f)
 		aboutButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 200)
+		aboutButton.setColor(1f, 1f, 1f, 0f)
+		aboutButton.addAction(SequenceAction(Actions.delay(1.50f), Actions.fadeIn(0.75f)))
 		//
 		quitButton.setSize(280f, 90f)
 		quitButton.label.setFontScale(2f)
 		quitButton.setPosition(CesGame.VIRTUAL_WIDTH / 2 - playButton.width / 2, CesGame.VIRTUAL_HEIGHT / 2 - 270)
+		quitButton.setColor(1f, 1f, 1f, 0f)
+		quitButton.addAction(SequenceAction(Actions.delay(1.80f), Actions.fadeIn(0.75f)))
 		//
 		stage.addActor(backgroundImage)
 		stage.addActor(titleImage)

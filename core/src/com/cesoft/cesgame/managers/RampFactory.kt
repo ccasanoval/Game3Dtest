@@ -20,8 +20,8 @@ import com.cesoft.cesgame.bullet.MotionState
 import com.cesoft.cesgame.components.BulletComponent
 import com.cesoft.cesgame.components.ModelComponent
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
-import com.badlogic.gdx.math.collision.BoundingBox
-import com.cesoft.cesgame.components.FrustumCullingData
+import com.cesoft.cesgame.RenderUtils.FrustumCullingData
+import com.cesoft.cesgame.systems.RenderSystem
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,10 @@ object RampFactory {
 	const val LONG = 30f
 	const val HIGH = 20f
 	const val THICK = 1f
-	private val dim = Vector3(THICK *2, HIGH *2, LONG *2)
+	private val dim0 = Vector3(THICK*2, HIGH*2, LONG*2)
+	private val dim90 = Vector3(LONG*2, THICK*2, HIGH*2)
+	private val dimMax = Vector3(LONG*2, LONG*2, LONG*2)
+	private val dim = Vector3(THICK, HIGH, LONG)
 
 	private val text1 = Gdx.files.internal("scene/wall/metal2.png")
 	private val text2 = Gdx.files.internal("scene/wall/metal3.png")
@@ -75,17 +78,17 @@ object RampFactory {
 		val modelComponent = ModelComponent(modelo, pos)
 		//
 		if(angleX == 0f && angleY == 0f && angleZ == 0f) {
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, Vector3(THICK*2, HIGH*2, LONG*2))
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dim0)
 		}
 		else if(angleX == 0f && angleY == 90f && angleZ == 90f) {
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, Vector3(LONG*2, THICK*2, HIGH*2))
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dim90)
 		}
 		else {
 			//TODO: ? por que no funciona  con esferica ? Quiza eliminar esferica ?
 			/*val boundingBox = BoundingBox()
 			modelComponent.instance.calculateBoundingBox(boundingBox)
 			frustrumCullingData = FrustumCullingData.create(boundingBox)*/
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, Vector3(LONG*2, LONG*2, LONG*2))
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimMax)
 		}
 
 		//
@@ -95,27 +98,21 @@ object RampFactory {
 		entity.add(modelComponent)
 
 		/// COLISION
-		val transf = modelComponent.instance.transform
-		val pos2 = Vector3()
-		transf.getTranslation(pos2)
-		val transf2 = transf.cpy()
-		transf2.setTranslation(pos2)
-
-		val shape = btBoxShape(Vector3(THICK + 0f, HIGH + 0f, LONG + 0f))
+		val shape = btBoxShape(dim)
 		//val shape = Bullet.obtainStaticNodeShape(model.nodes)
-		val motionState = MotionState(transf2)
+		val motionState = MotionState(modelComponent.instance.transform)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = motionState//modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-		rigidBody.contactCallbackFilter = BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
-		rigidBody.contactCallbackFlag = BulletComponent.SCENE_FLAG
+		rigidBody.contactCallbackFilter = 0//BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
+		rigidBody.contactCallbackFlag = BulletComponent.SCENE_FLAG or RenderSystem.CF_OCCLUDER_OBJECT
 		rigidBody.userValue = BulletComponent.SCENE_FLAG
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f
 		rigidBody.rollingFriction = 1f
-		rigidBody.anisotropicFriction = Vector3(1f, 1f, 1f)
+		//rigidBody.anisotropicFriction = Vector3(1f, 1f, 1f)
 		rigidBody.spinningFriction = 1f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 

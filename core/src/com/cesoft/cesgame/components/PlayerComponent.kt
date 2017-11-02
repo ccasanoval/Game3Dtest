@@ -48,13 +48,13 @@ object PlayerComponent : Component
 	}
 
 	//______________________________________________________________________________________________
+	private val posTemp = Vector3()
 	fun create(pos: Vector3): Entity {
 		val entity = Entity()
 
-		val localInertia = Vector3()
 		val shape = btSphereShape(RADIO)//btCylinderShape(Vector3(3f,ALTURA/2,3f))//btCapsuleShape(6f, ALTURA)//
-		shape.calculateLocalInertia(MASA, localInertia)
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(MASA, null, shape, localInertia)
+		shape.calculateLocalInertia(MASA, posTemp)
+		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(MASA, null, shape, posTemp)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(Matrix4().translate(pos))

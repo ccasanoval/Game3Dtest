@@ -22,6 +22,7 @@ import com.cesoft.cesgame.bullet.MotionState
 import com.cesoft.cesgame.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
+import com.cesoft.cesgame.RenderUtils.FrustumCullingData
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,40 +34,41 @@ object SceneFactory {
 			or VertexAttributes.Usage.TextureCoordinates).toLong()
 
 	private val mb = ModelBuilder()
+	private val posTemp = Vector3()
+	private val dimTemp = Vector3()
+
 
 	//______________________________________________________________________________________________
 	val materialJunk = Material(ColorAttribute.createDiffuse(Color.WHITE))
 	val imgJunk = Gdx.files.internal("scene/junk.png")
 	val ratioJunk = 546f/1000f
 	//
+	private val THICK_JUNK = 0.1f
+	private val LONG_JUNK = 500f
+	private val HIGH_JUNK = 500f * ratioJunk
+	private val UP_JUNK = HIGH_JUNK/2
+	private val dimJunk = Vector3(THICK_JUNK, HIGH_JUNK, LONG_JUNK)
 	fun loadJunk(engine: Engine, len: Float) {
-		val THICK = 0.1f
-		val LONG = 500f
-		val HIGH = 500f * ratioJunk
-		val UP = HIGH/2
-
 		/// MODEL
 		val texture = Texture(imgJunk)
 		texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge)
 		val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
 		materialJunk.set(textureAttribute)
 		materialJunk.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
-		val modelo: Model = mb.createBox(THICK, HIGH, LONG, materialJunk, POSITION_NORMAL)
+		val modelo: Model = mb.createBox(THICK_JUNK, HIGH_JUNK, LONG_JUNK, materialJunk, POSITION_NORMAL)
 
-		val dim = Vector3(THICK, HIGH, LONG)
-		var pos : Vector3
 		/// -X
-		pos = Vector3(-len, UP, 0f)
-		val modelComponent1 = ModelComponent(modelo, pos)
-		modelComponent1.frustumCullingData = FrustumCullingData.create(pos, dim)
+		posTemp.set(-len, UP_JUNK, 0f)
+		val modelComponent1 = ModelComponent(modelo, posTemp)
+		modelComponent1.frustumCullingData = FrustumCullingData.create(posTemp, dimJunk)
 		val entity1 = Entity()
 		entity1.add(modelComponent1)
 		engine.addEntity(entity1)
 
 		/// +X
-		pos = Vector3(+len, UP, 0f)
-		val modelComponent2 = ModelComponent(modelo, pos)
-		modelComponent2.frustumCullingData = FrustumCullingData.create(pos, dim)
+		posTemp.set(+len, UP_JUNK, 0f)
+		val modelComponent2 = ModelComponent(modelo, posTemp)
+		modelComponent2.frustumCullingData = FrustumCullingData.create(posTemp, dimJunk)
 		val entity2 = Entity()
 		entity2.add(modelComponent2)
 		engine.addEntity(entity2)
@@ -91,31 +93,30 @@ object SceneFactory {
 		materialSkyline.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
 		val modelo : Model = mb.createBox(THICK, HIGH, LONG, materialSkyline, POSITION_NORMAL)
 
-		var dim = Vector3(THICK, HIGH, LONG)
-		var pos: Vector3
+		dimTemp.set(THICK, HIGH, LONG)
 		/// -X ?????????????????????????????????????????????????????????????????????????
-		pos = Vector3(-len, UP, 0f)
-		val modelComponentX_ = ModelComponent(modelo, pos)
-		modelComponentX_.frustumCullingData = FrustumCullingData.create(pos, dim)
+		posTemp.set(-len, UP, 0f)
+		val modelComponentX_ = ModelComponent(modelo, posTemp)
+		modelComponentX_.frustumCullingData = FrustumCullingData.create(posTemp, dimTemp)
 		engine.addEntity(Entity().add(modelComponentX_))
 
 		/// +X
-		pos = Vector3(+len, UP, 0f)
-		val modelComponentX = ModelComponent(modelo, pos)
-		modelComponentX.frustumCullingData = FrustumCullingData.create(pos, dim)
+		posTemp.set(+len, UP, 0f)
+		val modelComponentX = ModelComponent(modelo, posTemp)
+		modelComponentX.frustumCullingData = FrustumCullingData.create(posTemp, dimTemp)
 		engine.addEntity(Entity().add(modelComponentX))
 
-		dim = Vector3(LONG, HIGH, THICK)
+		dimTemp.set(LONG, HIGH, THICK)
 		/// -Z
-		pos = Vector3(0f, UP, -len)
-		val modelComponentZ_ = ModelComponent(modelo, pos)
-		modelComponentZ_.frustumCullingData = FrustumCullingData.create(pos, dim)
+		posTemp.set(0f, UP, -len)
+		val modelComponentZ_ = ModelComponent(modelo, posTemp)
+		modelComponentZ_.frustumCullingData = FrustumCullingData.create(posTemp, dimTemp)
 		modelComponentZ_.instance.transform.rotate(Vector3.Y, 90f)
 		engine.addEntity(Entity().add(modelComponentZ_))
 		/// +Z
-		pos = Vector3(0f, UP, +len)
-		val modelComponentZ = ModelComponent(modelo, pos)
-		modelComponentZ.frustumCullingData = FrustumCullingData.create(pos, dim)
+		posTemp.set(0f, UP, +len)
+		val modelComponentZ = ModelComponent(modelo, posTemp)
+		modelComponentZ.frustumCullingData = FrustumCullingData.create(posTemp, dimTemp)
 		modelComponentZ.instance.transform.rotate(Vector3.Y, 90f)
 		engine.addEntity(Entity().add(modelComponentZ))
 	}
@@ -134,10 +135,10 @@ object SceneFactory {
 		textureAttribute1.scaleV = 80f
 		materialSuelo.set(textureAttribute1)
 		val modelo : Model = mb.createBox(len, 5f, len, materialSuelo, POSITION_NORMAL)
-		val pos = Vector3(0f,0f,0f)
-		val dim = Vector3(len, 5f, len)
-		val modelComponent = ModelComponent(modelo, pos)
-		modelComponent.frustumCullingData = FrustumCullingData.create(pos, dim)
+		posTemp.set(0f,0f,0f)
+		dimTemp.set(len, 5f, len)
+		val modelComponent = ModelComponent(modelo, posTemp)
+		modelComponent.frustumCullingData = FrustumCullingData.create(posTemp, dimTemp)
 		entity.add(modelComponent)
 
 		/// COLLISION
