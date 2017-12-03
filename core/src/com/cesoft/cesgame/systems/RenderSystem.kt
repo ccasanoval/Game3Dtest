@@ -21,12 +21,13 @@ import com.cesoft.cesgame.components.*
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.cesoft.cesgame.RenderUtils.OcclusionCuller
 import com.cesoft.cesgame.RenderUtils.OcclusionBuffer
+import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val bulletSystem: BulletSystem) : EntitySystem() {
+class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val broadphase2: btDbvtBroadphase) : EntitySystem() {
 
 	private lateinit var entities: ImmutableArray<Entity>
 	private var batch: ModelBatch = ModelBatch()
@@ -80,9 +81,6 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val bu
 				//System.err.println("OcclusionCuller : onObjectVisible : -----------")
 			}
 		}
-//		frustumCam = PerspectiveCamera(FRUSTUM_CAMERA_FOV, perspectiveCamera.viewportWidth, perspectiveCamera.viewportHeight)
-//		frustumCam.far = FRUSTUM_CAMERA_FAR
-//		frustumCam.update(true)
 	}
 
 	//______________________________________________________________________________________________
@@ -94,33 +92,54 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val bu
 	private var countMax = 0
 	override fun update(delta: Float) {
 		if(isDisposed)return
-
-		/// Occlusion Culling
-		visibleEntities.clear()
-		oclBuffer.clear()
-		occlusionCuller.performOcclusionCulling(bulletSystem.broadphase, oclBuffer, perspectiveCamera)
-
-		batch.begin(perspectiveCamera)
 		var countDrawn = 0
-		System.err.println("RenderSystem:update:NUM-----------"+entities.size()+"-------------"+visibleEntities.size)
-		//for(it in entities)
-		for(it in visibleEntities)
-		{
-			//if(it == null)continue
-			if(it!!.getComponent(GunComponent::class.java) == null)
-			{
-				val model = it.getComponent(ModelComponent::class.java) ?: continue
-				try
-				{
-					if(model.frustumCullingData.isVisible(perspectiveCamera)) {
-						batch.render(model.instance, environment)
-						countDrawn++
-					}
-				}catch(e: Exception){System.err.println("RenderSystem:update:e:-----------"+model+"-------------"+e)}
+
+		val OCCLUSION = false
+
+		if(OCCLUSION) {
+			/// Occlusion Culling
+			visibleEntities.clear()
+			oclBuffer.clear()
+			occlusionCuller.performOcclusionCulling(broadphase2, oclBuffer, perspectiveCamera)
+
+			batch.begin(perspectiveCamera)
+			//System.err.println("RenderSystem:update:NUM-----------" + entities.size() + "-------------" + visibleEntities.size)
+			//for(it in entities)
+			for(it in visibleEntities) {
+				//if(it == null)continue
+				if(it!!.getComponent(GunComponent::class.java) == null) {
+					val model = it.getComponent(ModelComponent::class.java) ?: continue
+						if(model.frustumCullingData.isVisible(perspectiveCamera)) {
+							batch.render(model.instance, environment)
+							countDrawn++
+						}
+				}
 			}
 		}
+		else
+		{
+			batch.begin(perspectiveCamera)
+			//System.err.println("RenderSystem:update:NUM-----------" + entities.size() + "-------------" + visibleEntities.size)
+			for(it in entities)
+			{
+				if(it.getComponent(GunComponent::class.java) == null)
+				{
+					val model = it.getComponent(ModelComponent::class.java) ?: continue
+					try {
+						if(model.frustumCullingData.isVisible(perspectiveCamera)) {
+							batch.render(model.instance, environment)
+							countDrawn++
+						}
+					}
+					catch(e: Exception) {
+						System.err.println("RenderSystem:update:e:-----------" + model + "-------------" + e)
+					}
+				}
+			}
+		}
+
 		if(countDrawn > countMax)countMax = countDrawn
-System.err.println("-------------------------------RENDER---"+countDrawn+"  / "+countMax)
+//System.err.println("-------------------------------RENDER---"+countDrawn+"  / "+countMax)
 		batch.end()
 
 		//drawShadows(delta)
@@ -214,4 +233,5 @@ System.err.println("-------------------------------RENDER---"+countDrawn+"  / "+
 
 		val CF_OCCLUDER_OBJECT: Int = 512
 	}
+
 }

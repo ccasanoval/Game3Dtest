@@ -37,9 +37,9 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	}
 
 	//______________________________________________________________________________________________
-	override fun update(deltaTime: Float) {
+	override fun update(delta: Float) {
 		// Calcular colisiones
-		collisionWorld.stepSimulation(Math.min(1f / 30f, deltaTime), 5, 1f / 60f)
+		collisionWorld.stepSimulation(Math.min(1f / 30f, delta), 5, 1f / 60f)
 	}
 
 	//______________________________________________________________________________________________
@@ -146,7 +146,6 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	private var shotIndex = 0
 	private val enemies = mutableMapOf<Int, Entity>()
 	private val shots = mutableMapOf<Int, Entity>()
-	//private lateinit var arena : Entity
 	private lateinit var player : Entity
 	override fun entityAdded(entity: Entity)
 	{

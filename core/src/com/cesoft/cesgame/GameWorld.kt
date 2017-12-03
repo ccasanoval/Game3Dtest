@@ -32,6 +32,11 @@ import com.cesoft.cesgame.systems.*
 //TODO: Shadows? Fog?
 //TODO: Columnas en maze, maze cerrado !!
 
+//VR
+//https://github.com/yangweigbh/Libgdx-CardBoard-Extension
+//https://github.com/Brummi/VRDemo
+//https://github.com/nooone/gdx-vr
+
 class GameWorld(gameUI: GameUI, assets: Assets) {
 
 	private val debugCollision = false
@@ -59,7 +64,7 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 
 		///----
 		bulletSystem = BulletSystem(this)
-		renderSystem = RenderSystem(colorAmbiente, assets, bulletSystem)
+		renderSystem = RenderSystem(colorAmbiente, assets, bulletSystem.broadphase)
 		enemySystem = EnemySystem(assets)
 		playerSystem = PlayerSystem(gameUI, renderSystem.perspectiveCamera, bulletSystem)
 		statusSystem = StatusSystem(this)

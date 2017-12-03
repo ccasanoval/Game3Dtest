@@ -8,6 +8,10 @@ import com.badlogic.ashley.core.Family
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
+import com.badlogic.gdx.controllers.Controller
+import com.badlogic.gdx.controllers.ControllerListener
+import com.badlogic.gdx.controllers.Controllers.addListener
+import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
@@ -30,8 +34,90 @@ class PlayerSystem(
 	private val camera: Camera,
 	private val bulletSystem: BulletSystem
 	)
-	: EntitySystem(), EntityListener, InputProcessor
+	: EntitySystem(), EntityListener, InputProcessor, ControllerListener
 {
+
+	///// ControllerListener
+	// TODO: REFACTOR to class que agrupe todo input...
+	enum class Direccion { NONE, ATRAS, ADELANTE, IZQUIERDA, DERECHA }
+	var xPad: Direccion = Direccion.NONE
+	var yPad: Direccion = Direccion.NONE
+	var fire1: Boolean = false
+	var fire2: Boolean = false
+	var btnA: Boolean = false
+	var btnB: Boolean = false
+	var btnC: Boolean = false
+	var btnD: Boolean = false
+	/////-------------------------------------------------------------------------------------------
+	override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
+		//System.err.println("axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
+		if(axisCode == com.badlogic.gdx.controllers.mappings.Ouya.AXIS_LEFT_X) {
+			xPad = when {
+				value > 0 -> Direccion.DERECHA
+				value < 0 -> Direccion.IZQUIERDA
+				else -> Direccion.NONE
+			}
+		}
+		else if(axisCode == com.badlogic.gdx.controllers.mappings.Ouya.AXIS_LEFT_Y) {
+			yPad = when {
+				value > 0 -> Direccion.ATRAS
+				value < 0 -> Direccion.ADELANTE
+				else -> Direccion.NONE
+			}
+		}
+		return false
+	}
+	override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
+		when(buttonCode) {
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = false
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = false
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_A -> btnA = false
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = false
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = false
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_Y -> btnD = false
+			else -> System.err.println("buttonUp:----------------"+controller?.name+" : "+buttonCode)
+		}
+		//else if(buttonCode == com.badlogic.gdx.controllers.mappings.Xbox.A)
+		return false
+	}
+	override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
+		when(buttonCode) {
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = true
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = true
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_A -> btnA = true
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = true
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = true
+			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_Y -> btnD = true
+			else -> System.err.println("buttonDown:---------------"+controller?.name+" : "+buttonCode)
+		}
+		return false
+	}
+	////
+	override fun connected(controller: Controller?) {
+		System.err.println("connected:------------"+controller?.name)
+	}
+	override fun disconnected(controller: Controller?) {
+		System.err.println("disconnected:------------"+controller?.name)
+	}
+	////
+	override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
+		System.err.println("accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
+		return false
+	}
+	override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
+		System.err.println("ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+		return false
+	}
+	override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
+		System.err.println("xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+		return false
+	}
+	override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
+		System.err.println("povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
+		return false
+	}
+	//////////
+
 	private lateinit var playerComponent : PlayerComponent
 	private lateinit var bulletComponent : BulletComponent
 
@@ -45,6 +131,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		engine!!.addEntityListener(Family.all(PlayerComponent::class.java).get(), this)
+		addListener(this)
 	}
 
 	//______________________________________________________________________________________________
@@ -70,7 +157,6 @@ class PlayerSystem(
 
 		val deltaX: Float
 		val deltaY: Float
-
 
 		if(CesGame.isMobile) {
 			deltaX = -ControllerWidget.watchVector.x * 85f * delta
@@ -125,11 +211,25 @@ class PlayerSystem(
 		//TODO: no mover si esta saltando?
 		//if(playerComponent!!.isSaltando)return
 		if(CesGame.isMobile) {
-			if(     ControllerWidget.movementVector.y > +0.20f) posTemp.add(camera.direction)
-			else if(ControllerWidget.movementVector.y < -0.20f) posTemp.sub(camera.direction)
-			if(     ControllerWidget.movementVector.x < -0.25f) posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
-			else if(ControllerWidget.movementVector.x > +0.25f) posTemp2.set(camera.direction).crs(camera.up)
-			else posTemp2.set(0f,0f,0f)
+			var hayMovimiento = false
+			if(ControllerWidget.movementVector.y > +0.20f || yPad == Direccion.ADELANTE) {
+				posTemp.add(camera.direction)
+				hayMovimiento = true
+			}
+			else if(ControllerWidget.movementVector.y < -0.20f || yPad == Direccion.ATRAS) {
+				posTemp.sub(camera.direction)
+				hayMovimiento = true
+			}
+			if(     ControllerWidget.movementVector.x < -0.25f || xPad == Direccion.IZQUIERDA) {
+				posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
+				hayMovimiento = true
+			}
+			else if(ControllerWidget.movementVector.x > +0.25f || xPad == Direccion.DERECHA) {
+				posTemp2.set(camera.direction).crs(camera.up)
+				hayMovimiento = true
+			}
+			if( ! hayMovimiento)
+				posTemp2.set(0f,0f,0f)
 			posTemp.add(posTemp2)
 			posTemp.scl(FUERZA_MOVIL * delta)
 		}
@@ -149,7 +249,7 @@ class PlayerSystem(
 	}
 	//______________________________________________________________________________________________
 	private fun updateSaltando() {
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || btnA)
 		{
 			System.err.println("------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isSaltando)
 			if( ! playerComponent.isSaltando) {
@@ -198,14 +298,14 @@ class PlayerSystem(
 		//System.err.println("--------------------------------------------FIRE "+lastDelta)
 		deltaFire += delta
 		deltaReload += delta
-		if(ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+		if(ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || fire1) {
 			if(deltaFire > 0.15f) {
 				deltaFire = 0f
 				fire()
 			}
 		}
 		//TODO: add ammo, que se gaste, mas contador
-		else if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)) {
+		else if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) || btnB) {
 			if(deltaReload > 5f) {
 				System.err.println("------ RELOAD ! -------------------")
 				deltaReload = 0f
