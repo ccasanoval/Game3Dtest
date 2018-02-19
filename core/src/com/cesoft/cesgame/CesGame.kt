@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.GL20
 import com.cesoft.cesgame.UI.GameUI
 import com.cesoft.cesgame.screens.GameScreen
@@ -14,7 +15,7 @@ import com.cesoft.cesgame.screens.MainMenuScreen
 // DESKTOP RUN    : desktop:run
 //
 //https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
-class CesGame : ApplicationAdapter() {
+class CesGame(private val camera: Camera?) : ApplicationAdapter() {
 
 	private var screen: Screen? = null
 	lateinit var assets: Assets
@@ -28,7 +29,7 @@ class CesGame : ApplicationAdapter() {
 		gameUI = GameUI(this, assets)
 		Settings.load()
 		Gdx.input.isCatchBackKey = true
-		setScreen(MainMenuScreen(this, assets))
+		setScreen(MainMenuScreen(this, assets, camera))
 	}
 
 	//______________________________________________________________________________________________

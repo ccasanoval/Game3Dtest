@@ -12,6 +12,6 @@ object DesktopLauncher {
 		config.height = CesGame.VIRTUAL_HEIGHT.toInt()
 		config.title = "CesDooM"
 		//config.addIcon("data/ic_launcher.png", Files.FileType.Internal);
-		LwjglApplication(CesGame(), config)
+		LwjglApplication(CesGame(null), config)
 	}
 }

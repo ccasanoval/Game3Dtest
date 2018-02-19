@@ -13,9 +13,9 @@ object Settings {
 	var soundEnabled = true
 	var highscores = intArrayOf(1000, 800, 500, 300, 100)
 	val file = ".spaceglad"
+
 	private val leaderURL = "http://dreamlo.com/lb/PLfBGtHgG02wU0lSzVNrPAG0uQf3J3-UGzK1i7mXmmxA"
 	private val request5 = "/pipe/5"
-
 	fun load(leaderboardItems: Array<Label>) {
 		/*val requestBests = Net.HttpRequest(Net.HttpMethods.GET)
 		requestBests.url = leaderURL + request5
