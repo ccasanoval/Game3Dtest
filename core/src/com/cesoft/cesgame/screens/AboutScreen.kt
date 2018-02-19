@@ -2,6 +2,7 @@ package com.cesoft.cesgame.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -14,7 +15,7 @@ import com.cesoft.cesgame.CesGame
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class AboutScreen(internal var game: CesGame, private val assets: Assets) : Screen {
+class AboutScreen(internal var game: CesGame, private val assets: Assets, private val camera: Camera?) : Screen {
 	private var stage: Stage = Stage(FitViewport(CesGame.VIRTUAL_WIDTH, CesGame.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/background.png")))
 	private var backButton: TextButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
@@ -61,7 +62,7 @@ class AboutScreen(internal var game: CesGame, private val assets: Assets) : Scre
 	private fun setListeners() {
 		backButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(MainMenuScreen(game, assets))
+				game.setScreen(MainMenuScreen(game, assets, camera))
 			}
 		})
 	}
