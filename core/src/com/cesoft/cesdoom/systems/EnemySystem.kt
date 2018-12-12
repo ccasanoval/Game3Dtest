@@ -11,8 +11,9 @@ import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter
-import java.util.Random
 import com.cesoft.cesdoom.Assets
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +31,7 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 		get() = random.nextInt(xSpawns.size)
 
 	private val posPlayerTemp = Vector3()
-
+	private var waitToCreate = false
 
 	//______________________________________________________________________________________________
 	override fun addedToEngine(e: Engine) {
@@ -39,16 +40,27 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
+
 	override fun update(delta: Float) {
 		//TODO: humo donde aparece bicho...
 		//if(entities!!.size() < 5) spawnEnemy(randomSpawnIndex)
 
 		if(entities == null)
 			return
-		if(entities!!.size() < 2) {
-			spawnEnemy(randomSpawnIndex, 400f)
-			spawnEnemy(randomSpawnIndex, 200f)
-			spawnEnemy(randomSpawnIndex, 10f)
+
+		if(entities!!.size() < 2 && !waitToCreate) {
+			waitToCreate = true
+			val timer = Timer("schedule", true);
+			timer.schedule(1500) {
+				spawnEnemy(randomSpawnIndex)
+			}
+			timer.schedule(4000) {
+				spawnEnemy(randomSpawnIndex)
+			}
+			timer.schedule(6000) {
+				spawnEnemy(randomSpawnIndex)
+				waitToCreate = false
+			}
 		}
 		for(entity in entities!!)
 		{
@@ -96,14 +108,13 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 
 
 	//______________________________________________________________________________________________
-	var index = 0
-	private fun spawnEnemy(randomSpawnIndex: Int, y: Float) {
+	private fun spawnEnemy(randomSpawnIndex: Int) {
 		/*engine!!.addEntity(EnemyFactory.create(
 				EnemyComponent.TYPE.MONSTER1,
 				Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]),
 				100f))*/
 				//SceneFactory.createEnemy(model, Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]), ++index))
-		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, y, -300f)))
+		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
 	}
 
 	//______________________________________________________________________________________________
