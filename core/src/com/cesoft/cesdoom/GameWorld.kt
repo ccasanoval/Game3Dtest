@@ -25,12 +25,13 @@ import com.cesoft.cesdoom.systems.*
 //TODO: about screen...
 
 //TODO: Logs solo en debug
-//TODO: Letrero LOADING... cuando le das a play
 //TODO: Constructor para laberinto¿?
 //TODO: Dependeci Injection?
 //TODO: cuando te mueves, camara gun se mueve a los lados
 //TODO: Shadows? Fog?
 //TODO: Columnas en maze, maze cerrado !!
+
+//https://github.com/mbrlabs/gdx-splash
 
 //VR
 //https://github.com/yangweigbh/Libgdx-CardBoard-Extension
@@ -85,17 +86,17 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 
 		// TODO: Cargar desde constructor...
 		/// SCENE
-		engine.addEntity(SceneFactory.loadDome())
-		engine.addEntity(SceneFactory.loadSuelo(lonMundo))
-		SceneFactory.loadSkyline(engine, lonMundo/2f)
-		SceneFactory.loadJunk(engine, lonMundo/3f)
+		engine.addEntity(SceneFactory.getDome(assets.getDome()))
+		engine.addEntity(SceneFactory.getSuelo(assets.getSuelo(), lonMundo))
+		SceneFactory.loadSkyline(assets.getSkyline(), engine, lonMundo/2f)
+		SceneFactory.loadJunk(assets.getJunk(), engine, lonMundo/3f)
 
 		/// MAZE
-		MazeFactory.create(engine)
+		MazeFactory.create(assets, engine)
 
 		/// ENEMIES
 		//TODO: How to create the enemy engine without creating an enemy
-		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
+		engine.addEntity(EnemyFactory.create(assets.getMonstruo1(), EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
 
 		/// PLAYER
 		createPlayer(Vector3(0f,150f,0f))
@@ -144,6 +145,7 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 
 	//______________________________________________________________________________________________
 	fun dispose() {
+		System.err.println("GameWorld:dispose:--------------------------------------------")
 		bulletSystem.dispose()
 		renderSystem.dispose()
 		enemySystem.dispose()

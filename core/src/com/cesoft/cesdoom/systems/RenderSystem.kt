@@ -95,7 +95,6 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val br
 		var countDrawn = 0
 
 		val OCCLUSION = false
-
 		if(OCCLUSION) {
 			/// Occlusion Culling
 			visibleEntities.clear()

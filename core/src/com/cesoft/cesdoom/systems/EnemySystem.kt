@@ -22,13 +22,13 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
 
-	private val xSpawns = floatArrayOf(+335f, +335f, -335f, -335f)
-	private val zSpawns = floatArrayOf(+335f, -335f, +335f, -335f)
+	//private val xSpawns = floatArrayOf(+335f, +335f, -335f, -335f)
+	//private val zSpawns = floatArrayOf(+335f, -335f, +335f, -335f)
 	//private var maper = ComponentMapper.getFor(StatusComponent::class.java)
 
-	private val random = Random()
-	private val randomSpawnIndex: Int
-		get() = random.nextInt(xSpawns.size)
+	//private val random = Random()
+	//private val randomSpawnIndex: Int
+	//	get() = random.nextInt(xSpawns.size)
 
 	private val posPlayerTemp = Vector3()
 	private var waitToCreate = false
@@ -40,7 +40,7 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
-
+	private val timer = Timer("schedule", true)
 	override fun update(delta: Float) {
 		//TODO: humo donde aparece bicho...
 		//if(entities!!.size() < 5) spawnEnemy(randomSpawnIndex)
@@ -50,16 +50,16 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 
 		if(entities!!.size() < 2 && !waitToCreate) {
 			waitToCreate = true
-			val timer = Timer("schedule", true);
+			timer.purge()
 			timer.schedule(1500) {
-				spawnEnemy(randomSpawnIndex)
-			}
-			timer.schedule(4000) {
-				spawnEnemy(randomSpawnIndex)
-			}
-			timer.schedule(6000) {
-				spawnEnemy(randomSpawnIndex)
-				waitToCreate = false
+				spawnEnemy()
+				timer.schedule(4000) {
+					spawnEnemy()
+					timer.schedule(4000) {
+						spawnEnemy()
+						waitToCreate = false
+					}
+				}
 			}
 		}
 		for(entity in entities!!)
@@ -97,7 +97,7 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 			bulletPlayer.rigidBody.getWorldTransform(transf)
 
 			transf.getTranslation(posPlayerTemp)
-			val orientation = 0f //TODO: Camara?
+			//val orientation = 0f //TODO: Camara?
 			//orientation = Math.atan2(-playerPosition.z.toDouble(), playerPosition.x.toDouble()).toFloat()
 
 			//
@@ -108,13 +108,13 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 
 
 	//______________________________________________________________________________________________
-	private fun spawnEnemy(randomSpawnIndex: Int) {
+	private fun spawnEnemy() {
 		/*engine!!.addEntity(EnemyFactory.create(
 				EnemyComponent.TYPE.MONSTER1,
 				Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]),
 				100f))*/
 				//SceneFactory.createEnemy(model, Vector3(xSpawns[randomSpawnIndex], 5f, zSpawns[randomSpawnIndex]), ++index))
-		engine.addEntity(EnemyFactory.create(EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
+		engine.addEntity(EnemyFactory.create(assets.getMonstruo1(), EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
 	}
 
 	//______________________________________________________________________________________________
@@ -124,6 +124,9 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	fun dispose()
 	{
+		timer.cancel()
+		timer.purge()
 		EnemyFactory.dispose()
+		//assets.endMonstruo1()
 	}
 }

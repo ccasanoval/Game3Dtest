@@ -90,7 +90,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	}
 	private fun pausar()
 	{
-		Gdx.app.error("CesDoom", "-----------------1----------------- PAUSADO ------------------------------")
+		//Gdx.app.error("CesDoom", "-----------------1----------------- PAUSADO ------------------------------")
 		//System.err.println("----------------------2------------ REANUDADO ------------------------------")
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
@@ -98,7 +98,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	}
 	private fun reanudar()
 	{
-		Gdx.app.error("CesDoom", "-----------------2----------------- REANUDADO ------------------------------")
+		//Gdx.app.error("CesDoom", "-----------------2----------------- REANUDADO ------------------------------")
 		window.remove()
 		Gdx.input.isCursorCatched = true
 		Settings.paused = false

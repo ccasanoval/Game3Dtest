@@ -30,18 +30,17 @@ class SteeringComponent(private val body: btRigidBody, private val _boundingRadi
 	private val tmpVector3 = Vector3()
 
 	//private var independentFacing: Boolean = false
-	private val ANGULAR_LOCK = Vector3(0f, 1f, 0f)
-	private var steeringBehavior: SteeringBehavior<Vector3>? = null
-	val steeringOutput = SteeringAcceleration(Vector3())
+	//private var steeringBehavior: SteeringBehavior<Vector3>? = null
+	//private val steeringOutput = SteeringAcceleration(Vector3())
 
 	//______________________________________________________________________________________________
 	init {
-		body.angularFactor = ANGULAR_LOCK
+		body.angularFactor = Vector3(0f, 1f, 0f)
 	}
 
 	//______________________________________________________________________________________________
 
-	fun procesar(steeringBehavior: SteeringBehavior<Vector3>) : SteeringAcceleration<Vector3> = steeringBehavior.calculateSteering(steeringOutput)
+	//fun procesar(steeringBehavior: SteeringBehavior<Vector3>) : SteeringAcceleration<Vector3> = steeringBehavior.calculateSteering(steeringOutput)
 	/*fun update(delta: Float) {
 		if(steeringBehavior != null) {
 			// Calculate steering acceleration
@@ -85,7 +84,7 @@ class SteeringComponent(private val body: btRigidBody, private val _boundingRadi
 
 	override fun getZeroLinearSpeedThreshold(): Float = 0.001f
 	override fun setZeroLinearSpeedThreshold(valor: Float) {
-		System.err.println("SteeringComponent: setZeroLinearSpeedThreshold: ------------"+valor)
+		//System.err.println("SteeringComponent: setZeroLinearSpeedThreshold: ------------$valor")
 		throw UnsupportedOperationException()
 	}
 

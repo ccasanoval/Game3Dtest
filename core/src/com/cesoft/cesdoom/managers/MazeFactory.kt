@@ -2,12 +2,15 @@ package com.cesoft.cesdoom.managers
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.math.Vector3
+import com.cesoft.cesdoom.Assets
 
 object MazeFactory
 {
 	//______________________________________________________________________________________________
-	fun create(engine: Engine)
+	fun create(assets: Assets, engine: Engine)
 	{
+		WallFactory.texture = assets.getWallMetal1()
+		RampFactory.init(assets.getWallMetal2(), assets.getWallMetal3())
 		createSector(engine, 0f)
 		createSector(engine, +RampFactory.LONG+5.5f*WallFactory.LONG-3)
 		createSector(engine, -RampFactory.LONG-5.5f*WallFactory.LONG+3)
@@ -15,7 +18,7 @@ object MazeFactory
 		createSector(engine, -RampFactory.LONG-11.5f*WallFactory.LONG+3)
 	}
 	//______________________________________________________________________________________________
-	fun createSector(engine: Engine, x: Float)
+	private fun createSector(engine: Engine, x: Float)
 	{
 		engine.addEntity(WallFactory.create(Vector3(x-RampFactory.LONG+1, 0f, +5*WallFactory.LONG)))
 		engine.addEntity(WallFactory.create(Vector3(x+RampFactory.LONG-1, 0f, +5*WallFactory.LONG)))

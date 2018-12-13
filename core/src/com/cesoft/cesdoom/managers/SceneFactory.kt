@@ -2,7 +2,6 @@ package com.cesoft.cesdoom.managers
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
@@ -11,13 +10,11 @@ import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
-import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
-import com.badlogic.gdx.utils.UBJsonReader
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
@@ -40,7 +37,6 @@ object SceneFactory {
 
 	//______________________________________________________________________________________________
 	val materialJunk = Material(ColorAttribute.createDiffuse(Color.WHITE))
-	val imgJunk = Gdx.files.internal("scene/junk.png")
 	val ratioJunk = 546f/1000f
 	//
 	private val THICK_JUNK = 0.1f
@@ -48,9 +44,8 @@ object SceneFactory {
 	private val HIGH_JUNK = 500f * ratioJunk
 	private val UP_JUNK = HIGH_JUNK/2
 	private val dimJunk = Vector3(THICK_JUNK, HIGH_JUNK, LONG_JUNK)
-	fun loadJunk(engine: Engine, len: Float) {
+	fun loadJunk(texture: Texture, engine: Engine, len: Float) {
 		/// MODEL
-		val texture = Texture(imgJunk)
 		texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge)
 		val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
 		materialJunk.set(textureAttribute)
@@ -76,17 +71,15 @@ object SceneFactory {
 
 	//______________________________________________________________________________________________
 	val materialSkyline = Material(ColorAttribute.createDiffuse(Color.DARK_GRAY))
-	val imgSkyline = Gdx.files.internal("scene/skyline.png")
 	val ratioSkyline = 380f/1400f
 	//
-	fun loadSkyline(engine: Engine, len: Float) {
+	fun loadSkyline(texture: Texture, engine: Engine, len: Float) {
 		val THICK = 0.1f
 		val LONG = 2*len
 		val HIGH = 2*len*ratioSkyline
 		val UP = len*ratioSkyline*3/5
 
 		/// MODEL
-		val texture = Texture(imgSkyline)
 		texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge)
 		val textureAttribute0 = TextureAttribute(TextureAttribute.Diffuse, texture)
 		materialSkyline.set(textureAttribute0)
@@ -122,13 +115,11 @@ object SceneFactory {
 	}
 
 	//______________________________________________________________________________________________
-	val imgSuelo = Gdx.files.internal("scene/ground.jpg")
 	val materialSuelo = Material(ColorAttribute.createDiffuse(Color.WHITE))
-	fun loadSuelo(len: Float): Entity {
+	fun getSuelo(texture: Texture, len: Float): Entity {
 		val entity = Entity()
 
 		/// MODEL
-		val texture = Texture(imgSuelo)
 		texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture)
 		textureAttribute1.scaleU = 80f
@@ -160,11 +151,6 @@ object SceneFactory {
 	}
 
 	//______________________________________________________________________________________________
-	private val modelLoader = G3dModelLoader(UBJsonReader())
-	private val fileDome = Gdx.files.getFileHandle("scene/spaceDome/spacedome.g3db", Files.FileType.Internal)
-	fun loadDome(): Entity {
-		val model = modelLoader.loadModel(fileDome)
-		return Entity().add(ModelComponent(model, Vector3(0f,0f,0f)))
-	}
+	fun getDome(model: Model) = Entity().add(ModelComponent(model, Vector3(0f,0f,0f)))
 
 }

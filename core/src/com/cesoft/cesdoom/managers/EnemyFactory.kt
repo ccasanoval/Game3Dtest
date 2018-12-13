@@ -1,14 +1,11 @@
 package com.cesoft.cesdoom.managers
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g3d.Model
-import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
-import com.badlogic.gdx.utils.UBJsonReader
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
@@ -27,37 +24,20 @@ object EnemyFactory
 {
 	private val RADIO = 15f
 
-	private val modelLoader = G3dModelLoader(UBJsonReader())
-	private val models = mutableMapOf<EnemyComponent.TYPE, Model>()
-
-	private val modelDataMonster1 = modelLoader.loadModelData(Gdx.files.internal("foes/monster1/a.g3db"))
-
+	//private val models = mutableMapOf<EnemyComponent.TYPE, Model>()
 
 	//______________________________________________________________________________________________
 	fun dispose()
 	{
-		for((_, model) in models)
+		System.err.println("EnemyFactory:dispose:--------------------------------------------")
+		/*for((_, model) in models)
 			model.dispose()
-		models.clear()
-	}
-
-	//______________________________________________________________________________________________
-	private fun createModel(type: EnemyComponent.TYPE): Model {
-		val model: Model
-		when(type) {
-			EnemyComponent.TYPE.MONSTER1 -> {
-				model = Model(modelDataMonster1)
-				//model = modelLoaderJSON.loadModel(Gdx.files.getFileHandle("foes/monster1/monster.g3dj", Files.FileType.Internal))
-//				for(i in 0 until model.nodes.size - 1)
-//					model.nodes[i].scale.scl(0.01f)
-			}
-		}
-		return model
+		models.clear()*/
 	}
 
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()
-	fun create(type: EnemyComponent.TYPE, pos: Vector3, mase: Float = 100f) : Entity
+	fun create(model: Model, type: EnemyComponent.TYPE, pos: Vector3, mase: Float = 100f) : Entity
 	{
 		val entity = Entity()
 
@@ -66,13 +46,13 @@ object EnemyFactory
 		entity.add(enemy)
 
 		/// MODEL
-		if(models[type] == null)
-			models[type] = createModel(type)
+		//if(models[type] == null)
+		//	models[type] = model
 		//
 		val modelComponent: ModelComponent
 		when(type) {
 			EnemyComponent.TYPE.MONSTER1 -> {
-				modelComponent = ModelComponent(models[type]!!, pos)
+				modelComponent = ModelComponent(model, pos)
 				modelComponent.frustumCullingData =
 					FrustumCullingData.create(Vector3(0f,0f,0f), Vector3(RADIO,RADIO,RADIO), modelComponent.instance)
 				entity.add(modelComponent)
@@ -121,7 +101,7 @@ object EnemyFactory
 	}
 
 	//______________________________________________________________________________________________
-	fun setAnimation(entity: Entity, action: EnemyComponent.ACTION)
+	private fun setAnimation(entity: Entity, action: EnemyComponent.ACTION)
 	{
 		val type = entity.getComponent(EnemyComponent::class.java).type
 		val animParams = getAnimationParams(type, action)

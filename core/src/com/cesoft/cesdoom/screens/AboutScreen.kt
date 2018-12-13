@@ -15,7 +15,7 @@ import com.cesoft.cesdoom.CesDoom
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class AboutScreen(internal var game: CesDoom, private val assets: Assets, private val camera: Camera?) : Screen {
+class AboutScreen(internal val game: CesDoom, private val assets: Assets, private val camera: Camera?) : Screen {
 	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/background.png")))
 	private var backButton: TextButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)

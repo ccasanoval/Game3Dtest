@@ -1,7 +1,6 @@
 package com.cesoft.cesdoom.managers
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
@@ -35,9 +34,6 @@ object RampFactory {
 	private val dimMax = Vector3(LONG*2, LONG*2, LONG*2)
 	private val dim = Vector3(THICK, HIGH, LONG)
 
-	private val text1 = Gdx.files.internal("scene/wall/metal2.png")
-	private val text2 = Gdx.files.internal("scene/wall/metal3.png")
-
 	private val material1 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
 	private val material2 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
 
@@ -47,9 +43,8 @@ object RampFactory {
 					or VertexAttributes.Usage.Normal
 					or VertexAttributes.Usage.TextureCoordinates).toLong()
 
-	init {
+	fun init(texture1: Texture, texture2: Texture) {
 		/// MODELO1
-		val texture1 = Texture(text1)
 		texture1.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture1)
 		textureAttribute1.scaleU = 3f
@@ -58,7 +53,6 @@ object RampFactory {
 		//model1 = modelBuilder1.createBox(THICK *2, HIGH *2, LONG *2, material1, POSITION_NORMAL)
 
 		/// MODELO2
-		val texture2 = Texture(text2)
 		texture2.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute2 = TextureAttribute(TextureAttribute.Diffuse, texture2)
 		textureAttribute2.scaleU = 2f

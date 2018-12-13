@@ -4,10 +4,9 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
-import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.GL20
 import com.cesoft.cesdoom.UI.GameUI
-import com.cesoft.cesdoom.screens.GameScreen
+import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16,7 +15,7 @@ import com.cesoft.cesdoom.screens.MainMenuScreen
 //
 //https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
 //class CesDoom(private val camera: Camera?) : ApplicationAdapter() {
-class CesDoom() : ApplicationAdapter() {
+class CesDoom : ApplicationAdapter() {
 
 	private var screen: Screen? = null
 	lateinit var assets: Assets
@@ -46,30 +45,32 @@ class CesDoom() : ApplicationAdapter() {
 	}
 
 	//______________________________________________________________________________________________
-	fun delScreen()
+	private fun delScreen()
 	{
-		if(this.screen != null) {
-			this.screen!!.hide()
-			this.screen!!.dispose()
+		System.err.println("CesDoom:delScreen:--------------------------------------------------------")
+		screen?.let {
+			it.hide()
+			it.dispose()
 		}
 	}
 	//______________________________________________________________________________________________
 	fun setScreen(screen: Screen) {
 		this.screen = screen
-		if(this.screen != null) {
-			this.screen!!.show()
-			this.screen!!.resize(Gdx.graphics.width, Gdx.graphics.height)
-		}
+		screen.show()
+		screen.resize(Gdx.graphics.width, Gdx.graphics.height)
 	}
 	//______________________________________________________________________________________________
 	fun reset()
 	{
+		System.err.println("CesDoom:reset:--------------------------------------------------------")
 		delScreen()
-		setScreen(GameScreen(gameUI, assets))
+		setScreen(LoadingScreen(this))
+		//<android:hardwareAccelerated="false">
 	}
 
 	//______________________________________________________________________________________________
 	override fun dispose() {
+		System.err.println("CesDoom:dispose:--------------------------------------------------------")
 		Settings.save()
 		delScreen()
 		gameUI.dispose()

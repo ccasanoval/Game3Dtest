@@ -10,8 +10,7 @@ import com.cesoft.cesdoom.UI.GameUI
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameScreen(private var gameUI: GameUI, assets: Assets) : Screen {
-	//private var gameUI: GameUI = GameUI(game, assets)
+class GameScreen(private val gameUI: GameUI, private val assets: Assets) : Screen {
 	private var gameWorld: GameWorld = GameWorld(gameUI, assets)
 
 	init {
@@ -36,7 +35,11 @@ class GameScreen(private var gameUI: GameUI, assets: Assets) : Screen {
 	}
 
 	override fun show() {}
-	override fun pause() {}
+	override fun pause() {
+		System.err.println("GameScreen:pause:--------------------------------------------------------")
+	}
 	override fun resume() {}
-	override fun hide() {}
+	override fun hide() {
+		System.err.println("GameScreen:hide:--------------------------------------------------------")
+	}
 }

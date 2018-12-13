@@ -1,7 +1,6 @@
 package com.cesoft.cesdoom.managers
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes
@@ -38,11 +37,12 @@ object WallFactory {
 	private val dimCollision = Vector3(THICK+0f,HIGH+0f,LONG+0f)
 
 	private val mb = ModelBuilder()
-	private val fileTexture = Gdx.files.internal("scene/wall/metal1.jpg")
 	private val POSITION_NORMAL =
 			(VertexAttributes.Usage.Position
 			or VertexAttributes.Usage.Normal
 			or VertexAttributes.Usage.TextureCoordinates).toLong()
+
+	var texture: Texture? = null
 
 	//______________________________________________________________________________________________
 	fun create(pos: Vector3, angle: Float = 0f): Entity {
@@ -51,8 +51,7 @@ object WallFactory {
 
 		/// MODELO
 		val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
-		val texture = Texture(fileTexture)
-		texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+		texture?.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture)
 		textureAttribute1.scaleU = 2f
 		textureAttribute1.scaleV = 4f

@@ -172,7 +172,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 				shots[shotIndex] = entity
 				bullet.rigidBody.userValue = comprimeCodigo(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
 			}
-			else -> System.err.println("Collision else added: "+bullet.rigidBody.userValue)
+			//else -> System.err.println("Collision else added: "+bullet.rigidBody.userValue)
 		}
 		collisionWorld.addRigidBody(bullet.rigidBody)
 	}
@@ -192,6 +192,6 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	//______________________________________________________________________________________________
 	override fun entityRemoved(entity: Entity)
 	{
-		val comp = entity.getComponent(BulletComponent::class.java)
+		entity.getComponent(BulletComponent::class.java)
 	}
 }
