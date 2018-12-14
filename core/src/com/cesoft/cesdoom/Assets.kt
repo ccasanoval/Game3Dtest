@@ -49,14 +49,12 @@ class Assets {
 	}
 
 	//______________________________________________________________________________________________
-	lateinit var _particulas : ParticleEffect
 	fun iniParticulas(param: Array<ParticleBatch<*>>) {
 		val loadParam = ParticleEffectLoader.ParticleEffectLoadParameter(param)
 		if( ! assetManager.isLoaded(fileParticulas)) {
 			assetManager.load(fileParticulas, ParticleEffect::class.java, loadParam)
 			assetManager.finishLoading()
 		}
-		//_particulas = assetManager.get(fileParticulas)
 	}
 	fun getParticulas():ParticleEffect {
 		val particleEffect: ParticleEffect = assetManager.get(fileParticulas)
@@ -126,6 +124,7 @@ class Assets {
 		// I18n
 		val SALIR="SALIR"
 		val JUGAR="JUGAR"
+		val MENU="MENU"
 		val SOBRE="SOBRE"
 		val ATRAS="ATRAS"
 		val CREDITOS_TXT="CREDITOS_TXT"

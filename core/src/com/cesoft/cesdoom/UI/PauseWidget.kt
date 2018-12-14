@@ -21,8 +21,8 @@ import com.cesoft.cesdoom.Settings
 class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Actor() {
 
 	private var window: Window
-	//private var closeDialog: TextButton
 	private var btnRestart: TextButton
+	private var btnMenu: TextButton
 	private var btnQuit: TextButton
 
 	//______________________________________________________________________________________________
@@ -33,10 +33,11 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		ws.titleFontColor = Color.BLUE
 		window = Window("", ws)
 		//
-		//closeDialog = TextButton("X", assets.skin)
 		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
+		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
 		btnQuit = TextButton(Assets.SALIR, assets.skin)
 		btnRestart.label.setFontScale(2f)
+		btnMenu.label.setFontScale(2f)
 		btnQuit.label.setFontScale(2f)
 		//
 		configureWidgets()
@@ -46,9 +47,11 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	//______________________________________________________________________________________________
 	private fun configureWidgets() {
 		//window.titleTable.add<TextButton>(closeDialog).width(64f).height(64f).pad(10f)//.height(window.padTop+10f)
-		window.add<TextButton>(btnRestart).width(370f).height(95f)
-		window.row().pad(20f)
-		window.add<TextButton>(btnQuit).width(300f).height(95f)
+		window.add<TextButton>(btnRestart).width(370f).height(90f)
+		window.row().pad(5f)
+		window.add<TextButton>(btnMenu).width(300f).height(90f)
+		window.row().pad(5f)
+		window.add<TextButton>(btnQuit).width(300f).height(90f)
 	}
 
 	//______________________________________________________________________________________________
@@ -69,16 +72,17 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 				reanudar()
 			}
 		})
+		btnMenu.addListener(object : ClickListener() {
+			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
+				reanudar()
+				game.reset2Menu()
+			}
+		})
 		btnQuit.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
 				Gdx.app.exit()
 			}
 		})
-//		closeDialog.addListener(object : ClickListener() {
-//			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-//				handleUpdates()
-//			}
-//		})
 	}
 
 	//______________________________________________________________________________________________
@@ -90,15 +94,12 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	}
 	private fun pausar()
 	{
-		//Gdx.app.error("CesDoom", "-----------------1----------------- PAUSADO ------------------------------")
-		//Log.e(tag, "----------------------2------------ REANUDADO ------------------------------")
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
 		Settings.paused = true
 	}
 	private fun reanudar()
 	{
-		//Gdx.app.error("CesDoom", "-----------------2----------------- REANUDADO ------------------------------")
 		window.remove()
 		Gdx.input.isCursorCatched = true
 		Settings.paused = false

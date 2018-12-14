@@ -52,7 +52,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	//______________________________________________________________________________________________
 	private fun delScreen()
 	{
-		System.err.println("CesDoom:delScreen:--------------------------------------------------------")
+		Log.e("CesDoom", ":delScreen:--------------------------------------------------------")
 		screen?.let {
 			it.hide()
 			it.dispose()
@@ -67,15 +67,21 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	//______________________________________________________________________________________________
 	fun reset()
 	{
-		System.err.println("CesDoom:reset:--------------------------------------------------------")
+		Log.e("CesDoom", "reset:--------------------------------------------------------")
 		delScreen()
 		setScreen(LoadingScreen(this))
 		//<android:hardwareAccelerated="false">
 	}
+	//______________________________________________________________________________________________
+	fun reset2Menu()
+	{
+		///delScreen()
+		setScreen(MainMenuScreen(this, assets, null))//, camera))
+	}
 
 	//______________________________________________________________________________________________
 	override fun dispose() {
-		System.err.println("CesDoom:dispose:--------------------------------------------------------")
+		Log.e("CesDoom", "dispose:--------------------------------------------------------")
 		Settings.save()
 		delScreen()
 		gameUI.dispose()

@@ -5,7 +5,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -22,9 +24,33 @@ public class LoadingScreen implements Screen {
 
     private static final String tag = LoadingScreen.class.getSimpleName();
 
+    public class LoadingBar extends Actor {
+
+        private Animation animation;
+        private TextureRegion reg;
+        private float stateTime;
+
+        public LoadingBar(Animation animation) {
+            this.animation = animation;
+            reg = (TextureRegion) animation.getKeyFrame(0);
+        }
+
+        @Override
+        public void act(float delta) {
+            stateTime += delta;
+            reg = (TextureRegion) animation.getKeyFrame(stateTime);
+        }
+
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            batch.draw(reg, getX(), getY());
+        }
+    }
+
+
     private Stage stage;
 
-    //private Image logo;
+    private Image logo;
     private Image loadingFrame;
     private Image loadingBarHidden;
     private Image screenBg;
@@ -47,7 +73,7 @@ public class LoadingScreen implements Screen {
         game.assets.iniLoading();
         TextureAtlas atlas = game.assets.getLoading();
         // Grab the regions from the atlas and create some images
-        //logo = new Image(atlas.findRegion("libgdx-logo"));
+        logo = new Image(atlas.findRegion("libgdx-logo"));
         loadingFrame = new Image(atlas.findRegion("loading-frame"));
         loadingBarHidden = new Image(atlas.findRegion("loading-bar-hidden"));
         screenBg = new Image(atlas.findRegion("screen-bg"));
@@ -67,7 +93,7 @@ public class LoadingScreen implements Screen {
         stage.addActor(loadingBg);
         stage.addActor(loadingBarHidden);
         stage.addActor(loadingFrame);
-        //stage.addActor(logo);
+        stage.addActor(logo);
 
         // Add everything to be loaded
         loadResources();
@@ -110,24 +136,19 @@ public class LoadingScreen implements Screen {
     @Override
     public void resize(int width, int height) {
 
+        int offset = 100;
         stage.getViewport().update(width, height);
-
-        /*
-        // Set our screen to always be XXX x 480 in size
-        width = 480 * width / height;
-        height = 480;
-        stage.getViewport().update(width , height, false);*/
 
         // Make the background fill the screen
         screenBg.setSize(width, height);
 
-        // Place the logo in the middle of the screen and 100 px up
-        //logo.setX((width - logo.getWidth()) / 2);
-        //logo.setY((height - logo.getHeight()) / 2 + 100);
+        // Place the logo in the middle of the screen and XX px down
+        logo.setX((width - logo.getWidth()) / 2);
+        logo.setY((height - logo.getHeight()) / 2 - offset/2);
 
         // Place the loading frame in the middle of the screen
         loadingFrame.setX((stage.getWidth() - loadingFrame.getWidth()) / 2);
-        loadingFrame.setY((stage.getHeight() - loadingFrame.getHeight()) / 2);
+        loadingFrame.setY((stage.getHeight() - loadingFrame.getHeight()) / 2 - offset);
 
         // Place the loading bar at the same spot as the frame, adjusted a few px
         loadingBar.setX(loadingFrame.getX() + 15);
@@ -158,7 +179,7 @@ public class LoadingScreen implements Screen {
         }
         else {
             // Interpolate the percentage to make it more smooth
-            percent = Interpolation.linear.apply(percent, game.assets.getProgress(), 0.1f);
+            percent = Interpolation.linear.apply(percent, game.assets.getProgress(), 0.5f);
             Log.INSTANCE.e(tag, "LoadingScreen:render:------------------------------%: " + percent);
             // Update positions (and size) to match the percentage
             loadingBarHidden.setX(startX + endX * percent);
@@ -177,17 +198,11 @@ public class LoadingScreen implements Screen {
     }
 
     @Override
-    public void dispose() {
-
-    }
+    public void dispose() { }
 
     @Override
-    public void pause() {
-
-    }
+    public void pause() { }
 
     @Override
-    public void resume() {
-
-    }
+    public void resume() { }
 }

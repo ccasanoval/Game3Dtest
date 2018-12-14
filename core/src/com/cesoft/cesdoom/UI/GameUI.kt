@@ -18,12 +18,11 @@ class GameUI(game: CesDoom, assets: Assets) {
 	private var scoreWidget: ScoreWidget = ScoreWidget(assets)
 	private var pauseWidget: PauseWidget = PauseWidget(game, stage, assets)
 	private var crosshairWidget: CrosshairWidget = CrosshairWidget()
-	private var fpsLabel: Label
+	private var fpsLabel: Label = Label("", assets.skin)
 	var gameOverWidget: GameOverWidget = GameOverWidget(game, stage, assets)
 		private set
 
 	init {
-		fpsLabel = Label("", assets.skin)
 		configureWidgets()
 	}
 
@@ -35,7 +34,7 @@ class GameUI(game: CesDoom, assets: Assets) {
 		scoreWidget.setSize(225f, 25f)
 		scoreWidget.setPosition(0f, CesDoom.VIRTUAL_HEIGHT - scoreWidget.height)
 
-		pauseWidget.setSize(500f, 250f)
+		pauseWidget.setSize(500f, 350f)
 		pauseWidget.setPosition(CesDoom.VIRTUAL_WIDTH - pauseWidget.width, CesDoom.VIRTUAL_HEIGHT - pauseWidget.height)
 
 		gameOverWidget.setSize(500f, 210f)

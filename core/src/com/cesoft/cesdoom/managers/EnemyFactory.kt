@@ -22,7 +22,7 @@ import com.cesoft.cesdoom.components.EnemyComponent.ACTION.*
 //
 object EnemyFactory
 {
-	private val RADIO = 15f
+	private val RADIO = 18f
 
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()

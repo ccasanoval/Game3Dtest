@@ -59,13 +59,6 @@ loading-bar2
   orig: 501, 49
   offset: 0, 0
   index: -1
-libgdx-logo
-  rotate: false
-  xy: 1, 8
-  size: 408, 68
-  orig: 408, 68
-  offset: 0, 0
-  index: -1
 loading-bar-hidden
   rotate: false
   xy: 543, 441
@@ -82,8 +75,15 @@ loading-frame-bg
   index: -1
 screen-bg
   rotate: false
-  xy: 1, 1
+  xy: 1, 435
   size: 5, 5
   orig: 5, 5
+  offset: 0, 0
+  index: -1
+libgdx-logo
+  rotate: false
+  xy: 1, 495
+  size: 450, 284
+  orig: 450, 284
   offset: 0, 0
   index: -1

@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlinVersion = '1.3.10'
+    ext.kotlinVersion = '1.3.11'
 
     repositories {
         mavenLocal()
@@ -93,8 +93,8 @@ project(":android") {
         implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
         //VR: LibGDX-Cardboard-Extension
-        implementation "com.google.vr:sdk-base:1.101.0"
-        implementation 'com.google.vr:sdk-controller:1.101.0'
+        //implementation "com.google.vr:sdk-base:1.101.0"
+        //implementation 'com.google.vr:sdk-controller:1.101.0'
         //implementation 'com.github.yangweigbh:Libgdx-CardBoard-Extension:0.4.0'
     }
 }

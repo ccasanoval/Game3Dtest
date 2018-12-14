@@ -1,22 +1,22 @@
 package com.cesoft.cesdoom
 
 import android.os.Bundle
-import com.badlogic.gdx.Gdx
 
 import com.badlogic.gdx.backends.android.AndroidApplication
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
+//import com.badlogic.gdx.Gdx
 //import com.badlogic.gdx.backends.android.CardBoardAndroidApplication
 //import com.badlogic.gdx.backends.android.CardBoardApplicationListener
 //import com.badlogic.gdx.backends.android.CardboardCamera
-import com.badlogic.gdx.graphics.GL20
-import com.google.vr.sdk.base.Eye
-import com.google.vr.sdk.base.HeadTransform
-import com.google.vr.sdk.base.Viewport
-import com.badlogic.gdx.graphics.g3d.Environment
-import com.badlogic.gdx.graphics.g3d.Model
-import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.g3d.ModelInstance
-import com.badlogic.gdx.math.Matrix4
+//import com.badlogic.gdx.graphics.GL20
+//import com.google.vr.sdk.base.Eye
+//import com.google.vr.sdk.base.HeadTransform
+//import com.google.vr.sdk.base.Viewport
+//import com.badlogic.gdx.graphics.g3d.Environment
+//import com.badlogic.gdx.graphics.g3d.Model
+//import com.badlogic.gdx.graphics.g3d.ModelBatch
+//import com.badlogic.gdx.graphics.g3d.ModelInstance
+//import com.badlogic.gdx.math.Matrix4
 
 
 //AndroidApplication(),
