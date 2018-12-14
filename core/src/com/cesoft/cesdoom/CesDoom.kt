@@ -65,17 +65,15 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		screen.resize(Gdx.graphics.width, Gdx.graphics.height)
 	}
 	//______________________________________________________________________________________________
-	fun reset()
-	{
+	fun reset() {
 		Log.e("CesDoom", "reset:--------------------------------------------------------")
 		delScreen()
 		setScreen(LoadingScreen(this))
 		//<android:hardwareAccelerated="false">
 	}
 	//______________________________________________________________________________________________
-	fun reset2Menu()
-	{
-		///delScreen()
+	fun reset2Menu() {
+		delScreen()
 		setScreen(MainMenuScreen(this, assets, null))//, camera))
 	}
 

@@ -60,16 +60,19 @@ class RenderSystem(
 	//______________________________________________________________________________________________
 	init {
 		/// Camaras
-		//perspectiveCamera.far = Math.sqrt((2*largoMundo*largoMundo).toDouble()).toFloat()+1	// Lado mundo = 4000 => SQRT(4000*4000+4000*4000) = 5700
 		perspectiveCamera.far = 12000f // Para que vea el cielo (dome)
 		perspectiveCamera.near = 1f
+
 		gunCamera.far = 50f
 
 		/// Particulas
 		val billboardParticleBatch = BillboardParticleBatch()
 		billboardParticleBatch.setCamera(perspectiveCamera)
 		particleSystem.add(billboardParticleBatch)
-		assets.iniParticulas(particleSystem.batches)
+		assets.iniParticleEffectDeath(particleSystem.batches)
+
+			Log.e(tag, "INI ---------------------------------------------------------")
+
 
 		/// Ambiente
 		environment.set(colorAmbiente)
@@ -233,6 +236,7 @@ class RenderSystem(
 		isDisposed = true
 		batch.dispose()
 		visibleEntities.clear()
+					Log.e(tag, "dispose ---------------------------------------------------------")
 	}
 
 }

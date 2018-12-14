@@ -1,34 +1,23 @@
 package com.cesoft.cesdoom
 
-import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetLoaderParameters
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
-import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffectLoader
 import com.badlogic.gdx.graphics.g3d.particles.batches.ParticleBatch
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.I18NBundle
-import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
-import com.cesoft.cesdoom.components.ModelComponent
-import com.cesoft.cesdoom.managers.EnemyFactory
-import com.cesoft.cesdoom.managers.SceneFactory
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class Assets {
-	/// Particulas
-	private val fileParticulas = "particles/dieparticle.pfx"
 	private val assetManager = AssetManager()
 
 	/// Skin
@@ -46,19 +35,6 @@ class Assets {
 		if(atlasFile.exists())
 			skin.addRegions(TextureAtlas(atlasFile))
 		skin.load(fileHandle)
-	}
-
-	//______________________________________________________________________________________________
-	fun iniParticulas(param: Array<ParticleBatch<*>>) {
-		val loadParam = ParticleEffectLoader.ParticleEffectLoadParameter(param)
-		if( ! assetManager.isLoaded(fileParticulas)) {
-			assetManager.load(fileParticulas, ParticleEffect::class.java, loadParam)
-			assetManager.finishLoading()
-		}
-	}
-	fun getParticulas():ParticleEffect {
-		val particleEffect: ParticleEffect = assetManager.get(fileParticulas)
-		return particleEffect.copy()
 	}
 
 
@@ -103,6 +79,21 @@ class Assets {
 	fun iniWallMetal3() = assetManager.load("scene/wall/metal3.png", Texture::class.java)
 	fun getWallMetal3():Texture = assetManager.get("scene/wall/metal3.png", Texture::class.java)
 
+	//______________________________________________________________________________________________
+	fun iniParticleEffectDeath(param: Array<ParticleBatch<*>>) {
+		val loadParam = ParticleEffectLoader.ParticleEffectLoadParameter(param)
+		assetManager.load("particles/dieparticle.pfx", ParticleEffect::class.java, loadParam)
+		try {
+		assetManager.finishLoadingAsset("particles/dieparticle.pfx")
+		} catch (e: Exception) {
+			Log.e("Assets", "iniParticleEffectDeath:e:-------------------------------$e")
+		}
+		Log.e("Assets", "iniParticleEffectDeath----------------------------------------")
+	}
+	fun getParticleEffectDeath():ParticleEffect {
+		Log.e("Assets", "getParticleEffectDeath----------------------------------------")
+		return assetManager.get("particles/dieparticle.pfx", ParticleEffect::class.java).copy()
+	}
 
 
     //______________________________________________________________________________________________
