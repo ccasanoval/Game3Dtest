@@ -22,12 +22,24 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.cesoft.cesdoom.RenderUtils.OcclusionCuller
 import com.cesoft.cesdoom.RenderUtils.OcclusionBuffer
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase
-
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val broadphase2: btDbvtBroadphase) : EntitySystem() {
+class RenderSystem(
+		colorAmbiente: ColorAttribute,
+		assets: Assets,
+		private val broadphase2: btDbvtBroadphase
+) : EntitySystem() {
+
+
+	companion object {
+	    val tag: String = RenderSystem::class.java.simpleName
+		private val FOV = 67f
+		var particleSystem = ParticleSystem()
+		val CF_OCCLUDER_OBJECT: Int = 512
+	}
 
 	private lateinit var entities: ImmutableArray<Entity>
 	private var batch: ModelBatch = ModelBatch()
@@ -71,14 +83,14 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val br
 		oclBuffer = OcclusionBuffer(OCL_BUFFER_EXTENTS[0], OCL_BUFFER_EXTENTS[0])
 		occlusionCuller = object : OcclusionCuller() {
 			override fun isOccluder(obj: btCollisionObject): Boolean {
-				//System.err.println("OcclusionCuller : isOccluder ---"+(obj.collisionFlags and CF_OCCLUDER_OBJECT != 0))
+				//Log.e(tag, "OcclusionCuller : isOccluder ---"+(obj.collisionFlags and CF_OCCLUDER_OBJECT != 0))
 				return obj.collisionFlags and CF_OCCLUDER_OBJECT != 0
 			}
 			override fun onObjectVisible(obj: btCollisionObject) {
 				val entity = obj.userData as Entity
 				//val model = entity.getComponent(ModelComponent::class.java)
 				visibleEntities.add(entity)
-				//System.err.println("OcclusionCuller : onObjectVisible : -----------")
+				//Log.e(tag, "OcclusionCuller : onObjectVisible : -----------")
 			}
 		}
 	}
@@ -102,7 +114,7 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val br
 			occlusionCuller.performOcclusionCulling(broadphase2, oclBuffer, perspectiveCamera)
 
 			batch.begin(perspectiveCamera)
-			//System.err.println("RenderSystem:update:NUM-----------" + entities.size() + "-------------" + visibleEntities.size)
+			//Log.e(tag, "RenderSystem:update:NUM-----------" + entities.size() + "-------------" + visibleEntities.size)
 			//for(it in entities)
 			for(it in visibleEntities) {
 				//if(it == null)continue
@@ -130,7 +142,7 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val br
 						}
 					}
 					catch(e: Exception) {
-						System.err.println("RenderSystem:update:e:-----------$model-------------$e")
+						Log.e(tag, "RenderSystem:update:e:-----------$model-------------$e")
 					}
 				}
 			}
@@ -221,14 +233,6 @@ class RenderSystem(colorAmbiente: ColorAttribute, assets: Assets, private val br
 		isDisposed = true
 		batch.dispose()
 		visibleEntities.clear()
-	}
-
-	//______________________________________________________________________________________________
-	companion object {
-		private val FOV = 67f
-		var particleSystem = ParticleSystem()
-
-		val CF_OCCLUDER_OBJECT: Int = 512
 	}
 
 }

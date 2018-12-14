@@ -24,17 +24,6 @@ object EnemyFactory
 {
 	private val RADIO = 15f
 
-	//private val models = mutableMapOf<EnemyComponent.TYPE, Model>()
-
-	//______________________________________________________________________________________________
-	fun dispose()
-	{
-		System.err.println("EnemyFactory:dispose:--------------------------------------------")
-		/*for((_, model) in models)
-			model.dispose()
-		models.clear()*/
-	}
-
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()
 	fun create(model: Model, type: EnemyComponent.TYPE, pos: Vector3, mase: Float = 100f) : Entity
@@ -46,9 +35,6 @@ object EnemyFactory
 		entity.add(enemy)
 
 		/// MODEL
-		//if(models[type] == null)
-		//	models[type] = model
-		//
 		val modelComponent: ModelComponent
 		when(type) {
 			EnemyComponent.TYPE.MONSTER1 -> {
@@ -59,9 +45,6 @@ object EnemyFactory
 				/// ANIMATION
 				entity.add(AnimationComponent(modelComponent.instance))
 				setAnimation(entity, EnemyComponent.ACTION.WALKING)
-				/// PARTICLES
-				//entity.add(EnemyDieParticleComponent())//TODO:meter ese boolean en otros sition
-				//entity.add(EnemyDieParticleComponent())
 			}
 		}
 		// (desaparecer)
@@ -143,11 +126,11 @@ object EnemyFactory
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 22.6f, time)
 
 						/*if(random.nextInt(2) == 0) {
-							System.err.println("----******************--------- Enemy Factory DYING 1")
+							Log.e("----******************--------- Enemy Factory DYING 1")
 							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 15.6f, time)
 						}
 						else {
-							System.err.println("-----*********************-------- Enemy Factory DYING 2")
+							Log.e("-----*********************-------- Enemy Factory DYING 2")
 							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 20f, time)
 						}*/
 					}
@@ -192,7 +175,7 @@ object EnemyFactory
 	{
 		val bullet = entity.getComponent(BulletComponent::class.java)
 		val status = entity.getComponent(StatusComponent::class.java)
-//System.err.println("-------------------------MOVER: ")
+//Log.e(tag, "-------------------------MOVER: ")
 
 		/*if(status.isDead() || status.isAching()) {
 			//bullet.rigidBody.linearVelocity = Vector3(0f,0f,0f)
@@ -205,8 +188,8 @@ object EnemyFactory
 		val target = BulletLocation(playerPosition, orientation)
 		val seekSB = Seek<Vector3>(steering, target)
 		val res : SteeringAcceleration<Vector3> = steering.procesar(seekSB)
-		System.err.println("-------------- PlayerSystem: update: res.linear="+res.linear)
-		System.err.println("-------------- PlayerSystem: update: res.angular="+res.angular)
+		Log.e(tag, "-------------- PlayerSystem: update: res.linear="+res.linear)
+		Log.e(tag, "-------------- PlayerSystem: update: res.angular="+res.angular)
 */
 		///
 

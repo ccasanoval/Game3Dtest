@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.cesoft.cesdoom.UI.GameUI
 import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen
+import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // DESKTOP DEPLOY : gradlew desktop:dist --> cesgame2\desktop\build\libs
@@ -15,11 +16,15 @@ import com.cesoft.cesdoom.screens.MainMenuScreen
 //
 //https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
 //class CesDoom(private val camera: Camera?) : ApplicationAdapter() {
-class CesDoom : ApplicationAdapter() {
+class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 
 	private var screen: Screen? = null
 	lateinit var assets: Assets
 	lateinit var gameUI: GameUI
+
+	init {
+	    Log.debugMode = debugMode
+	}
 
 	//______________________________________________________________________________________________
 	override fun create() {

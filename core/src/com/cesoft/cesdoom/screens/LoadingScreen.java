@@ -12,11 +12,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.cesoft.cesdoom.CesDoom;
+import com.cesoft.cesdoom.util.Log;
 
 /**
  * @author Mats Svensson, modified by CESoft
  */
+//TODO: pass to kotlin
 public class LoadingScreen implements Screen {
+
+    private static final String tag = LoadingScreen.class.getSimpleName();
 
     private Stage stage;
 
@@ -94,6 +98,12 @@ public class LoadingScreen implements Screen {
         // Enemy
         try { game.assets.getMonstruo1(); }
         catch(Exception ignore) { game.assets.iniMonstruo1(); }
+
+        // Weapons
+        try { game.assets.getCZ805(); }
+        catch(Exception ignore) { game.assets.iniCZ805(); }
+
+        //TODO: Also the rest of the object initialization?
     }
 
     //______________________________________________________________________________________________
@@ -149,7 +159,7 @@ public class LoadingScreen implements Screen {
         else {
             // Interpolate the percentage to make it more smooth
             percent = Interpolation.linear.apply(percent, game.assets.getProgress(), 0.1f);
-            System.err.println("LoadingScreen:render:------------------------------%: " + percent);
+            Log.INSTANCE.e(tag, "LoadingScreen:render:------------------------------%: " + percent);
             // Update positions (and size) to match the percentage
             loadingBarHidden.setX(startX + endX * percent);
             loadingBg.setX(loadingBarHidden.getX() + 30);

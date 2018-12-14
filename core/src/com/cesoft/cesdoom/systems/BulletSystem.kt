@@ -89,7 +89,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	//______________________________________________________________________________________________
 	private fun collPlayerScene()
 	{
-		//System.err.println("--------- COLLISION: Player + Scene --------------------------")
+		//Log.e(tag, "--------- COLLISION: Player + Scene --------------------------")
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerEnemy(iEnemy: Int)
@@ -172,7 +172,7 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 				shots[shotIndex] = entity
 				bullet.rigidBody.userValue = comprimeCodigo(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
 			}
-			//else -> System.err.println("Collision else added: "+bullet.rigidBody.userValue)
+			//else -> Log.e(tag, "Collision else added: "+bullet.rigidBody.userValue)
 		}
 		collisionWorld.addRigidBody(bullet.rigidBody)
 	}

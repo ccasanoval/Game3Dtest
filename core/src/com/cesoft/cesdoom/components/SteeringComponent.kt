@@ -84,7 +84,7 @@ class SteeringComponent(private val body: btRigidBody, private val _boundingRadi
 
 	override fun getZeroLinearSpeedThreshold(): Float = 0.001f
 	override fun setZeroLinearSpeedThreshold(valor: Float) {
-		//System.err.println("SteeringComponent: setZeroLinearSpeedThreshold: ------------$valor")
+		//Log.e(tag, "SteeringComponent: setZeroLinearSpeedThreshold: ------------$valor")
 		throw UnsupportedOperationException()
 	}
 

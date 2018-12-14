@@ -49,7 +49,7 @@ object MazeFactory
 		engine.addEntity(WallFactory.create(Vector3(x+2f*WallFactory.LONG, 0f, -7*WallFactory.LONG), +90f))
 		engine.addEntity(WallFactory.create(Vector3(x+4f*WallFactory.LONG, 0f, -7*WallFactory.LONG), +90f))
 
-		//System.err.println("---------------GameWorld:init:5-----------------------")
+		//Log.e(tag, "---------------GameWorld:init:5-----------------------")
 
 		/// RAMPAS
 		engine.addEntity(RampFactory.create(Vector3(x, 2f*WallFactory.HIGH, +1*RampFactory.HIGH), angleY=90f, angleZ=90f, type=false))

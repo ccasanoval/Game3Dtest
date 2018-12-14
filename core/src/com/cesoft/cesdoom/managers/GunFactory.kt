@@ -18,25 +18,13 @@ import com.cesoft.cesdoom.components.ModelComponent
 //
 object GunFactory
 {
-	private val modelLoader = G3dModelLoader(UBJsonReader())
-	private var models = mutableMapOf<GunComponent.TYPE, Model>()
-	private var files = mutableMapOf<GunComponent.TYPE, FileHandle>()
-
-	init {
-		files[GunComponent.TYPE.CZ805] = Gdx.files.getFileHandle("weapons/cz805/a.g3db", Files.FileType.Internal)
-	}
+	private var modelStatus = mutableMapOf<GunComponent.TYPE, Boolean>()
 
 	//______________________________________________________________________________________________
-	fun dispose()
-	{
-		for((_, model) in models)
-			model.dispose()
-		models = mutableMapOf()
-	}
-
-	//______________________________________________________________________________________________
-	fun createModel(type: GunComponent.TYPE): Model {
-		val model: Model = modelLoader.loadModel(files[type])
+	private fun createModel(model: Model, type: GunComponent.TYPE): Model {
+		val init = modelStatus[type]?:false
+		if(init)return model
+		modelStatus[type] = true
 		when(type) {
 			GunComponent.TYPE.CZ805 -> {
 				for(i in 0 until model.nodes.size - 1)
@@ -47,26 +35,22 @@ object GunFactory
 	}
 
 	//______________________________________________________________________________________________
-	fun create(type: GunComponent.TYPE): Entity {
+	fun create(model: Model, type: GunComponent.TYPE): Entity {
 		val entity = Entity()
 
 		val gun = GunComponent(type)
 		entity.add(gun)
 
-		if(models[type] == null)
-			models[type] = createModel(type)
+		createModel(model, type)//TODO:If changing weapons, remember to call it just once
 		when(type) {
 			GunComponent.TYPE.CZ805 -> {
-				val modelComponent = ModelComponent(models[type]!!, Vector3(25f, -10f, -15f))
+				val modelComponent = ModelComponent(model, Vector3(25f, -10f, -15f))
 				modelComponent.instance.transform.rotate(0f, 1f, 0f, 185f)
 				modelComponent.instance.transform.rotate(1f, 0f, 0f, -7f)
 				entity.add(modelComponent).add(AnimationComponent(modelComponent.instance))
 				GunFireWidget.setPosition(30f, -60f)
-
 			}
-
 		}
-
 		return entity
 	}
 

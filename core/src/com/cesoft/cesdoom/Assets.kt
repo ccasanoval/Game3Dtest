@@ -82,6 +82,9 @@ class Assets {
 	fun iniMonstruo1() = assetManager.load("foes/monster1/a.g3db", Model::class.java)
 	fun getMonstruo1():Model = assetManager.get("foes/monster1/a.g3db", Model::class.java)
 	//______________________________________________________________________________________________
+	fun iniCZ805() = assetManager.load("weapons/cz805/a.g3db", Model::class.java)
+	fun getCZ805():Model = assetManager.get("weapons/cz805/a.g3db", Model::class.java)
+	//______________________________________________________________________________________________
 	//fun endSuelo() = assetManager.unload("scene/ground.jpg")
 	fun iniSuelo() = assetManager.load("scene/ground.jpg", Texture::class.java)
 	fun getSuelo():Texture = assetManager.get("scene/ground.jpg", Texture::class.java)

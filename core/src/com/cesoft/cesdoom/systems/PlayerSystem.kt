@@ -25,6 +25,7 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.PlayerComponent.ALTURA
 import com.cesoft.cesdoom.components.PlayerComponent.FUERZA_MOVIL
 import com.cesoft.cesdoom.managers.GunFactory
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +37,10 @@ class PlayerSystem(
 	)
 	: EntitySystem(), EntityListener, InputProcessor, ControllerListener
 {
+
+	companion object {
+	    val tag: String = PlayerSystem::class.java.simpleName
+	}
 
 	///// ControllerListener
 	// TODO: REFACTOR to class que agrupe todo input...
@@ -50,7 +55,7 @@ class PlayerSystem(
 	var btnD: Boolean = false
 	/////-------------------------------------------------------------------------------------------
 	override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
-		//System.err.println("axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
+		//Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
 		if(axisCode == com.badlogic.gdx.controllers.mappings.Ouya.AXIS_LEFT_X) {
 			xPad = when {
 				value > 0 -> Direccion.DERECHA
@@ -75,7 +80,7 @@ class PlayerSystem(
 			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = false
 			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = false
 			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_Y -> btnD = false
-			else -> System.err.println("buttonUp:----------------"+controller?.name+" : "+buttonCode)
+			else -> Log.e(tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
 		}
 		//else if(buttonCode == com.badlogic.gdx.controllers.mappings.Xbox.A)
 		return false
@@ -88,32 +93,32 @@ class PlayerSystem(
 			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = true
 			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = true
 			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_Y -> btnD = true
-			else -> System.err.println("buttonDown:---------------"+controller?.name+" : "+buttonCode)
+			else -> Log.e(tag, "buttonDown:---------------"+controller?.name+" : "+buttonCode)
 		}
 		return false
 	}
 	////
 	override fun connected(controller: Controller?) {
-		System.err.println("connected:------------"+controller?.name)
+		Log.e(tag, "connected:------------"+controller?.name)
 	}
 	override fun disconnected(controller: Controller?) {
-		System.err.println("disconnected:------------"+controller?.name)
+		Log.e(tag, "disconnected:------------"+controller?.name)
 	}
 	////
 	override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
-		System.err.println("accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
+		Log.e(tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
 		return false
 	}
 	override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-		System.err.println("ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+		Log.e(tag, "ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
 		return false
 	}
 	override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-		System.err.println("xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+		Log.e(tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
 		return false
 	}
 	override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
-		System.err.println("povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
+		Log.e(tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
 		return false
 	}
 	//////////
@@ -182,7 +187,7 @@ class PlayerSystem(
 				pr = pitch - 120
 			else if(pitch - pr < 40)//Angulo mirando arriba
 				pr = pitch - 40
-			//System.err.println("-------------------------------- PITCH: "+pitch)
+			//Log.e(tag, "-------------------------------- PITCH: "+pitch)
 		}
 		/// DESKTOP
 		else {
@@ -251,7 +256,7 @@ class PlayerSystem(
 	private fun updateSaltando() {
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || btnA)
 		{
-			System.err.println("------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isSaltando)
+			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isSaltando)
 			if( ! playerComponent.isSaltando) {
 				playerComponent.isSaltando = true
 				val fuerza = 40f
@@ -395,8 +400,5 @@ class PlayerSystem(
 	override fun scrolled(amount: Int): Boolean = false
 
 	//______________________________________________________________________________________________
-	fun dispose()
-	{
-		GunFactory.dispose()
-	}
+	fun dispose() { }
 }

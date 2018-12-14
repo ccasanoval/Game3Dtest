@@ -32,7 +32,7 @@ class AndroidLauncher: AndroidApplication() {//CardBoardAndroidApplication(), Ca
 		super.onCreate(savedInstanceState)
 		val config = AndroidApplicationConfiguration()
 		//initialize(this, config)//CesGame(), config)
-		initialize(CesDoom(), config)
+		initialize(CesDoom(BuildConfig.DEBUG), config)
 	}
 /*
 	override fun create() {

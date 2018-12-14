@@ -126,7 +126,5 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 	{
 		timer.cancel()
 		timer.purge()
-		EnemyFactory.dispose()
-		//assets.endMonstruo1()
 	}
 }

@@ -91,7 +91,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	private fun pausar()
 	{
 		//Gdx.app.error("CesDoom", "-----------------1----------------- PAUSADO ------------------------------")
-		//System.err.println("----------------------2------------ REANUDADO ------------------------------")
+		//Log.e(tag, "----------------------2------------ REANUDADO ------------------------------")
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
 		Settings.paused = true

@@ -34,6 +34,8 @@ object SceneFactory {
 	private val posTemp = Vector3()
 	private val dimTemp = Vector3()
 
+	private var modelStatus = mutableMapOf<GunComponent.TYPE, Boolean>()
+
 
 	//______________________________________________________________________________________________
 	val materialJunk = Material(ColorAttribute.createDiffuse(Color.WHITE))
@@ -46,6 +48,7 @@ object SceneFactory {
 	private val dimJunk = Vector3(THICK_JUNK, HIGH_JUNK, LONG_JUNK)
 	fun loadJunk(texture: Texture, engine: Engine, len: Float) {
 		/// MODEL
+		//val texture = Texture(textureOrg.textureData)
 		texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge)
 		val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
 		materialJunk.set(textureAttribute)

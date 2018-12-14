@@ -6,6 +6,7 @@ import com.cesoft.cesdoom.Assets
 import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.UI.GameUI
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,6 +14,9 @@ import com.cesoft.cesdoom.UI.GameUI
 class GameScreen(private val gameUI: GameUI, private val assets: Assets) : Screen {
 	private var gameWorld: GameWorld = GameWorld(gameUI, assets)
 
+	companion object {
+		val tag: String = GameScreen::class.java.simpleName
+	}
 	init {
 		Settings.paused = false
 		Gdx.input.inputProcessor = gameUI.stage
@@ -35,11 +39,7 @@ class GameScreen(private val gameUI: GameUI, private val assets: Assets) : Scree
 	}
 
 	override fun show() {}
-	override fun pause() {
-		System.err.println("GameScreen:pause:--------------------------------------------------------")
-	}
+	override fun pause() {}
 	override fun resume() {}
-	override fun hide() {
-		System.err.println("GameScreen:hide:--------------------------------------------------------")
-	}
+	override fun hide() {}
 }

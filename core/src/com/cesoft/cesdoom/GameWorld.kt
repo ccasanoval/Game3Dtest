@@ -13,10 +13,12 @@ import com.cesoft.cesdoom.components.GunComponent
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.managers.*
 import com.cesoft.cesdoom.systems.*
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//TODO: Steering AI !!!!!!
+//TODO: Sound...
+//TODO: Steering AI !!!!!! https://www.gamedevelopment.blog/full-libgdx-game-tutorial-ashley-steering-behaviors/
 //TODO: Velocidad carga y velocidad ejecucion (mobile 20 fps !!!)
 //TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
 
@@ -56,6 +58,9 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 
 	private val colorAmbiente = ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.4f, 0.4f, 1f)
 
+	companion object {
+	    val tag: String = GameWorld::class.java.simpleName
+	}
 
 	//______________________________________________________________________________________________
 	init {
@@ -99,7 +104,7 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 		engine.addEntity(EnemyFactory.create(assets.getMonstruo1(), EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
 
 		/// PLAYER
-		createPlayer(Vector3(0f,150f,0f))
+		createPlayer(assets, Vector3(0f,150f,0f))
 		PlayerComponent.health = 100f
 		PlayerComponent.score = 0
 		PlayerComponent.colorAmbiente = colorAmbiente
@@ -107,10 +112,10 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 
 
 	//______________________________________________________________________________________________
-	private fun createPlayer(pos: Vector3) {
+	private fun createPlayer(assets: Assets, pos: Vector3) {
 		player = PlayerComponent.create(pos)
 		engine.addEntity(player)
-		gun = GunFactory.create(GunComponent.TYPE.CZ805)//Dentro de playerSystem??
+		gun = GunFactory.create(assets.getCZ805(), GunComponent.TYPE.CZ805)//Dentro de playerSystem??
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun
@@ -145,7 +150,7 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-		System.err.println("GameWorld:dispose:--------------------------------------------")
+		Log.e(tag, "GameWorld:dispose:--------------------------------------------")
 		bulletSystem.dispose()
 		renderSystem.dispose()
 		enemySystem.dispose()
