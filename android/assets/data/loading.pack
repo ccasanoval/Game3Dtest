@@ -82,7 +82,7 @@ screen-bg
   index: -1
 libgdx-logo
   rotate: false
-  xy: 1, 495
+  xy: 1, 496
   size: 450, 284
   orig: 450, 284
   offset: 0, 0

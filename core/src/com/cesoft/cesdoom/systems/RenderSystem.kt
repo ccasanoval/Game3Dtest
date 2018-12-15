@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
+import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
 import com.badlogic.gdx.math.Vector3
@@ -30,14 +31,12 @@ import com.cesoft.cesdoom.util.Log
 class RenderSystem(
 		colorAmbiente: ColorAttribute,
 		assets: Assets,
-		private val broadphase2: btDbvtBroadphase
-) : EntitySystem() {
-
+		private val broadphase2: btDbvtBroadphase)
+	: EntitySystem() {
 
 	companion object {
 	    val tag: String = RenderSystem::class.java.simpleName
 		private val FOV = 67f
-		var particleSystem = ParticleSystem()
 		val CF_OCCLUDER_OBJECT: Int = 512
 	}
 
@@ -56,6 +55,7 @@ class RenderSystem(
 	//private var frustumCam: PerspectiveCamera
 	private val OCL_BUFFER_EXTENTS = intArrayOf(128, 256, 512, 32, 64)
 	val visibleEntities = arrayListOf<Entity?>()
+	private var particleSystem = ParticleSystem()
 
 	//______________________________________________________________________________________________
 	init {
@@ -76,7 +76,7 @@ class RenderSystem(
 
 		/// Ambiente
 		environment.set(colorAmbiente)
-		environment.add(DirectionalLight().set(0.7f, 0.4f, 0.2f, -1f, -0.8f, -0.4f))
+		environment.add(DirectionalLight().set(0.7f, 0.3f, 0.1f, -1f, -0.8f, -0.4f))
 		/// Sombras
 //		shadowLight = DirectionalShadowLight(1024 * 5, 1024 * 5, 200f, 200f, 1f, 300f)
 //		shadowLight.set(0.9f, 0.9f, 0.9f, 0f, -0.1f, 0.1f)
@@ -178,9 +178,7 @@ class RenderSystem(
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT)
 		batch.begin(gunCamera)
 		val modelo = gun.getComponent(ModelComponent::class.java)
-
 		animGunRespiracion(modelo, delta)
-
 		batch.render(modelo.instance)
 		batch.end()
 	}
@@ -233,10 +231,18 @@ class RenderSystem(
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-		isDisposed = true
+		particleSystem.removeAll()
+		for(p in particles)p.dispose()
+
 		batch.dispose()
 		visibleEntities.clear()
-					Log.e(tag, "dispose ---------------------------------------------------------")
+		isDisposed = true
+Log.e(tag, "dispose ---------------------------------------------------------")
 	}
 
+	val particles = ArrayList<ParticleEffect>()
+	fun addParticleEffect(particle: ParticleEffect) {
+		particleSystem.add(particle)
+		particles.add(particle)
+	}
 }

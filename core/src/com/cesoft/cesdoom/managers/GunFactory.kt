@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.UBJsonReader
+import com.cesoft.cesdoom.Assets
 import com.cesoft.cesdoom.UI.GunFireWidget
 import com.cesoft.cesdoom.components.AnimationComponent
 import com.cesoft.cesdoom.components.AnimationParams
@@ -82,6 +83,12 @@ object GunFactory
 				}
 
 		}
+	}
+
+	fun playSound(assets: Assets) {
+		val sound = assets.getSoundCZ805()
+		if( ! sound.isPlaying)
+			sound.play()
 	}
 
 }

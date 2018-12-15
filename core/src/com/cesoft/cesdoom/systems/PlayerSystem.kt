@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.Settings
-import com.cesoft.cesdoom.UI.GameUI
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.UI.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
@@ -31,13 +30,12 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class PlayerSystem(
-	private val gameUI: GameUI,
-	private val camera: Camera,
-	private val bulletSystem: BulletSystem
+		private val game: CesDoom,
+		private val camera: Camera,
+		private val bulletSystem: BulletSystem
 	)
 	: EntitySystem(), EntityListener, InputProcessor, ControllerListener
 {
-
 	companion object {
 	    val tag: String = PlayerSystem::class.java.simpleName
 	}
@@ -45,14 +43,14 @@ class PlayerSystem(
 	///// ControllerListener
 	// TODO: REFACTOR to class que agrupe todo input...
 	enum class Direccion { NONE, ATRAS, ADELANTE, IZQUIERDA, DERECHA }
-	var xPad: Direccion = Direccion.NONE
-	var yPad: Direccion = Direccion.NONE
-	var fire1: Boolean = false
-	var fire2: Boolean = false
-	var btnA: Boolean = false
-	var btnB: Boolean = false
-	var btnC: Boolean = false
-	var btnD: Boolean = false
+	private var xPad: Direccion = Direccion.NONE
+	private var yPad: Direccion = Direccion.NONE
+	private var fire1: Boolean = false
+	private var fire2: Boolean = false
+	private var btnA: Boolean = false
+	private var btnB: Boolean = false
+	private var btnC: Boolean = false
+	private var btnD: Boolean = false
 	/////-------------------------------------------------------------------------------------------
 	override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
 		//Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
@@ -142,10 +140,10 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
 		updateMovement(delta)
-		updateDisparo(delta)
+		updateWeapon(delta)
 		updateStatus()
 		checkGameOver(delta)
-		updateCamara()
+		updateCamera()
 		PlayerComponent.update()
 	}
 
@@ -206,7 +204,6 @@ class PlayerSystem(
 	{
 		posTemp.set(0f, 0f, 0f)
 
-		/// Esta muerto...
 		if(PlayerComponent.health <= 0f)//TODO: idem en rotacion
 		{
 			altura -= delta*10f
@@ -234,7 +231,12 @@ class PlayerSystem(
 				hayMovimiento = true
 			}
 			if( ! hayMovimiento)
-				posTemp2.set(0f,0f,0f)
+				posTemp2.set(Vector3.Zero)
+			else {
+				animFootStep(delta)
+				if( ! game.assets.getSoundFootSteps().isPlaying)
+					game.assets.getSoundFootSteps().play()
+			}
 			posTemp.add(posTemp2)
 			posTemp.scl(FUERZA_MOVIL * delta)
 		}
@@ -243,7 +245,8 @@ class PlayerSystem(
 			else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) posTemp.sub(camera.direction)
 			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) posTemp2.set(camera.direction).crs(camera.up)
-			else posTemp2.set(0f,0f,0f)
+			else posTemp2.set(Vector3.Zero)
+			if(posTemp2.isZero)game.assets.getSoundFootSteps().play()
 			posTemp.add(posTemp2)
 			posTemp.scl(PlayerComponent.FUERZA_PC * delta)
 		}
@@ -270,10 +273,9 @@ class PlayerSystem(
 		//playerComponent.isSaltando = getPosition().y > ALTURA/6 ==> No vale con rampas!!!
 	}
 	//______________________________________________________________________________________________
-	private fun updateCamara()
-	{
+	private fun updateCamera() {
 		val pos = getPosition()
-		pos.y += altura/1.5f
+		pos.y += altura/1.5f +yFoot
 		pos.x += camera.direction.x*PlayerComponent.RADIO/2 // camara adelantada a colision, para no disparar a self bullet body
 		pos.z += camera.direction.z*PlayerComponent.RADIO/2
 		camera.position.set(pos)
@@ -284,25 +286,25 @@ class PlayerSystem(
 	{
 		val transform = Matrix4()
 		bulletComponent.rigidBody.motionState.getWorldTransform(transform)
-		//val pos = Vector3()
 		return transform.getTranslation(posTemp)
 	}
 
 	//______________________________________________________________________________________________
 	private fun updateStatus() {
-		gameUI.healthWidget.setValue(PlayerComponent.health)
+		game.gameUI.healthWidget.setValue(PlayerComponent.health)
 	}
 
 	//______________________________________________________________________________________________
 	//TODO: quiza depende de GunComponent?
 	private var deltaFire = 100f
 	private var deltaReload = 100f
-	private fun updateDisparo(delta: Float)
+	private fun updateWeapon(delta: Float)
 	{
 		// Gdx.input.isTouched
 		deltaFire += delta
 		deltaReload += delta
 		if(ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || fire1) {
+			GunFactory.playSound(game.assets)
 			if(deltaFire > 0.15f) {
 				deltaFire = 0f
 				fire()
@@ -369,6 +371,22 @@ class PlayerSystem(
 		}
 	}
 
+	private var isFootUp = false
+	private var yFoot = 0f
+	private fun animFootStep(delta: Float)
+	{
+		if(isFootUp) {
+			yFoot += delta*7
+			if(yFoot > 0.8f)
+				isFootUp = false
+		}
+		else {
+			yFoot -= delta*7
+			if(yFoot < -0.8f)
+				isFootUp = true
+		}
+	}
+
 	//______________________________________________________________________________________________
 	private var delayDeath = 0f
 	private fun checkGameOver(delta: Float) {
@@ -376,7 +394,7 @@ class PlayerSystem(
 			if(delayDeath > 2f)
 			{
 				Settings.paused = true
-				gameUI.gameOverWidget.gameOver()
+				game.gameUI.gameOverWidget.gameOver()
 			}
 			delayDeath += delta
 		}

@@ -34,7 +34,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, private val assets
 	private fun setListeners() {
 		btnJugar.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(GameScreen(game.gameUI, assets))
+				game.setScreen(GameScreen(game))
 			}
 		})
 

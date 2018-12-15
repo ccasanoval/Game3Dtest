@@ -275,13 +275,13 @@ object EnemyFactory
 	}
 
 
-
-	fun update(delta: Float, entity: Entity, posPlayer: Vector3, assets: Assets) {
-
+	fun update(delta: Float, entity: Entity, posPlayer: Vector3, assets: Assets, render: RenderSystem) {
 		val status = entity.getComponent(StatusComponent::class.java)
 		if(status.isDead())
 		{
 			val enemy = entity as Enemy
+
+			assets.getSoundEnemy1Die().play()
 
 			val model = entity.getComponent(ModelComponent::class.java)
 			if(model.blendingAttribute != null)
@@ -298,7 +298,8 @@ object EnemyFactory
 				effect.init()
 				effect.start()
 				enemy.particleEffect = effect
-				RenderSystem.particleSystem.add(effect)
+				render.addParticleEffect(effect)
+				//RenderSystem.particleSystem.add(effect)
 			}
 
 			if(status.deathProgres() == 1f) {

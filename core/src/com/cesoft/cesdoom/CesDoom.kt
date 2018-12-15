@@ -5,9 +5,13 @@ import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.utils.GdxRuntimeException
 import com.cesoft.cesdoom.UI.GameUI
+import com.cesoft.cesdoom.entities.Enemy
+import com.cesoft.cesdoom.screens.GameScreen
 import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen
+import com.cesoft.cesdoom.systems.RenderSystem
 import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +38,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		gameUI = GameUI(this, assets)
 		Settings.load()
 		Gdx.input.isCatchBackKey = true
-		setScreen(MainMenuScreen(this, assets, null))//, camera))
+		setScreen(MainMenuScreen(this))
 	}
 
 	//______________________________________________________________________________________________
@@ -74,7 +78,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	//______________________________________________________________________________________________
 	fun reset2Menu() {
 		delScreen()
-		setScreen(MainMenuScreen(this, assets, null))//, camera))
+		setScreen(MainMenuScreen(this))
 	}
 
 	//______________________________________________________________________________________________
@@ -85,6 +89,49 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		gameUI.dispose()
 		assets.dispose()
 	}
+
+	fun loadResources() {
+		// Wall
+		try {assets.getWallMetal1()}
+		catch (ignore: GdxRuntimeException) {assets.iniWallMetal1()}
+		try {assets.getWallMetal2()}
+		catch (ignore: GdxRuntimeException) {assets.iniWallMetal2()}
+		try {assets.getWallMetal3()}
+		catch (ignore: GdxRuntimeException) {assets.iniWallMetal3()}
+
+		// Sounds
+		try {assets.getSoundCZ805()}
+		catch (ignore: Exception) {assets.iniSoundCZ805()}
+		try {assets.getSoundEnemy1()}
+		catch (ignore: Exception) {assets.iniSoundEnemy1()}
+		try {assets.getSoundEnemy1Die()}
+		catch (ignore: Exception) {assets.iniSoundEnemy1Die()}
+		try {assets.getSoundFootSteps()}
+		catch (ignore: Exception) {assets.iniSoundFootSteps()}
+
+		// Enemy
+		try {assets.getMonstruo1()}
+		catch (ignore: Exception) {assets.iniMonstruo1()}
+
+		// Weapons
+		try {assets.getCZ805()}
+		catch (ignore: Exception) {assets.iniCZ805()}
+
+		// Scene
+		try {assets.getDome()}
+		catch (ignore: GdxRuntimeException) {assets.iniDome()}
+		try {assets.getSuelo()}
+		catch (ignore: GdxRuntimeException) {assets.iniSuelo()}
+		try {assets.getSkyline()}
+		catch (ignore: GdxRuntimeException) {assets.iniSkyline()}
+		try {assets.getJunk()}
+		catch (ignore: GdxRuntimeException) {assets.iniJunk()}
+
+		//TODO: Also the rest of the object initialization?
+	}
+
+	val render: RenderSystem
+		get() = (screen as GameScreen).render
 
 	//______________________________________________________________________________________________
 	companion object {

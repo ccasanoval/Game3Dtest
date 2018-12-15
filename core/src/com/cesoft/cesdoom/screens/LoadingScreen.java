@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.cesoft.cesdoom.CesDoom;
 import com.cesoft.cesdoom.util.Log;
 
@@ -30,7 +29,7 @@ public class LoadingScreen implements Screen {
         private TextureRegion reg;
         private float stateTime;
 
-        public LoadingBar(Animation animation) {
+        LoadingBar(Animation animation) {
             this.animation = animation;
             reg = (TextureRegion) animation.getKeyFrame(0);
         }
@@ -96,40 +95,7 @@ public class LoadingScreen implements Screen {
         stage.addActor(logo);
 
         // Add everything to be loaded
-        loadResources();
-    }
-
-    private void loadResources() {
-        //game.assets.iniParticulas(null);
-
-        // Scene
-        try { game.assets.getDome(); }
-        catch(GdxRuntimeException ignore) { game.assets.iniDome(); }
-
-        try { game.assets.getSuelo(); }
-        catch(GdxRuntimeException ignore) { game.assets.iniSuelo(); }
-        try { game.assets.getSkyline(); }
-        catch(GdxRuntimeException ignore) { game.assets.iniSkyline(); }
-        try { game.assets.getJunk(); }
-        catch(GdxRuntimeException ignore) { game.assets.iniJunk(); }
-
-        // Wall
-        try { game.assets.getWallMetal1(); }
-        catch(GdxRuntimeException ignore) { game.assets.iniWallMetal1(); }
-        try { game.assets.getWallMetal2(); }
-        catch(GdxRuntimeException ignore) { game.assets.iniWallMetal2(); }
-        try { game.assets.getWallMetal3(); }
-        catch(GdxRuntimeException ignore) { game.assets.iniWallMetal3(); }
-
-        // Enemy
-        try { game.assets.getMonstruo1(); }
-        catch(Exception ignore) { game.assets.iniMonstruo1(); }
-
-        // Weapons
-        try { game.assets.getCZ805(); }
-        catch(Exception ignore) { game.assets.iniCZ805(); }
-
-        //TODO: Also the rest of the object initialization?
+        game.loadResources();
     }
 
     //______________________________________________________________________________________________
@@ -175,7 +141,7 @@ public class LoadingScreen implements Screen {
         if (game.assets.update()) { // Load some, will return true if done loading
             //if (Gdx.input.isTouched()) // If the screen is touched after the game is done loading, go to the main menu screen
                 //game.setScreen(new MainMenuScreen(game));
-            game.setScreen(new GameScreen(game.gameUI, game.assets));
+            game.setScreen(new GameScreen(game));
         }
         else {
             // Interpolate the percentage to make it more smooth

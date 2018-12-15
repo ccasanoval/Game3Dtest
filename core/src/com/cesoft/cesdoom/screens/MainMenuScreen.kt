@@ -17,13 +17,13 @@ import com.cesoft.cesdoom.CesDoom
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class MainMenuScreen(private val game: CesDoom, private val assets: Assets, private val camera: Camera?) : Screen {
+class MainMenuScreen(private val game: CesDoom) : Screen {
 	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/background.png")))
 	private var titleImage: Image = Image(Texture(Gdx.files.internal("data/title.png")))
-	private var playButton: TextButton = TextButton(assets.getString(Assets.JUGAR), assets.skin)
-	private var quitButton: TextButton = TextButton(assets.getString(Assets.SALIR), assets.skin)
-	private var aboutButton: TextButton = TextButton(assets.getString(Assets.SOBRE), assets.skin)
+	private var playButton: TextButton = TextButton(game.assets.getString(Assets.JUGAR), game.assets.skin)
+	private var quitButton: TextButton = TextButton(game.assets.getString(Assets.SALIR), game.assets.skin)
+	private var aboutButton: TextButton = TextButton(game.assets.getString(Assets.SOBRE), game.assets.skin)
 
 	init {
 		configureWidgers()
@@ -83,7 +83,7 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets, priv
 		})
 		aboutButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(AboutScreen(game, assets, camera))
+				game.setScreen(AboutScreen(game))
 			}
 		})
 	}

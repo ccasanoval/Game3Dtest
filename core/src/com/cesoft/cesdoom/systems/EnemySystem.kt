@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.managers.EnemyFactory
-import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.util.Log
 import java.util.*
@@ -19,7 +19,7 @@ import kotlin.concurrent.schedule
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
+class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
 
@@ -41,7 +41,6 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 	}
 
 	//______________________________________________________________________________________________
-	private val timer = Timer("schedule", true)
 	override fun update(delta: Float) {
 		//TODO: humo donde aparece bicho...
 		if(entities == null)
@@ -53,17 +52,18 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 			bulletPlayer.rigidBody.getWorldTransform(transf)
 			val posPlayer = Vector3()
 			transf.getTranslation(posPlayer)
-			EnemyFactory.update(delta, entity, posPlayer.cpy(), assets)
+			EnemyFactory.update(delta, entity, posPlayer.cpy(), game.assets, game.render)
 		}
 
 		spawnIfNeeded()
 	}
 
+	private val timer = Timer("schedule", true)
 	private fun spawnIfNeeded() {
 		if(entities!!.size() < 2 && !waitToCreate) {
 			waitToCreate = true
 			timer.purge()
-			timer.schedule(1500) {
+			timer.schedule(4000) {
 				spawnEnemy()
 				timer.schedule(4000) {
 					spawnEnemy()
@@ -78,10 +78,12 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 
 	//______________________________________________________________________________________________
 	private fun spawnEnemy() {
-		engine.addEntity(
-				EnemyFactory.create(assets.getMonstruo1(),
-				EnemyComponent.TYPE.MONSTER1,
-				Vector3(0f, 150f, -300f)))
+		val enemy = EnemyFactory.create(
+						game.assets.getMonstruo1(),
+						EnemyComponent.TYPE.MONSTER1,
+						Vector3(0f, 150f, -300f))
+		engine.addEntity(enemy)
+		//game.addEnemy(enemy)
 	}
 
 	//______________________________________________________________________________________________

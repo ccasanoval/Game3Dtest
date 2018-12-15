@@ -1,8 +1,9 @@
 package com.cesoft.cesdoom
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.assets.AssetLoaderParameters
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g3d.Model
@@ -36,6 +37,31 @@ class Assets {
 			skin.addRegions(TextureAtlas(atlasFile))
 		skin.load(fileHandle)
 	}
+
+	//______________________________________________________________________________________________
+	fun iniSoundCZ805() {
+		//https://freesound.org/people/SuperPhat/sounds/416417/
+		assetManager.load("sounds/assaultrifle.ogg", Music::class.java)
+	}
+	fun getSoundCZ805() = assetManager.get("sounds/assaultrifle.ogg", Music::class.java)
+	fun endSoundCZ805() = assetManager.get("sounds/assaultrifle.ogg", Music::class.java).dispose()
+	//______________________________________________________________________________________________
+	fun iniSoundEnemy1() {
+		//https://freesound.org/people/cylon8472/sounds/326743/
+		assetManager.load("sounds/enemy1.ogg", Music::class.java)
+	}
+	fun getSoundEnemy1() = assetManager.get("sounds/enemy1.ogg", Music::class.java)
+	fun endSoundEnemy1() = assetManager.get("sounds/enemy1.ogg", Music::class.java).dispose()
+	//
+	fun iniSoundEnemy1Die() = assetManager.load("sounds/enemy1die.ogg", Sound::class.java)
+	fun getSoundEnemy1Die() = assetManager.get("sounds/enemy1die.ogg", Sound::class.java)
+	fun endSoundEnemy1Die() = assetManager.get("sounds/enemy1die.ogg", Sound::class.java).dispose()
+	//
+	fun iniSoundFootSteps() = assetManager.load("sounds/footsteps.ogg", Music::class.java)
+	fun getSoundFootSteps() = assetManager.get("sounds/footsteps.ogg", Music::class.java)
+	fun endSoundFootSteps() = assetManager.get("sounds/footsteps.ogg", Music::class.java).dispose()
+
+
 
 
     //______________________________________________________________________________________________
@@ -84,12 +110,12 @@ class Assets {
 		val loadParam = ParticleEffectLoader.ParticleEffectLoadParameter(param)
 		assetManager.load("particles/dieparticle.pfx", ParticleEffect::class.java, loadParam)
 		try {
-		assetManager.finishLoadingAsset("particles/dieparticle.pfx")
+			assetManager.finishLoadingAsset("particles/dieparticle.pfx")
 		} catch (e: Exception) {
 			Log.e("Assets", "iniParticleEffectDeath:e:-------------------------------$e")
 		}
-		Log.e("Assets", "iniParticleEffectDeath----------------------------------------")
 	}
+	private fun endParticleEffectDeath() = assetManager.unload("particles/dieparticle.pfx")
 	fun getParticleEffectDeath():ParticleEffect {
 		Log.e("Assets", "getParticleEffectDeath----------------------------------------")
 		return assetManager.get("particles/dieparticle.pfx", ParticleEffect::class.java).copy()
@@ -99,6 +125,7 @@ class Assets {
     //______________________________________________________________________________________________
 	fun dispose() {
 		skin.dispose()
+		endParticleEffectDeath()
 		assetManager.dispose()
 	}
 

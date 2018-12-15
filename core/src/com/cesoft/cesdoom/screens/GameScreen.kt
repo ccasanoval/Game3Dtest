@@ -2,35 +2,37 @@ package com.cesoft.cesdoom.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
-import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.Settings
-import com.cesoft.cesdoom.UI.GameUI
-import com.cesoft.cesdoom.util.Log
+import com.cesoft.cesdoom.systems.RenderSystem
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameScreen(private val gameUI: GameUI, private val assets: Assets) : Screen {
-	private var gameWorld: GameWorld = GameWorld(gameUI, assets)
+class GameScreen(private val game: CesDoom) : Screen {
+	private var gameWorld: GameWorld = GameWorld(game)
 
 	companion object {
 		val tag: String = GameScreen::class.java.simpleName
 	}
 	init {
 		Settings.paused = false
-		Gdx.input.inputProcessor = gameUI.stage
+		Gdx.input.inputProcessor = game.gameUI.stage
 		Gdx.input.isCursorCatched = true
 	}
 
+	val render: RenderSystem
+		get() = gameWorld.renderSystem
+
 	override fun render(delta: Float) {
-		gameUI.update(delta)
+		game.gameUI.update(delta)
 		gameWorld.render(delta)
-		gameUI.render()
+		game.gameUI.render()
 	}
 
 	override fun resize(width: Int, height: Int) {
-		gameUI.resize(width, height)
+		game.gameUI.resize(width, height)
 		gameWorld.resize(width, height)
 	}
 

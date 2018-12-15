@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
-import com.cesoft.cesdoom.UI.GameUI
 import com.cesoft.cesdoom.components.EnemyComponent
 import com.cesoft.cesdoom.components.GunComponent
 import com.cesoft.cesdoom.components.PlayerComponent
@@ -17,7 +16,7 @@ import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//TODO: Sound...
+//TODO: Sound... https://www.gamefromscratch.com/post/2013/11/19/LibGDX-Tutorial-8-Audio.aspx
 //TODO: Steering AI !!!!!! https://www.gamedevelopment.blog/full-libgdx-game-tutorial-ashley-steering-behaviors/
 //TODO: Velocidad carga y velocidad ejecucion (mobile 20 fps !!!)
 //TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
@@ -40,7 +39,7 @@ import com.cesoft.cesdoom.util.Log
 //https://github.com/Brummi/VRDemo
 //https://github.com/nooone/gdx-vr
 
-class GameWorld(gameUI: GameUI, assets: Assets) {
+class GameWorld(game: CesDoom) {
 
 	private val debugCollision = false
 	private var debugDrawer: DebugDrawer? = null
@@ -48,7 +47,7 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 	private var bulletSystem: BulletSystem
 	private var playerSystem: PlayerSystem
 
-	private var renderSystem: RenderSystem
+	var renderSystem: RenderSystem
 	private var enemySystem: EnemySystem
 	private var statusSystem: StatusSystem
 
@@ -56,7 +55,7 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 	private lateinit var player: Entity
 	private lateinit var gun: Entity
 
-	private val colorAmbiente = ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.4f, 0.4f, 1f)
+	private val colorAmbiente = ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.2f, 0.2f, 1f)
 
 	companion object {
 	    val tag: String = GameWorld::class.java.simpleName
@@ -66,13 +65,14 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 	init {
 		Bullet.init()
 
+		val assets = game.assets
 		val lonMundo = 4000f
 
 		///----
 		bulletSystem = BulletSystem(this)
 		renderSystem = RenderSystem(colorAmbiente, assets, bulletSystem.broadphase)
-		enemySystem = EnemySystem(assets)
-		playerSystem = PlayerSystem(gameUI, renderSystem.perspectiveCamera, bulletSystem)
+		enemySystem = EnemySystem(game)
+		playerSystem = PlayerSystem(game, renderSystem.perspectiveCamera, bulletSystem)
 		statusSystem = StatusSystem(this)
 
 		///----
@@ -101,7 +101,10 @@ class GameWorld(gameUI: GameUI, assets: Assets) {
 
 		/// ENEMIES
 		//TODO: How to create the enemy engine without creating an enemy
-		engine.addEntity(EnemyFactory.create(assets.getMonstruo1(), EnemyComponent.TYPE.MONSTER1, Vector3(0f, 150f, -300f)))
+		engine.addEntity(EnemyFactory.create(
+				assets.getMonstruo1(),
+				EnemyComponent.TYPE.MONSTER1,
+				Vector3(0f, 150f, -300f)))
 
 		/// PLAYER
 		createPlayer(assets, Vector3(0f,150f,0f))
