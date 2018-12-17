@@ -356,7 +356,7 @@ class PlayerSystem(
 			/// Enemy
 			entity.getComponent(StatusComponent::class.java)?.hurt()
 			/// Draw shot on Wall or Enemy
-			//TODO: draw nubecilla de humo !!!!!!!!!!!!!!!! con particles?
+			//TODO: draw nubecilla de humo !!!!!!!!!!!!!!!!
 			/*val pos = Vector3()
 			rayTestCB.getHitPointWorld(pos)
 

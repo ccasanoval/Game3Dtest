@@ -12,21 +12,19 @@ import com.cesoft.cesdoom.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.screens.GameScreen
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Cambiar estilo botones : imagenes?
-class GameOverWidget(private val game: CesDoom, stage: Stage, private val assets: Assets) : Actor() {
+class GameOverWidget(private val game: CesDoom, stage: Stage) : Actor() {
 	private var image: Image = Image(Texture(Gdx.files.internal("data/gameOver.png")))
 	private var btnJugar: TextButton
 	private var btnSalir: TextButton
 
 	init {
 		super.setStage(stage)
-		btnJugar = TextButton(assets.getString(Assets.JUGAR), assets.skin)
-		btnSalir = TextButton(assets.getString(Assets.SALIR), assets.skin)
-		//
+		btnJugar = TextButton(game.assets.getString(Assets.JUGAR), game.assets.skin)
+		btnSalir = TextButton(game.assets.getString(Assets.SALIR), game.assets.skin)
 		setListeners()
 	}
 
@@ -34,16 +32,23 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, private val assets
 	private fun setListeners() {
 		btnJugar.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(GameScreen(game))
+				game.reset()
+				this@GameOverWidget.clear()
+				//TODO: borrar botones
 			}
 		})
-
 		btnSalir.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
 				Gdx.app.exit()
 			}
 		})
 	}
+
+	/*private fun reanudar() {
+		window.remove()
+		Gdx.input.isCursorCatched = true
+		Settings.paused = false
+	}*/
 
 	//______________________________________________________________________________________________
 	override fun setPosition(x: Float, y: Float) {

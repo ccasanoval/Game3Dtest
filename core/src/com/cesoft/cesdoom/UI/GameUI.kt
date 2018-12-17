@@ -16,10 +16,10 @@ class GameUI(game: CesDoom, assets: Assets) {
 	var healthWidget: HealthWidget = HealthWidget(assets)
 		private set
 	private var scoreWidget: ScoreWidget = ScoreWidget(assets)
-	private var pauseWidget: PauseWidget = PauseWidget(game, stage, assets)
+	private var pauseWidget: PauseWidget = PauseWidget(game, stage)
 	private var crosshairWidget: CrosshairWidget = CrosshairWidget()
 	private var fpsLabel: Label = Label("", assets.skin)
-	var gameOverWidget: GameOverWidget = GameOverWidget(game, stage, assets)
+	var gameOverWidget: GameOverWidget = GameOverWidget(game, stage)
 		private set
 
 	init {

@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffectLoader
 import com.badlogic.gdx.graphics.g3d.particles.batches.ParticleBatch
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.I18NBundle
+import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
 
 
@@ -38,6 +40,7 @@ class Assets {
 		skin.load(fileHandle)
 	}
 
+	// SOUND
 	//______________________________________________________________________________________________
 	fun iniSoundCZ805() {
 		//https://freesound.org/people/SuperPhat/sounds/416417/
@@ -62,8 +65,7 @@ class Assets {
 	fun endSoundFootSteps() = assetManager.get("sounds/footsteps.ogg", Music::class.java).dispose()
 
 
-
-
+	// LOADING
     //______________________________________________________________________________________________
     fun iniLoading() {
         assetManager.load("data/loading.pack", TextureAtlas::class.java)
@@ -73,17 +75,21 @@ class Assets {
     fun endLoading() {
         assetManager.unload("data/loading.pack")
     }
+
+	// MODELS
 	//______________________________________________________________________________________________
 	//fun endDome() = assetManager.unload("scene/spaceDome/spacedome.g3db")
 	fun iniDome() = assetManager.load("scene/spaceDome/spacedome.g3db", Model::class.java)
 	fun getDome():Model = assetManager.get("scene/spaceDome/spacedome.g3db", Model::class.java)
 	//______________________________________________________________________________________________
 	//fun endMonstruo1() = assetManager.unload("foes/monster1/a.g3db")
-	fun iniMonstruo1() = assetManager.load("foes/monster1/a.g3db", Model::class.java)
-	fun getMonstruo1():Model = assetManager.get("foes/monster1/a.g3db", Model::class.java)
+	fun iniEnemy1() = assetManager.load("foes/monster1/a.g3db", Model::class.java)
+	fun getEnemy1():Model = assetManager.get("foes/monster1/a.g3db", Model::class.java)
 	//______________________________________________________________________________________________
 	fun iniCZ805() = assetManager.load("weapons/cz805/a.g3db", Model::class.java)
 	fun getCZ805():Model = assetManager.get("weapons/cz805/a.g3db", Model::class.java)
+
+	// IMAGES
 	//______________________________________________________________________________________________
 	//fun endSuelo() = assetManager.unload("scene/ground.jpg")
 	fun iniSuelo() = assetManager.load("scene/ground.jpg", Texture::class.java)
@@ -104,9 +110,14 @@ class Assets {
 	//______________________________________________________________________________________________
 	fun iniWallMetal3() = assetManager.load("scene/wall/metal3.png", Texture::class.java)
 	fun getWallMetal3():Texture = assetManager.get("scene/wall/metal3.png", Texture::class.java)
+	//______________________________________________________________________________________________
+	fun iniFireShot() = assetManager.load("weapons/fire.png", Texture::class.java)
+	fun getFireShot():Image = Image(assetManager.get("weapons/fire.png", Texture::class.java))
 
+	// PARTICLES
 	//______________________________________________________________________________________________
 	fun iniParticleEffectDeath(param: Array<ParticleBatch<*>>) {
+Log.e(tag, "iniParticleEffectDeath-------------------------------------")
 		val loadParam = ParticleEffectLoader.ParticleEffectLoadParameter(param)
 		assetManager.load("particles/dieparticle.pfx", ParticleEffect::class.java, loadParam)
 		try {
@@ -115,17 +126,23 @@ class Assets {
 			Log.e("Assets", "iniParticleEffectDeath:e:-------------------------------$e")
 		}
 	}
-	private fun endParticleEffectDeath() = assetManager.unload("particles/dieparticle.pfx")
+	private fun endParticleEffectDeath() {
+Log.e(tag, "endParticleEffectDeath-------------------------------------")
+		assetManager.get("particles/dieparticle.pfx", ParticleEffect::class.java).dispose()
+		assetManager.unload("particles/dieparticle.pfx")
+	}
 	fun getParticleEffectDeath():ParticleEffect {
-		Log.e("Assets", "getParticleEffectDeath----------------------------------------")
+Log.e(tag, "getParticleEffectDeath----------------------------------------")
 		return assetManager.get("particles/dieparticle.pfx", ParticleEffect::class.java).copy()
 	}
 
 
     //______________________________________________________________________________________________
 	fun dispose() {
+		Log.e(tag, "dispose------------------------------------------------------------------------")
 		skin.dispose()
 		endParticleEffectDeath()
+		GunFactory.dispose()
 		assetManager.dispose()
 	}
 
@@ -135,6 +152,7 @@ class Assets {
 
 	//______________________________________________________________________________________________
 	companion object {
+		private val tag: String = Assets::class.java.simpleName
 		private val fileHandle = Gdx.files.internal("skin/star-soldier-ui.json")!!
 		private val atlasFile = fileHandle.sibling("star-soldier-ui.atlas")!!
 		private var i18n = Gdx.files.internal("i18n/cesdoom")

@@ -23,17 +23,6 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
 
-	//private val xSpawns = floatArrayOf(+335f, +335f, -335f, -335f)
-	//private val zSpawns = floatArrayOf(+335f, -335f, +335f, -335f)
-	//private var maper = ComponentMapper.getFor(StatusComponent::class.java)
-
-	//private val random = Random()
-	//private val randomSpawnIndex: Int
-	//	get() = random.nextInt(xSpawns.size)
-
-
-	private var waitToCreate = false
-
 	//______________________________________________________________________________________________
 	override fun addedToEngine(e: Engine) {
 		entities = e.getEntitiesFor(Family.all(EnemyComponent::class.java, StatusComponent::class.java).get())
@@ -58,6 +47,14 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 		spawnIfNeeded()
 	}
 
+	private var waitToCreate = false
+	fun pause() {
+		timer.cancel()
+		waitToCreate = false
+	}
+	fun resume() {
+		spawnIfNeeded()
+	}
 	private val timer = Timer("schedule", true)
 	private fun spawnIfNeeded() {
 		if(entities!!.size() < 2 && !waitToCreate) {
@@ -79,7 +76,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	private fun spawnEnemy() {
 		val enemy = EnemyFactory.create(
-						game.assets.getMonstruo1(),
+						game.assets.getEnemy1(),
 						EnemyComponent.TYPE.MONSTER1,
 						Vector3(0f, 150f, -300f))
 		engine.addEntity(enemy)

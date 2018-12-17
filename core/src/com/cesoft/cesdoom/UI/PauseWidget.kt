@@ -18,7 +18,7 @@ import com.cesoft.cesdoom.Settings
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Actor() {
+class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 
 	private var window: Window
 	private var btnRestart: TextButton
@@ -33,9 +33,9 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		ws.titleFontColor = Color.BLUE
 		window = Window("", ws)
 		//
-		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
-		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
-		btnQuit = TextButton(Assets.SALIR, assets.skin)
+		btnRestart = TextButton(game.assets.getString(Assets.RECARGAR), game.assets.skin)
+		btnMenu = TextButton(game.assets.getString(Assets.MENU), game.assets.skin)
+		btnQuit = TextButton(Assets.SALIR, game.assets.skin)
 		btnRestart.label.setFontScale(2f)
 		btnMenu.label.setFontScale(2f)
 		btnQuit.label.setFontScale(2f)
@@ -47,11 +47,11 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	//______________________________________________________________________________________________
 	private fun configureWidgets() {
 		//window.titleTable.add<TextButton>(closeDialog).width(64f).height(64f).pad(10f)//.height(window.padTop+10f)
-		window.add<TextButton>(btnRestart).width(370f).height(90f)
-		window.row().pad(5f)
-		window.add<TextButton>(btnMenu).width(300f).height(90f)
-		window.row().pad(5f)
-		window.add<TextButton>(btnQuit).width(300f).height(90f)
+		window.add<TextButton>(btnRestart).width(370f).height(100f)
+		window.row().pad(1f)
+		window.add<TextButton>(btnMenu).width(370f).height(90f)
+		window.row().pad(1f)
+		window.add<TextButton>(btnQuit).width(370f).height(90f)
 	}
 
 	//______________________________________________________________________________________________
@@ -92,14 +92,14 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		else
 			reanudar()
 	}
-	private fun pausar()
-	{
+	private fun pausar() {
+		//TODO: pausar enemy system de creaer mas bichos
+		game.pauseGame()
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
 		Settings.paused = true
 	}
-	private fun reanudar()
-	{
+	private fun reanudar() {
 		window.remove()
 		Gdx.input.isCursorCatched = true
 		Settings.paused = false

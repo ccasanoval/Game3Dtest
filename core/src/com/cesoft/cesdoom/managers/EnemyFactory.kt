@@ -21,6 +21,7 @@ import com.cesoft.cesdoom.entities.Enemy
 import com.badlogic.gdx.utils.Pool
 import com.cesoft.cesdoom.Assets
 import com.cesoft.cesdoom.systems.RenderSystem
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,8 +109,7 @@ object EnemyFactory
 	}
 	//______________________________________________________________________________________________
 	private val random = java.util.Random()
-	private fun getAnimationParams(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) : AnimationParams
-	{
+	private fun getAnimationParams(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) : AnimationParams {
 		val loop = -1	//Continuously = -1 , OnlyOnce = 0
 		val speed = 1f
 		val time = getActionDuration(type, action)
@@ -121,8 +121,7 @@ object EnemyFactory
 					EnemyComponent.ACTION.RUNNING ->
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 6f, time)
 					EnemyComponent.ACTION.ATTACKING -> {
-						when(random.nextInt(2))
-						{
+						when(random.nextInt(2)) {
 							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 10f, time)
 							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 12.8f, time)
 						}
@@ -290,6 +289,7 @@ object EnemyFactory
 			val enemyComponent = entity.getComponent(EnemyComponent::class.java)
 			if( ! enemyComponent.isShowingParticles) {
 				enemyComponent.isShowingParticles = true
+				Log.e("EnemyFactory", "ini particles----------------------------------------------")
 				val effect = assets.getParticleEffectDeath()
 				(effect.controllers.first().emitter as RegularEmitter).emissionMode =
 						RegularEmitter.EmissionMode.EnabledUntilCycleEnd

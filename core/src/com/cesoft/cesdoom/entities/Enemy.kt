@@ -10,7 +10,7 @@ import com.cesoft.cesdoom.util.Log
 class Enemy
 	: Entity(), Pool.Poolable {
 
-	var alive = false
+	private var alive = false
 		private set
     var position: Vector3 = Vector3()
     var type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER1

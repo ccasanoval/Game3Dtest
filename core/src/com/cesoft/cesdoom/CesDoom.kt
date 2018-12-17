@@ -7,7 +7,6 @@ import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.cesoft.cesdoom.UI.GameUI
-import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.screens.GameScreen
 import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen
@@ -22,6 +21,13 @@ import com.cesoft.cesdoom.util.Log
 //class CesDoom(private val camera: Camera?) : ApplicationAdapter() {
 class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 
+	companion object {
+		private val tag: String = CesDoom::class.java.simpleName
+		val VIRTUAL_WIDTH = 1024f
+		val VIRTUAL_HEIGHT = 576f
+		var isMobile = false
+			private set
+	}
 	private var screen: Screen? = null
 	lateinit var assets: Assets
 	lateinit var gameUI: GameUI
@@ -56,7 +62,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	//______________________________________________________________________________________________
 	private fun delScreen()
 	{
-		Log.e("CesDoom", ":delScreen:--------------------------------------------------------")
+		Log.e(tag, "delScreen:--------------------------------------------------------")
 		screen?.let {
 			it.hide()
 			it.dispose()
@@ -68,9 +74,13 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		screen.show()
 		screen.resize(Gdx.graphics.width, Gdx.graphics.height)
 	}
+
+	fun pauseGame() {
+		(screen as GameScreen).pause()
+	}
 	//______________________________________________________________________________________________
 	fun reset() {
-		Log.e("CesDoom", "reset:--------------------------------------------------------")
+		Log.e(tag, "reset:--------------------------------------------------------")
 		delScreen()
 		setScreen(LoadingScreen(this))
 		//<android:hardwareAccelerated="false">
@@ -91,6 +101,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	}
 
 	fun loadResources() {
+		Log.e("CesDoom", "loadResources------------------------------------------------")
 		// Wall
 		try {assets.getWallMetal1()}
 		catch (ignore: GdxRuntimeException) {assets.iniWallMetal1()}
@@ -110,12 +121,14 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		catch (ignore: Exception) {assets.iniSoundFootSteps()}
 
 		// Enemy
-		try {assets.getMonstruo1()}
-		catch (ignore: Exception) {assets.iniMonstruo1()}
+		try {assets.getEnemy1()}
+		catch (ignore: Exception) {assets.iniEnemy1()}
 
 		// Weapons
 		try {assets.getCZ805()}
 		catch (ignore: Exception) {assets.iniCZ805()}
+		try {assets.getFireShot()}
+		catch (ignore: Exception) {assets.iniFireShot()}
 
 		// Scene
 		try {assets.getDome()}
@@ -133,12 +146,4 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	val render: RenderSystem
 		get() = (screen as GameScreen).render
 
-	//______________________________________________________________________________________________
-	companion object {
-		val VIRTUAL_WIDTH = 1024f
-		val VIRTUAL_HEIGHT = 576f
-
-		var isMobile = false
-			private set
-	}
 }

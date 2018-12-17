@@ -6,6 +6,7 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.systems.RenderSystem
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,10 +39,16 @@ class GameScreen(private val game: CesDoom) : Screen {
 
 	override fun dispose() {
 		gameWorld.dispose()
+		Log.e("GameScreen", "dispose------------------------------------------------")
 	}
 
 	override fun show() {}
-	override fun pause() {}
-	override fun resume() {}
+	override fun pause() {
+		Log.e("GameScreen", "pause------------------------------------------------")
+		gameWorld.pause()
+	}
+	override fun resume() {
+		gameWorld.resume()
+	}
 	override fun hide() {}
 }

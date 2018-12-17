@@ -23,6 +23,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.cesoft.cesdoom.RenderUtils.OcclusionCuller
 import com.cesoft.cesdoom.RenderUtils.OcclusionBuffer
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase
+import com.cesoft.cesdoom.entities.Gun
 import com.cesoft.cesdoom.util.Log
 
 
@@ -45,7 +46,7 @@ class RenderSystem(
 	private val environment: Environment = Environment()
 	var perspectiveCamera: PerspectiveCamera = PerspectiveCamera(FOV, CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
 	private var gunCamera: PerspectiveCamera = PerspectiveCamera(FOV, CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
-	lateinit var gun: Entity
+	lateinit var gun: Gun
 	private var isDisposed = false
 	//private val shadowLight: DirectionalShadowLight
 
@@ -59,6 +60,8 @@ class RenderSystem(
 
 	//______________________________________________________________________________________________
 	init {
+		Log.e(tag, "INI ---------------------------------------------------------")
+
 		/// Camaras
 		perspectiveCamera.far = 12000f // Para que vea el cielo (dome)
 		perspectiveCamera.near = 1f
@@ -70,9 +73,6 @@ class RenderSystem(
 		billboardParticleBatch.setCamera(perspectiveCamera)
 		particleSystem.add(billboardParticleBatch)
 		assets.iniParticleEffectDeath(particleSystem.batches)
-
-			Log.e(tag, "INI ---------------------------------------------------------")
-
 
 		/// Ambiente
 		environment.set(colorAmbiente)
@@ -130,8 +130,7 @@ class RenderSystem(
 				}
 			}
 		}
-		else
-		{
+		else {
 			batch.begin(perspectiveCamera)
 			for(it in entities)
 			{
@@ -184,8 +183,7 @@ class RenderSystem(
 	}
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()
-	private fun animGunRespiracion(modelo: ModelComponent, delta: Float)
-	{
+	private fun animGunRespiracion(modelo: ModelComponent, delta: Float) {
 		modelo.instance.transform.getTranslation(posTemp)
 		if(yDrawGunOrg == -999f)yDrawGunOrg=posTemp.y
 		if(isDrawGunUp) {
@@ -193,8 +191,7 @@ class RenderSystem(
 			if(posTemp.y > yDrawGunOrg+2.5f)
 				isDrawGunUp = false
 		}
-		else
-		{
+		else {
 			posTemp.y -= delta*2
 			if(posTemp.y < yDrawGunOrg-2.5f)
 				isDrawGunUp = true
@@ -231,17 +228,18 @@ class RenderSystem(
 
 	//______________________________________________________________________________________________
 	fun dispose() {
+		gun.reset()
 		particleSystem.removeAll()
 		for(p in particles)p.dispose()
-
 		batch.dispose()
 		visibleEntities.clear()
 		isDisposed = true
 Log.e(tag, "dispose ---------------------------------------------------------")
 	}
 
-	val particles = ArrayList<ParticleEffect>()
+	private val particles = ArrayList<ParticleEffect>()
 	fun addParticleEffect(particle: ParticleEffect) {
+Log.e(tag, "addParticleEffect ---------------------------------------------------------")
 		particleSystem.add(particle)
 		particles.add(particle)
 	}

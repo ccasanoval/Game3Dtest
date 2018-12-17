@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.cesoft.cesdoom.components.EnemyComponent
 import com.cesoft.cesdoom.components.GunComponent
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.entities.Gun
 import com.cesoft.cesdoom.managers.*
 import com.cesoft.cesdoom.systems.*
 import com.cesoft.cesdoom.util.Log
@@ -53,7 +54,7 @@ class GameWorld(game: CesDoom) {
 
 	private var engine: Engine = Engine()
 	private lateinit var player: Entity
-	private lateinit var gun: Entity
+	private lateinit var gun: Gun
 
 	private val colorAmbiente = ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.2f, 0.2f, 1f)
 
@@ -102,7 +103,7 @@ class GameWorld(game: CesDoom) {
 		/// ENEMIES
 		//TODO: How to create the enemy engine without creating an enemy
 		engine.addEntity(EnemyFactory.create(
-				assets.getMonstruo1(),
+				assets.getEnemy1(),
 				EnemyComponent.TYPE.MONSTER1,
 				Vector3(0f, 150f, -300f)))
 
@@ -113,12 +114,14 @@ class GameWorld(game: CesDoom) {
 		PlayerComponent.colorAmbiente = colorAmbiente
 	}
 
-
 	//______________________________________________________________________________________________
 	private fun createPlayer(assets: Assets, pos: Vector3) {
 		player = PlayerComponent.create(pos)
 		engine.addEntity(player)
-		gun = GunFactory.create(assets.getCZ805(), GunComponent.TYPE.CZ805)//Dentro de playerSystem??
+		gun = GunFactory.create(
+				assets.getCZ805(),
+				GunComponent.TYPE.CZ805,
+				assets.getFireShot())
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun
@@ -146,6 +149,13 @@ class GameWorld(game: CesDoom) {
 		//shotSystem.setProcessing( ! Settings.paused)
 	}
 
+	fun pause() {
+		enemySystem.pause()
+	}
+	fun resume() {
+		enemySystem.resume()
+	}
+
 	//______________________________________________________________________________________________
 	fun resize(width: Int, height: Int) {
 		renderSystem.resize(width, height)
@@ -153,7 +163,7 @@ class GameWorld(game: CesDoom) {
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-		Log.e(tag, "GameWorld:dispose:--------------------------------------------")
+		Log.e(tag, "dispose:--------------------------------------------")
 		bulletSystem.dispose()
 		renderSystem.dispose()
 		enemySystem.dispose()
@@ -167,8 +177,8 @@ class GameWorld(game: CesDoom) {
 	}
 
 	//______________________________________________________________________________________________
-	fun enemyDied(entity: Entity)
-	{
+	fun enemyDied(entity: Entity) {
+		Log.e(tag, "enemyDied:-------------------------------------------------------------")
 		remove(entity)
 		PlayerComponent.score += 20
 	}
