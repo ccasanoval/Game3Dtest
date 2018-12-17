@@ -109,7 +109,7 @@ class GameWorld(game: CesDoom) {
 
 		/// PLAYER
 		createPlayer(assets, Vector3(0f,150f,0f))
-		PlayerComponent.health = 100f
+		PlayerComponent.health = 1f
 		PlayerComponent.score = 0
 		PlayerComponent.colorAmbiente = colorAmbiente
 	}

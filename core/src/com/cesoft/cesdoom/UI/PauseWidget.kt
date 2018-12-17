@@ -28,6 +28,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 	//______________________________________________________________________________________________
 	init {
 		super.setStage(stage)
+		//
 		val ws = Window.WindowStyle()
 		ws.titleFont = BitmapFont()
 		ws.titleFontColor = Color.BLUE
@@ -36,8 +37,11 @@ class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 		btnRestart = TextButton(game.assets.getString(Assets.RECARGAR), game.assets.skin)
 		btnMenu = TextButton(game.assets.getString(Assets.MENU), game.assets.skin)
 		btnQuit = TextButton(Assets.SALIR, game.assets.skin)
+		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
 		btnRestart.label.setFontScale(2f)
+		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
 		btnMenu.label.setFontScale(2f)
+		btnQuit = TextButton(Assets.SALIR, assets.skin)
 		btnQuit.label.setFontScale(2f)
 		//
 		configureWidgets()
@@ -46,18 +50,18 @@ class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 
 	//______________________________________________________________________________________________
 	private fun configureWidgets() {
-		//window.titleTable.add<TextButton>(closeDialog).width(64f).height(64f).pad(10f)//.height(window.padTop+10f)
-		window.add<TextButton>(btnRestart).width(370f).height(100f)
+		window.add<TextButton>(btnRestart).width(350f).height(90f)
 		window.row().pad(1f)
-		window.add<TextButton>(btnMenu).width(370f).height(90f)
+		window.add<TextButton>(btnMenu).width(300f).height(90f)
 		window.row().pad(1f)
-		window.add<TextButton>(btnQuit).width(370f).height(90f)
+		window.add<TextButton>(btnQuit).width(300f).height(90f)
 	}
 
 	//______________________________________________________________________________________________
 	private fun setListeners() {
 		super.addListener(object : InputListener() {
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
+				if(Settings.gameOver)return false
 				if(keycode == Input.Keys.ESCAPE || keycode == Input.Keys.BACK) {
 					handleUpdates()
 					return true

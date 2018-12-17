@@ -27,6 +27,7 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
+        kotlinCorroutinesVersion = '1.0.1'
     }
 
     repositories {
@@ -91,6 +92,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-x86_64"
         implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCorroutinesVersion"
 
         //VR: LibGDX-Cardboard-Extension
         //implementation "com.google.vr:sdk-base:1.101.0"
@@ -112,5 +114,6 @@ project(":core") {
         implementation "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
         implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCorroutinesVersion"
     }
 }

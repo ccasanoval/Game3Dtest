@@ -37,8 +37,8 @@ class GameUI(game: CesDoom, assets: Assets) {
 		pauseWidget.setSize(500f, 350f)
 		pauseWidget.setPosition(CesDoom.VIRTUAL_WIDTH - pauseWidget.width, CesDoom.VIRTUAL_HEIGHT - pauseWidget.height)
 
-		gameOverWidget.setSize(500f, 210f)
-		gameOverWidget.setPosition((CesDoom.VIRTUAL_WIDTH - 500)/2, (CesDoom.VIRTUAL_HEIGHT-210)/2)
+		gameOverWidget.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
+		gameOverWidget.setPosition((CesDoom.VIRTUAL_WIDTH - gameOverWidget.width)/2, (CesDoom.VIRTUAL_HEIGHT - gameOverWidget.height)/2)
 
 		crosshairWidget.setPosition(CesDoom.VIRTUAL_WIDTH / 2 - 16, CesDoom.VIRTUAL_HEIGHT / 2 - 16)
 		crosshairWidget.setSize(32f, 32f)
