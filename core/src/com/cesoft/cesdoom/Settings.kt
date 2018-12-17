@@ -10,9 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 object Settings {
 
 	var paused: Boolean = false
+	var gameOver: Boolean = false
 	var soundEnabled = true
-	var highscores = intArrayOf(1000, 800, 500, 300, 100)
-	val file = ".spaceglad"
+
+	//var highscores = intArrayOf(1000, 800, 500, 300, 100)
+	//val file = ".spaceglad"
 
 	private val leaderURL = "http://dreamlo.com/lb/PLfBGtHgG02wU0lSzVNrPAG0uQf3J3-UGzK1i7mXmmxA"
 	private val request5 = "/pipe/5"

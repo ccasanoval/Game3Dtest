@@ -11,11 +11,11 @@ import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.util.Log
 import java.util.*
-import kotlin.concurrent.schedule
-
+import kotlinx.coroutines.*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -60,19 +60,16 @@ class EnemySystem(private val assets: Assets) : EntitySystem(), EntityListener {
 	}
 
 	private fun spawnIfNeeded() {
-		if(entities!!.size() < 2 && !waitToCreate) {
-			waitToCreate = true
-			timer.purge()
-			timer.schedule(1500) {
+		if(waitToCreate)return
+		waitToCreate = true
+		GlobalScope.launch {
+			while(entities!!.size() < 3) {
+				delay(5000)
+				if(Settings.paused)
+					continue
 				spawnEnemy()
-				timer.schedule(4000) {
-					spawnEnemy()
-					timer.schedule(4000) {
-						spawnEnemy()
-						waitToCreate = false
-					}
-				}
 			}
+			waitToCreate = false
 		}
 	}
 

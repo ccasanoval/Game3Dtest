@@ -28,16 +28,17 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	//______________________________________________________________________________________________
 	init {
 		super.setStage(stage)
+		//
 		val ws = Window.WindowStyle()
 		ws.titleFont = BitmapFont()
 		ws.titleFontColor = Color.BLUE
 		window = Window("", ws)
 		//
 		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
-		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
-		btnQuit = TextButton(Assets.SALIR, assets.skin)
 		btnRestart.label.setFontScale(2f)
+		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
 		btnMenu.label.setFontScale(2f)
+		btnQuit = TextButton(Assets.SALIR, assets.skin)
 		btnQuit.label.setFontScale(2f)
 		//
 		configureWidgets()
@@ -46,11 +47,10 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 
 	//______________________________________________________________________________________________
 	private fun configureWidgets() {
-		//window.titleTable.add<TextButton>(closeDialog).width(64f).height(64f).pad(10f)//.height(window.padTop+10f)
-		window.add<TextButton>(btnRestart).width(370f).height(90f)
-		window.row().pad(5f)
+		window.add<TextButton>(btnRestart).width(350f).height(90f)
+		window.row().pad(1f)
 		window.add<TextButton>(btnMenu).width(300f).height(90f)
-		window.row().pad(5f)
+		window.row().pad(1f)
 		window.add<TextButton>(btnQuit).width(300f).height(90f)
 	}
 
@@ -58,6 +58,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	private fun setListeners() {
 		super.addListener(object : InputListener() {
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
+				if(Settings.gameOver)return false
 				if(keycode == Input.Keys.ESCAPE || keycode == Input.Keys.BACK) {
 					handleUpdates()
 					return true
