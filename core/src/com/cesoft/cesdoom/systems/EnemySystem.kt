@@ -10,12 +10,10 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.managers.EnemyFactory
-import com.cesoft.cesdoom.Assets
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.util.Log
-import java.util.*
 import kotlinx.coroutines.*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,17 +21,6 @@ import kotlinx.coroutines.*
 class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 	private var entities: ImmutableArray<Entity>? = null
 	private var player: Entity? = null
-
-	//private val xSpawns = floatArrayOf(+335f, +335f, -335f, -335f)
-	//private val zSpawns = floatArrayOf(+335f, -335f, +335f, -335f)
-	//private var maper = ComponentMapper.getFor(StatusComponent::class.java)
-
-	//private val random = Random()
-	//private val randomSpawnIndex: Int
-	//	get() = random.nextInt(xSpawns.size)
-
-
-	private var waitToCreate = false
 
 	//______________________________________________________________________________________________
 	override fun addedToEngine(e: Engine) {
@@ -61,7 +48,6 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 
 	private var waitToCreate = false
 	fun pause() {
-		timer.cancel()
 		waitToCreate = false
 	}
 	fun resume() {
@@ -97,9 +83,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-				Log.e("EnemySystem", "dispose----------------------------------------")
-		timer.cancel()
-		timer.purge()
+		Log.e("EnemySystem", "dispose----------------------------------------")
 		for(entity in entities!!) {
 			(entity as Enemy).reset()
 		}

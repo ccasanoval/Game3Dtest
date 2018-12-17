@@ -10,15 +10,15 @@ import com.cesoft.cesdoom.CesDoom
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameUI(game: CesDoom, assets: Assets) {
+class GameUI(game: CesDoom) {
 
 	var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
-	var healthWidget: HealthWidget = HealthWidget(assets)
+	var healthWidget: HealthWidget = HealthWidget(game.assets)
 		private set
-	private var scoreWidget: ScoreWidget = ScoreWidget(assets)
+	private var scoreWidget: ScoreWidget = ScoreWidget(game.assets)
 	private var pauseWidget: PauseWidget = PauseWidget(game, stage)
 	private var crosshairWidget: CrosshairWidget = CrosshairWidget()
-	private var fpsLabel: Label = Label("", assets.skin)
+	private var fpsLabel: Label = Label("", game.assets.skin)
 	var gameOverWidget: GameOverWidget = GameOverWidget(game, stage)
 		private set
 

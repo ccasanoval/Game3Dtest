@@ -173,7 +173,6 @@ class RenderSystem(
 	private var isDrawGunUp = true
 	private var yDrawGunOrg = -999f
 	private fun drawGun(delta: Float) {
-		//TODO: guardar posicion ondulatoria al andar
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT)
 		batch.begin(gunCamera)
 		val modelo = gun.getComponent(ModelComponent::class.java)
@@ -229,8 +228,8 @@ class RenderSystem(
 	//______________________________________________________________________________________________
 	fun dispose() {
 		gun.reset()
-		particleSystem.removeAll()
-		for(p in particles)p.dispose()
+		//particleSystem.removeAll()
+		//for(p in particles)p.dispose()
 		batch.dispose()
 		visibleEntities.clear()
 		isDisposed = true

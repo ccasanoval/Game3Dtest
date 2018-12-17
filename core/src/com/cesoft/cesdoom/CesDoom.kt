@@ -41,7 +41,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		isMobile = Gdx.app.type == Application.ApplicationType.Android
 
 		assets = Assets()
-		gameUI = GameUI(this, assets)
+		gameUI = GameUI(this)
 		Settings.load()
 		Gdx.input.isCatchBackKey = true
 		setScreen(MainMenuScreen(this))

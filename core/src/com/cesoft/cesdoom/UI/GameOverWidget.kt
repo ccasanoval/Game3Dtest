@@ -14,12 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
-import com.cesoft.cesdoom.components.PlayerComponent
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Actor() {
+class GameOverWidget(private val game: CesDoom, stage: Stage) : Actor() {
 	private var image: Image = Image(Texture(Gdx.files.internal("data/gameOver.png")))
 	private var window: Window
 	private var btnRestart: TextButton
@@ -34,11 +33,11 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		ws.titleFontColor = Color.BLUE
 		window = Window("", ws)
 		//
-		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
+		btnRestart = TextButton(game.assets.getString(Assets.RECARGAR), game.assets.skin)
 		btnRestart.label.setFontScale(2f)
-		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
+		btnMenu = TextButton(game.assets.getString(Assets.MENU), game.assets.skin)
 		btnMenu.label.setFontScale(2f)
-		btnQuit = TextButton(Assets.SALIR, assets.skin)
+		btnQuit = TextButton(Assets.SALIR, game.assets.skin)
 		btnQuit.label.setFontScale(2f)
 		//
 		configureWidgets()
