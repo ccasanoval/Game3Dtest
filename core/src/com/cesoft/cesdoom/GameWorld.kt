@@ -7,9 +7,10 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
-import com.cesoft.cesdoom.components.EnemyComponent
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.GunComponent
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.entities.Gun
 import com.cesoft.cesdoom.managers.*
 import com.cesoft.cesdoom.systems.*
@@ -102,10 +103,10 @@ class GameWorld(game: CesDoom) {
 
 		/// ENEMIES
 		//TODO: How to create the enemy engine without creating an enemy
-		engine.addEntity(EnemyFactory.create(
+		/*engine.addEntity(EnemyFactory.create(
 				assets.getEnemy1(),
 				EnemyComponent.TYPE.MONSTER1,
-				Vector3(0f, 150f, -300f)))
+				Vector3(0f, 150f, -300f)))*/
 
 		/// PLAYER
 		createPlayer(assets, Vector3(0f,150f,0f))
@@ -177,9 +178,10 @@ class GameWorld(game: CesDoom) {
 	}
 
 	//______________________________________________________________________________________________
-	fun enemyDied(entity: Entity) {
+	fun enemyDied(enemy: Enemy) {
 		Log.e(tag, "enemyDied:-------------------------------------------------------------")
-		remove(entity)
+		enemy.reset()
+		remove(enemy)
 		PlayerComponent.score += 20
 	}
 }

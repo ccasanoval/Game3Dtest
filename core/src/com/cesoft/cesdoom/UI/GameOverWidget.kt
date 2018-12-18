@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
 

@@ -13,16 +13,15 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
-import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
-import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
 import com.badlogic.gdx.math.Vector3
-import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.*
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.cesoft.cesdoom.RenderUtils.OcclusionCuller
 import com.cesoft.cesdoom.RenderUtils.OcclusionBuffer
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase
+import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.entities.Gun
 import com.cesoft.cesdoom.util.Log
 
@@ -31,7 +30,7 @@ import com.cesoft.cesdoom.util.Log
 //
 class RenderSystem(
 		colorAmbiente: ColorAttribute,
-		assets: Assets,
+		private val assets: Assets,
 		private val broadphase2: btDbvtBroadphase)
 	: EntitySystem() {
 
@@ -56,7 +55,6 @@ class RenderSystem(
 	//private var frustumCam: PerspectiveCamera
 	private val OCL_BUFFER_EXTENTS = intArrayOf(128, 256, 512, 32, 64)
 	val visibleEntities = arrayListOf<Entity?>()
-	private var particleSystem = ParticleSystem()
 
 	//______________________________________________________________________________________________
 	init {
@@ -69,10 +67,7 @@ class RenderSystem(
 		gunCamera.far = 50f
 
 		/// Particulas
-		val billboardParticleBatch = BillboardParticleBatch()
-		billboardParticleBatch.setCamera(perspectiveCamera)
-		particleSystem.add(billboardParticleBatch)
-		assets.iniParticleEffectDeath(particleSystem.batches)
+		assets.iniParticleEffectPool(perspectiveCamera)
 
 		/// Ambiente
 		environment.set(colorAmbiente)
@@ -153,19 +148,25 @@ class RenderSystem(
 		if(countDrawn > countMax)countMax = countDrawn
 		batch.end()
 
-		//drawShadows(delta)
-		renderParticleEffects()
-		drawGun(delta)
+		if( ! Settings.paused) {
+			//drawShadows(delta)
+			renderParticleEffects()
+			drawGun(delta)
+		}
 	}
 
 	//______________________________________________________________________________________________
 	private fun renderParticleEffects() {
+		Log.e(tag, "renderParticleEffects-------1-----------------------------------------------------")
 		batch.begin(perspectiveCamera)
-		particleSystem.update()
-		particleSystem.begin()
-		particleSystem.draw()
-		particleSystem.end()
-		batch.render(particleSystem)
+		assets.getParticleSystem()?.let {
+Log.e(tag, "renderParticleEffects-----2-------------------------------------------------------"+it)
+			it.update()
+			it.begin()
+			it.draw()
+			it.end()
+			batch.render(it)
+		}
 		batch.end()
 	}
 
@@ -228,8 +229,6 @@ class RenderSystem(
 	//______________________________________________________________________________________________
 	fun dispose() {
 		gun.reset()
-		//particleSystem.removeAll()
-		//for(p in particles)p.dispose()
 		batch.dispose()
 		visibleEntities.clear()
 		isDisposed = true
@@ -239,7 +238,7 @@ Log.e(tag, "dispose ---------------------------------------------------------")
 	private val particles = ArrayList<ParticleEffect>()
 	fun addParticleEffect(particle: ParticleEffect) {
 Log.e(tag, "addParticleEffect ---------------------------------------------------------")
-		particleSystem.add(particle)
+		assets.getParticleSystem()?.add(particle)
 		particles.add(particle)
 	}
 }

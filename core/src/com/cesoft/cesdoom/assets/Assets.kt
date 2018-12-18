@@ -1,18 +1,17 @@
-package com.cesoft.cesdoom
+package com.cesoft.cesdoom.assets
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
+import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
-import com.badlogic.gdx.graphics.g3d.particles.ParticleEffectLoader
-import com.badlogic.gdx.graphics.g3d.particles.batches.ParticleBatch
+import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.I18NBundle
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
@@ -21,9 +20,26 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class Assets {
-	/// Particulas
-	private val fileParticulas = "particles/dieparticle.pfx"
-	private val assetManager = AssetManager()
+
+	companion object {
+		private val tag: String = Assets::class.java.simpleName
+		private val fileHandle = Gdx.files.internal("skin/star-soldier-ui.json")!!
+		private val atlasFile = fileHandle.sibling("star-soldier-ui.atlas")!!
+		private var i18n = Gdx.files.internal("i18n/cesdoom")
+
+		// I18n
+		val SALIR="SALIR"
+		val JUGAR="JUGAR"
+		val MENU="MENU"
+		val SOBRE="SOBRE"
+		val ATRAS="ATRAS"
+		val CREDITOS_TXT="CREDITOS_TXT"
+		//val PUNTUACIONES="PUNTUACIONES"
+		val CREDITOS="CREDITOS"
+		val RECARGAR="RECARGAR"
+	}
+
+	val assetManager = AssetManager()
 
 	/// Skin
 	var skin: Skin = Skin()
@@ -119,61 +135,21 @@ class Assets {
 
 	// PARTICLES
 	//______________________________________________________________________________________________
-	var _particulas : ParticleEffect? = null
-	fun iniParticulas(param: Array<ParticleBatch<*>>)
-	{
-		Log.e(tag, "iniParticulas-------------------------1-")
-		if(_particulas != null)return
-				Log.e(tag, "iniParticulas-------------------------2-")
-
-		val loadParam = ParticleEffectLoader.ParticleEffectLoadParameter(param)
-		if( ! assetManager.isLoaded(fileParticulas)) {
-			Log.e(tag, "iniParticulas--------------------------3")
-
-			assetManager.load(fileParticulas, ParticleEffect::class.java, loadParam)
-			assetManager.finishLoading()
-		}
-Log.e(tag, "iniParticulas--------------------------8")
-
-		_particulas = assetManager.get(fileParticulas)
-	}
-	fun getParticulas() = _particulas!!.copy()
-
-	fun iniParticleEffectDeath(param: Array<ParticleBatch<*>>) {
-		iniParticulas(param)
-
-		//TODO:CES: Particulas
-		//TODO:CES: https://github.com/libgdx/libgdx/wiki/2D-ParticleEffects
-		//TODO:CES:
-/*
-		val effect = ParticleEffect()
-		effect.load(Gdx.files.internal("myparticle.p"), param)
-
-Log.e(tag, "iniParticleEffectDeath------------------A-------------------")
-		val loadParam = ParticleEffectLoader.ParticleEffectLoadParameter(param)
-		Log.e(tag, "iniParticleEffectDeath------------------B-------------------")
-		assetManager.load("particles/dieparticle.pfx", ParticleEffect::class.java, loadParam)
-		try {
+	var particleEffectPool: ParticleEffectPool? = null
+	fun iniParticleEffectPool(camera: PerspectiveCamera) {
+		Log.e(tag, "iniParticleEffectPool--------------------------------------- 1")
+		if(particleEffectPool == null) {
+			Log.e(tag, "iniParticleEffectPool--------------------------------------- 2")
+			particleEffectPool = ParticleEffectPool(this, camera)
+			assetManager.load("particles/dieparticle.pfx", ParticleEffect::class.java, particleEffectPool!!.loadParam)
 			assetManager.finishLoadingAsset("particles/dieparticle.pfx")
-		} catch (e: Exception) {
-			Log.e("Assets", "iniParticleEffectDeath:e:-------------------------------$e")
 		}
-
-Log.e(tag, "iniParticleEffectDeath------------------Z-------------------")
-		assetManager.dispose()
-assetManager.load("particles/dieparticle.pfx", ParticleEffect::class.java, loadParam)
-assetManager.finishLoadingAsset("particles/dieparticle.pfx")*/
-
 	}
-	private fun endParticleEffectDeath() {
-Log.e(tag, "endParticleEffectDeath-------------------------------------")
-		//assetManager.get("particles/dieparticle.pfx", ParticleEffect::class.java).dispose()
-		//assetManager.unload("particles/dieparticle.pfx")
+	fun getParticleEffectDie(): ParticleEffect {
+		return assetManager.get("particles/dieparticle.pfx", ParticleEffect::class.java)
 	}
-	fun getParticleEffectDeath():ParticleEffect {
-Log.e(tag, "getParticleEffectDeath----------------------------------------")
-		//return assetManager.get("particles/dieparticle.pfx", ParticleEffect::class.java).copy()
-		return getParticulas()
+	fun getParticleSystem() : ParticleSystem? {
+		return particleEffectPool?.particleSystem
 	}
 
 
@@ -181,7 +157,7 @@ Log.e(tag, "getParticleEffectDeath----------------------------------------")
 	fun dispose() {
 		Log.e(tag, "dispose------------------------------------------------------------------------")
 		skin.dispose()
-		endParticleEffectDeath()
+		//endParticleEffectDeath()
 		GunFactory.dispose()
 		assetManager.dispose()
 	}
@@ -190,22 +166,4 @@ Log.e(tag, "getParticleEffectDeath----------------------------------------")
     fun getProgress() = assetManager.progress
     fun update() = assetManager.update()
 
-	//______________________________________________________________________________________________
-	companion object {
-		private val tag: String = Assets::class.java.simpleName
-		private val fileHandle = Gdx.files.internal("skin/star-soldier-ui.json")!!
-		private val atlasFile = fileHandle.sibling("star-soldier-ui.atlas")!!
-		private var i18n = Gdx.files.internal("i18n/cesdoom")
-
-		// I18n
-		val SALIR="SALIR"
-		val JUGAR="JUGAR"
-		val MENU="MENU"
-		val SOBRE="SOBRE"
-		val ATRAS="ATRAS"
-		val CREDITOS_TXT="CREDITOS_TXT"
-		//val PUNTUACIONES="PUNTUACIONES"
-		val CREDITOS="CREDITOS"
-		val RECARGAR="RECARGAR"
-	}
 }

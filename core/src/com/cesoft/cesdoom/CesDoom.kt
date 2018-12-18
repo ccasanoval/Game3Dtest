@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.cesoft.cesdoom.UI.GameUI
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.screens.GameScreen
 import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen

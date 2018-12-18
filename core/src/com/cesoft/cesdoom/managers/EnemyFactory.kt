@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
-import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
@@ -19,7 +18,8 @@ import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 import com.cesoft.cesdoom.components.EnemyComponent.ACTION.*
 import com.cesoft.cesdoom.entities.Enemy
 import com.badlogic.gdx.utils.Pool
-import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.assets.ParticleEffectPool
 import com.cesoft.cesdoom.systems.RenderSystem
 import com.cesoft.cesdoom.util.Log
 
@@ -30,6 +30,7 @@ object EnemyFactory
 {
 	private val RADIO = 18f
 
+	private var renderSystem: RenderSystem? = null
 	private val activeEnemies = ArrayList<Enemy>()
 	private val enemyPool = object : Pool<Enemy>() {
 		override fun newObject(): Enemy {
@@ -39,12 +40,21 @@ object EnemyFactory
 
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()
-	fun create(model: Model, type: EnemyComponent.TYPE, pos: Vector3, mase: Float = 100f) : Enemy
-	{
-		//val entity = Entity()
+	fun create(
+			particlePool: ParticleEffectPool,
+			render: RenderSystem,
+			model: Model,
+			type: EnemyComponent.TYPE,
+			pos: Vector3,
+			mase: Float = 100f) : Enemy {
+
+		renderSystem = render
 		val entity = enemyPool.obtain()
-		entity.init(pos, type, mase)
+		entity.init(pos, type, mase, particlePool)
 		activeEnemies.add(entity)
+
+		// Render Particles
+		render.addParticleEffect(entity.particleEffect)
 
 		/// ENEMY
 		val enemyComponent = EnemyComponent(type)
@@ -271,10 +281,10 @@ object EnemyFactory
 	//______________________________________________________________________________________________
 	fun playDying(entity: Entity) {
 		setAnimation(entity, EnemyComponent.ACTION.DYING)
+		renderSystem?.addParticleEffect((entity as Enemy).particleEffect)
 	}
 
-
-	fun update(delta: Float, entity: Entity, posPlayer: Vector3, assets: Assets, render: RenderSystem) {
+	fun update(delta: Float, entity: Entity, posPlayer: Vector3, assets: Assets) {
 		val status = entity.getComponent(StatusComponent::class.java)
 		if(status.isDead())
 		{
@@ -286,21 +296,8 @@ object EnemyFactory
 			if(model.blendingAttribute != null)
 				model.blendingAttribute!!.opacity = 1 - status.deathProgres()
 
-			val enemyComponent = entity.getComponent(EnemyComponent::class.java)
-			if( ! enemyComponent.isShowingParticles) {
-				enemyComponent.isShowingParticles = true
-				Log.e("EnemyFactory", "ini particles----------------------------------------------")
-				val effect = assets.getParticleEffectDeath()
-				(effect.controllers.first().emitter as RegularEmitter).emissionMode =
-						RegularEmitter.EmissionMode.EnabledUntilCycleEnd
-				effect.setTransform(model.instance.transform)
-				effect.scale(5f, 8f, 5f)
-				effect.init()
-				effect.start()
-				enemy.particleEffect = effect
-				render.addParticleEffect(effect)
-				//RenderSystem.particleSystem.add(effect)
-			}
+			// Render Particles
+			//render.addParticleEffect(enemy.particleEffect)
 
 			if(status.deathProgres() == 1f) {
 				activeEnemies.remove(enemy)

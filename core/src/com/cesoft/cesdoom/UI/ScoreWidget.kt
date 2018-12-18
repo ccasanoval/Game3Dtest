@@ -3,7 +3,7 @@ package com.cesoft.cesdoom.UI
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
-import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

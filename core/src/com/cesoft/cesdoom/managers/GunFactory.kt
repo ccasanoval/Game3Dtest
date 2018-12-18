@@ -4,14 +4,13 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.UI.GunFireWidget
 import com.cesoft.cesdoom.components.AnimationComponent
 import com.cesoft.cesdoom.components.AnimationParams
 import com.cesoft.cesdoom.components.GunComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.entities.Gun
-import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //

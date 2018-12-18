@@ -2,11 +2,11 @@ package com.cesoft.cesdoom.components
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
+import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.managers.EnemyFactory
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class StatusComponent(private val entity: Entity) : Component//private val animat: AnimationComponent, private val enemy: EnemyComponent) : Component
-{
+class StatusComponent(private val entity: Entity) : Component {
 	var isSaltando = true
 	private var estado = EnemyComponent.ACTION.WALKING
 	val type = entity.getComponent(EnemyComponent::class.java).type
@@ -18,7 +18,6 @@ class StatusComponent(private val entity: Entity) : Component//private val anima
 
 	/// ACHING
 	private var health: Float = 100f
-		private set
 	private var achingStateTime: Float = 0f
 	fun isAching() = estado == EnemyComponent.ACTION.ACHING
 	private fun setAchingState() {estado = EnemyComponent.ACTION.ACHING}
@@ -37,7 +36,7 @@ class StatusComponent(private val entity: Entity) : Component//private val anima
 	}
 
 	/// RUNNING
-	fun isRunning() = estado == EnemyComponent.ACTION.RUNNING
+	private fun isRunning() = estado == EnemyComponent.ACTION.RUNNING
 	private fun setRunningState() {estado = EnemyComponent.ACTION.RUNNING}
 	fun setRunning()
 	{

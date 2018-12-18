@@ -6,9 +6,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
-import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
-import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.Settings
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

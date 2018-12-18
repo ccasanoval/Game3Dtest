@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.utils.ImmutableArray
 import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.components.StatusComponent
+import com.cesoft.cesdoom.entities.Enemy
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -25,7 +26,7 @@ class StatusSystem(private val gameWorld: GameWorld) : EntitySystem() {
 			val status = entity.getComponent(StatusComponent::class.java)
 			status.update(delta)
 			if(status.isDeadOver()) {
-				gameWorld.enemyDied(entity)
+				gameWorld.enemyDied(entity as Enemy)
 			}
 		}
 	}

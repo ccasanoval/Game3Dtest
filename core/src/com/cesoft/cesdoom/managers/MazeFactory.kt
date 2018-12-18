@@ -2,7 +2,7 @@ package com.cesoft.cesdoom.managers
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.math.Vector3
-import com.cesoft.cesdoom.Assets
+import com.cesoft.cesdoom.assets.Assets
 
 object MazeFactory
 {
