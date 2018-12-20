@@ -234,7 +234,7 @@ class PlayerSystem(
 				posTemp2.set(Vector3.Zero)
 			else {
 				animFootStep(delta)
-				if( ! game.assets.getSoundFootSteps().isPlaying)
+				if(Settings.soundEnabled && ! game.assets.getSoundFootSteps().isPlaying)
 					game.assets.getSoundFootSteps().play()
 			}
 			posTemp.add(posTemp2)
@@ -246,7 +246,8 @@ class PlayerSystem(
 			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) posTemp2.set(camera.direction).crs(camera.up)
 			else posTemp2.set(Vector3.Zero)
-			if(posTemp2.isZero)game.assets.getSoundFootSteps().play()
+			if(Settings.soundEnabled && ! posTemp2.isZero)
+				game.assets.getSoundFootSteps().play()
 			posTemp.add(posTemp2)
 			posTemp.scl(PlayerComponent.FUERZA_PC * delta)
 		}

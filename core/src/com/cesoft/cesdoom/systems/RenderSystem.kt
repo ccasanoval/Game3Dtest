@@ -157,10 +157,10 @@ class RenderSystem(
 
 	//______________________________________________________________________________________________
 	private fun renderParticleEffects() {
-		Log.e(tag, "renderParticleEffects-------1-----------------------------------------------------")
+		//Log.e(tag, "renderParticleEffects-------1-----------------------------------------------------")
 		batch.begin(perspectiveCamera)
 		assets.getParticleSystem()?.let {
-Log.e(tag, "renderParticleEffects-----2-------------------------------------------------------"+it)
+//Log.e(tag, "renderParticleEffects-----2-------------------------------------------------------"+it)
 			it.update()
 			it.begin()
 			it.draw()
@@ -235,10 +235,12 @@ Log.e(tag, "renderParticleEffects-----2-----------------------------------------
 Log.e(tag, "dispose ---------------------------------------------------------")
 	}
 
-	private val particles = ArrayList<ParticleEffect>()
-	fun addParticleEffect(particle: ParticleEffect) {
+	///private val particleEffects = ArrayList<ParticleEffect>()
+	fun addParticleEffect(effect: ParticleEffect) {
 Log.e(tag, "addParticleEffect ---------------------------------------------------------")
-		assets.getParticleSystem()?.add(particle)
-		particles.add(particle)
+		effect.init()
+		effect.start()
+		assets.getParticleSystem()?.add(effect)
+		//particleEffects.add(effect)
 	}
 }

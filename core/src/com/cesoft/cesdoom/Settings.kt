@@ -11,7 +11,8 @@ object Settings {
 
 	var paused: Boolean = false
 	var gameOver: Boolean = false
-	var soundEnabled = true
+	var mainMenu: Boolean = false
+	var soundEnabled = false
 
 	//var highscores = intArrayOf(1000, 800, 500, 300, 100)
 	//val file = ".spaceglad"

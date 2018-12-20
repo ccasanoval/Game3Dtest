@@ -20,6 +20,7 @@ import com.cesoft.cesdoom.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +141,7 @@ object SceneFactory {
 		val shape = Bullet.obtainStaticNodeShape(modelo.nodes)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, null, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
+		Log.e("SceneFactory", "----------------------- SUELO:rigidBody:$rigidBody")
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
 		//rigidBody.motionState = MotionState(Matrix4().setTranslation(Vector3(x,y,z)))

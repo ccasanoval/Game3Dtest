@@ -18,6 +18,7 @@ import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 import com.cesoft.cesdoom.components.EnemyComponent.ACTION.*
 import com.cesoft.cesdoom.entities.Enemy
 import com.badlogic.gdx.utils.Pool
+import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.ParticleEffectPool
 import com.cesoft.cesdoom.systems.RenderSystem
@@ -28,15 +29,16 @@ import com.cesoft.cesdoom.util.Log
 //
 object EnemyFactory
 {
+	private val tag: String = EnemyFactory::class.java.simpleName
 	private val RADIO = 18f
 
 	private var renderSystem: RenderSystem? = null
 	private val activeEnemies = ArrayList<Enemy>()
-	private val enemyPool = object : Pool<Enemy>() {
+	/*private val enemyPool = object : Pool<Enemy>() {
 		override fun newObject(): Enemy {
 			return Enemy()
 		}
-	}
+	}*/
 
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()
@@ -49,17 +51,18 @@ object EnemyFactory
 			mase: Float = 100f) : Enemy {
 
 		renderSystem = render
-		val entity = enemyPool.obtain()
+		val entity = Enemy()//enemyPool.obtain()
 		entity.init(pos, type, mase, particlePool)
 		activeEnemies.add(entity)
 
 		// Render Particles
-		render.addParticleEffect(entity.particleEffect)
+		Log.e(tag, "create:------------------ add particle:"+entity.particleEffect)
+		//render.addParticleEffect(entity.particleEffect)
 
 		/// ENEMY
 		val enemyComponent = EnemyComponent(type)
 		entity.add(enemyComponent)
-
+Log.e(tag, "create:------------------********************************* 3:")
 		/// MODEL
 		val modelComponent: ModelComponent
 		when(type) {
@@ -73,6 +76,7 @@ object EnemyFactory
 				setAnimation(entity, EnemyComponent.ACTION.WALKING)
 			}
 		}
+Log.e(tag, "create:------------------********************************* 5:")
 		// (desaparecer)
 		if(modelComponent.instance.materials.size > 0) {
 			val material = modelComponent.instance.materials.get(0)
@@ -80,18 +84,19 @@ object EnemyFactory
 			material.set(blendingAttribute)
 			modelComponent.blendingAttribute = blendingAttribute
 		}
-
+		Log.e(tag, "create:------------------********************************* 7:")
 		/// STATUS
 		val stat = StatusComponent(entity)
 		stat.setWalking()
 		entity.add(stat)
 		//setWalkin()
-
+		Log.e(tag, "create:------------------********************************* 9:")
 		/// COLLISION
 		val shape = btSphereShape(RADIO)//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, posTemp)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, posTemp)
 		val rigidBody = btRigidBody(bodyInfo)
+		Log.e(tag, "create:------------------********************************* rigidBody:$rigidBody / bodyInfo:$bodyInfo")
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
@@ -102,7 +107,7 @@ object EnemyFactory
 		rigidBody.friction = 0f
 		rigidBody.rollingFriction = 1000000f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
-
+		Log.e(tag, "create:------------------********************************* 11:")
 		/// STEERING
 		//entity.add(SteeringComponent(rigidBody, RADIO))
 
@@ -290,7 +295,8 @@ object EnemyFactory
 		{
 			val enemy = entity as Enemy
 
-			assets.getSoundEnemy1Die().play()
+			if(Settings.soundEnabled)
+				assets.getSoundEnemy1Die().play()
 
 			val model = entity.getComponent(ModelComponent::class.java)
 			if(model.blendingAttribute != null)
@@ -301,7 +307,7 @@ object EnemyFactory
 
 			if(status.deathProgres() == 1f) {
 				activeEnemies.remove(enemy)
-				enemyPool.free(enemy)
+				//enemyPool.free(enemy)
 				enemy.reset()
 				return
 			}

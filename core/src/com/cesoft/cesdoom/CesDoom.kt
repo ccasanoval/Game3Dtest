@@ -88,6 +88,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	}
 	//______________________________________________________________________________________________
 	fun reset2Menu() {
+		Settings.mainMenu = true
 		delScreen()
 		setScreen(MainMenuScreen(this))
 	}

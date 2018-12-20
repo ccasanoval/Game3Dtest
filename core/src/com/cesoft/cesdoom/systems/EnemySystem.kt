@@ -50,6 +50,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 		spawnIfNeeded()
 	}
 
+	private var jobToCreate: Job? = null
 	private var waitToCreate = false
 	fun pause() {
 		waitToCreate = false
@@ -60,12 +61,18 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 	private fun spawnIfNeeded() {
 		if(waitToCreate)return
 		waitToCreate = true
-		GlobalScope.launch {
+		jobToCreate = GlobalScope.launch {
 			while(entities!!.size() < 3) {
 				delay(5000)
 				if(Settings.paused)
 					continue
-				spawnEnemy()
+				if(Settings.gameOver || Settings.mainMenu) {
+					waitToCreate = false
+					coroutineContext.cancel()
+					Log.e("corroutine", "----corroutine--------------------------------------")
+				}
+				else
+					spawnEnemy()
 			}
 			waitToCreate = false
 		}
@@ -89,6 +96,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	fun dispose() {
 		Log.e("EnemySystem", "dispose----------------------------------------")
+		jobToCreate?.cancel()
 		for(entity in entities!!) {
 			(entity as Enemy).reset()
 		}

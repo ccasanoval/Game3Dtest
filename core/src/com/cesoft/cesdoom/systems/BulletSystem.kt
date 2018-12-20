@@ -183,15 +183,14 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 	private fun getIndex(codigo : Int) = (codigo and MASCARA_INDEX) ushr 8
 
 	//______________________________________________________________________________________________
-	fun removeBody(entity: Entity)
-	{
+	fun removeBody(entity: Entity) {
 		val comp = entity.getComponent(BulletComponent::class.java)
-		collisionWorld.removeCollisionObject(comp.rigidBody)
+		if(comp != null)
+			collisionWorld.removeCollisionObject(comp.rigidBody)
 	}
 
 	//______________________________________________________________________________________________
-	override fun entityRemoved(entity: Entity)
-	{
+	override fun entityRemoved(entity: Entity) {
 		entity.getComponent(BulletComponent::class.java)
 	}
 }

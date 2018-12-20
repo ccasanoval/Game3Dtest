@@ -5,11 +5,21 @@ import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Pool
 import com.cesoft.cesdoom.assets.ParticleEffectPool
+import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.EnemyComponent
 import com.cesoft.cesdoom.util.Log
 
 class Enemy
-	: Entity(), Pool.Poolable {
+	: Entity() {//, Pool.Poolable {
+
+	companion object {
+	    /*fun newInstance(position: Vector3,
+						type: EnemyComponent.TYPE=EnemyComponent.TYPE.MONSTER1,
+						mase: Float = 100f,
+						particleEffectPool: ParticleEffectPool) {
+			val entity = enemyPool.obtain()
+		}*/
+	}
 
 	private var alive = false
 		private set
@@ -19,13 +29,16 @@ class Enemy
 	lateinit var particleEffectPool: ParticleEffectPool
 	lateinit var particleEffect: ParticleEffect
 
-	override fun reset() {
+	fun reset() {
 		Log.e("Enemy", "reset:------------------------------------------------------particleEffect="+particleEffect)
         alive = false
 		position = Vector3()
     	type = EnemyComponent.TYPE.MONSTER1
     	mase = 100f
 		particleEffectPool.free(particleEffect)
+		//TODO:liberar bullet?
+		val bullet = getComponent(BulletComponent::class.java)
+		bullet.rigidBodyInfo.dispose()
 		removeAll()
 	}
 

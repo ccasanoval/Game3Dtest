@@ -28,18 +28,20 @@ class Assets {
 		private var i18n = Gdx.files.internal("i18n/cesdoom")
 
 		// I18n
-		val SALIR="SALIR"
-		val JUGAR="JUGAR"
 		val MENU="MENU"
+		val JUGAR="JUGAR"
+		val SALIR="SALIR"
+		val RECARGAR="RECARGAR"
+		val PUNTUACIONES="PUNTUACIONES"
+		val CREDITOS="CREDITOS"
+		val SOBRE_TXT="SOBRE_TXT"
 		val SOBRE="SOBRE"
 		val ATRAS="ATRAS"
-		val CREDITOS_TXT="CREDITOS_TXT"
-		//val PUNTUACIONES="PUNTUACIONES"
-		val CREDITOS="CREDITOS"
-		val RECARGAR="RECARGAR"
+		val CONFIG="CONFIG"
+		val CONFIG_SOUND="CONFIG_SOUND"
 	}
 
-	val assetManager = AssetManager()
+	private val assetManager = AssetManager()
 
 	/// Skin
 	var skin: Skin = Skin()
@@ -47,9 +49,8 @@ class Assets {
 
 	/// i18n
 	private var i18nBundle = I18NBundle.createBundle(i18n)!!
-		fun getString(clave: String) = i18nBundle.get(clave)
-		//fun formatString(clave: String, vararg params: Any) = i18nBundle.format(clave, params)
-		fun formatString(clave: String, param: Int) = i18nBundle.format(clave, param)
+		fun getString(clave: String):String = i18nBundle.get(clave)
+		fun formatString(clave: String, param: Int):String = i18nBundle.format(clave, param)
 
 	//______________________________________________________________________________________________
 	init {
@@ -101,7 +102,7 @@ class Assets {
 	fun iniDome() = assetManager.load("scene/spaceDome/spacedome.g3db", Model::class.java)
 	fun getDome():Model = assetManager.get("scene/spaceDome/spacedome.g3db", Model::class.java)
 	//______________________________________________________________________________________________
-	//fun endMonstruo1() = assetManager.unload("foes/monster1/a.g3db")
+	fun endEnemy1() = assetManager.unload("foes/monster1/a.g3db")
 	fun iniEnemy1() = assetManager.load("foes/monster1/a.g3db", Model::class.java)
 	fun getEnemy1():Model = assetManager.get("foes/monster1/a.g3db", Model::class.java)
 	//______________________________________________________________________________________________
@@ -159,6 +160,7 @@ class Assets {
 		skin.dispose()
 		//endParticleEffectDeath()
 		GunFactory.dispose()
+		endEnemy1()
 		assetManager.dispose()
 	}
 

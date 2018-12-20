@@ -9,11 +9,7 @@ import com.cesoft.cesdoom.components.PlayerComponent
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class ScoreWidget(private val assets: Assets) : Actor() {
-	private var score: TextField
-
-	init {
-		score = TextField("", assets.skin)
-	}
+	private var score: TextField = TextField("", assets.skin)
 
 	override fun act(delta: Float) {
 		score.act(delta)

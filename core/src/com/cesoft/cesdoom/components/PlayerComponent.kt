@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.bullet.MotionState
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +57,7 @@ object PlayerComponent : Component
 		shape.calculateLocalInertia(MASA, posTemp)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(MASA, null, shape, posTemp)
 		val rigidBody = btRigidBody(bodyInfo)
+		Log.e("SceneFactory", "----------------------- SUELO:rigidBody:$rigidBody")
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(Matrix4().translate(pos))
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK

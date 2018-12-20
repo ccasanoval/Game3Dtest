@@ -22,16 +22,15 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 //AndroidApplication(),
 class AndroidLauncher: AndroidApplication() {//CardBoardAndroidApplication(), CardBoardApplicationListener {
 
-	private lateinit var game: CesDoom
-	//private lateinit var cam: CardboardCamera
-	private val Z_NEAR = 0.1f
-	private val Z_FAR = 1000.0f
-	private val CAMERA_Z = 0.01f
+//	private lateinit var game: CesDoom
+//	private lateinit var cam: CardboardCamera
+//	private val Z_NEAR = 0.1f
+//	private val Z_FAR = 1000.0f
+//	private val CAMERA_Z = 0.01f
 	//______________________________________________________________________________________________
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val config = AndroidApplicationConfiguration()
-		//initialize(this, config)//CesGame(), config)
 		initialize(CesDoom(BuildConfig.DEBUG), config)
 	}
 /*

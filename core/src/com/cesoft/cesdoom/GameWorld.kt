@@ -166,15 +166,16 @@ class GameWorld(game: CesDoom) {
 	fun dispose() {
 		Log.e(tag, "dispose:--------------------------------------------")
 		bulletSystem.dispose()
-		renderSystem.dispose()
 		enemySystem.dispose()
 		playerSystem.dispose()
+
+		renderSystem.dispose()
 	}
 
 	//______________________________________________________________________________________________
 	fun remove(entity: Entity) {
-		engine.removeEntity(entity)
 		bulletSystem.removeBody(entity)
+		engine.removeEntity(entity)
 	}
 
 	//______________________________________________________________________________________________
