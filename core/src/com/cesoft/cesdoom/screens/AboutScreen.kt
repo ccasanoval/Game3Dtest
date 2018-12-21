@@ -59,7 +59,7 @@ class AboutScreen(internal val game: CesDoom) : Screen, InputProcessor {
 		stage.addActor(win)
 		stage.addActor(scrollPane)
 
-		win.addActor(texto)
+		scrollPane.addActor(texto)
 	}
 
 	//______________________________________________________________________________________________

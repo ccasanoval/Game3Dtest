@@ -17,10 +17,10 @@ object Settings {
 	//var highscores = intArrayOf(1000, 800, 500, 300, 100)
 	//val file = ".spaceglad"
 
-	private val leaderURL = "http://dreamlo.com/lb/PLfBGtHgG02wU0lSzVNrPAG0uQf3J3-UGzK1i7mXmmxA"
+	/*private val leaderURL = "http://dreamlo.com/lb/PLfBGtHgG02wU0lSzVNrPAG0uQf3J3-UGzK1i7mXmmxA"
 	private val request5 = "/pipe/5"
 	fun load(leaderboardItems: Array<Label>) {
-		/*val requestBests = Net.HttpRequest(Net.HttpMethods.GET)
+		val requestBests = Net.HttpRequest(Net.HttpMethods.GET)
 		requestBests.url = leaderURL + request5
 		Gdx.net.sendHttpRequest(requestBests, object : Net.HttpResponseListener {
 			override fun handleHttpResponse(httpResponse: Net.HttpResponse) {
@@ -48,32 +48,32 @@ object Settings {
 			override fun cancelled() {
 				println("Cancel")
 			}
-		})*/
+		})
 	}
 
 	fun load() {
-		/*try {
+		try {
 			val filehandle = Gdx.files.external(file)
 			val strings = filehandle.readString().split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 			soundEnabled = java.lang.Boolean.parseBoolean(strings[0])
 			for(i in 0 .. 4) highscores[i] = Integer.parseInt(strings[i + 1])
 		}
 		catch(e: Throwable) {
-		}*/
+		}
 	}
 
 	fun save() {
-		/*try {
+		try {
 			val filehandle = Gdx.files.external(file)
 			filehandle.writeString(java.lang.Boolean.toString(soundEnabled) + "\n", false)
 			for(i in 0 .. 4) filehandle.writeString(Integer.toString(highscores[i]) + "\n", true)
 		}
 		catch(e: Throwable) {
-		}*/
+		}
 	}
 
 	fun sendScore(score: Int) {
-		/*val request = Net.HttpRequest("GET")
+		val request = Net.HttpRequest("GET")
 		request.url = "http://dreamlo.com/lb/PLfBGtHgG02wU0lSzVNrPAG0uQf3J3-UGzK1i7mXmmxA/add/" + "SpaceGladiator" + "/" + score
 		Gdx.net.sendHttpRequest(request, object : Net.HttpResponseListener {
 			override fun handleHttpResponse(httpResponse: Net.HttpResponse) {}
@@ -81,10 +81,10 @@ object Settings {
 			override fun failed(t: Throwable) {}
 
 			override fun cancelled() {}
-		})*/
+		})
 	}
 
-	/*fun addScore(score: Int) {
+	fun addScore(score: Int) {
 		for(i in 0 .. 4) {
 			if(highscores[i] < score) {
 				for(j in 4 downTo i + 1) highscores[j] = highscores[j - 1]

@@ -34,11 +34,7 @@ object EnemyFactory
 
 	private var renderSystem: RenderSystem? = null
 	private val activeEnemies = ArrayList<Enemy>()
-	/*private val enemyPool = object : Pool<Enemy>() {
-		override fun newObject(): Enemy {
-			return Enemy()
-		}
-	}*/
+
 
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()
@@ -286,7 +282,9 @@ Log.e(tag, "create:------------------********************************* 5:")
 	//______________________________________________________________________________________________
 	fun playDying(entity: Entity) {
 		setAnimation(entity, EnemyComponent.ACTION.DYING)
-		renderSystem?.addParticleEffect((entity as Enemy).particleEffect)
+		(entity as Enemy).particleEffect?.let {
+			renderSystem?.addParticleEffect(it)
+		}
 	}
 
 	fun update(delta: Float, entity: Entity, posPlayer: Vector3, assets: Assets) {

@@ -26,20 +26,23 @@ class Enemy
     var position: Vector3 = Vector3()
     var type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER1
     var mase: Float = 100f
-	lateinit var particleEffectPool: ParticleEffectPool
-	lateinit var particleEffect: ParticleEffect
+	private var particleEffectPool: ParticleEffectPool? = null
+	var particleEffect: ParticleEffect? = null
 
 	fun reset() {
-		Log.e("Enemy", "reset:------------------------------------------------------particleEffect="+particleEffect)
+		Log.e("Enemy", "reset:------------------------------------------------------particleEffect=$particleEffect")
         alive = false
 		position = Vector3()
     	type = EnemyComponent.TYPE.MONSTER1
     	mase = 100f
-		particleEffectPool.free(particleEffect)
+
+		particleEffect?.let { particleEffectPool?.free(it) }
+
 		//TODO:liberar bullet?
 		val bullet = getComponent(BulletComponent::class.java)
-		bullet.rigidBodyInfo.dispose()
-		removeAll()
+		//bullet.rigidBodyInfo.dispose()
+		//bullet.rigidBody.dispose()
+		//removeAll()
 	}
 
     fun init(position: Vector3,
@@ -50,8 +53,8 @@ class Enemy
         this.type = type
         this.mase = mase
         this.alive = true
-		this.particleEffectPool = particleEffectPool
-		this.particleEffect = particleEffectPool.obtain()
+		//this.particleEffectPool = particleEffectPool
+		//this.particleEffect = particleEffectPool.obtain()
 		Log.e("Enemy", "INI-------------------------"+this.particleEffect)
     }
 }

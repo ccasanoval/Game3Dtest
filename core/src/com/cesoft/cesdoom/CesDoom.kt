@@ -43,7 +43,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 
 		assets = Assets()
 		gameUI = GameUI(this)
-		Settings.load()
+		//Settings.load()
 		Gdx.input.isCatchBackKey = true
 		setScreen(MainMenuScreen(this))
 	}
@@ -96,7 +96,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	//______________________________________________________________________________________________
 	override fun dispose() {
 		Log.e("CesDoom", "dispose:--------------------------------------------------------")
-		Settings.save()
+		//Settings.save()
 		delScreen()
 		gameUI.dispose()
 		assets.dispose()

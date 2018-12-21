@@ -98,11 +98,9 @@ class Assets {
 
 	// MODELS
 	//______________________________________________________________________________________________
-	//fun endDome() = assetManager.unload("scene/spaceDome/spacedome.g3db")
 	fun iniDome() = assetManager.load("scene/spaceDome/spacedome.g3db", Model::class.java)
 	fun getDome():Model = assetManager.get("scene/spaceDome/spacedome.g3db", Model::class.java)
 	//______________________________________________________________________________________________
-	fun endEnemy1() = assetManager.unload("foes/monster1/a.g3db")
 	fun iniEnemy1() = assetManager.load("foes/monster1/a.g3db", Model::class.java)
 	fun getEnemy1():Model = assetManager.get("foes/monster1/a.g3db", Model::class.java)
 	//______________________________________________________________________________________________
@@ -115,7 +113,6 @@ class Assets {
 	fun iniSuelo() = assetManager.load("scene/ground.jpg", Texture::class.java)
 	fun getSuelo():Texture = assetManager.get("scene/ground.jpg", Texture::class.java)
 	//______________________________________________________________________________________________
-	//fun endSkyline() = assetManager.unload("scene/skyline.png")
 	fun iniSkyline() = assetManager.load("scene/skyline.png", Texture::class.java)
 	fun getSkyline():Texture = assetManager.get("scene/skyline.png", Texture::class.java)
 	//______________________________________________________________________________________________
@@ -133,6 +130,7 @@ class Assets {
 	//______________________________________________________________________________________________
 	fun iniFireShot() = assetManager.load("weapons/fire.png", Texture::class.java)
 	fun getFireShot():Image = Image(assetManager.get("weapons/fire.png", Texture::class.java))
+	fun endFireShot() = assetManager.get("weapons/fire.png", Texture::class.java).dispose()
 
 	// PARTICLES
 	//______________________________________________________________________________________________
@@ -157,11 +155,30 @@ class Assets {
     //______________________________________________________________________________________________
 	fun dispose() {
 		Log.e(tag, "dispose------------------------------------------------------------------------")
+
+		getDome().dispose()
+		getEnemy1().dispose()
+		getCZ805().dispose()
+		getSuelo().dispose()
+		getSkyline().dispose()
+		getJunk().dispose()
+		getWallMetal1().dispose()
+		getWallMetal2().dispose()
+		getWallMetal3().dispose()
+		endFireShot()
+
+		getSoundCZ805().dispose()
+		getSoundEnemy1().dispose()
+		getSoundEnemy1Die().dispose()
+		getSoundFootSteps().dispose()
+
+
+
 		skin.dispose()
 		//endParticleEffectDeath()
 		GunFactory.dispose()
-		endEnemy1()
-		assetManager.dispose()
+		try { assetManager.dispose() }
+		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e: $e") }
 	}
 
     //______________________________________________________________________________________________
