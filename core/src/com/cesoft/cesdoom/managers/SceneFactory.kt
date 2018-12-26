@@ -141,7 +141,6 @@ object SceneFactory {
 		val shape = Bullet.obtainStaticNodeShape(modelo.nodes)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, null, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
-		Log.e("SceneFactory", "----------------------- SUELO:rigidBody:$rigidBody")
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
 		//rigidBody.motionState = MotionState(Matrix4().setTranslation(Vector3(x,y,z)))
@@ -156,6 +155,6 @@ object SceneFactory {
 	}
 
 	//______________________________________________________________________________________________
-	fun getDome(model: Model) = Entity().add(ModelComponent(model, Vector3(0f,0f,0f)))
+	fun getDome(model: Model):Entity = Entity().add(ModelComponent(model, Vector3(0f,0f,0f)))
 
 }

@@ -15,7 +15,7 @@ class ParticleEffectPool(private val assets: Assets, camera: PerspectiveCamera)
 	val loadParam: ParticleEffectLoader.ParticleEffectLoadParameter
 
 	init {
-		Log.e("ParticleEffectPool", "INI ---------------------------------------------------------")
+		//Log.e("ParticleEffectPool", "INI ---------------------------------------------------------")
 		val billboardParticleBatch = BillboardParticleBatch()
 		billboardParticleBatch.setCamera(camera)
 		particleSystem.add(billboardParticleBatch)

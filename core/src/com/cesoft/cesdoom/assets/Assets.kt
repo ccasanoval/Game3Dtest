@@ -130,15 +130,15 @@ class Assets {
 	//______________________________________________________________________________________________
 	fun iniFireShot() = assetManager.load("weapons/fire.png", Texture::class.java)
 	fun getFireShot():Image = Image(assetManager.get("weapons/fire.png", Texture::class.java))
-	fun endFireShot() = assetManager.get("weapons/fire.png", Texture::class.java).dispose()
+	private fun endFireShot() = assetManager.get("weapons/fire.png", Texture::class.java).dispose()
 
 	// PARTICLES
 	//______________________________________________________________________________________________
 	var particleEffectPool: ParticleEffectPool? = null
 	fun iniParticleEffectPool(camera: PerspectiveCamera) {
-		Log.e(tag, "iniParticleEffectPool--------------------------------------- 1")
+		//Log.e(tag, "iniParticleEffectPool--------------------------------------- 1")
 		if(particleEffectPool == null) {
-			Log.e(tag, "iniParticleEffectPool--------------------------------------- 2")
+			//Log.e(tag, "iniParticleEffectPool--------------------------------------- 2")
 			particleEffectPool = ParticleEffectPool(this, camera)
 			assetManager.load("particles/dieparticle.pfx", ParticleEffect::class.java, particleEffectPool!!.loadParam)
 			assetManager.finishLoadingAsset("particles/dieparticle.pfx")

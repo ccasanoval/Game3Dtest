@@ -13,11 +13,9 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
 import com.cesoft.cesdoom.CesDoom
-import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 
 import com.cesoft.cesdoom.components.EnemyComponent.ACTION.*
 import com.cesoft.cesdoom.entities.Enemy
-import com.badlogic.gdx.utils.Pool
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.ParticleEffectPool
@@ -39,6 +37,7 @@ object EnemyFactory
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()
 	fun create(
+			id: Int,
 			particlePool: ParticleEffectPool,
 			render: RenderSystem,
 			model: Model,
@@ -47,9 +46,8 @@ object EnemyFactory
 			mase: Float = 100f) : Enemy {
 
 		renderSystem = render
-		val entity = Enemy()//enemyPool.obtain()
-		entity.init(pos, type, mase, particlePool)
-		activeEnemies.add(entity)
+		val entity = Enemy(id)//enemyPool.obtain()
+
 
 		// Render Particles
 		Log.e(tag, "create:------------------ add particle:"+entity.particleEffect)
@@ -58,21 +56,21 @@ object EnemyFactory
 		/// ENEMY
 		val enemyComponent = EnemyComponent(type)
 		entity.add(enemyComponent)
-Log.e(tag, "create:------------------********************************* 3:")
+
 		/// MODEL
 		val modelComponent: ModelComponent
 		when(type) {
 			EnemyComponent.TYPE.MONSTER1 -> {
 				modelComponent = ModelComponent(model, pos)
-				modelComponent.frustumCullingData =
-					FrustumCullingData.create(Vector3(0f,0f,0f), Vector3(RADIO,RADIO,RADIO), modelComponent.instance)
+				//modelComponent.frustumCullingData =
+				//	FrustumCullingData.create(Vector3(0f,0f,0f), Vector3(RADIO,RADIO,RADIO), modelComponent.instance)
 				entity.add(modelComponent)
 				/// ANIMATION
 				entity.add(AnimationComponent(modelComponent.instance))
 				setAnimation(entity, EnemyComponent.ACTION.WALKING)
 			}
 		}
-Log.e(tag, "create:------------------********************************* 5:")
+
 		// (desaparecer)
 		if(modelComponent.instance.materials.size > 0) {
 			val material = modelComponent.instance.materials.get(0)
@@ -80,19 +78,18 @@ Log.e(tag, "create:------------------********************************* 5:")
 			material.set(blendingAttribute)
 			modelComponent.blendingAttribute = blendingAttribute
 		}
-		Log.e(tag, "create:------------------********************************* 7:")
+
 		/// STATUS
 		val stat = StatusComponent(entity)
 		stat.setWalking()
 		entity.add(stat)
 		//setWalkin()
-		Log.e(tag, "create:------------------********************************* 9:")
+
 		/// COLLISION
 		val shape = btSphereShape(RADIO)//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, posTemp)
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, posTemp)
-		val rigidBody = btRigidBody(bodyInfo)
-		Log.e(tag, "create:------------------********************************* rigidBody:$rigidBody / bodyInfo:$bodyInfo")
+		val rigidBodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, posTemp)
+		val rigidBody = btRigidBody(rigidBodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
@@ -102,11 +99,13 @@ Log.e(tag, "create:------------------********************************* 5:")
 		//rigidBody.userIndex = index
 		rigidBody.friction = 0f
 		rigidBody.rollingFriction = 1000000f
-		entity.add(BulletComponent(rigidBody, bodyInfo))
-		Log.e(tag, "create:------------------********************************* 11:")
+		entity.add(BulletComponent(rigidBody, rigidBodyInfo))
+
 		/// STEERING
 		//entity.add(SteeringComponent(rigidBody, RADIO))
 
+		entity.init(pos, type, mase, particlePool, rigidBody, rigidBodyInfo)
+		activeEnemies.add(entity)
 		return entity
 	}
 
@@ -196,10 +195,10 @@ Log.e(tag, "create:------------------********************************* 5:")
 	//______________________________________________________________________________________________
 	//TODO: IA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	private val posTempEnemy = Vector3()
-	fun mover(entity: Entity, playerPosition: Vector3, delta: Float)
+	private fun mover(enemy: Enemy, playerPosition: Vector3, delta: Float)
 	{
-		val bullet = entity.getComponent(BulletComponent::class.java)
-		val status = entity.getComponent(StatusComponent::class.java)
+		//val bullet = enemy.getComponent(BulletComponent::class.java)
+		val status = enemy.getComponent(StatusComponent::class.java)
 
 		/*if(status.isDead() || status.isAching()) {
 			//bullet.rigidBody.linearVelocity = Vector3(0f,0f,0f)
@@ -217,7 +216,7 @@ Log.e(tag, "create:------------------********************************* 5:")
 */
 		///
 
-		val model = entity.getComponent(ModelComponent::class.java)
+		val model = enemy.getComponent(ModelComponent::class.java)
 		model.instance.transform.getTranslation(posTempEnemy)
 		val dX = playerPosition.x - posTempEnemy.x
 		val dZ = playerPosition.z - posTempEnemy.z
@@ -250,11 +249,11 @@ Log.e(tag, "create:------------------********************************* 5:")
 		}
 
 		val dir = playerPosition.add(posTempEnemy.scl(-1f)).nor().scl(fuerza*delta)
-		dir.y = bullet.rigidBody.linearVelocity.y
-		bullet.rigidBody.linearVelocity = dir
+		dir.y = enemy.rigidBody!!.linearVelocity.y//bullet.rigidBody.linearVelocity.y
+		enemy.rigidBody!!.linearVelocity = dir//bullet.rigidBody.linearVelocity = dir
 
 		val transf = Matrix4()
-		bullet.rigidBody.getWorldTransform(transf)
+		enemy.rigidBody!!.getWorldTransform(transf)//bullet.rigidBody.getWorldTransform(transf)
 		transf.getTranslation(posTempEnemy)
 
 		val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
@@ -287,16 +286,14 @@ Log.e(tag, "create:------------------********************************* 5:")
 		}
 	}
 
-	fun update(delta: Float, entity: Entity, posPlayer: Vector3, assets: Assets) {
-		val status = entity.getComponent(StatusComponent::class.java)
+	fun update(delta: Float, enemy: Enemy, posPlayer: Vector3, assets: Assets) {
+		val status = enemy.getComponent(StatusComponent::class.java)
 		if(status.isDead())
 		{
-			val enemy = entity as Enemy
-
 			if(Settings.soundEnabled)
 				assets.getSoundEnemy1Die().play()
 
-			val model = entity.getComponent(ModelComponent::class.java)
+			val model = enemy.getComponent(ModelComponent::class.java)
 			if(model.blendingAttribute != null)
 				model.blendingAttribute!!.opacity = 1 - status.deathProgres()
 
@@ -306,16 +303,17 @@ Log.e(tag, "create:------------------********************************* 5:")
 			if(status.deathProgres() == 1f) {
 				activeEnemies.remove(enemy)
 				//enemyPool.free(enemy)
-				enemy.reset()
+				//enemy.reset()
+				Log.e(tag, "update------------------------------------------status.deathProgres() == 1f")
 				return
 			}
 		}
 
 		///----- ANIMATION
-		val animat = entity.getComponent(AnimationComponent::class.java)
+		val animat = enemy.getComponent(AnimationComponent::class.java)
 		animat?.update(delta)
 
 		//
-		mover(entity, posPlayer, delta)
+		mover(enemy, posPlayer, delta)
 	}
 }

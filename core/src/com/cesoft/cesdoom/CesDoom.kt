@@ -84,11 +84,14 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		Log.e(tag, "reset:--------------------------------------------------------")
 		delScreen()
 		setScreen(LoadingScreen(this))
+		Settings.gameOver = false
+		Settings.mainMenu = false
 		//<android:hardwareAccelerated="false">
 	}
 	//______________________________________________________________________________________________
 	fun reset2Menu() {
 		Settings.mainMenu = true
+		Settings.gameOver = false
 		delScreen()
 		setScreen(MainMenuScreen(this))
 	}

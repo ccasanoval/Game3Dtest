@@ -57,7 +57,7 @@ public class LoadingScreen implements Screen {
 
     private float startX, endX;
     private float percent;
-    private float scale = 2;
+    //private float scale = 2;
 
     private Actor loadingBar;
     private CesDoom game;
@@ -89,11 +89,11 @@ public class LoadingScreen implements Screen {
 
         // Add all the actors to the stage
         stage.addActor(screenBg);
+        stage.addActor(logo);
         stage.addActor(loadingBar);
         stage.addActor(loadingBg);
         stage.addActor(loadingBarHidden);
         stage.addActor(loadingFrame);
-        stage.addActor(logo);
 
         // Add everything to be loaded
         game.loadResources();
@@ -103,7 +103,7 @@ public class LoadingScreen implements Screen {
     @Override
     public void resize(int width, int height) {
 
-        int offset = 0;
+        int offset = 200;
         stage.getViewport().update(width, height);
 
         // Background
@@ -114,34 +114,38 @@ public class LoadingScreen implements Screen {
 		float w = width*2.5f/4f;//logo.getPrefWidth()
 		logo.setSize(w, h);
         logo.setX((width - logo.getWidth()) / 2);
-        logo.setY((height - logo.getHeight()) / 2 - offset/2);
+        logo.setY((height - logo.getHeight()) / 2 - 100);
+
+        Log.INSTANCE.e("aaaa", loadingBarHidden.getPrefWidth()+"+---------------------------");
 
         // Bar frame
 		//w = 2f*width/4f;
 		//h = loadingFrame.getPrefHeight() / loadingFrame.getPrefWidth()*w;
 		//loadingFrame.setSize(w, h);
-		loadingFrame.setScale(scale);
+		//loadingFrame.setScale(2);
+		//loadingFrame.setWidth(stage.getWidth()/2f);
         loadingFrame.setX((stage.getWidth() - loadingFrame.getWidth()) / 2);
-        loadingFrame.setY((stage.getHeight() - loadingFrame.getHeight()) / 2 - offset);
+        loadingFrame.setY((stage.getHeight() - loadingFrame.getHeight()) / 2 +300);
 
         // Bar
-		loadingBar.setScale(scale);
-        loadingBar.setX(loadingFrame.getX() + 15*scale);
-        loadingBar.setY(loadingFrame.getY() + 5*scale);
+		//loadingBar.setScale(2);
+		//loadingBar.setWidth(stage.getWidth()/2f);
+        loadingBar.setX(loadingFrame.getX() + 15);
+        loadingBar.setY(loadingFrame.getY() + 5);
 
         // Place the image that will hide the bar on top of the bar, adjusted a few px
 		//loadingBarHidden.setScale(2);
-        loadingBarHidden.setX(loadingBar.getX() + 35*scale);
-        loadingBarHidden.setY(loadingBar.getY() - 3*scale);
+        loadingBarHidden.setX(loadingBar.getX() + 35);
+        loadingBarHidden.setY(loadingBar.getY() - 3);
         // The start position and how far to move the hidden loading bar
         startX = loadingBarHidden.getX();
-        endX = 440*scale;
+        endX = 440;
 
         // The rest of the hidden bar
-		loadingBg.setSize(450*scale, 50*scale);
+		loadingBg.setSize(450, 50);
 		//loadingBg.setScale(2);
-        loadingBg.setX(loadingBarHidden.getX() + 30*scale);
-        loadingBg.setY(loadingBarHidden.getY() + 3*scale);
+        loadingBg.setX(loadingBarHidden.getX() + 30);
+        loadingBg.setY(loadingBarHidden.getY() + 3);
     }
 
     @Override
@@ -157,8 +161,8 @@ public class LoadingScreen implements Screen {
             //Log.INSTANCE.e(tag, "LoadingScreen:render:------------------------------%: " + percent);
             // Update positions (and size) to match the percentage
             loadingBarHidden.setX(startX + endX * percent);
-            loadingBg.setX(loadingBarHidden.getX() + 30*scale);
-            loadingBg.setWidth((450 - 450*percent)*scale);
+            loadingBg.setX(loadingBarHidden.getX() + 30);
+            loadingBg.setWidth((450 - 450*percent));
             loadingBg.invalidate();
             // Show the loading screen
             stage.act();

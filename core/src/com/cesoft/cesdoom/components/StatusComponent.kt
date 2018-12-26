@@ -97,7 +97,14 @@ class StatusComponent(private val entity: Entity) : Component {
 	//______________________________________________________________________________________________
 	fun isDeadOver() = deadStateTime > EnemyFactory.getActionDuration(type, EnemyComponent.ACTION.DYING)
 	fun deathProgres() = deadStateTime / EnemyFactory.getActionDuration(type, EnemyComponent.ACTION.DYING)
+	private fun isAchingOver() = achingStateTime > EnemyFactory.getActionDuration(type, EnemyComponent.ACTION.ACHING)
 
-	//______________________________________________________________________________________________
-	fun isAchingOver() = achingStateTime > EnemyFactory.getActionDuration(type, EnemyComponent.ACTION.ACHING)
+	/// Reset
+	fun reset() {
+		isSaltando = true
+		estado = EnemyComponent.ACTION.WALKING
+		deadStateTime = 0f
+		health = 100f
+		achingStateTime = 0f
+	}
 }

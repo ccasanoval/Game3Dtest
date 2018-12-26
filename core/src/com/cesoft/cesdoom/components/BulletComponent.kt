@@ -5,7 +5,10 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class BulletComponent(var rigidBody: btRigidBody, val rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo) : Component
+class BulletComponent(
+		val rigidBody: btRigidBody,
+		val rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo)
+	: Component
 {
 	// Si no usas rigidBodyInfo, se destruye por gc y puede dar lugar a problemas en las colisiones¿?
 	// Bullet: Disposing btRigidBodyConstructionInfo(452913408,true) due to garbage collection.

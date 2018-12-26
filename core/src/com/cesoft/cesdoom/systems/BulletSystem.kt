@@ -10,6 +10,8 @@ import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.*
 import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.components.*
+import com.cesoft.cesdoom.entities.Enemy
+import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Ghost object ???
@@ -112,20 +114,28 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 		if(entity != null) {
 			val estado = entity.getComponent(StatusComponent::class.java)
 			estado.hurt(20f)
-			if(estado.isDead())
+			if(estado.isDead()) {
 				enemies.remove(iEnemy)
+				removeBody(entity)
+				Log.e("BulletSystem", "collShotEnemy---------------$iEnemy------*******************")
+			}
 		}
 		// Shot
 		entity = shots[iShot]
-		if(entity!=null)
-		{
-			gameWorld.remove(entity)
+		if(entity!=null) {
+			gameWorld.removeShot(entity)
+			removeBody(entity)
 		}
 		shots.remove(iShot)
 	}
 
 	//______________________________________________________________________________________________
 	fun dispose() {
+		Log.e("BulletSystem", "dispose---------------------------------------------")
+		for(entity in enemies)
+			gameWorld.removeEnemy(entity.value as Enemy)
+		for(entity in shots)
+			gameWorld.removeShot(entity.value)
 		collisionWorld.dispose()
 		solver.dispose()
 		broadphase.dispose()

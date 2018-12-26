@@ -151,10 +151,10 @@ class GameWorld(game: CesDoom) {
 	}
 
 	fun pause() {
-		enemySystem.pause()
+		//enemySystem.pause()
 	}
 	fun resume() {
-		enemySystem.resume()
+		//enemySystem.resume()
 	}
 
 	//______________________________________________________________________________________________
@@ -173,7 +173,11 @@ class GameWorld(game: CesDoom) {
 	}
 
 	//______________________________________________________________________________________________
-	fun remove(entity: Entity) {
+	fun removeEnemy(enemy: Enemy) {
+		bulletSystem.removeBody(enemy)
+		engine.removeEntity(enemy)
+	}
+	fun removeShot(entity: Entity) {
 		bulletSystem.removeBody(entity)
 		engine.removeEntity(entity)
 	}
@@ -181,8 +185,8 @@ class GameWorld(game: CesDoom) {
 	//______________________________________________________________________________________________
 	fun enemyDied(enemy: Enemy) {
 		Log.e(tag, "enemyDied:-------------------------------------------------------------")
-		enemy.reset()
-		remove(enemy)
+		//enemy.reset()
+		removeEnemy(enemy)//TODO:CES
 		PlayerComponent.score += 20
 	}
 }

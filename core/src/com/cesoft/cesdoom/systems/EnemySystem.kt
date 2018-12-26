@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.managers.EnemyFactory
-import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.util.Log
@@ -19,7 +18,7 @@ import kotlinx.coroutines.*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
-	private var entities: ImmutableArray<Entity>? = null
+	private var enemies: ImmutableArray<Enemy>? = null
 	private var player: Entity? = null
 
 	init {
@@ -28,17 +27,17 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 
 	//______________________________________________________________________________________________
 	override fun addedToEngine(e: Engine) {
-		entities = e.getEntitiesFor(Family.all(EnemyComponent::class.java, StatusComponent::class.java).get())
+		enemies = e.getEntitiesFor(Family.all(EnemyComponent::class.java, StatusComponent::class.java).get()) as ImmutableArray<Enemy>?
 		e.addEntityListener(Family.one(PlayerComponent::class.java).get(), this)
 	}
 
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
 		//TODO: humo donde aparece bicho...
-		if(entities == null)
+		if(enemies == null)
 			return
 
-		for(entity in entities!!) {
+		for(entity in enemies!!) {
 			val bulletPlayer = player!!.getComponent(BulletComponent::class.java)
 			val transf = Matrix4()
 			bulletPlayer.rigidBody.getWorldTransform(transf)
@@ -47,46 +46,54 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 			EnemyFactory.update(delta, entity, posPlayer.cpy(), game.assets)
 		}
 
-		spawnIfNeeded()
+		spawIfNeeded()
 	}
 
-	private var jobToCreate: Job? = null
-	private var waitToCreate = false
-	fun pause() {
-		waitToCreate = false
-	}
-	fun resume() {
-		spawnIfNeeded()
-	}
-	private fun spawnIfNeeded() {
-		if(waitToCreate)return
-		waitToCreate = true
-		jobToCreate = GlobalScope.launch {
-			while(entities!!.size() < 3) {
-				delay(5000)
-				if(Settings.paused)
-					continue
-				if(Settings.gameOver || Settings.mainMenu) {
-					waitToCreate = false
-					coroutineContext.cancel()
-					Log.e("corroutine", "----corroutine--------------------------------------")
+	//https://blog.egorand.me/concurrency-primitives-in-kotlin/
+	//@Volatile private var spawning = false
+	private var lastSpawn = System.currentTimeMillis()
+	private fun spawIfNeeded() {
+		if(System.currentTimeMillis() < lastSpawn + 5*1000)return
+		lastSpawn = System.currentTimeMillis()
+		spawnAllEnemies()
+		enemies?.let { enemies ->
+			if(enemies.size() < MIN) {
+						Log.e("tag", "--------------spawIfNeeded 3 ")
+
+				var id = 0
+				for(i in 0 until enemies.size())
+					if(enemies[i].id == id)
+						id++
+				if(id >= allEnemies.size) {
+					return//Max enemy number reached
 				}
-				else
-					spawnEnemy()
-			}
-			waitToCreate = false
-		}
-	}
 
-	//______________________________________________________________________________________________
-	private fun spawnEnemy() {
-		val enemy = EnemyFactory.create(
+				val enemy = allEnemies[id]//TODO:  (pooling)
+				enemy.reset()
+				try {
+					engine.addEntity(enemy)
+				}
+				catch(e: Exception) {//TODO: on pause, reset timer...
+					Log.e("EnemySystem", "-------------------------------$e")
+				}//TODO: check before fail
+			}
+		} ?: run { }
+Log.e("tag", "--------------spawIfNeeded zzz: ")
+	}
+	private val MIN = 3
+	private val MAX = 7
+	private val allEnemies = ArrayList<Enemy>()
+	private fun spawnAllEnemies() {
+		if(allEnemies.isEmpty())
+		for(i in 0 until MAX) {
+			val enemy = EnemyFactory.create(i,
 						game.assets.particleEffectPool!!,
 						game.render,
 						game.assets.getEnemy1(),
 						EnemyComponent.TYPE.MONSTER1,
 						Vector3(0f, 150f, -300f))
-		engine.addEntity(enemy)
+			allEnemies.add(enemy)
+		}
 	}
 
 	//______________________________________________________________________________________________
@@ -95,10 +102,6 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-		Log.e("EnemySystem", "dispose----------------------------------------")
-		jobToCreate?.cancel()
-		for(entity in entities!!) {
-			(entity as Enemy).reset()
-		}
+		Log.e("EnemySystem", "dispose--------------------------------------------------")
 	}
 }

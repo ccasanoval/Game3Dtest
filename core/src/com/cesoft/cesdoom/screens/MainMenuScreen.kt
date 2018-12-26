@@ -89,7 +89,8 @@ class MainMenuScreen(private val game: CesDoom) : Screen {
 	private fun setListeners() {
 		playButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(LoadingScreen(game))
+				//game.setScreen(LoadingScreen(game))
+				game.reset()
 			}
 		})
 		quitButton.addListener(object : ClickListener() {
