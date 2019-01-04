@@ -2,11 +2,16 @@ package com.cesoft.cesdoom.components
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
-import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.managers.EnemyFactory
+import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class StatusComponent(private val entity: Entity) : Component {
+
+	companion object {
+	    val tag : String = StatusComponent::class.java.simpleName
+	}
+
 	var isSaltando = true
 	private var estado = EnemyComponent.ACTION.WALKING
 	val type = entity.getComponent(EnemyComponent::class.java).type
@@ -14,25 +19,27 @@ class StatusComponent(private val entity: Entity) : Component {
 	/// DEAD
 	private var deadStateTime: Float = 0f
 	fun isDead() = estado == EnemyComponent.ACTION.DYING
-	private fun setDeadState() { estado = EnemyComponent.ACTION.DYING }
+	private fun setDeadState() {
+		estado = EnemyComponent.ACTION.DYING
+		deadStateTime = 0f
+	}
 
 	/// ACHING
 	private var health: Float = 100f
 	private var achingStateTime: Float = 0f
 	fun isAching() = estado == EnemyComponent.ACTION.ACHING
 	private fun setAchingState() {estado = EnemyComponent.ACTION.ACHING}
-	fun hurt(pain: Float = 50f)
-	{
+	fun hurt(pain: Float = 50f) {
 		if(isDead())return
-		if( ! isAching())
-		{
+		if( ! isAching()) {
 			health -= pain
 			achingStateTime = 0f
 			setAchingState()
 			EnemyFactory.playAching(entity)
 		}
-		else
+		else {
 			health -= 5f
+		}
 	}
 
 	/// RUNNING
@@ -76,12 +83,14 @@ class StatusComponent(private val entity: Entity) : Component {
 		//EnemyFactory.update(entity, delta)
 		if( ! isDead() && health < 0)
 		{
-			setDeadState()
 			EnemyFactory.playDying(entity)
+			setDeadState()
+			Log.e(tag, "update:HEALTH < 0--------------------------------------"+isDead())
 		}
 		else if(isDead())
 		{
 			deadStateTime += delta
+			//EnemyFactory.endDying(entity)
 		}
 		else if(isAching())
 		{
@@ -101,6 +110,7 @@ class StatusComponent(private val entity: Entity) : Component {
 
 	/// Reset
 	fun reset() {
+		Log.e(tag, "reset:------------------------------------------------------------")
 		isSaltando = true
 		estado = EnemyComponent.ACTION.WALKING
 		deadStateTime = 0f

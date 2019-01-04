@@ -103,29 +103,23 @@ public class LoadingScreen implements Screen {
     @Override
     public void resize(int width, int height) {
 
-        int offset = 200;
         stage.getViewport().update(width, height);
 
         // Background
         screenBg.setSize(width, height);
-//Log.INSTANCE.e(tag, "resize:----------"+logo.getImageWidth()+" - "+logo.getMinWidth()+" - "+);
+
         // Logo
 		float h = height*2.5f/4f;
 		float w = width*2.5f/4f;//logo.getPrefWidth()
 		logo.setSize(w, h);
         logo.setX((width - logo.getWidth()) / 2);
-        logo.setY((height - logo.getHeight()) / 2 - 100);
+        logo.setY((height - logo.getHeight()) /2);
 
-        Log.INSTANCE.e("aaaa", loadingBarHidden.getPrefWidth()+"+---------------------------");
+        //Log.INSTANCE.e("aaaa", loadingBarHidden.getPrefWidth()+"+---------------------------");
 
         // Bar frame
-		//w = 2f*width/4f;
-		//h = loadingFrame.getPrefHeight() / loadingFrame.getPrefWidth()*w;
-		//loadingFrame.setSize(w, h);
-		//loadingFrame.setScale(2);
-		//loadingFrame.setWidth(stage.getWidth()/2f);
         loadingFrame.setX((stage.getWidth() - loadingFrame.getWidth()) / 2);
-        loadingFrame.setY((stage.getHeight() - loadingFrame.getHeight()) / 2 +300);
+        loadingFrame.setY(height - loadingFrame.getPrefHeight() - 50);
 
         // Bar
 		//loadingBar.setScale(2);

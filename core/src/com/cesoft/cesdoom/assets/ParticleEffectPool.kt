@@ -29,9 +29,11 @@ class ParticleEffectPool(private val assets: Assets, camera: PerspectiveCamera)
 
 	override fun free(effect: ParticleEffect) {
 		try {
+			Log.e("ParticleEffectPool", "free ---------------------------------------------------------$effect")
+			effect.end()
 			effect.reset()
 		}
-		catch (e: Exception) {
+		catch(e: Exception) {
 			Log.e("ParticleEffectPool", "free $effect : 	º$e")
 		}
 		super.free(effect)

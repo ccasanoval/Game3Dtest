@@ -2,7 +2,6 @@ package com.cesoft.cesdoom.managers
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
@@ -35,7 +34,7 @@ object SceneFactory {
 	private val posTemp = Vector3()
 	private val dimTemp = Vector3()
 
-	private var modelStatus = mutableMapOf<GunComponent.TYPE, Boolean>()
+	//private var modelStatus = mutableMapOf<GunComponent.TYPE, Boolean>()
 
 
 	//______________________________________________________________________________________________

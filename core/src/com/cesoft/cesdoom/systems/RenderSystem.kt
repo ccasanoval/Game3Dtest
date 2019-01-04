@@ -151,8 +151,8 @@ class RenderSystem(
 		if( ! Settings.paused) {
 			//drawShadows(delta)
 			renderParticleEffects()
-			drawGun(delta)
 		}
+		drawGun(delta)
 	}
 
 	//______________________________________________________________________________________________
@@ -232,15 +232,17 @@ class RenderSystem(
 		batch.dispose()
 		visibleEntities.clear()
 		isDisposed = true
-Log.e(tag, "dispose ---------------------------------------------------------")
 	}
 
 	///private val particleEffects = ArrayList<ParticleEffect>()
 	fun addParticleEffect(effect: ParticleEffect) {
-Log.e(tag, "addParticleEffect ---------------------------------------------------------")
 		effect.init()
 		effect.start()
 		assets.getParticleSystem()?.add(effect)
-		//particleEffects.add(effect)
+	}
+	fun delParticleEffect(effect: ParticleEffect) {
+		effect.end()
+		effect.reset()
+		assets.getParticleSystem()?.remove(effect)
 	}
 }

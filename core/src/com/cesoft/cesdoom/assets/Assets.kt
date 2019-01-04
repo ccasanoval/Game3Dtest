@@ -1,6 +1,7 @@
 package com.cesoft.cesdoom.assets
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
@@ -15,6 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.I18NBundle
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +62,18 @@ class Assets {
 		if(atlasFile.exists())
 			skin.addRegions(TextureAtlas(atlasFile))
 		skin.load(fileHandle)
+
+		assetManager.setLoader(
+			Text::class.java,
+			TextLoader(InternalFileHandleResolver())
+		)
+	}
+
+	// MAP
+	//
+	fun iniMap() : String? {
+		assetManager.load(AssetDescriptor<Text>( "scene/MapPathFinder.txt", Text::class.java, TextLoader.TextParameter()))
+		return assetManager.get( "scene/MapPathFinder.txt", Text::class.java).string
 	}
 
 	// SOUND

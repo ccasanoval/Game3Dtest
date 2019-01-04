@@ -3,9 +3,25 @@ package com.cesoft.cesdoom.managers
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.map.MapPathFinder
 
 object MazeFactory
 {
+
+	// TODO: Steering MapPathFinder (must reset origin of MapPathFinder...) Constructor?
+	// Wall : 00 -> z = 2*WallFactory.LONG
+	// Wall : 90 -> x = 2*WallFactory.LONG
+	// Wall : 45 -> x = 2*WallFactory.LONG * sin(45)  &  z = 2*WallFactory.LONG * sin(45)
+	/*
+	val height = (RampFactory.LONG+11.5*WallFactory.LONG).toInt()
+	val width = (RampFactory.LONG+11.5*WallFactory.LONG).toInt()
+	val MapPathFinder = ByteArray(width*height)
+	*/
+	private val mapWidth = 1000
+	private val mapHeight = 1000
+	private val mapData = BooleanArray(mapWidth * mapHeight)
+	lateinit var map: MapPathFinder
+
 	//______________________________________________________________________________________________
 	fun create(assets: Assets, engine: Engine)
 	{
@@ -16,6 +32,8 @@ object MazeFactory
 		createSector(engine, -RampFactory.LONG-5.5f*WallFactory.LONG+3)
 		createSector(engine, +RampFactory.LONG+11.5f*WallFactory.LONG-3)
 		createSector(engine, -RampFactory.LONG-11.5f*WallFactory.LONG+3)
+
+		map = MapPathFinder(100, 100, mapData)
 	}
 	//______________________________________________________________________________________________
 	private fun createSector(engine: Engine, x: Float)

@@ -159,7 +159,7 @@ abstract class OcclusionCuller : Disposable {
 		frustumOffsets.clear()
 		for(i in 1 .. 5) {
 			val plane = frustum.planes[i]
-			// Since the plane normals map to an array of btVector3, all four vector components (x, y, z, w)
+			// Since the plane normals MapPathFinder to an array of btVector3, all four vector components (x, y, z, w)
 			// required by the C++ struct must be provided. The plane offset from origin (d) must also be set.
 			frustumNormals.put(plane.normal.x)
 			frustumNormals.put(plane.normal.y)

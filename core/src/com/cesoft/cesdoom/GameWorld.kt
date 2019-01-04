@@ -12,31 +12,27 @@ import com.cesoft.cesdoom.components.GunComponent
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.entities.Gun
+import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.managers.*
 import com.cesoft.cesdoom.systems.*
 import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//TODO: Sound... https://www.gamefromscratch.com/post/2013/11/19/LibGDX-Tutorial-8-Audio.aspx
+//TODO: Constructor para laberinto & MapPathFinder
+//TODO: Columnas en maze, maze cerrado !!
 //TODO: Steering AI !!!!!! https://www.gamedevelopment.blog/full-libgdx-game-tutorial-ashley-steering-behaviors/
 //TODO: Velocidad carga y velocidad ejecucion (mobile 20 fps !!!)
-//TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
 
 //TODO: Configurar joystick Android -> Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga y salto?
-//TODO: splash mientras carga .... recursos con AssetManager, que ventaja tiene?
 //TODO: about screen...
 
 //TODO: Logs solo en debug
-//TODO: Constructor para laberinto¿?
-//TODO: Dependeci Injection?
-//TODO: cuando te mueves, camara gun se mueve a los lados
+//TODO: Dependecy Injection?
 //TODO: Shadows? Fog?
-//TODO: Columnas en maze, maze cerrado !!
-
-//https://github.com/mbrlabs/gdx-splash
 
 //VR
+//TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
 //https://github.com/yangweigbh/Libgdx-CardBoard-Extension
 //https://github.com/Brummi/VRDemo
 //https://github.com/nooone/gdx-vr
@@ -110,14 +106,14 @@ class GameWorld(game: CesDoom) {
 
 		/// PLAYER
 		createPlayer(assets, Vector3(0f,150f,0f))
-		PlayerComponent.health = 1f
+		PlayerComponent.health = 100f
 		PlayerComponent.score = 0
 		PlayerComponent.colorAmbiente = colorAmbiente
 	}
 
 	//______________________________________________________________________________________________
 	private fun createPlayer(assets: Assets, pos: Vector3) {
-		player = PlayerComponent.create(pos)
+		player = Player.create(pos)//PlayerComponent.create(pos)
 		engine.addEntity(player)
 		gun = GunFactory.create(
 				assets.getCZ805(),
@@ -164,11 +160,8 @@ class GameWorld(game: CesDoom) {
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-		Log.e(tag, "dispose:--------------------------------------------")
 		bulletSystem.dispose()
-		enemySystem.dispose()
 		playerSystem.dispose()
-
 		renderSystem.dispose()
 	}
 
@@ -184,9 +177,7 @@ class GameWorld(game: CesDoom) {
 
 	//______________________________________________________________________________________________
 	fun enemyDied(enemy: Enemy) {
-		Log.e(tag, "enemyDied:-------------------------------------------------------------")
-		//enemy.reset()
-		removeEnemy(enemy)//TODO:CES
+		removeEnemy(enemy)
 		PlayerComponent.score += 20
 	}
 }

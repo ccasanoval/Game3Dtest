@@ -9,11 +9,10 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
-import com.badlogic.gdx.math.Matrix4
-import com.badlogic.gdx.math.Quaternion
+import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter
+import com.badlogic.gdx.physics.bullet.collision.btCylinderShape
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
 import com.cesoft.cesdoom.CesDoom
-
 import com.cesoft.cesdoom.components.EnemyComponent.ACTION.*
 import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.Settings
@@ -28,11 +27,15 @@ import com.cesoft.cesdoom.util.Log
 object EnemyFactory
 {
 	private val tag: String = EnemyFactory::class.java.simpleName
-	private val RADIO = 18f
+	val RADIO = 18f
 
 	private var renderSystem: RenderSystem? = null
 	private val activeEnemies = ArrayList<Enemy>()
 
+	private lateinit var game: CesDoom
+	fun init(game: CesDoom) {
+		this.game = game
+	}
 
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()
@@ -48,10 +51,6 @@ object EnemyFactory
 		renderSystem = render
 		val entity = Enemy(id)//enemyPool.obtain()
 
-
-		// Render Particles
-		Log.e(tag, "create:------------------ add particle:"+entity.particleEffect)
-		//render.addParticleEffect(entity.particleEffect)
 
 		/// ENEMY
 		val enemyComponent = EnemyComponent(type)
@@ -83,10 +82,9 @@ object EnemyFactory
 		val stat = StatusComponent(entity)
 		stat.setWalking()
 		entity.add(stat)
-		//setWalkin()
 
 		/// COLLISION
-		val shape = btSphereShape(RADIO)//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
+		val shape = btSphereShape(RADIO-2f)////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, posTemp)
 		val rigidBodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, posTemp)
 		val rigidBody = btRigidBody(rigidBodyInfo)
@@ -96,7 +94,6 @@ object EnemyFactory
 		rigidBody.contactCallbackFilter = BulletComponent.SHOT_FLAG or BulletComponent.PLAYER_FLAG
 		rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
 		rigidBody.userValue = BulletComponent.ENEMY_FLAG
-		//rigidBody.userIndex = index
 		rigidBody.friction = 0f
 		rigidBody.rollingFriction = 1000000f
 		entity.add(BulletComponent(rigidBody, rigidBodyInfo))
@@ -104,7 +101,7 @@ object EnemyFactory
 		/// STEERING
 		//entity.add(SteeringComponent(rigidBody, RADIO))
 
-		entity.init(pos, type, mase, particlePool, rigidBody, rigidBodyInfo)
+		entity.init(type, mase, particlePool, rigidBody, rigidBodyInfo)
 		activeEnemies.add(entity)
 		return entity
 	}
@@ -193,76 +190,6 @@ object EnemyFactory
 
 
 	//______________________________________________________________________________________________
-	//TODO: IA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	private val posTempEnemy = Vector3()
-	private fun mover(enemy: Enemy, playerPosition: Vector3, delta: Float)
-	{
-		//val bullet = enemy.getComponent(BulletComponent::class.java)
-		val status = enemy.getComponent(StatusComponent::class.java)
-
-		/*if(status.isDead() || status.isAching()) {
-			//bullet.rigidBody.linearVelocity = Vector3(0f,0f,0f)
-			return
-		}*/
-
-		/// Steering
-		/*val steering = entity.getComponent(SteeringComponent::class.java)
-		val orientation = Math.atan2(-playerOrientation.z.toDouble(), playerOrientation.x.toDouble()).toFloat()
-		val target = BulletLocation(playerPosition, orientation)
-		val seekSB = Seek<Vector3>(steering, target)
-		val res : SteeringAcceleration<Vector3> = steering.procesar(seekSB)
-		Log.e(tag, "-------------- PlayerSystem: update: res.linear="+res.linear)
-		Log.e(tag, "-------------- PlayerSystem: update: res.angular="+res.angular)
-*/
-		///
-
-		val model = enemy.getComponent(ModelComponent::class.java)
-		model.instance.transform.getTranslation(posTempEnemy)
-		val dX = playerPosition.x - posTempEnemy.x
-		val dZ = playerPosition.z - posTempEnemy.z
-
-		var fuerza = 0f
-		val distanciaConPlayer = posTempEnemy.dst(playerPosition)
-
-		/// No está en condiciones de atacar
-		if(status.isAching() || status.isDead())
-			fuerza = 0f
-		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
-		else if(distanciaConPlayer < RADIO+PlayerComponent.RADIO+2)
-		{
-			status.setAttacking()
-			val pain = 20f
-			PlayerComponent.hurt(delta * pain)
-		}
-		/// Esta cerca, corre a por el
-		else if(distanciaConPlayer < 180f)
-		{
-			fuerza = if(CesDoom.isMobile) 1800f else 2200f
-			status.setRunning()
-		}
-		/// Esta lejos, camina buscando
-		else
-		{
-			//TODO: Wandering ?
-			fuerza = if(CesDoom.isMobile) 600f else 800f
-			status.setWalking()
-		}
-
-		val dir = playerPosition.add(posTempEnemy.scl(-1f)).nor().scl(fuerza*delta)
-		dir.y = enemy.rigidBody!!.linearVelocity.y//bullet.rigidBody.linearVelocity.y
-		enemy.rigidBody!!.linearVelocity = dir//bullet.rigidBody.linearVelocity = dir
-
-		val transf = Matrix4()
-		enemy.rigidBody!!.getWorldTransform(transf)//bullet.rigidBody.getWorldTransform(transf)
-		transf.getTranslation(posTempEnemy)
-
-		val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
-		val rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
-		model.instance.transform.set(posTempEnemy, rot)
-	}
-
-
-	//______________________________________________________________________________________________
 	fun playRunning(entity: Entity) {
 		setAnimation(entity, EnemyComponent.ACTION.RUNNING)
 	}
@@ -281,9 +208,17 @@ object EnemyFactory
 	//______________________________________________________________________________________________
 	fun playDying(entity: Entity) {
 		setAnimation(entity, EnemyComponent.ACTION.DYING)
-		(entity as Enemy).particleEffect?.let {
-			renderSystem?.addParticleEffect(it)
-		}
+		val model = entity.getComponent(ModelComponent::class.java)
+		val enemy = entity as Enemy
+		val effect = enemy.particleEffect!!
+		val re = effect.controllers.first().emitter as RegularEmitter
+
+		re.emissionMode = RegularEmitter.EmissionMode.EnabledUntilCycleEnd
+		effect.setTransform(model.instance.transform)
+		effect.scale(5f, 8f, 5f)
+		effect.init()
+		effect.start()
+		renderSystem?.addParticleEffect(effect)
 	}
 
 	fun update(delta: Float, enemy: Enemy, posPlayer: Vector3, assets: Assets) {
@@ -302,9 +237,6 @@ object EnemyFactory
 
 			if(status.deathProgres() == 1f) {
 				activeEnemies.remove(enemy)
-				//enemyPool.free(enemy)
-				//enemy.reset()
-				Log.e(tag, "update------------------------------------------status.deathProgres() == 1f")
 				return
 			}
 		}
@@ -314,6 +246,7 @@ object EnemyFactory
 		animat?.update(delta)
 
 		//
-		mover(enemy, posPlayer, delta)
+		//mover(enemy, posPlayer, delta)
+		enemy.mover(posPlayer, delta)
 	}
 }
