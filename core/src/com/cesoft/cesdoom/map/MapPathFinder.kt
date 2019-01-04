@@ -13,11 +13,25 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //TODO: traducir de coordenadas: 0,0 central a 0,0 en TopLeft en construcor... mejor funcion que añada los boolean uno a uno...
-class MapPathFinder(val width: Int, val height: Int, private val data: BooleanArray) {
+class MapPathFinder(val width: Int, val height: Int, val scale: Int, private val data: BooleanArray) {
 
-    private val aStar = object : Astar(width, height) {
+    private var aStar : Astar = object : Astar(width, height) {
         override fun isValid(x: Int, y: Int): Boolean {
             return !data[x + y * width]
+        }
+    }
+
+    private val data2 = BooleanArray(width*height)
+    fun addCollider(pos: Vector2) {
+        val x = pos.x.toInt() + width/2
+        val y = pos.y.toInt() + height/2
+        data2[x + y * width] = true
+    }
+    fun compile() {
+        aStar = object : Astar(width, height) {
+            override fun isValid(x: Int, y: Int): Boolean {
+                return !data2[x + y * width]
+            }
         }
     }
 
@@ -47,6 +61,7 @@ class MapPathFinder(val width: Int, val height: Int, private val data: BooleanAr
     }
 
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     //From https://gist.github.com/NathanSweet/7587981
     private open class Astar(val width: Int, val height: Int) {
         private val open: BinaryHeap<PathNode> = BinaryHeap(width * 4, false)
@@ -57,7 +72,7 @@ class MapPathFinder(val width: Int, val height: Int, private val data: BooleanAr
         private var targetY: Int = 0
 
         init {
-            for(i in 0 until width*height)
+            for (i in 0 until width * height)
                 nodes.add(null)
         }
 
@@ -159,7 +174,6 @@ class MapPathFinder(val width: Int, val height: Int, private val data: BooleanAr
             internal var parent: PathNode? = null
         }
     }
-
 }
 
 

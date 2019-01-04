@@ -33,7 +33,7 @@ object MazeFactory
 		createSector(engine, +RampFactory.LONG+11.5f*WallFactory.LONG-3)
 		createSector(engine, -RampFactory.LONG-11.5f*WallFactory.LONG+3)
 
-		map = MapPathFinder(100, 100, mapData)
+		map = MapPathFinder(mapWidth, mapHeight, 4, mapData)
 	}
 	//______________________________________________________________________________________________
 	private fun createSector(engine: Engine, x: Float)

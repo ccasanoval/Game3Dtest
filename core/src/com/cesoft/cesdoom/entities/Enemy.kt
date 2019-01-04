@@ -60,8 +60,17 @@ class Enemy(val id: Int) : Entity() {
 		mapData[7 + width/2      +     (5 + height/2) * width] = true
 		mapData[7 + width/2      +     (6 + height/2) * width] = true
 		mapData[8 + width/2      +     (6 + height/2) * width] = true
-		val map = MapPathFinder(width, height, mapData)
-		map.getNextSteep(Vector2(2f,4f), Vector2(9f,7f))
+		val map = MapPathFinder(width, height, 4, mapData)
+		map.getNextSteep(Vector2(2f,4f), Vector2(9f,7f))//--> 3,5  4,6  5,6  6,6  7,7  8,7  9,7
+
+		map.addCollider(Vector2(4f,5f))
+		map.addCollider(Vector2(5f,5f))
+		map.addCollider(Vector2(6f,5f))
+		map.addCollider(Vector2(7f,5f))
+		map.addCollider(Vector2(7f,6f))
+		map.addCollider(Vector2(8f,6f))
+		map.compile()
+		map.getNextSteep(Vector2(2f,4f), Vector2(9f,7f))//--> 3,5  4,6  5,6  6,6  7,7  8,7  9,7
 
 		//MazeFactory.map.getNextSteep()
 		//---- MAP TEST
