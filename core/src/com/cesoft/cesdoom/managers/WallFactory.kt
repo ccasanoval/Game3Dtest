@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.physics.bullet.collision.Collision
@@ -19,13 +20,15 @@ import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 import com.cesoft.cesdoom.components.ModelComponent
+import com.cesoft.cesdoom.map.MapPathFinder
 import com.cesoft.cesdoom.systems.RenderSystem
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object WallFactory {
-	const val LONG = 50f
+	const val LONG = 25f//TODO:Change texture length!
 	const val HIGH = 25f
 	const val THICK = 4f
 
@@ -45,16 +48,51 @@ object WallFactory {
 	var texture: Texture? = null
 
 	//______________________________________________________________________________________________
-	fun create(pos: Vector3, angle: Float = 0f): Entity {
+	fun create(map: MapPathFinder, pos: Vector3, angle: Float = 0f): Entity {
+
+
+		//angle > -5f && angle < 5f)
+
+		/// COLISION
+		//val shape = Bullet.obtainStaticNodeShape(model.nodes)
+		//modelComponent.instance.transform)
+		//BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
+		//rigidBody.anisotropicFriction = Vector3(1f,1f,1f)
+		val thick = WallFactory.THICK.toInt() * 4	// Debe ser mayor para que no haga colision con enemigo, que no es un punto sino un objeto 3D / o cambiar scale
+		val long = WallFactory.LONG.toInt()   * 2
+		Log.e("WallFactory", "---------------- ${WallFactory.THICK}   ${WallFactory.LONG}")
+		when(angle) {//TODO: change by sin + cos of angle...
+			+00f ->
+				for(x_ in 0..thick)
+					for(z_ in 0..long)
+						map.addCollider(Vector2(x_ + pos.x - 1.5f*thick, z_ + pos.z - long +1.5f*thick))
+			+90f ->
+				for(z_ in 0..thick)
+					for(x_ in 0..long)
+						map.addCollider(Vector2(x_ + pos.x - long, z_ + pos.z - thick))
+			+45f ->
+				for(z_ in 0..thick)
+					for(x_ in z_..z_+(long*0.7971f).toInt())
+						map.addCollider(Vector2(x_ + pos.x - long*0.7971f, x_ + pos.z - long*0.7971f))
+			-45f ->
+				for(z_ in 0..thick)
+					for(x_ in z_..z_+(long*0.7971f).toInt())
+						map.addCollider(Vector2(x_ + pos.x - long*0.7971f, -x_ + pos.z - long*0.7971f))
+		}
+
 		val entity = Entity()
 		pos.y += HIGH
+
+		/// MODELO
+
+		// Mejora para frustum culling
 
 		/// MODELO
 		val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
 		texture?.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture)
 		textureAttribute1.scaleU = 2f
-		textureAttribute1.scaleV = 4f
+		textureAttribute1.scaleV = 2f//4
 		material.set(textureAttribute1)
 
 		val modelo : Model = mb.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)

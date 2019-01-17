@@ -71,10 +71,10 @@ class Assets {
 
 	// MAP
 	//
-	fun iniMap() : String? {
-		assetManager.load(AssetDescriptor<Text>( "scene/MapPathFinder.txt", Text::class.java, TextLoader.TextParameter()))
-		return assetManager.get( "scene/MapPathFinder.txt", Text::class.java).string
-	}
+//	fun iniMap() : String? {
+//		assetManager.load(AssetDescriptor<Text>( "scene/MapPathFinder.txt", Text::class.java, TextLoader.TextParameter()))
+//		return assetManager.get( "scene/MapPathFinder.txt", Text::class.java).string
+//	}
 
 	// SOUND
 	//______________________________________________________________________________________________
@@ -172,6 +172,7 @@ class Assets {
 	fun dispose() {
 		Log.e(tag, "dispose------------------------------------------------------------------------")
 
+		try {
 		getDome().dispose()
 		getEnemy1().dispose()
 		getCZ805().dispose()
@@ -187,14 +188,15 @@ class Assets {
 		getSoundEnemy1().dispose()
 		getSoundEnemy1Die().dispose()
 		getSoundFootSteps().dispose()
-
+		}
+		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e1: $e") }
 
 
 		skin.dispose()
 		//endParticleEffectDeath()
 		GunFactory.dispose()
 		try { assetManager.dispose() }
-		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e: $e") }
+		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e2: $e") }
 	}
 
     //______________________________________________________________________________________________

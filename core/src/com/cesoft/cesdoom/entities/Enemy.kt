@@ -12,7 +12,7 @@ import com.cesoft.cesdoom.assets.ParticleEffectPool
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.managers.MazeFactory
-import com.cesoft.cesdoom.map.MapPathFinder
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,6 +33,11 @@ class Enemy(val id: Int) : Entity() {
 	var rigidBody: btRigidBody? = null
 	private var rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo? = null
 
+	companion object {
+	    val tag: String = Enemy::class.java.simpleName
+		const val RADIO = 18f
+	}
+
 	fun getStatus() = StatusComponent(this)
 
 	/*fun getPosition() : Vector3 {
@@ -48,32 +53,6 @@ class Enemy(val id: Int) : Entity() {
 	fun reset() {
         alive = false
     	mase = 100f
-
-
-		//---- MAP TEST
-		val width = 20
-		val height = 20
-		val mapData = BooleanArray(width * height)
-		mapData[4 + width/2      +     (5 + height/2) * width] = true
-		mapData[5 + width/2      +     (5 + height/2) * width] = true
-		mapData[6 + width/2      +     (5 + height/2) * width] = true
-		mapData[7 + width/2      +     (5 + height/2) * width] = true
-		mapData[7 + width/2      +     (6 + height/2) * width] = true
-		mapData[8 + width/2      +     (6 + height/2) * width] = true
-		val map = MapPathFinder(width, height, 4, mapData)
-		map.getNextSteep(Vector2(2f,4f), Vector2(9f,7f))//--> 3,5  4,6  5,6  6,6  7,7  8,7  9,7
-
-		map.addCollider(Vector2(4f,5f))
-		map.addCollider(Vector2(5f,5f))
-		map.addCollider(Vector2(6f,5f))
-		map.addCollider(Vector2(7f,5f))
-		map.addCollider(Vector2(7f,6f))
-		map.addCollider(Vector2(8f,6f))
-		map.compile()
-		map.getNextSteep(Vector2(2f,4f), Vector2(9f,7f))//--> 3,5  4,6  5,6  6,6  7,7  8,7  9,7
-
-		//MazeFactory.map.getNextSteep()
-		//---- MAP TEST
 
 
 		/// Animation
@@ -116,26 +95,142 @@ class Enemy(val id: Int) : Entity() {
     }
 
 
+	private var posTemp = Vector3()
+	private var reduceCPU = 0
 
-	private var posTempEnemy = Vector3()
-	fun mover(playerPosition: Vector3, delta: Float)
-	{
+	private var step3 = Vector3(-696969f, -696969f, -696969f)
+
+	private var stepCalc = Vector2(-696969f, -696969f)
+	private var currentPos = Vector2(-696969f, -696969f)
+
+	fun mover(playerPosition: Vector3, delta: Float) {
+
+		//TODO: Solo si distancia > EnemyFactory.RADIO + PlayerComponent.RADIO+10
+
+		/// Posicion Enemigo
+		val transf1 = Matrix4()
+		/*val pos1 = Vector3()
+		rigidBody!!.getWorldTransform(transf1)
+		transf1.getTranslation(pos1)
+		currentPos = Vector2(pos1.x, pos1.z)
+		Log.e(tag, "POSIT---------------------------------------------------$currentPos")*/
+
+		val model = getComponent(ModelComponent::class.java)
+		model.instance.transform.getTranslation(posTemp)
+		val dX_ = playerPosition.x - posTemp.x
+		val dZ_ = playerPosition.z - posTemp.z
+		currentPos = Vector2(posTemp.x, posTemp.z)
+		Log.e(tag, "POSIT----------------////////////////////////////////// ${Vector2(posTemp.x, posTemp.z)}")
+
+
+		val status = getComponent(StatusComponent::class.java)
+		val fuerza: Float
+		val rot: Quaternion
+		val distanciaConPlayer = posTemp.dst(playerPosition)
+
+		/// No está en condiciones de atacar
+		if(status.isAching() || status.isDead() || posTemp.y > RADIO+2) {
+			fuerza = 0f
+		}
+		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
+		else if(distanciaConPlayer < Enemy.RADIO + PlayerComponent.RADIO+2) {
+			status.setAttacking()
+			val pain = 20f
+			PlayerComponent.hurt(delta * pain)
+			fuerza = 0f
+		}
+		/// Esta cerca, corre a por el
+		else if(distanciaConPlayer < 180f) {
+			fuerza = if(CesDoom.isMobile) 1600f else 2200f
+			status.setRunning()
+		}
+		/// Esta lejos, camina buscando
+		else {
+			fuerza = if(CesDoom.isMobile) 600f else 800f
+			status.setWalking()
+		}
+
+		//Log.e(tag, "move---------------------------------------------fuerza= $fuerza ")
+
+		var dX = 0f
+		var dZ = 0f
+		/// Si hay movimiento
+        if(status.isAttacking() || fuerza == 0f) {
+            //dX = playerPosition.x - pos1.x
+            //dZ = playerPosition.y - pos1.z
+//            val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
+//            rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
+        }
+        else {
+			//TODO: comparar con posicion anterior y si no cambia no hace falta que recalcules..¿?
+			//if(++reduceCPU % 2 == 0) {
+			val dis :Float =
+					if(stepCalc.x == -696969f) 0f
+					else currentPos.dst2(stepCalc)
+			//Log.e(tag, "dis------------------------------- $dis")
+			if(dis < Enemy.RADIO+PlayerComponent.RADIO || ++reduceCPU % 5 == 0) {
+				val player = Vector2(playerPosition.x, playerPosition.z)
+				if (stepCalc.x == -696969f) {
+					stepCalc = player.cpy()
+					step3 = playerPosition.cpy()
+				}
+				try {
+					stepCalc = MazeFactory.map.getNextSteep(currentPos, player)
+					step3 = Vector3(stepCalc.x, playerPosition.y, stepCalc.y)
+					Log.e(tag, "MOVER---------------------------------------------------$stepCalc")
+				} catch (e: Exception) {
+					Log.e(tag, "mover:e:------------------------------------------------------------$e")
+				}
+			}
+
+			//Log.e(tag, "mover-------------------------player: $playerPosition  /  step: $step2  /  ")
+
+			dX = stepCalc.x - currentPos.x
+			dZ = stepCalc.y - currentPos.y
+//			val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
+//			rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
+		}
+
+		/// Set velocity
+		val dir = step3.add(posTemp.scl(-1f)).nor().scl(fuerza*delta)
+		dir.y = rigidBody!!.linearVelocity.y
+		rigidBody!!.linearVelocity = dir
+
+		val transf = Matrix4()
+		rigidBody!!.getWorldTransform(transf)
+		transf.getTranslation(posTemp)
+
+		/*dX = playerPosition.x - pos1.x
+		dZ = playerPosition.y - pos1.z
+		val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
+		rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())*/
+
+		/// Set position and rotation
+		val theta = Math.atan2(dX_.toDouble(), dZ_.toDouble()).toFloat()
+		rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
+		model.instance.transform.set(posTemp, rot)
+
+
+		//Log.e(tag, "POSIT2--------------------------------------------------$currentPos")
+/*
+
+
 		val status = getComponent(StatusComponent::class.java)
 
 		val model = getComponent(ModelComponent::class.java)
-		model.instance.transform.getTranslation(posTempEnemy)
-		val dX = playerPosition.x - posTempEnemy.x
-		val dZ = playerPosition.z - posTempEnemy.z
+		model.instance.transform.getTranslation(posTemp)
+		val dX = playerPosition.x - posTemp.x
+		val dZ = playerPosition.z - posTemp.z
 
 		var fuerza = 0f
-		val distanciaConPlayer = posTempEnemy.dst(playerPosition)
+		val distanciaConPlayer = posTemp.dst(playerPosition)
 
 		/// No está en condiciones de atacar
 		if(status.isAching() || status.isDead()) {
 			fuerza = 0f
 		}
 		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
-		else if(distanciaConPlayer < EnemyFactory.RADIO + PlayerComponent.RADIO+2)
+		else if(distanciaConPlayer < Enemy.RADIO + PlayerComponent.RADIO+2)
 		{
 			status.setAttacking()
 			val pain = 20f
@@ -154,20 +249,21 @@ class Enemy(val id: Int) : Entity() {
 			status.setWalking()
 		}
 
-		val dir = playerPosition.add(posTempEnemy.scl(-1f)).nor().scl(fuerza*delta)
+		val dir = playerPosition.add(posTemp.scl(-1f)).nor().scl(fuerza*delta)
 		dir.y = rigidBody!!.linearVelocity.y//bullet.rigidBody.linearVelocity.y
 		rigidBody!!.linearVelocity = dir//bullet.rigidBody.linearVelocity = dir
 
 		val transf = Matrix4()
 		rigidBody!!.getWorldTransform(transf)//bullet.rigidBody.getWorldTransform(transf)
-		transf.getTranslation(posTempEnemy)
+		transf.getTranslation(posTemp)
 
 		val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
 		val rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
-		model.instance.transform.set(posTempEnemy, rot)
+		model.instance.transform.set(posTemp, rot)
 
 		val pos = Vector3()
 		model.instance.transform.getTranslation(pos)
+		*/
 	}
 
 }

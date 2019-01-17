@@ -125,7 +125,7 @@ class PlayerSystem(
 	private lateinit var bulletComponent : BulletComponent
 
 	private var rayTestCB: ClosestRayResultCallback = ClosestRayResultCallback(Vector3.Zero, Vector3.Z)
-	private var altura = ALTURA
+	private var altura = ALTURA+350//testing
 	lateinit var gun: Entity
 
 	private val posTemp = Vector3()

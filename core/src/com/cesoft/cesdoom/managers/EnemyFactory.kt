@@ -27,7 +27,6 @@ import com.cesoft.cesdoom.util.Log
 object EnemyFactory
 {
 	private val tag: String = EnemyFactory::class.java.simpleName
-	val RADIO = 18f
 
 	private var renderSystem: RenderSystem? = null
 	private val activeEnemies = ArrayList<Enemy>()
@@ -84,7 +83,7 @@ object EnemyFactory
 		entity.add(stat)
 
 		/// COLLISION
-		val shape = btSphereShape(RADIO-2f)////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
+		val shape = btSphereShape(Enemy.RADIO-2f)////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, posTemp)
 		val rigidBodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, posTemp)
 		val rigidBody = btRigidBody(rigidBodyInfo)
@@ -128,9 +127,9 @@ object EnemyFactory
 					EnemyComponent.ACTION.RUNNING ->
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 6f, time)
 					EnemyComponent.ACTION.ATTACKING -> {
-						when(random.nextInt(2)) {
-							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 10f, time)
-							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 12.8f, time)
+						when(random.nextInt(3)) {
+							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 12.8f, time)
+							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 10f, time)
 						}
 					}
 					EnemyComponent.ACTION.IDLE ->

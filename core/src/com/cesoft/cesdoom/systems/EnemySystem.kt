@@ -19,7 +19,7 @@ import com.cesoft.cesdoom.util.Log
 class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 	private var enemies: ImmutableArray<Enemy>? = null
 	private var player: Player? = null
-	private val MAX = 3	//TODO: aumenta cuando supera x puntos...
+	private val MAX = 1	//TODO: aumenta cuando supera x puntos...
 	private val SPAWN_DELAY = 5*1000//TODO: si pausa o background, debe actualizar time!!!
 	private val allEnemies = ArrayList<Enemy>()
 

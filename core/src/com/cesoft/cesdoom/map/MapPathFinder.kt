@@ -8,56 +8,108 @@ import com.badlogic.gdx.utils.IntArray
 import com.cesoft.cesdoom.util.Log
 
 //TODO: import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder
+//      https://github.com/conquest/conquest
+//TODO: es.usc.citius.hipster.algorithm.ADStarForward;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//TODO: traducir de coordenadas: 0,0 central a 0,0 en TopLeft en construcor... mejor funcion que añada los boolean uno a uno...
-class MapPathFinder(val width: Int, val height: Int, val scale: Int, private val data: BooleanArray) {
+class MapPathFinder(val width: Int, val height: Int, val scale: Int) {
 
-    private var aStar : Astar = object : Astar(width, height) {
-        override fun isValid(x: Int, y: Int): Boolean {
-            return !data[x + y * width]
-        }
+    companion object {
+        private val tag = MapPathFinder::class.java.simpleName
     }
 
-    private val data2 = BooleanArray(width*height)
+    private var aStar : Astar? = null
+    private val data = BooleanArray(width*height)
     fun addCollider(pos: Vector2) {
-        val x = pos.x.toInt() + width/2
-        val y = pos.y.toInt() + height/2
-        data2[x + y * width] = true
+        val x = pos.x.toInt()/scale + width/2
+        val y = pos.y.toInt()/scale + height/2
+        data[x + y * width] = true
     }
-    fun compile() {
+    fun compile(walkerSize: Float) {
+        val walker = (walkerSize/scale).toInt()
+        Log.e(tag, "----------------------------- WALKER SIZE: $walker  $walkerSize")
         aStar = object : Astar(width, height) {
             override fun isValid(x: Int, y: Int): Boolean {
-                return !data2[x + y * width]
+                if(walker <= 1) {
+                    return !data[x + y*width]
+                }
+                else {
+                    if(data[x + y*width])return false
+                    for(i in 1..walker) {
+                        if(x+i < width  && data[x+i + y*width]) return false
+                        if(x-i >= 0     && data[x-i + y*width]) return false
+                        if(y+i < height && data[x + (y+i)*width]) return false
+                        if(y-i >= 0     && data[x + (y-i)*width]) return false
+                    }
+                    return true
+                }
             }
         }
+        print()
+    }
+    private fun print() {
+        var s: String = "  "
+        Log.e("MapPathFinder3", "\n\n\n")
+        for(x in 0 until width)
+            s+=x%10
+        Log.e("MapPathFinder3", s)
+        for (y in 0 until height) {
+            s = "$y\t"
+            for(x in 0 until width) {
+                s += if(data[y * width + x]) "X" else "·"
+            }
+            Log.e("MapPathFinder3", s)
+        }
+        Log.e("MapPathFinder3", "\n\n\n")
     }
 
 
+    private var onceOnly = true
+    private var xOldCalc = -99999999
+    private var yOldCalc = -99999999
     fun getNextSteep(agent: Vector2, target: Vector2) : Vector2 {
+        aStar?.let { aStar ->
 
-        Log.e("MAP", "----------------------- $agent to $target ")
-        //TODO: traducir de coordenadas: 0,0 central a 0,0 en TopLeft y viceversa...
+            //Log.e("MAP", "----------------------- $agent to $target ")
 
-        val xIni = agent.x.toInt() + width/2
-        val yIni = agent.y.toInt() + height/2
-        val xEnd = target.x.toInt() + width/2
-        val yEnd = target.y.toInt() + height/2
+            val xIni = (agent.x/scale + width/2f).toInt()
+            val yIni = (agent.y/scale + height/2f).toInt()
+            val xEnd = (target.x/scale + width/2f).toInt()
+            val yEnd = (target.y/scale + height/2f).toInt()
+            //Log.e(tag, "0------ xEnd=$xEnd------- $target------- ${target.x/scale}---- ${width/2f}-------")
 
-        val path = aStar.getPath(xIni, yIni, xEnd, yEnd)
-        val n = path.size
-        var i = 0
-        var x = 0
-        var y = 0
-        while(i < n) {
-            x = path.get(i)
-            y = path.get(i + 1)
-            Log.e("MAP", "$i----------------------- X=$x, Y=$y  /  X=${x-width/2}, Y=${y-height/2} ")
-            i += 2
+
+            //TODO: si player esta dentro de zona prohibida, buscar punto mas cercano
+
+            val path = aStar.getPath(xIni, yIni, xEnd, yEnd)
+            //Log.e(tag, "A------xIni=$xIni--yIni=$yIni------------xEnd=$xEnd, yEnd=$yEnd------------  $agent    pathSize=${path.size} ******************************************")
+            val n = path.size
+            var i = 0
+            var x = 0
+            var y = 0
+
+            while(i < n) {
+                if(path.get(i) != xOldCalc || path.get(i + 1) != yOldCalc) {
+                    x = path.get(i)
+                    y = path.get(i + 1)
+                }
+                //if(onceOnly)Log.e(tag, "B $i----------------------- X=$x, Y=$y  /  X=${scale * (x - width / 2)}, Y=${scale * (y - height / 2)} ")
+                i += 2
+            }
+            onceOnly = false
+
+            xOldCalc = x
+            yOldCalc = y
+
+            Log.e(tag, "CALC--- -- -- -- -- -- -- -- -- --- - -- -- - - -  - - - - -  -- ------- $xIni/$x  $yIni/$y-------")
+
+            //Log.e(tag, "C------xIni=$xIni--yIni=$yIni---------------NEXT STEP X=$x, Y=$y  /  X=${scale * (x - width / 2)}, Y=${scale * (y - height / 2)} ")
+            Log.e(tag, "CALC---------------------------------------------------"+Vector2(x.toFloat() - width/2, y.toFloat() - height/2).scl(scale.toFloat(), scale.toFloat()))
+            return Vector2(x.toFloat() - width/2, y.toFloat() - height/2).scl(scale.toFloat(), scale.toFloat())
         }
-        return Vector2(x.toFloat() -width/2 , y.toFloat() -height/2)
+        throw Exception("MapPathFinder3 not initialized")
     }
 
 
@@ -102,12 +154,14 @@ class MapPathFinder(val width: Int, val height: Int, val scale: Int, private val
             val lastRow = height - 1
             var i = 0
             while (open.size > 0) {
-                var node: PathNode? = open.pop()
-                if (node!!.x == targetX && node.y == targetY) {
+                //if(i > 100)return path//TODO:CES:TEST-----------------find how to search parcial..
+
+                var node: PathNode = open.pop()!!
+                if (node.x == targetX && node.y == targetY) {
                     while (node !== root) {
-                        path.add(node!!.x)
+                        path.add(node.x)
                         path.add(node.y)
-                        node = node.parent
+                        node = node.parent!!
                     }
                     break
                 }
@@ -161,6 +215,7 @@ class MapPathFinder(val width: Int, val height: Int, val scale: Int, private val
             }
         }
 
+        // To be overriden when we have the complete map
         protected open fun isValid(x: Int, y: Int): Boolean {
             return true
         }
@@ -176,63 +231,3 @@ class MapPathFinder(val width: Int, val height: Int, val scale: Int, private val
     }
 }
 
-
-
-/*
-
-import com.cesoft.cesdoom.MapPathFinder.MapPathFinder
-import com.badlogic.gdx.math.Interpolation.circle
-
-import sun.font.LayoutPathImpl.getPath
-
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.ai.pfa.Connection
-import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder
-import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph
-
-
-class CesIndexGraph : IndexedGraph<BinaryHeap.Node> {
-    private val graph = ArrayList<BinaryHeap.Node>()
-
-    init {
-        for(i in 0..99)
-            graph.add(i, BinaryHeap.Node(1f))
-    }
-
-    /// implement: IndexedGraph
-    override fun getConnections(fromNode: BinaryHeap.Node?): Array<Connection<BinaryHeap.Node>> {
-        val conn = Array<Connection<BinaryHeap.Node>>()
-        fromNode
-        return conn
-    }
-    override fun getIndex(node: BinaryHeap.Node?): Int {
-        return 0
-    }
-    override fun getNodeCount(): Int {
-        return 100
-    }
-
-    ///
-    fun getNodeByXY(x: Float, y: Float) {
-
-    }
-}
-
-fun a(agent: Vector2, target: Vector2) {
-    val graph = CesIndexGraph()
-    val pathFinder = IndexedAStarPathFinder<BinaryHeap.Node>(graph, false)
-
-    val startX = agent.x
-    val startY = agent.y
-
-    val endX = target.x
-    val endY = target.y
-
-    val startNode = graph.getNodeByXY(startX, startY)
-    val endNode = graph.getNodeByXY(endX, endY)
-
-    val resultPath = null
-    pathFinder.searchNodePath(startNode, endNode, HeuristicImp(), resultPath)
-    Gdx.app.log("Path", ""+ resultPath.getCount())
-
-}*/

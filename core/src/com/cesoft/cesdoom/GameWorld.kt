@@ -92,7 +92,7 @@ class GameWorld(game: CesDoom) {
 		engine.addEntity(SceneFactory.getDome(assets.getDome()))
 		engine.addEntity(SceneFactory.getSuelo(assets.getSuelo(), lonMundo))
 		SceneFactory.loadSkyline(assets.getSkyline(), engine, lonMundo/2f)
-		SceneFactory.loadJunk(assets.getJunk(), engine, lonMundo/3f)
+		SceneFactory.loadJunk(assets.getJunk(), engine, lonMundo/4f)
 
 		/// MAZE
 		MazeFactory.create(assets, engine)
