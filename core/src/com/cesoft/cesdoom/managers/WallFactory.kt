@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.physics.bullet.collision.Collision
@@ -20,7 +19,7 @@ import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 import com.cesoft.cesdoom.components.ModelComponent
-import com.cesoft.cesdoom.map.MapPathFinder
+import com.cesoft.cesdoom.map.MapGraphFactory
 import com.cesoft.cesdoom.systems.RenderSystem
 import com.cesoft.cesdoom.util.Log
 
@@ -48,7 +47,7 @@ object WallFactory {
 	var texture: Texture? = null
 
 	//______________________________________________________________________________________________
-	fun create(map: MapPathFinder, pos: Vector3, angle: Float = 0f): Entity {
+	fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float = 0f): Entity {
 
 
 		//angle > -5f && angle < 5f)
@@ -58,32 +57,31 @@ object WallFactory {
 		//modelComponent.instance.transform)
 		//BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
 		//rigidBody.anisotropicFriction = Vector3(1f,1f,1f)
-		val thick = WallFactory.THICK.toInt() * 4	// Debe ser mayor para que no haga colision con enemigo, que no es un punto sino un objeto 3D / o cambiar scale
-		val long = WallFactory.LONG.toInt()   * 2
+		val thick = WallFactory.THICK.toInt() * 6	// Debe ser mayor para que no haga colision con enemigo, que no es un punto sino un objeto 3D / o cambiar scale
+		val long = WallFactory.LONG.toInt()   * 4
 		Log.e("WallFactory", "---------------- ${WallFactory.THICK}   ${WallFactory.LONG}")
 		when(angle) {//TODO: change by sin + cos of angle...
-			+00f ->
+			+00f -> //--- Vertical
 				for(x_ in 0..thick)
 					for(z_ in 0..long)
-						map.addCollider(Vector2(x_ + pos.x - 1.5f*thick, z_ + pos.z - long +1.5f*thick))
-			+90f ->
+						mapFactory.addCollider(x_ + pos.x - thick/2, z_ + pos.z + long/2)
+			+90f -> //--- Horizontal
 				for(z_ in 0..thick)
 					for(x_ in 0..long)
-						map.addCollider(Vector2(x_ + pos.x - long, z_ + pos.z - thick))
+						mapFactory.addCollider(x_ + pos.x - long/2, z_ + pos.z + thick/2)
 			+45f ->
 				for(z_ in 0..thick)
 					for(x_ in z_..z_+(long*0.7971f).toInt())
-						map.addCollider(Vector2(x_ + pos.x - long*0.7971f, x_ + pos.z - long*0.7971f))
+						mapFactory.addCollider(x_ + pos.x - long*0.7971f, x_ + pos.z - long*0.7971f)
 			-45f ->
 				for(z_ in 0..thick)
 					for(x_ in z_..z_+(long*0.7971f).toInt())
-						map.addCollider(Vector2(x_ + pos.x - long*0.7971f, -x_ + pos.z - long*0.7971f))
+						mapFactory.addCollider(x_ + pos.x - long*0.7971f, -x_ + pos.z - long*0.7971f)
 		}
 
 		val entity = Entity()
 		pos.y += HIGH
 
-		/// MODELO
 
 		// Mejora para frustum culling
 

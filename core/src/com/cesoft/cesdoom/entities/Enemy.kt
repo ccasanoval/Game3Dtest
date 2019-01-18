@@ -98,10 +98,10 @@ class Enemy(val id: Int) : Entity() {
 	private var posTemp = Vector3()
 	private var reduceCPU = 0
 
-	private var step3 = Vector3(-696969f, -696969f, -696969f)
+	private var nextStep3D = Vector3()
 
-	private var stepCalc = Vector2(-696969f, -696969f)
-	private var currentPos = Vector2(-696969f, -696969f)
+	private var stepCalc2D = Vector2()
+	private var currentPos2D = Vector2()
 
 	fun mover(playerPosition: Vector3, delta: Float) {
 
@@ -119,7 +119,7 @@ class Enemy(val id: Int) : Entity() {
 		model.instance.transform.getTranslation(posTemp)
 		val dX_ = playerPosition.x - posTemp.x
 		val dZ_ = playerPosition.z - posTemp.z
-		currentPos = Vector2(posTemp.x, posTemp.z)
+		currentPos2D = Vector2(posTemp.x, posTemp.z)
 		Log.e(tag, "POSIT----------------////////////////////////////////// ${Vector2(posTemp.x, posTemp.z)}")
 
 
@@ -163,8 +163,22 @@ class Enemy(val id: Int) : Entity() {
         }
         else {
 			//TODO: comparar con posicion anterior y si no cambia no hace falta que recalcules..¿?
+			val player2D = Vector2(playerPosition.x, playerPosition.z)
+			val map = MazeFactory.mapFactory.map
+			val path = map.findPath(currentPos2D, player2D)
+			if(path.size > 1) {
+				stepCalc2D = path[1]
+				nextStep3D = Vector3(stepCalc2D.x, posTemp.y, stepCalc2D.y)
+			}
+			else
+				nextStep3D = Vector3(player2D.x, posTemp.y, player2D.y)
+			Log.e(tag, "ENEMY--------- $currentPos2D")
+			Log.e(tag, "PLAYER--------- $player2D")
+			if(path.size > 2)
+				Log.e(tag, "PATH--------- ${path[0]}  ${path[1]}  ${path[2]}")
+
 			//if(++reduceCPU % 2 == 0) {
-			val dis :Float =
+			/*val dis :Float =
 					if(stepCalc.x == -696969f) 0f
 					else currentPos.dst2(stepCalc)
 			//Log.e(tag, "dis------------------------------- $dis")
@@ -175,24 +189,26 @@ class Enemy(val id: Int) : Entity() {
 					step3 = playerPosition.cpy()
 				}
 				try {
-					stepCalc = MazeFactory.map.getNextSteep(currentPos, player)
+					//stepCalc = MazeFactory.map.getNextSteep(currentPos, player)
+					val map = MazeFactory.mapFactory.map
+					map.findPath(currentPos, player)
 					step3 = Vector3(stepCalc.x, playerPosition.y, stepCalc.y)
 					Log.e(tag, "MOVER---------------------------------------------------$stepCalc")
 				} catch (e: Exception) {
 					Log.e(tag, "mover:e:------------------------------------------------------------$e")
 				}
-			}
+			}*/
 
 			//Log.e(tag, "mover-------------------------player: $playerPosition  /  step: $step2  /  ")
 
-			dX = stepCalc.x - currentPos.x
-			dZ = stepCalc.y - currentPos.y
+			dX = stepCalc2D.x - currentPos2D.x
+			dZ = stepCalc2D.y - currentPos2D.y
 //			val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
 //			rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
 		}
 
 		/// Set velocity
-		val dir = step3.add(posTemp.scl(-1f)).nor().scl(fuerza*delta)
+		val dir = nextStep3D.add(posTemp.scl(-1f)).nor().scl(fuerza*delta)
 		dir.y = rigidBody!!.linearVelocity.y
 		rigidBody!!.linearVelocity = dir
 
