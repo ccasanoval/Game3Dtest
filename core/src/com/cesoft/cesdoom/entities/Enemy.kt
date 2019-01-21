@@ -104,6 +104,7 @@ class Enemy(val id: Int) : Entity() {
 	private var currentPos2D = Vector2()
 
 
+	private var stepCounter = 0
 	private var path: ArrayList<Vector2>? = null
 	private var pathIndex = 0
 	private var timePathfinding = 0L
@@ -112,7 +113,7 @@ class Enemy(val id: Int) : Entity() {
 		//TODO: Solo si distancia > EnemyFactory.RADIO + PlayerComponent.RADIO+10
 
 		/// Posicion Enemigo
-		val transf1 = Matrix4()
+		//val transf1 = Matrix4()
 		/*val pos1 = Vector3()
 		rigidBody!!.getWorldTransform(transf1)
 		transf1.getTranslation(pos1)
@@ -166,11 +167,14 @@ class Enemy(val id: Int) : Entity() {
 //            rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
         }
         else {
-			//TODO: comparar con posicion anterior y si no cambia no hace falta que recalcules..¿?
+
 			val player2D = Vector2(playerPosition.x, playerPosition.z)
 			val map = MazeFactory.mapFactory.map
-			//if(System.currentTimeMillis() > timePathfinding + 500) {
-			if(pathIndex == 0 || pathIndex >= path!!.size) {
+
+			//TODO: Si player cambia mucho la posicion, obliga a recalcular
+
+			stepCounter++ //Obliga a recalcular pase lo que pase cada x ciclos
+			if(stepCounter%20==0 || pathIndex == 0 || pathIndex >= path!!.size) {
 				timePathfinding = System.currentTimeMillis()
 				path = map.findPath(currentPos2D, player2D)
 				path?.let { path ->
@@ -186,23 +190,18 @@ class Enemy(val id: Int) : Entity() {
 				}
 			}
 			else {
-				/*if(pathIndex >= path!!.size) {
+				val next = path!![pathIndex]
+
+				if(currentPos2D.dst(next) < 5) {
+					pathIndex++
+				}
+				if(pathIndex >= path!!.size) {
 					pathIndex = 0
 				}
-				else {*/
-					val next = path!![pathIndex]
-
-					if(currentPos2D.dst(next) < 5) {
-						pathIndex++
-					}
-					if(pathIndex >= path!!.size) {
-						pathIndex = 0
-					}
-					else {
-						stepCalc2D = next
-						nextStep3D = Vector3(stepCalc2D.x, posTemp.y, stepCalc2D.y)
-					}
-				//}
+				else {
+					stepCalc2D = next
+					nextStep3D = Vector3(stepCalc2D.x, posTemp.y, stepCalc2D.y)
+				}
 			}
 			/*else {
 				pathIndex = 0

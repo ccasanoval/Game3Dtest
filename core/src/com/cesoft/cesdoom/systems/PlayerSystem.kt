@@ -125,7 +125,7 @@ class PlayerSystem(
 	private lateinit var bulletComponent : BulletComponent
 
 	private var rayTestCB: ClosestRayResultCallback = ClosestRayResultCallback(Vector3.Zero, Vector3.Z)
-	private var altura = ALTURA+200//TODO:CES:testing
+	private var altura = ALTURA//TODO:CES:testing altura = ALTURA+400
 	lateinit var gun: Entity
 
 	private val posTemp = Vector3()
@@ -181,7 +181,7 @@ class PlayerSystem(
 		/// MOBILE
 		if(CesDoom.isMobile)
 		{
-			if(pitch - pr > 120)//Angulo mirando abajo
+			if(pitch - pr > 120)//Angulo mirando abajo //TODO:put back 120 , TEST=160
 				pr = pitch - 120
 			else if(pitch - pr < 40)//Angulo mirando arriba
 				pr = pitch - 40

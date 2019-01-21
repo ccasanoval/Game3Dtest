@@ -104,6 +104,7 @@ class MapGraph(val width: Float, val height: Float, val scale: Int)
         val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
         val nodeOrig = getNode(orig)
         val nodeDest = getNode(dest)
+        Log.e(tag, "findPath a------:----- $nodeOrig $nodeDest")
         pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
         pathSmoother.smoothPath(path)
         return path
