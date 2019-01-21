@@ -103,6 +103,10 @@ class Enemy(val id: Int) : Entity() {
 	private var stepCalc2D = Vector2()
 	private var currentPos2D = Vector2()
 
+
+	private var path: ArrayList<Vector2>? = null
+	private var pathIndex = 0
+	private var timePathfinding = 0L
 	fun mover(playerPosition: Vector3, delta: Float) {
 
 		//TODO: Solo si distancia > EnemyFactory.RADIO + PlayerComponent.RADIO+10
@@ -165,17 +169,50 @@ class Enemy(val id: Int) : Entity() {
 			//TODO: comparar con posicion anterior y si no cambia no hace falta que recalcules..¿?
 			val player2D = Vector2(playerPosition.x, playerPosition.z)
 			val map = MazeFactory.mapFactory.map
-			val path = map.findPath(currentPos2D, player2D)
-			if(path.size > 1) {
-				stepCalc2D = path[1]
-				nextStep3D = Vector3(stepCalc2D.x, posTemp.y, stepCalc2D.y)
+			//if(System.currentTimeMillis() > timePathfinding + 500) {
+			if(pathIndex == 0 || pathIndex >= path!!.size) {
+				timePathfinding = System.currentTimeMillis()
+				path = map.findPath(currentPos2D, player2D)
+				path?.let { path ->
+					if(path.size > 1) {
+						pathIndex = 2
+						stepCalc2D = path[1]
+						nextStep3D = Vector3(stepCalc2D.x, posTemp.y, stepCalc2D.y)
+						if(path.size > 2)
+							Log.e(tag, "PATH---------************************  ${path[0]}      *** ${path[1]}      ${path[2]}")
+					}
+					else
+						nextStep3D = Vector3(player2D.x, posTemp.y, player2D.y)
+				}
 			}
-			else
+			else {
+				/*if(pathIndex >= path!!.size) {
+					pathIndex = 0
+				}
+				else {*/
+					val next = path!![pathIndex]
+
+					if(currentPos2D.dst(next) < 5) {
+						pathIndex++
+					}
+					if(pathIndex >= path!!.size) {
+						pathIndex = 0
+					}
+					else {
+						stepCalc2D = next
+						nextStep3D = Vector3(stepCalc2D.x, posTemp.y, stepCalc2D.y)
+					}
+				//}
+			}
+			/*else {
+				pathIndex = 0
 				nextStep3D = Vector3(player2D.x, posTemp.y, player2D.y)
+			}*/
+
+			Log.e(tag, "PATH---------******************::: $stepCalc2D")
+
 			Log.e(tag, "ENEMY--------- $currentPos2D")
 			Log.e(tag, "PLAYER--------- $player2D")
-			if(path.size > 2)
-				Log.e(tag, "PATH--------- ${path[0]}  ${path[1]}  ${path[2]}")
 
 			//if(++reduceCPU % 2 == 0) {
 			/*val dis :Float =

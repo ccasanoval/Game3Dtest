@@ -27,11 +27,11 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
             Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($x,$y) => ($point) ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     }
 
-    fun clear() {
-        map.clear()
+    /*fun clear() {
+        //map.clear()
         for(i in 0 until mapData.size)
             mapData[i]=0
-    }
+    }*/
 
     fun compile() {
         for(y in 0 until map.cy) {
@@ -55,7 +55,7 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
     fun print() {
         var col = " \t"
         for(x in 0 until map.cx)
-            col += " \t"+(x%10)
+            col += " "+(x%10)
         Log.e("MAP", col)
         for(y in 0 until map.cy) {
             var row = "$y \t"
@@ -91,7 +91,7 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
     }*/
 
     fun compile(mapData: IntArray) : MapGraph {
-        map.clear()
+        //map.clear()
         for(y in 0 until map.cy) {
             for(x in 0 until map.cx) {
                 val index = x + y * map.cx

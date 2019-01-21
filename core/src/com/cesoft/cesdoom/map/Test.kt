@@ -21,7 +21,7 @@ object Test {
             0, 0, 0, 1, 1, 1, 1, 0, 0, 0, //6
             0, 0, 0, 0, 0, 0, 1, 0, 0, 0, //7
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //8
-            0, 0, 0, 0, 0, 1, 0, 0, 0, 0)//9
+            0, 0, 0, 0, 0, 1, 0, 0, 0, 0) //9
 
 
     @JvmStatic
@@ -30,9 +30,10 @@ object Test {
 
         //var path = map.findPath(map.getNode(0, 0), map.getNode(cx - 1, cy - 1))
         var path = map.findPath(Point(0, 0), Point(cx - 1, cy - 1))
-        Log.e("TEST", "\n--------- 0,0 to cx-1,cy-1 ------------N=" + path.count + " ")
+        Log.e("TEST", "\n--------- 0,0 to ${cx-1},${cy-1} ------------N=" + path.count + " ")
         for(i in 0 until path.count) {
-            Log.e("TEST", i.toString() + "---------------------" + path.get(i).point)
+            //Log.e("TEST", "$i---------------------")
+            Log.e("TEST", "$i---------------------" + path.get(i).point)
         }
 
         //path = map.findPath(map.getNode(1, 1), map.getNode(2, 1))

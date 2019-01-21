@@ -25,9 +25,9 @@ object MazeFactory
 	//480x1 == 240x2 == 160x3 == 120x4
 	private const val long = WallFactory.LONG
 	private const val long2 = 2*WallFactory.LONG
-	private const val mapWidth = 2*(5f*long2)
-	private const val mapHeight = 2*(5f*long2)
-	private const val scale = 1
+	private const val mapWidth = 3f*(5f*long2)
+	private const val mapHeight = 3f*(5f*long2)
+	private const val scale = 2
 	val mapFactory = MapGraphFactory(mapWidth, mapHeight, scale)
 
 
@@ -69,6 +69,7 @@ object MazeFactory
 	}
 	private fun createTest(engine: Engine) {
 
+//		engine.addEntity(WallFactory.create(mapFactory, Vector3(0f, 0f, 0f), 90f))
 
 //		engine.addEntity(WallFactory.create(mapFactory, Vector3(+long, 0f, 0f), 90f))
 //		engine.addEntity(WallFactory.create(mapFactory, Vector3(0f, 0f, +long), 00f))

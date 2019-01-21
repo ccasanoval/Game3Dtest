@@ -22,6 +22,7 @@ import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.map.MapGraphFactory
 import com.cesoft.cesdoom.systems.RenderSystem
 import com.cesoft.cesdoom.util.Log
+import kotlin.math.sign
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,26 +58,26 @@ object WallFactory {
 		//modelComponent.instance.transform)
 		//BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
 		//rigidBody.anisotropicFriction = Vector3(1f,1f,1f)
-		val thick = WallFactory.THICK.toInt() * 6	// Debe ser mayor para que no haga colision con enemigo, que no es un punto sino un objeto 3D / o cambiar scale
+		val thick = WallFactory.THICK.toInt() * 7	// Debe ser mayor para que no haga colision con enemigo, que no es un punto sino un objeto 3D / o cambiar scale
 		val long = WallFactory.LONG.toInt()   * 4
 		Log.e("WallFactory", "---------------- ${WallFactory.THICK}   ${WallFactory.LONG}")
 		when(angle) {//TODO: change by sin + cos of angle...
 			+00f -> //--- Vertical
-				for(x_ in 0..thick)
-					for(z_ in 0..long)
-						mapFactory.addCollider(x_ + pos.x - thick/2, z_ + pos.z + long/2)
+				for(x_ in -thick/2..thick/2)
+					for(z_ in -long/2..long/2)
+						mapFactory.addCollider(pos.x + x_, pos.z + z_)
 			+90f -> //--- Horizontal
-				for(z_ in 0..thick)
-					for(x_ in 0..long)
-						mapFactory.addCollider(x_ + pos.x - long/2, z_ + pos.z + thick/2)
+				for(z_ in -thick/2..thick/2)
+					for(x_ in -long/2..long/2)
+						mapFactory.addCollider(pos.x + x_, pos.z + z_)
 			+45f ->
 				for(z_ in 0..thick)
 					for(x_ in z_..z_+(long*0.7971f).toInt())
-						mapFactory.addCollider(x_ + pos.x - long*0.7971f, x_ + pos.z - long*0.7971f)
+						mapFactory.addCollider(pos.x + z_, pos.z + z_)
 			-45f ->
 				for(z_ in 0..thick)
 					for(x_ in z_..z_+(long*0.7971f).toInt())
-						mapFactory.addCollider(x_ + pos.x - long*0.7971f, -x_ + pos.z - long*0.7971f)
+						mapFactory.addCollider(pos.x + x_, pos.z + x_)
 		}
 
 		val entity = Entity()
