@@ -136,13 +136,11 @@ object SceneFactory {
 		entity.add(modelComponent)
 
 		/// COLLISION
-		//val shape = btBoxShape(Vector3(5000f, 1f, 5000f))
 		val shape = Bullet.obtainStaticNodeShape(modelo.nodes)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, null, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(modelComponent.instance.transform)
-		//rigidBody.motionState = MotionState(Matrix4().setTranslation(Vector3(x,y,z)))
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 		rigidBody.contactCallbackFilter = 0
 		rigidBody.contactCallbackFlag = BulletComponent.GROUND_FLAG

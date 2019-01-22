@@ -5,12 +5,21 @@ import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.cesoft.cesdoom.managers.MazeFactory;
-import com.cesoft.cesdoom.managers.WallFactory;
 import com.cesoft.cesdoom.managers.WallMapFactory;
 import com.cesoft.cesdoom.util.Log;
-
 import java.util.ArrayList;
 
+//https://libgdx.badlogicgames.com/ci/gdx-ai/docs/com/badlogic/gdx/ai/steer/behaviors/FollowPath.html
+//http://tutorials.boondog.xyz/2016/12/13/pathfinding-with-jump-point-seach-2/
+//https://happycoding.io/tutorials/libgdx/pathfinding
+//https://www.javatips.net/api/gdx-ai-master/tests/src/com/badlogic/gdx/ai/tests/pfa/tests/InterruptibleFlatTiledAStarTest.java
+//https://www.javatips.net/api/gdx-ai-master/tests/src/com/badlogic/gdx/ai/tests/pfa/tests/InterruptibleHierarchicalTiledAStarTest.java
+//http://tutorials.boondog.xyz/2016/12/13/pathfinding-with-jump-point-seach-2/
+//https://happycoding.io/tutorials/libgdx/pathfinding
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 public class Test2
 {
     private static int cx = 10;
@@ -67,7 +76,7 @@ public class Test2
 
     private static void createTest() {
         float lng = MazeFactory.lng;
-        float long2 = MazeFactory.long2;
+        float lng2 = MazeFactory.lng2;
         //float mapWidth = MazeFactory.mapWidth;
         //float mapHeight = MazeFactory.mapHeight;
         //int scale = MazeFactory.scale;
@@ -75,14 +84,15 @@ public class Test2
 
 
         WallMapFactory wf = WallMapFactory.INSTANCE;
+        //GateMapFactory wf = WallMapFactory.INSTANCE;
         int e = 0;
 
 
 
 
         /// Interior -------------
-        wf.create(mapFactory, new Vector3(0*lng, 0f, +.5f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(0*lng, 0f, -.5f*long2), 90f, e);
+        wf.create(mapFactory, new Vector3(0*lng, 0f, +.5f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(0*lng, 0f, -.5f*lng2), 90f, e);
         //
         wf.create(mapFactory, new Vector3(+1f*lng, 0f, +2*lng), 00f, e);
         wf.create(mapFactory, new Vector3(-1f*lng, 0f, +2*lng), 00f, e);
@@ -92,65 +102,83 @@ public class Test2
 
 
         /// Middle -------------
-        wf.create(mapFactory, new Vector3(+5*lng, 0f, +2.0f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-5*lng, 0f, +2.0f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(+5*lng, 0f, -2.0f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-5*lng, 0f, -2.0f*long2), 90f, e);
+        wf.create(mapFactory, new Vector3(+5*lng, 0f, +2.0f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-5*lng, 0f, +2.0f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(+5*lng, 0f, -2.0f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-5*lng, 0f, -2.0f*lng2), 90f, e);
 
-        wf.create(mapFactory, new Vector3(+3*lng, 0f, +3.0f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-3*lng, 0f, +3.0f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(+3*lng, 0f, -3.0f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-3*lng, 0f, -3.0f*long2), 90f, e);
+        wf.create(mapFactory, new Vector3(+3*lng, 0f, +3.0f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-3*lng, 0f, +3.0f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(+3*lng, 0f, -3.0f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-3*lng, 0f, -3.0f*lng2), 90f, e);
 
-        wf.create(mapFactory, new Vector3(+2*long2, 0f, +5f*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(-2*long2, 0f, +5f*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(+2*long2, 0f, -5f*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(-2*long2, 0f, -5f*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(+2*lng2, 0f, +5f*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(-2*lng2, 0f, +5f*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(+2*lng2, 0f, -5f*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(-2*lng2, 0f, -5f*lng), 00f, e);
 
 
 
         /// Exterior -------------
         //---
-        wf.create(mapFactory, new Vector3(+1*lng, 0f, +4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(+3*lng, 0f, +4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(+5*lng, 0f, +4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(+7*lng, 0f, +4.1f*long2), 90f, e);
+        wf.create(mapFactory, new Vector3(+1*lng, 0f, +4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(+3*lng, 0f, +4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(+5*lng, 0f, +4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(+7*lng, 0f, +4.1f*lng2), 90f, e);
         //
-        wf.create(mapFactory, new Vector3(-1*lng, 0f, +4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-3*lng, 0f, +4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-5*lng, 0f, +4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-7*lng, 0f, +4.1f*long2), 90f, e);
+        wf.create(mapFactory, new Vector3(-1*lng, 0f, +4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-3*lng, 0f, +4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-5*lng, 0f, +4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-7*lng, 0f, +4.1f*lng2), 90f, e);
         //
-        wf.create(mapFactory, new Vector3(+1*lng, 0f, -4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(+3*lng, 0f, -4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(+5*lng, 0f, -4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(+7*lng, 0f, -4.1f*long2), 90f, e);
+        wf.create(mapFactory, new Vector3(+1*lng, 0f, -4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(+3*lng, 0f, -4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(+5*lng, 0f, -4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(+7*lng, 0f, -4.1f*lng2), 90f, e);
         //
-        wf.create(mapFactory, new Vector3(-1*lng, 0f, -4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-3*lng, 0f, -4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-5*lng, 0f, -4.1f*long2), 90f, e);
-        wf.create(mapFactory, new Vector3(-7*lng, 0f, -4.1f*long2), 90f, e);
+        wf.create(mapFactory, new Vector3(-1*lng, 0f, -4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-3*lng, 0f, -4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-5*lng, 0f, -4.1f*lng2), 90f, e);
+        wf.create(mapFactory, new Vector3(-7*lng, 0f, -4.1f*lng2), 90f, e);
 
         //---
-        wf.create(mapFactory, new Vector3(+4*long2, 0f, +1*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(+4*long2, 0f, +3*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(+4*long2, 0f, +5*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(+4*lng2, 0f, +1*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(+4*lng2, 0f, +3*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(+4*lng2, 0f, +5*lng), 00f, e);
         //
-        wf.create(mapFactory, new Vector3(-4*long2, 0f, +1*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(-4*long2, 0f, +3*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(-4*long2, 0f, +5*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(-4*long2, 0f, +7*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(-4*lng2, 0f, +1*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(-4*lng2, 0f, +3*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(-4*lng2, 0f, +5*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(-4*lng2, 0f, +7*lng), 00f, e);
         //
-        wf.create(mapFactory, new Vector3(+4*long2, 0f, -1*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(+4*long2, 0f, -3*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(+4*long2, 0f, -5*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(+4*long2, 0f, -7*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(+4*lng2, 0f, -1*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(+4*lng2, 0f, -3*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(+4*lng2, 0f, -5*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(+4*lng2, 0f, -7*lng), 00f, e);
         //
-        wf.create(mapFactory, new Vector3(-4*long2, 0f, -1*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(-4*long2, 0f, -3*lng), 00f, e);
-        wf.create(mapFactory, new Vector3(-4*long2, 0f, -5*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(-4*lng2, 0f, -1*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(-4*lng2, 0f, -3*lng), 00f, e);
+        wf.create(mapFactory, new Vector3(-4*lng2, 0f, -5*lng), 00f, e);
         //---
         //Exterior -------------
+
+
+        // Extra Exterior ------------------
+        for(int z=-9; z <= 9; z+=3) {
+            wf.create(mapFactory, new Vector3(+7f * lng2, 0f, z * lng), 00f, e);
+            wf.create(mapFactory, new Vector3(-7f * lng2, 0f, z * lng), 00f, e);
+        }
+        wf.create(mapFactory, new Vector3(0f, 0f, +5.5f * lng2), 90f, e);
+        for(int x=-6; x <= 6; x+=2) {
+            if(x == 0) {
+                //GATE
+                continue;
+            }
+            wf.create(mapFactory, new Vector3(x * lng2, 0f, +5.2f * lng2), 90f, e);
+            wf.create(mapFactory, new Vector3(x * lng2, 0f, -5.2f * lng2), 90f, e);
+        }
+
+        // Extra Exterior ------------------
 
 
 

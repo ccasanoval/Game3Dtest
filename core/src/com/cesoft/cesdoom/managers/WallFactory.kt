@@ -3,10 +3,12 @@ package com.cesoft.cesdoom.managers
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
@@ -27,9 +29,11 @@ import com.cesoft.cesdoom.systems.RenderSystem
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object WallFactory {
-	const val LONG = 25f//TODO:Change texture length!
+	const val LONG = 25f
 	const val HIGH = 25f
 	const val THICK = 4f
+
+	enum class Type { BRICK, STEEL, GRILLE }
 
 	// dimension en X grados para frustum culling
 	private val dim0 = Vector3(THICK*2, HIGH*2, LONG*2)
@@ -44,29 +48,50 @@ object WallFactory {
 			or VertexAttributes.Usage.Normal
 			or VertexAttributes.Usage.TextureCoordinates).toLong()
 
-	var texture: Texture? = null
+	private val material0 = Material(ColorAttribute.createDiffuse(Color.WHITE))
+	private val material1 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
+	private val material2 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
+	fun ini(texture0: Texture, texture1: Texture, texture2: Texture) {
+
+		texture0.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+		val textureAttribute0 = TextureAttribute(TextureAttribute.Diffuse, texture0)
+		textureAttribute0.scaleU = 2f
+		textureAttribute0.scaleV = 2f
+		material0.set(textureAttribute0)
+
+		texture1.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture1)
+		textureAttribute1.scaleU = 3f
+		textureAttribute1.scaleV = 3f * RampFactory.LONG / RampFactory.HIGH
+		material1.set(textureAttribute1)
+
+		texture2.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+		val textureAttribute2 = TextureAttribute(TextureAttribute.Diffuse, texture2)
+		textureAttribute2.scaleU = 2f
+		textureAttribute2.scaleV = 2f * RampFactory.LONG / RampFactory.HIGH
+		material2.set(textureAttribute2)
+		material2.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
+	}
+
 
 	//______________________________________________________________________________________________
-	fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, engine: Engine): Entity {
+	fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, engine: Engine, type: Type = Type.BRICK): Entity {
 
 		/// GraphMap
 		WallMapFactory.create(mapFactory, pos, angle, 0)
-
 
 		/// Entity
 		val entity = Entity()
 		pos.y += HIGH
 
-
+		/// MATERIAL
+		val material = when(type) {
+			Type.BRICK -> material0
+			Type.STEEL -> material1
+			Type.GRILLE -> material2
+		}
 
 		/// MODELO
-		val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
-		texture?.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture)
-		textureAttribute1.scaleU = 2f
-		textureAttribute1.scaleV = 2f//4
-		material.set(textureAttribute1)
-
 		val modelo : Model = mb.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
 		val modelComponent = ModelComponent(modelo, pos)
 
@@ -85,7 +110,7 @@ object WallFactory {
 		}
 		modelComponent.frustumCullingData = frustumCullingData
 
-		modelComponent.instance.materials.get(0).set(textureAttribute1)
+		//modelComponent.instance.materials.get(0).set(textureAttribute1)
 		modelComponent.instance.transform.rotate(Vector3.Y, angle)
 		entity.add(modelComponent)
 

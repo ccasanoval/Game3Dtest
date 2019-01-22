@@ -13,10 +13,11 @@ class BulletComponent(
 	// Si no usas rigidBodyInfo, se destruye por gc y puede dar lugar a problemas en las colisiones¿?
 	// Bullet: Disposing btRigidBodyConstructionInfo(452913408,true) due to garbage collection.
 	companion object {
-		const val GROUND_FLAG = 1 shl 3
-		const val SCENE_FLAG = 1 shl 4
-		const val PLAYER_FLAG = 1 shl 5
-		const val ENEMY_FLAG = 1 shl 6
-		const val SHOT_FLAG = 1 shl 7
+		const val GROUND_FLAG = 1 shl 2
+		const val SCENE_FLAG = 1 shl 3
+		const val PLAYER_FLAG = 1 shl 4
+		const val ENEMY_FLAG = 1 shl 5
+		const val SHOT_FLAG = 1 shl 6
+		const val GATE_FLAG = 1 shl 7
 	}
 }

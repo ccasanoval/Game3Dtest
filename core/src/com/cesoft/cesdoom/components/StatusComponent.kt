@@ -1,12 +1,12 @@
 package com.cesoft.cesdoom.components
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.ashley.core.Entity
+import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class StatusComponent(private val entity: Entity) : Component {
+class StatusComponent(private val entity: Enemy) : Component {
 
 	companion object {
 	    val tag : String = StatusComponent::class.java.simpleName

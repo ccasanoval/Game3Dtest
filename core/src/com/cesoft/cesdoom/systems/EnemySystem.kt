@@ -19,7 +19,7 @@ import com.cesoft.cesdoom.util.Log
 class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 	private var enemies: ImmutableArray<Enemy>? = null
 	private var player: Player? = null
-	private val MAX = 1	//TODO: aumenta cuando supera x puntos...
+	private val MAX = 3	//TODO: aumenta cuando supera x puntos...
 	private val SPAWN_DELAY = 5*1000//TODO: si pausa o background, debe actualizar time!!!
 	private val allEnemies = ArrayList<Enemy>()
 
@@ -100,16 +100,18 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 		return false
 	}
 
+	private var z_ = -1
 	private fun spawnAllEnemies() {
 		if(allEnemies.size < MAX)//allEnemies.isEmpty() ||
 		for(i in allEnemies.size until MAX) {
-			Log.e("EnemySystem", "spawnAllEnemies:-------------------------------$i  "+allEnemies.size+" ")
+			z_ = if(z_ < 0) 1 else -1
+			//Log.e("EnemySystem", "spawnAllEnemies:-------------------------------$i  "+allEnemies.size+" ")
 			val enemy = EnemyFactory.create(i,
 						game.assets.particleEffectPool!!,
 						game.render,
 						game.assets.getEnemy1(),
 						EnemyComponent.TYPE.MONSTER1,
-						Vector3(0f, 150f, -300f))
+						Vector3(0f, 150f, z_*350f))
 			allEnemies.add(enemy)
 		}
 	}

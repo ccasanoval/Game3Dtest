@@ -23,9 +23,9 @@ object MazeFactory
 	*/
 	//480x1 == 240x2 == 160x3 == 120x4
 	const val lng = WallFactory.LONG
-	const val long2 = 2*WallFactory.LONG
-	const val mapWidth = 3f*(5f*long2)
-	const val mapHeight = 3f*(5f*long2)
+	const val lng2 = 2*WallFactory.LONG
+	const val mapWidth = 3f*(5f*lng2)
+	const val mapHeight = 3f*(5f*lng2)
 	const val scale = 5
 	val mapFactory = MapGraphFactory(mapWidth, mapHeight, scale)
 
@@ -33,8 +33,15 @@ object MazeFactory
 	//______________________________________________________________________________________________
 	fun create(assets: Assets, engine: Engine)
 	{
-		WallFactory.texture = assets.getWallMetal1()
+		WallFactory.ini(
+				assets.getWallMetal1(),
+				assets.getWallMetal2(),
+				assets.getWallMetal3())
+
 		RampFactory.init(assets.getWallMetal2(), assets.getWallMetal3())
+
+        GateFactory.ini(assets.getGate())
+
 //		createSector(engine, 0f)
 //		createSector(engine, +RampFactory.LONG+5.5f*WallFactory.LONG-3)
 //		createSector(engine, -RampFactory.LONG-5.5f*WallFactory.LONG+3)
@@ -46,7 +53,7 @@ object MazeFactory
 		mapFactory.compile()
 
 
-
+		//----- TEST
 		mapFactory.print()
 		Log.e("AAA", "")
 		Log.e("AAA", "")
@@ -54,17 +61,12 @@ object MazeFactory
 		Log.e("Maze", "--------------------------------------")
 		Log.e("Maze", "-------------------------------------- (0,-250)")
 		Log.e("Maze", "--------------------------------------")
-		var path = mapFactory.map.findPath(Vector2(0f, -250f), Vector2(0f, 0f))
+		val path = mapFactory.map.findPath(Vector2(0f, -250f), Vector2(0f, 0f))
 		for(step in path) {
 			Log.e("Maze", step.toString())
 		}
-		/*Log.e("Maze", "--------------------------------------")
-		Log.e("Maze", "-------------------------------------- ${path[9]}")
-		Log.e("Maze", "--------------------------------------")
-		path = mapFactory.map.findPath(path[9], Vector2(0f, 0f))
-		for(step in path) {
-			Log.e("Maze", step.toString())
-		}*/
+		//----- TEST
+
 	}
 	private fun createTest(e: Engine) {
 
@@ -72,8 +74,8 @@ object MazeFactory
 
 
 		/// Interior -------------
-		wf.create(mapFactory, Vector3(0 * lng, 0f, +.5f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(0 * lng, 0f, -.5f * long2), 90f, e)
+		wf.create(mapFactory, Vector3(0 * lng, 0f, +.5f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(0 * lng, 0f, -.5f * lng2), 90f, e)
 		//
 		wf.create(mapFactory, Vector3(+1f * lng, 0f, +2 * lng), 00f, e)
 		wf.create(mapFactory, Vector3(-1f * lng, 0f, +2 * lng), 00f, e)
@@ -82,64 +84,82 @@ object MazeFactory
 
 
 		/// Middle -------------
-		wf.create(mapFactory, Vector3(+5 * lng, 0f, +2.0f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-5 * lng, 0f, +2.0f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(+5 * lng, 0f, -2.0f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-5 * lng, 0f, -2.0f * long2), 90f, e)
+		wf.create(mapFactory, Vector3(+5 * lng, 0f, +2.0f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-5 * lng, 0f, +2.0f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(+5 * lng, 0f, -2.0f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-5 * lng, 0f, -2.0f * lng2), 90f, e)
 
-		wf.create(mapFactory, Vector3(+3 * lng, 0f, +3.0f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-3 * lng, 0f, +3.0f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(+3 * lng, 0f, -3.0f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-3 * lng, 0f, -3.0f * long2), 90f, e)
+		wf.create(mapFactory, Vector3(+3 * lng, 0f, +3.0f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-3 * lng, 0f, +3.0f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(+3 * lng, 0f, -3.0f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-3 * lng, 0f, -3.0f * lng2), 90f, e)
 
-		wf.create(mapFactory, Vector3(+2 * long2, 0f, +5f * lng), 00f, e)
-		wf.create(mapFactory, Vector3(-2 * long2, 0f, +5f * lng), 00f, e)
-		wf.create(mapFactory, Vector3(+2 * long2, 0f, -5f * lng), 00f, e)
-		wf.create(mapFactory, Vector3(-2 * long2, 0f, -5f * lng), 00f, e)
+		wf.create(mapFactory, Vector3(+2 * lng2, 0f, +5f * lng), 00f, e)
+		wf.create(mapFactory, Vector3(-2 * lng2, 0f, +5f * lng), 00f, e)
+		wf.create(mapFactory, Vector3(+2 * lng2, 0f, -5f * lng), 00f, e)
+		wf.create(mapFactory, Vector3(-2 * lng2, 0f, -5f * lng), 00f, e)
 
 
 		/// Exterior -------------
 		//---
-		wf.create(mapFactory, Vector3(+1 * lng, 0f, +4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(+3 * lng, 0f, +4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(+5 * lng, 0f, +4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(+7 * lng, 0f, +4.1f * long2), 90f, e)
+		wf.create(mapFactory, Vector3(+1 * lng, 0f, +4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(+3 * lng, 0f, +4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(+5 * lng, 0f, +4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(+7 * lng, 0f, +4.1f * lng2), 90f, e)
 		//
-		wf.create(mapFactory, Vector3(-1 * lng, 0f, +4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-3 * lng, 0f, +4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-5 * lng, 0f, +4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-7 * lng, 0f, +4.1f * long2), 90f, e)
+		wf.create(mapFactory, Vector3(-1 * lng, 0f, +4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-3 * lng, 0f, +4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-5 * lng, 0f, +4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-7 * lng, 0f, +4.1f * lng2), 90f, e)
 		//
-		wf.create(mapFactory, Vector3(+1 * lng, 0f, -4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(+3 * lng, 0f, -4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(+5 * lng, 0f, -4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(+7 * lng, 0f, -4.1f * long2), 90f, e)
+		wf.create(mapFactory, Vector3(+1 * lng, 0f, -4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(+3 * lng, 0f, -4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(+5 * lng, 0f, -4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(+7 * lng, 0f, -4.1f * lng2), 90f, e)
 		//
-		wf.create(mapFactory, Vector3(-1 * lng, 0f, -4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-3 * lng, 0f, -4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-5 * lng, 0f, -4.1f * long2), 90f, e)
-		wf.create(mapFactory, Vector3(-7 * lng, 0f, -4.1f * long2), 90f, e)
+		wf.create(mapFactory, Vector3(-1 * lng, 0f, -4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-3 * lng, 0f, -4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-5 * lng, 0f, -4.1f * lng2), 90f, e)
+		wf.create(mapFactory, Vector3(-7 * lng, 0f, -4.1f * lng2), 90f, e)
 
 		//---
-		wf.create(mapFactory, Vector3(+4 * long2, 0f, +1 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(+4 * long2, 0f, +3 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(+4 * long2, 0f, +5 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(+4 * lng2, 0f, +1 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(+4 * lng2, 0f, +3 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(+4 * lng2, 0f, +5 * lng), 00f, e)
 		//
-		wf.create(mapFactory, Vector3(-4 * long2, 0f, +1 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(-4 * long2, 0f, +3 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(-4 * long2, 0f, +5 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(-4 * long2, 0f, +7 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(-4 * lng2, 0f, +1 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(-4 * lng2, 0f, +3 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(-4 * lng2, 0f, +5 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(-4 * lng2, 0f, +7 * lng), 00f, e)
 		//
-		wf.create(mapFactory, Vector3(+4 * long2, 0f, -1 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(+4 * long2, 0f, -3 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(+4 * long2, 0f, -5 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(+4 * long2, 0f, -7 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(+4 * lng2, 0f, -1 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(+4 * lng2, 0f, -3 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(+4 * lng2, 0f, -5 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(+4 * lng2, 0f, -7 * lng), 00f, e)
 		//
-		wf.create(mapFactory, Vector3(-4 * long2, 0f, -1 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(-4 * long2, 0f, -3 * lng), 00f, e)
-		wf.create(mapFactory, Vector3(-4 * long2, 0f, -5 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(-4 * lng2, 0f, -1 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(-4 * lng2, 0f, -3 * lng), 00f, e)
+		wf.create(mapFactory, Vector3(-4 * lng2, 0f, -5 * lng), 00f, e)
 		//---
 		//Exterior -------------
+
+
+		// Extra Exterior ------------------
+        for(z in -11..11 step 2) {
+            wf.create(mapFactory, Vector3(+7f * lng2, 0f, z * lng), 00f, e, WallFactory.Type.GRILLE)
+            wf.create(mapFactory, Vector3(-7f * lng2, 0f, z * lng), 00f, e, WallFactory.Type.GRILLE)
+        }
+        for(x in -13..13 step 2) {
+            if (x == 1) {
+                //GATE
+                GateFactory.create(mapFactory, Vector3(x*lng, 0f, +6.2f * lng2), 90f, e)
+                GateFactory.create(mapFactory, Vector3(x*lng, 0f, -6.2f * lng2), 90f, e)
+                continue
+            }
+            wf.create(mapFactory, Vector3(x * lng, 0f, +6.2f * lng2), 90f, e, WallFactory.Type.GRILLE)
+            wf.create(mapFactory, Vector3(x * lng, 0f, -6.2f * lng2), 90f, e, WallFactory.Type.GRILLE)
+        }
+		// Extra Exterior ------------------
 
 
 		//createSectorTest(engine, +1, +1)
@@ -147,19 +167,23 @@ object MazeFactory
 		//createSectorTest(engine, +1, -1)
 		//createSectorTest(engine, -1, -1)
 	}
+
+
+
+
 	/*private fun createSectorTest(engine: Engine, x: Int, z: Int) {
 		val cc = WallFactory.LONG / 2
 		val long = WallFactory.LONG
-		val long2 = 2*WallFactory.LONG
+		val lng2 = 2*WallFactory.LONG
 		//
 		WallFactory.create(mapFactory, Vector3(x*(cc+long), 0f, z*(cc)), 90f, engine)
 		/*WallFactory.create(mapFactory, Vector3(x*(cc+long), 0f, z*(cc)), 90f, engine)
 		WallFactory.create(mapFactory, Vector3(x*(cc), 0f, z*(cc+long)), 0f))
-		WallFactory.create(mapFactory, Vector3(x*(cc+long2), 0f, z*(cc+long)), 0f))
+		WallFactory.create(mapFactory, Vector3(x*(cc+lng2), 0f, z*(cc+long)), 0f))
 		//
-		WallFactory.create(mapFactory, Vector3(x*(cc+2*long2), 0f, z*(0*cc)), 0f))
-		WallFactory.create(mapFactory, Vector3(x*(cc+2*long2), 0f, z*(2*long)), 0f))
-		WallFactory.create(mapFactory, Vector3(x*(cc+2*long2), 0f, z*(2*long+cc)), 0f))
+		WallFactory.create(mapFactory, Vector3(x*(cc+2*lng2), 0f, z*(0*cc)), 0f))
+		WallFactory.create(mapFactory, Vector3(x*(cc+2*lng2), 0f, z*(2*long)), 0f))
+		WallFactory.create(mapFactory, Vector3(x*(cc+2*lng2), 0f, z*(2*long+cc)), 0f))
 		//
 		WallFactory.create(mapFactory, Vector3(x*(0*cc), 0f, z*(6*cc)), 90f, engine)*/
 	}

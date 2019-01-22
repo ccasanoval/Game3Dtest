@@ -2,7 +2,8 @@ package com.cesoft.cesdoom.map
 
 import com.badlogic.gdx.ai.pfa.Connection
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 class Vertex(private val orig: Node, private val dest: Node) : Connection<Node> {
 
     private var coste: Float = 0f

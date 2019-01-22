@@ -122,6 +122,9 @@ class Assets {
 	fun iniWallMetal1() = assetManager.load("scene/wall/metal1.jpg", Texture::class.java)
 	fun getWallMetal1():Texture = assetManager.get("scene/wall/metal1.jpg", Texture::class.java)
 	//______________________________________________________________________________________________
+	fun iniGate() = assetManager.load("scene/wall/metal2.png", Texture::class.java)
+	fun getGate():Texture = assetManager.get("scene/wall/metal2.png", Texture::class.java)
+	//______________________________________________________________________________________________
 	fun iniWallMetal2() = assetManager.load("scene/wall/metal2.png", Texture::class.java)
 	fun getWallMetal2():Texture = assetManager.get("scene/wall/metal2.png", Texture::class.java)
 	//______________________________________________________________________________________________

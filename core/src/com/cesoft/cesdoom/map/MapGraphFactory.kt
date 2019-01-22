@@ -3,8 +3,9 @@ package com.cesoft.cesdoom.map
 import com.badlogic.gdx.math.Vector2
 import com.cesoft.cesdoom.util.Log
 
-//http://tutorials.boondog.xyz/2016/12/13/pathfinding-with-jump-point-seach-2/
-//https://happycoding.io/tutorials/libgdx/pathfinding
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
 
     val map: MapGraph = MapGraph(width, height, scale)

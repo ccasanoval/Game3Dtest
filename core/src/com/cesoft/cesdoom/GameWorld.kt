@@ -15,7 +15,6 @@ import com.cesoft.cesdoom.entities.Gun
 import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.managers.*
 import com.cesoft.cesdoom.systems.*
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,6 +36,11 @@ import com.cesoft.cesdoom.util.Log
 //https://github.com/Brummi/VRDemo
 //https://github.com/nooone/gdx-vr
 
+//
+//https://www.gamefromscratch.com/page/LibGDX-Tutorial-series.aspx
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 class GameWorld(game: CesDoom) {
 
 	private val debugCollision = false
@@ -48,6 +52,7 @@ class GameWorld(game: CesDoom) {
 	var renderSystem: RenderSystem
 	private var enemySystem: EnemySystem
 	private var statusSystem: StatusSystem
+	private var gateSystem: GateSystem
 
 	private var engine: Engine = Engine()
 	private lateinit var player: Entity
@@ -72,6 +77,7 @@ class GameWorld(game: CesDoom) {
 		enemySystem = EnemySystem(game)
 		playerSystem = PlayerSystem(game, renderSystem.perspectiveCamera, bulletSystem)
 		statusSystem = StatusSystem(this)
+		gateSystem = GateSystem()
 
 		///----
 		engine.addSystem(renderSystem)
@@ -79,6 +85,7 @@ class GameWorld(game: CesDoom) {
 		engine.addSystem(playerSystem)
 		engine.addSystem(enemySystem)
 		engine.addSystem(statusSystem)
+		engine.addSystem(gateSystem)
 
 		///---
 		if(debugCollision) {
@@ -96,13 +103,6 @@ class GameWorld(game: CesDoom) {
 
 		/// MAZE
 		MazeFactory.create(assets, engine)
-
-		/// ENEMIES
-		//TODO: How to create the enemy engine without creating an enemy
-		/*engine.addEntity(EnemyFactory.create(
-				assets.getEnemy1(),
-				EnemyComponent.TYPE.MONSTER1,
-				Vector3(0f, 150f, -300f)))*/
 
 		/// PLAYER
 		createPlayer(assets, Vector3(0f,150f,0f))
@@ -138,12 +138,11 @@ class GameWorld(game: CesDoom) {
 		}
 	}
 	private fun checkPause() {
-		//renderSystem.setProcessing( ! Settings.paused)
 		bulletSystem.setProcessing( ! Settings.paused)
 		enemySystem.setProcessing( ! Settings.paused)
 		playerSystem.setProcessing( ! Settings.paused)
 		statusSystem.setProcessing( ! Settings.paused)
-		//shotSystem.setProcessing( ! Settings.paused)
+		gateSystem.setProcessing( ! Settings.paused)
 	}
 
 	fun pause() {

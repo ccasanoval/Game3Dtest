@@ -8,7 +8,7 @@ import com.cesoft.cesdoom.map.MapGraphFactory
 //
 object WallMapFactory {
 
-    fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, engine: Int) {
+    fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, ignore: Int) {
 
         val thick = WallFactory.THICK.toInt() * 3	// Debe ser mayor para que no haga colision con enemigo, que no es un punto sino un objeto 3D / o cambiar scale
         val long = WallFactory.LONG.toInt()   * 3

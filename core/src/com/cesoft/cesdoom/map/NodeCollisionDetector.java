@@ -6,8 +6,10 @@ import com.badlogic.gdx.ai.utils.RaycastCollisionDetector;
 import com.badlogic.gdx.math.Vector2;
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 public class NodeCollisionDetector implements RaycastCollisionDetector<Vector2> {
-    MapGraph worldMap;
+    private MapGraph worldMap;
 
     public NodeCollisionDetector(MapGraph worldMap) {
         this.worldMap = worldMap;

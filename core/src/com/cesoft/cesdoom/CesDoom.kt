@@ -107,6 +107,9 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 
 	fun loadResources() {
 		Log.e("CesDoom", "loadResources------------------------------------------------")
+		// Gate
+		try {assets.getGate()}
+		catch (ignore: GdxRuntimeException) {assets.iniGate()}
 		// Wall
 		try {assets.getWallMetal1()}
 		catch (ignore: GdxRuntimeException) {assets.iniWallMetal1()}

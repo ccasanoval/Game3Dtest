@@ -6,6 +6,8 @@ import com.badlogic.gdx.ai.pfa.SmoothableGraphPath
 import com.badlogic.gdx.math.Vector2
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 open class MapGraphSmooth : DefaultGraphPath<Node>(), SmoothableGraphPath<Node, Vector2> {
 
     private val tmpPosition = Vector2()

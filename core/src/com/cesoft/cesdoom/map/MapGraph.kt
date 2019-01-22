@@ -1,7 +1,6 @@
 package com.cesoft.cesdoom.map
 
 import com.badlogic.gdx.ai.pfa.Connection
-import com.badlogic.gdx.ai.pfa.DefaultGraphPath
 import com.badlogic.gdx.ai.pfa.GraphPath
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder
 import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph
@@ -11,11 +10,10 @@ import com.cesoft.cesdoom.util.Log
 import com.badlogic.gdx.ai.pfa.PathSmoother
 
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 class MapGraph(val width: Float, val height: Float, val scale: Int)
     : IndexedGraph<Node> {
-    //: MapGraphPathSmooth() {
-
 
     companion object {
         val tag: String = MapGraph::class.java.simpleName
@@ -104,7 +102,7 @@ class MapGraph(val width: Float, val height: Float, val scale: Int)
         val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
         val nodeOrig = getNode(orig)
         val nodeDest = getNode(dest)
-        Log.e(tag, "findPath a------:----- $nodeOrig $nodeDest")
+Log.e(tag, "findPath a------:----- $nodeOrig $nodeDest")
         pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
         pathSmoother.smoothPath(path)
         return path
@@ -119,13 +117,13 @@ class MapGraph(val width: Float, val height: Float, val scale: Int)
 
         try {
             val t0 = System.currentTimeMillis()
-            //Log.e(tag, "findPath a------:----- $nodeOrig $nodeDest  $path")
+//Log.e(tag, "findPath a------:----- $nodeOrig $nodeDest  $path")
             val b2 = pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
             val t1 = System.currentTimeMillis() - t0
-            Log.e(tag, "findPath:----- $b2 ${path.count}  delay= $t1 ms")
+//Log.e(tag, "findPath:----- $b2 ${path.count}  delay= $t1 ms")
             pathSmoother.smoothPath(path)
             val t2 = System.currentTimeMillis() - t0 - t1
-            Log.e(tag, "smoothPath:----- $b2 ${path.count}  delay= $t2 ms")
+//Log.e(tag, "smoothPath:----- $b2 ${path.count}  delay= $t2 ms")
 
             val res = ArrayList<Vector2>()
             for(step in path) {

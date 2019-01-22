@@ -24,35 +24,17 @@ class Player : Entity() {
             rigidBody.userData = entity
             rigidBody.motionState = MotionState(Matrix4().translate(pos))
             rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-            rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG or BulletComponent.SCENE_FLAG or BulletComponent.GROUND_FLAG
+            rigidBody.contactCallbackFilter = BulletComponent.ENEMY_FLAG or BulletComponent.SCENE_FLAG or BulletComponent.GROUND_FLAG or BulletComponent.GATE_FLAG
             rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
             rigidBody.userValue = BulletComponent.PLAYER_FLAG
             rigidBody.activationState = Collision.DISABLE_DEACTIVATION
             rigidBody.friction = 0f
             rigidBody.rollingFriction = 1000000000f
-
             entity.add(BulletComponent(rigidBody, bodyInfo))
             entity.add(PlayerComponent)
-
             return entity
         }
     }
-
-    /*private var lastHurt = 0L
-    fun hurt(pain: Float) {
-        if(System.currentTimeMillis() > lastHurt+800) {
-            PlayerComponent.health -= pain
-            PlayerComponent.colorAmbiente.color.set(.8f, 0f, 0f, 1f)//Pasar RenderObject y llamar a CamaraRoja(true)...
-            lastHurt = System.currentTimeMillis()
-        }
-        //else if(lastHurt+50 < System.currentTimeMillis())
-        //	colorAmbiente.color.set(.8f, .8f, .8f, 1f)//Pasar RenderObject y llamar a CamaraRoja(false)...
-    }
-
-    fun update() {
-        if(lastHurt+50 < System.currentTimeMillis())
-            PlayerComponent.colorAmbiente.color.set(.8f, .8f, .8f, 1f)//Pasar RenderObject y llamar a CamaraRoja(false)...
-    }*/
 
     fun getPosition() : Vector3 {
         val bulletPlayer = getComponent(BulletComponent::class.java)

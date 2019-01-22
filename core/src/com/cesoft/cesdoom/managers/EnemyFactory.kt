@@ -10,7 +10,6 @@ import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter
-import com.badlogic.gdx.physics.bullet.collision.btCylinderShape
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.EnemyComponent.ACTION.*
@@ -19,7 +18,6 @@ import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.ParticleEffectPool
 import com.cesoft.cesdoom.systems.RenderSystem
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,11 +49,16 @@ object EnemyFactory
 		val entity = Enemy(id)//enemyPool.obtain()
 
 
-		/// ENEMY
+		/// Enemy Component
 		val enemyComponent = EnemyComponent(type)
 		entity.add(enemyComponent)
 
-		/// MODEL
+		/// Status Component
+		val stat = StatusComponent(entity)
+		stat.setWalking()
+		entity.add(stat)
+
+		/// Model
 		val modelComponent: ModelComponent
 		when(type) {
 			EnemyComponent.TYPE.MONSTER1 -> {
@@ -69,7 +72,7 @@ object EnemyFactory
 			}
 		}
 
-		// (desaparecer)
+		// Evanesce Effect
 		if(modelComponent.instance.materials.size > 0) {
 			val material = modelComponent.instance.materials.get(0)
 			val blendingAttribute = BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
@@ -77,12 +80,7 @@ object EnemyFactory
 			modelComponent.blendingAttribute = blendingAttribute
 		}
 
-		/// STATUS
-		val stat = StatusComponent(entity)
-		stat.setWalking()
-		entity.add(stat)
-
-		/// COLLISION
+		/// Collision
 		val shape = btSphereShape(Enemy.RADIO-2f)////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
 		shape.calculateLocalInertia(mase, posTemp)
 		val rigidBodyInfo = btRigidBody.btRigidBodyConstructionInfo(mase, null, shape, posTemp)
@@ -116,7 +114,7 @@ object EnemyFactory
 	//______________________________________________________________________________________________
 	private val random = java.util.Random()
 	private fun getAnimationParams(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) : AnimationParams {
-		val loop = -1	//Continuously = -1 , OnlyOnce = 0
+		val loop = -1
 		val speed = 1f
 		val time = getActionDuration(type, action)
 		when(type) {
@@ -127,10 +125,11 @@ object EnemyFactory
 					EnemyComponent.ACTION.RUNNING ->
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 6f, time)
 					EnemyComponent.ACTION.ATTACKING -> {
-						when(random.nextInt(3)) {
-							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 12.8f, time)
-							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 10f, time)
-						}
+						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 12.8f, time)
+//						when(random.nextInt(3)) {
+//							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 12.8f, time)
+//							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 10f, time)
+//						}
 					}
 					EnemyComponent.ACTION.IDLE ->
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 19.12f, time)
@@ -144,7 +143,6 @@ object EnemyFactory
 					}
 					EnemyComponent.ACTION.DYING -> {
 						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 22.6f, time)
-
 						/*if(random.nextInt(2) == 0) {
 							Log.e("----******************--------- Enemy Factory DYING 1")
 							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 15.6f, time)
@@ -231,21 +229,16 @@ object EnemyFactory
 			if(model.blendingAttribute != null)
 				model.blendingAttribute!!.opacity = 1 - status.deathProgres()
 
-			// Render Particles
-			//render.addParticleEffect(enemy.particleEffect)
-
 			if(status.deathProgres() == 1f) {
 				activeEnemies.remove(enemy)
 				return
 			}
 		}
 
-		///----- ANIMATION
+		///
 		val animat = enemy.getComponent(AnimationComponent::class.java)
 		animat?.update(delta)
-
-		//
-		//mover(enemy, posPlayer, delta)
+		///
 		enemy.mover(posPlayer, delta)
 	}
 }
