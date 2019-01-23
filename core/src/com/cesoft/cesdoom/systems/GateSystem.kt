@@ -34,11 +34,8 @@ class GateSystem : EntitySystem(), EntityListener {
 
     //______________________________________________________________________________________________
     override fun update(delta: Float) {
-        Log.e("GateSystem", "update--------------------------- $delta ${gates?.size()}")
         gates?.let { gates ->
             for(entity in gates) {
-                //val posPlayer = player!!.getPosition()
-                //EnemyFactory.update(delta, entity, posPlayer.cpy(), game.assets)
                entity.update(delta)
             }
         }

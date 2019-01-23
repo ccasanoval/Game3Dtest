@@ -129,7 +129,6 @@ class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityLis
 
 	//______________________________________________________________________________________________
 	private fun collPlayerGate(iGate: Int) {
-		Log.e("BulletSystem", "collPlayerGate:$iGate---------------------------------------------***************************************************")
 		val gate = gates[iGate] as Gate
 		gate.isOpening = true
 	}

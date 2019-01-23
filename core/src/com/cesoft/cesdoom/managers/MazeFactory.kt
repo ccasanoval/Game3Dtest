@@ -152,12 +152,12 @@ object MazeFactory
         for(x in -13..13 step 2) {
             if (x == 1) {
                 //GATE
-                GateFactory.create(mapFactory, Vector3(x*lng, 0f, +6.2f * lng2), 90f, e)
-                GateFactory.create(mapFactory, Vector3(x*lng, 0f, -6.2f * lng2), 90f, e)
+                GateFactory.create(mapFactory, Vector3(x*lng, 0f, +6f * lng2), 90f, e)
+                GateFactory.create(mapFactory, Vector3(x*lng, 0f, -6f * lng2), 90f, e)
                 continue
             }
-            wf.create(mapFactory, Vector3(x * lng, 0f, +6.2f * lng2), 90f, e, WallFactory.Type.GRILLE)
-            wf.create(mapFactory, Vector3(x * lng, 0f, -6.2f * lng2), 90f, e, WallFactory.Type.GRILLE)
+            wf.create(mapFactory, Vector3(x * lng, 0f, +6f * lng2), 90f, e, WallFactory.Type.GRILLE)
+            wf.create(mapFactory, Vector3(x * lng, 0f, -6f * lng2), 90f, e, WallFactory.Type.GRILLE)
         }
 		// Extra Exterior ------------------
 

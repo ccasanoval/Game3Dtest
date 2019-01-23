@@ -164,20 +164,20 @@ public class Test2
 
 
         // Extra Exterior ------------------
-        for(int z=-9; z <= 9; z+=3) {
+        for(int z=-11; z <= 11; z+=2) {
             wf.create(mapFactory, new Vector3(+7f * lng2, 0f, z * lng), 00f, e);
             wf.create(mapFactory, new Vector3(-7f * lng2, 0f, z * lng), 00f, e);
         }
-        wf.create(mapFactory, new Vector3(0f, 0f, +5.5f * lng2), 90f, e);
-        for(int x=-6; x <= 6; x+=2) {
-            if(x == 0) {
+        for(int x=-13; x <= 13; x+=2) {
+            if (x == 1) {
                 //GATE
+                //GateFactory.create(mapFactory, Vector3(x*lng, 0f, +6f * lng2), 90f, e)
+                //GateFactory.create(mapFactory, Vector3(x*lng, 0f, -6f * lng2), 90f, e)
                 continue;
             }
-            wf.create(mapFactory, new Vector3(x * lng2, 0f, +5.2f * lng2), 90f, e);
-            wf.create(mapFactory, new Vector3(x * lng2, 0f, -5.2f * lng2), 90f, e);
+            wf.create(mapFactory, new Vector3(x * lng, 0f, +6f * lng2), 90f, e);
+            wf.create(mapFactory, new Vector3(x * lng, 0f, -6f * lng2), 90f, e);
         }
-
         // Extra Exterior ------------------
 
 

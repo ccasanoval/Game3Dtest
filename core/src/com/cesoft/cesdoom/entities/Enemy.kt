@@ -51,10 +51,9 @@ class Enemy(val id: Int) : Entity() {
 		return pos
 	}*/
 
-	fun reset() {
+	fun reset(position: Vector3) {
         alive = false
     	mase = 100f
-
 
 		/// Animation
 		EnemyFactory.playWalking(this)
@@ -63,7 +62,7 @@ class Enemy(val id: Int) : Entity() {
 		getComponent(StatusComponent::class.java).reset()
 
 		/// Position
-		val position = Vector3(0f, 150f, -250f)
+		//val position = Vector3(0f, 150f, -250f)
 
 		/// Model
 		val model = getComponent(ModelComponent::class.java)

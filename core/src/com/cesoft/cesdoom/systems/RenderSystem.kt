@@ -81,14 +81,11 @@ class RenderSystem(
 		oclBuffer = OcclusionBuffer(OCL_BUFFER_EXTENTS[0], OCL_BUFFER_EXTENTS[0])
 		occlusionCuller = object : OcclusionCuller() {
 			override fun isOccluder(obj: btCollisionObject): Boolean {
-				//Log.e(tag, "OcclusionCuller : isOccluder ---"+(obj.collisionFlags and CF_OCCLUDER_OBJECT != 0))
 				return obj.collisionFlags and CF_OCCLUDER_OBJECT != 0
 			}
 			override fun onObjectVisible(obj: btCollisionObject) {
 				val entity = obj.userData as Entity
-				//val model = entity.getComponent(ModelComponent::class.java)
 				visibleEntities.add(entity)
-				//Log.e(tag, "OcclusionCuller : onObjectVisible : -----------")
 			}
 		}
 	}
@@ -104,7 +101,7 @@ class RenderSystem(
 		if(isDisposed)return
 		var countDrawn = 0
 
-		val OCCLUSION = false
+		/*val OCCLUSION = false
 		if(OCCLUSION) {
 			/// Occlusion Culling
 			visibleEntities.clear()
@@ -125,7 +122,7 @@ class RenderSystem(
 				}
 			}
 		}
-		else {
+		else {*/
 			batch.begin(perspectiveCamera)
 			for(it in entities)
 			{
@@ -143,7 +140,7 @@ class RenderSystem(
 					}
 				}
 			}
-		}
+		//}
 
 		if(countDrawn > countMax)countMax = countDrawn
 		batch.end()

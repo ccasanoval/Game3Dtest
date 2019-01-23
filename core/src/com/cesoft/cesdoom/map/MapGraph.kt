@@ -39,8 +39,9 @@ class MapGraph(val width: Float, val height: Float, val scale: Int)
         }
         else {
             Log.e(tag, "getNode: coordinates out of boundaries: ($x, $y)  ${nodes.size} <> $i ")
-            //return Node(0, Point(0, 0), false)
-            throw IndexOutOfBoundsException()
+            //return Node(9999999, Point(0, 0), false)
+            return nodes[0] // Para que los pathFinders no cojan toda la cpu buscando un path imposible
+            //throw IndexOutOfBoundsException()
         }
 
     }

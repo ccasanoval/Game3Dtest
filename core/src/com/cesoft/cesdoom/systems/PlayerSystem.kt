@@ -156,7 +156,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private fun updateRotacion(delta: Float)
 	{
-		if(PlayerComponent.health <= 0f)return
+		if(PlayerComponent.isDead())return
 
 		val deltaX: Float
 		val deltaY: Float
@@ -204,7 +204,7 @@ class PlayerSystem(
 	{
 		posTemp.set(0f, 0f, 0f)
 
-		if(PlayerComponent.health <= 0f)//TODO: idem en rotacion
+		if(PlayerComponent.isDead())
 		{
 			altura -= delta*10f
 			return
@@ -391,7 +391,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private var delayDeath = 0f
 	private fun checkGameOver(delta: Float) {
-		if(PlayerComponent.health <= 0 && !Settings.paused) {
+		if(PlayerComponent.isDead() && !Settings.paused) {
 			if(delayDeath > 2f)
 			{
 				Settings.paused = true

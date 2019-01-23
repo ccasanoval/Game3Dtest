@@ -25,7 +25,15 @@ object PlayerComponent : Component
 
 	lateinit var colorAmbiente : ColorAttribute
 
-	//______________________________________________________________________________________________
+	//TODO: pasar funciones a entidad Player ?
+	fun ini(colorAmbiente: ColorAttribute) {
+		this.health = 100f
+		this.score = 0
+		this.colorAmbiente = colorAmbiente
+	}
+
+	fun isDead() = health < 1
+
 	private var lastHurt = 0L
 	fun hurt(pain: Float) {
 		if(System.currentTimeMillis() > lastHurt+800) {
@@ -35,7 +43,6 @@ object PlayerComponent : Component
 		}
 	}
 
-	//______________________________________________________________________________________________
 	fun update() {
 		if(lastHurt+50 < System.currentTimeMillis())
 			colorAmbiente.color.set(.8f, .8f, .8f, 1f)//Pasar RenderObject y llamar a CamaraRoja(false)...

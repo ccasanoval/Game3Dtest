@@ -51,6 +51,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 
 	//https://blog.egorand.me/concurrency-primitives-in-kotlin/
 	//@Volatile private var spawning = false
+	private var countSpawnPosition = 0
 	private var lastSpawn = System.currentTimeMillis()
 	private fun spawIfNeeded() {
 		if(System.currentTimeMillis() < lastSpawn + SPAWN_DELAY)return
@@ -79,7 +80,13 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 				}
 
 				val enemy = allEnemies[id]//TODO:  (pooling)
-				enemy.reset()
+				val pos = when(countSpawnPosition++ % 4) {
+					0 -> Vector3(+250f, 150f, -250f)
+					1 -> Vector3(-250f, 150f, -250f)
+					2 -> Vector3(+250f, 150f, +250f)
+					else -> Vector3(-250f, 150f, -250f)
+				}
+				enemy.reset(pos)
 				try {
 					engine.addEntity(enemy)
 				}
@@ -100,18 +107,16 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 		return false
 	}
 
-	private var z_ = -1
 	private fun spawnAllEnemies() {
 		if(allEnemies.size < MAX)//allEnemies.isEmpty() ||
 		for(i in allEnemies.size until MAX) {
-			z_ = if(z_ < 0) 1 else -1
 			//Log.e("EnemySystem", "spawnAllEnemies:-------------------------------$i  "+allEnemies.size+" ")
 			val enemy = EnemyFactory.create(i,
 						game.assets.particleEffectPool!!,
 						game.render,
 						game.assets.getEnemy1(),
 						EnemyComponent.TYPE.MONSTER1,
-						Vector3(0f, 150f, z_*350f))
+						Vector3())//La posicion se resetea en Enemy.reset  (0f, 150f, 350f)
 			allEnemies.add(enemy)
 		}
 	}

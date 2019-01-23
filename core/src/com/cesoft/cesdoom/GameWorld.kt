@@ -106,13 +106,11 @@ class GameWorld(game: CesDoom) {
 
 		/// PLAYER
 		createPlayer(assets, Vector3(0f,150f,0f))
-		PlayerComponent.health = 100f
-		PlayerComponent.score = 0
-		PlayerComponent.colorAmbiente = colorAmbiente
 	}
 
 	//______________________________________________________________________________________________
 	private fun createPlayer(assets: Assets, pos: Vector3) {
+		PlayerComponent.ini(colorAmbiente)
 		player = Player.create(pos)//PlayerComponent.create(pos)
 		engine.addEntity(player)
 		gun = GunFactory.create(

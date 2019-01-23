@@ -27,13 +27,13 @@ import com.cesoft.cesdoom.map.MapGraphFactory
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object GateFactory {
-    const val LONG = Gate.LONG
-    const val HIGH = Gate.HIGH
-    const val THICK = Gate.THICK
+    private const val LONG = GateComponent.LONG
+    private const val HIGH = GateComponent.HIGH
+    private const val THICK = GateComponent.THICK
 
     // dimension en X grados para frustum culling
-    private val dim0 = Vector3(THICK*2, HIGH*2, LONG*2)
-    private val dim90= Vector3(LONG*2, HIGH*2, THICK*2)
+    private val dim0 = Vector3(THICK*2, HIGH*2, LONG*5)//5*LONG porque la puerta se mueve
+    private val dim90= Vector3(LONG*5, HIGH*2, THICK*2)
     //private val dim45= Vector3(LONG*2, HIGH*2, LONG*2)
 
     private val dimCollision = Vector3(THICK+20f,HIGH+0f,LONG+0f)
@@ -51,25 +51,26 @@ object GateFactory {
 
 
     //______________________________________________________________________________________________
+    private var counter = 0
     fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, engine: Engine): Gate {
 
         /// GraphMap
         WallMapFactory.create(mapFactory, pos, angle, 0)
 
         /// Entity
-        val entity = Gate()
+        val entity = Gate(counter++)
         pos.y += HIGH
 
         /// Component
-        val enemyComponent = GateComponent()
+        val enemyComponent = GateComponent
         entity.add(enemyComponent)
 
         /// Material
         val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
         texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture)
-        textureAttribute1.scaleU = 2f
-        textureAttribute1.scaleV = 2f//4
+        textureAttribute1.scaleU = 1f
+        textureAttribute1.scaleV = 1f
         material.set(textureAttribute1)
 
         /// Model

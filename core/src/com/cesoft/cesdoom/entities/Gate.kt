@@ -3,21 +3,19 @@ package com.cesoft.cesdoom.entities
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
+import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.util.Log
+import com.cesoft.cesdoom.components.GateComponent.MAX_OFFSET_OPEN
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class Gate : Entity() {
+class Gate(private val id: Int) : Entity() {
 
     companion object {
         val tag: String = Gate::class.java.simpleName
-        const val LONG = 25f
-        const val HIGH = 25f
-        const val THICK = 4f
-        const val MAX_OFFSET_OPEN = LONG - 2f
+        private const val STEP_OPEN = 6f
     }
 
-    private var stepOpen = 0.2f
     private var offsetOpened = 0f
     var isOpening = false
 
@@ -40,23 +38,26 @@ class Gate : Entity() {
 
 
     fun update(delta: Float) {
-        Log.e(tag, "update------------ $offsetOpened --------------- $delta  $isOpening")
+        //Log.e(tag, "update($id)------------ $offsetOpened --------------- $delta  $isOpening")
 
         if(isOpening) {
-            offsetOpened += delta * stepOpen
+            offsetOpened += delta * STEP_OPEN
             if(offsetOpened > MAX_OFFSET_OPEN) {
                 isOpening = false
                 offsetOpened = MAX_OFFSET_OPEN
             }
+            val model = getComponent(ModelComponent::class.java)
             when(angle) {
                 00f -> {
                     //TODO:Get position and traslate
-                    rigidBody.translate(Vector3(pos.x,pos.y, pos.z + offsetOpened))
-                    Log.e(tag, "update--A------------------------- "+Vector3(0f,0f, offsetOpened))
+                    val posTemp = Vector3(pos.x, pos.y, pos.z + offsetOpened)
+                    model.instance.transform.setTranslation(posTemp)
+                    Log.e(tag, "update($id)-00-------- $offsetOpened $delta  $isOpening ---------------- $posTemp ")
                 }
                 90f -> {
-                    rigidBody.translate(Vector3(pos.x + offsetOpened, pos.y, pos.z))
-                    Log.e(tag, "update--B------------------------- "+Vector3(0f,0f, offsetOpened))
+                    val posTemp = Vector3(pos.x + offsetOpened, pos.y, pos.z)
+                    model.instance.transform.setTranslation(posTemp)
+                    Log.e(tag, "update($id)-90--------offset=$offsetOpened delta=$delta open=$isOpening ---------------- pos=$posTemp ")
                 }
             }
         }
