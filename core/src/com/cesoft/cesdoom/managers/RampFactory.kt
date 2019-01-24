@@ -93,20 +93,18 @@ object RampFactory {
 
 		/// COLISION
 		val shape = btBoxShape(dim)
-		//val shape = Bullet.obtainStaticNodeShape(model.nodes)
 		val motionState = MotionState(modelComponent.instance.transform)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
-		rigidBody.motionState = motionState//modelComponent.instance.transform)
+		rigidBody.motionState = motionState
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-		rigidBody.contactCallbackFilter = 0//BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
-		rigidBody.contactCallbackFlag = BulletComponent.SCENE_FLAG or RenderSystem.CF_OCCLUDER_OBJECT
-		rigidBody.userValue = BulletComponent.SCENE_FLAG
+		rigidBody.contactCallbackFilter = 0
+		rigidBody.contactCallbackFlag = RenderSystem.CF_OCCLUDER_OBJECT//BulletComponent.SCENE_FLAG or
+		rigidBody.userValue = 0//BulletComponent.SCENE_FLAG
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f
 		rigidBody.rollingFriction = 1f
-		//rigidBody.anisotropicFriction = Vector3(1f, 1f, 1f)
 		rigidBody.spinningFriction = 1f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 

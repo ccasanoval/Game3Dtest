@@ -17,7 +17,7 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.components.*
-import com.cesoft.cesdoom.UI.ControllerWidget
+import com.cesoft.cesdoom.ui.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
 import com.cesoft.cesdoom.CesDoom
@@ -143,6 +143,7 @@ class PlayerSystem(
 		updateWeapon(delta)
 		updateStatus()
 		checkGameOver(delta)
+		checkYouWin(delta)
 		updateCamera()
 		PlayerComponent.update()
 	}
@@ -260,9 +261,9 @@ class PlayerSystem(
 	private fun updateSaltando() {
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || btnA)
 		{
-			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isSaltando)
-			if( ! playerComponent.isSaltando) {
-				playerComponent.isSaltando = true
+			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isJumping)
+			if( ! playerComponent.isJumping) {
+				playerComponent.isJumping = true
 				val fuerza = 40f
 				val vel = bulletComponent.rigidBody.linearVelocity.cpy()
 				vel.y += fuerza
@@ -392,12 +393,23 @@ class PlayerSystem(
 	private var delayDeath = 0f
 	private fun checkGameOver(delta: Float) {
 		if(PlayerComponent.isDead() && !Settings.paused) {
-			if(delayDeath > 2f)
-			{
+			if(delayDeath >= 2f) {
 				Settings.paused = true
-				game.gameUI.gameOverWidget.gameOver()
+				game.gameUI.gameOverWidget.show()
 			}
 			delayDeath += delta
+		}
+	}
+	//______________________________________________________________________________________________
+	private var delayYouWin = 0f
+	private fun checkYouWin(delta: Float) {
+		if(PlayerComponent.isWinning && !Settings.paused) {
+			if(delayYouWin >= 0f) {
+				Settings.paused = true
+				game.gameUI.gameWinWidget.show()
+				//game.gameUI.gameOverWidget.show()
+			}
+			delayYouWin += delta
 		}
 	}
 

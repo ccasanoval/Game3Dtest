@@ -32,11 +32,11 @@ object GateFactory {
     private const val THICK = GateComponent.THICK
 
     // dimension en X grados para frustum culling
-    private val dim0 = Vector3(THICK*2, HIGH*2, LONG*5)//5*LONG porque la puerta se mueve
-    private val dim90= Vector3(LONG*5, HIGH*2, THICK*2)
+    //private val dim0 = Vector3(THICK*2, HIGH*2, LONG*5)//5*LONG porque la puerta se mueve
+    //private val dim90= Vector3(LONG*5, HIGH*2, THICK*2)
     //private val dim45= Vector3(LONG*2, HIGH*2, LONG*2)
 
-    private val dimCollision = Vector3(THICK+20f,HIGH+0f,LONG+0f)
+    private val dimCollision = Vector3(THICK+5f,HIGH+0f,LONG+0f)
 
     private val mb = ModelBuilder()
     private val POSITION_NORMAL =
@@ -77,8 +77,8 @@ object GateFactory {
         val model : Model = mb.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
         val modelComponent = ModelComponent(model, pos)
 
-        // Mejora para frustum culling
-        val frustumCullingData : FrustumCullingData
+        // Frustum culling
+        /*val frustumCullingData : FrustumCullingData
         if(angle == 0f)//angle > -5f && angle < 5f)
             frustumCullingData = FrustumCullingData.create(pos, dim0)
         else if(angle == 90f)
@@ -91,21 +91,24 @@ object GateFactory {
             frustumCullingData = FrustumCullingData.create(boundingBox)
         }
         modelComponent.frustumCullingData = frustumCullingData
-
+        */
         modelComponent.instance.materials.get(0).set(textureAttribute1)
         modelComponent.instance.transform.rotate(Vector3.Y, angle)
         entity.add(modelComponent)
 
-        /// Collision
+        /// Position and Shape
         val transf = modelComponent.instance.transform
         val shape = btBoxShape(dimCollision)
         val motionState = MotionState(transf)
+
+        /// Collision
         val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
         val rigidBody = btRigidBody(bodyInfo)
         rigidBody.userData = entity
         rigidBody.motionState = motionState
         rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-        rigidBody.contactCallbackFilter = 0
+        //rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
+        rigidBody.contactCallbackFilter = 0//BulletComponent.PLAYER_FLAG
         rigidBody.contactCallbackFlag = BulletComponent.GATE_FLAG
         rigidBody.userValue = BulletComponent.GATE_FLAG
         rigidBody.activationState = Collision.DISABLE_DEACTIVATION

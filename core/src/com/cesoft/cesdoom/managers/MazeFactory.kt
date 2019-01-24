@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.components.GateComponent
 import com.cesoft.cesdoom.map.MapGraphFactory
 import com.cesoft.cesdoom.util.Log
 
@@ -154,6 +155,8 @@ object MazeFactory
                 //GATE
                 GateFactory.create(mapFactory, Vector3(x*lng, 0f, +6f * lng2), 90f, e)
                 GateFactory.create(mapFactory, Vector3(x*lng, 0f, -6f * lng2), 90f, e)
+				YouWinFactory.create(Vector3(x*lng, 0f, +6f * lng2 + (2*YouWinFactory.SIZE+GateComponent.THICK)), e)
+				YouWinFactory.create(Vector3(x*lng, 0f, -6f * lng2 - (2*YouWinFactory.SIZE+GateComponent.THICK)), e)
                 continue
             }
             wf.create(mapFactory, Vector3(x * lng, 0f, +6f * lng2), 90f, e, WallFactory.Type.GRILLE)
@@ -161,6 +164,11 @@ object MazeFactory
         }
 		// Extra Exterior ------------------
 
+
+		//TESTING
+        GateFactory.create(mapFactory, Vector3(+GateComponent.LONG+.2f, 0f, 0f), 0f, e)
+		//GateFactory.create(mapFactory, Vector3(-GateComponent.LONG, 0f, 0f), 0f, e)
+		//YouWinFactory.create(Vector3(-2*GateComponent.LONG, 0f, 0f), e)
 
 		//createSectorTest(engine, +1, +1)
 		//createSectorTest(engine, -1, +1)

@@ -66,7 +66,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 				}
 				else {
 					for(id0 in 0 until MAX) {
-						Log.e("EnemySystem", "spawIfNeeded:---------------------------B $id0")
+						//Log.e("EnemySystem", "spawIfNeeded:---------------------------B $id0")
 						if( ! isEnemyActive(id0)) {
 							id = id0
 							break
@@ -74,7 +74,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 					}
 				}
 
-				Log.e("EnemySystem", "spawIfNeeded:---------------------------id=$id  n enemies="+enemies.size()+" --- ")
+				//Log.e("EnemySystem", "spawIfNeeded:---------------------------id=$id  n enemies="+enemies.size()+" --- ")
 				if(id >= allEnemies.size) {
 					return//Max enemy number reached
 				}
@@ -91,7 +91,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 					engine.addEntity(enemy)
 				}
 				catch(e: Throwable) {//TODO: on pause, reset timer...
-					Log.e("EnemySystem", "spawIfNeeded:e:-------------------------------$e")
+					Log.e("EnemySystem", "spawnIfNeeded:e:-------------------------------$e")
 				}//TODO: check before fail
 			}
 		} ?: run { }

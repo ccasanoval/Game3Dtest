@@ -1,4 +1,4 @@
-package com.cesoft.cesdoom.UI
+package com.cesoft.cesdoom.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -20,6 +20,8 @@ class GameUI(game: CesDoom) {
 	private var fpsLabel: Label = Label("", game.assets.skin)
 	var gameOverWidget: GameOverWidget = GameOverWidget(game, stage)
 		private set
+	var gameWinWidget: GameWinWidget = GameWinWidget(game, stage)
+		private set
 
 	init {
 		configureWidgets()
@@ -38,6 +40,9 @@ class GameUI(game: CesDoom) {
 
 		gameOverWidget.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
 		gameOverWidget.setPosition((CesDoom.VIRTUAL_WIDTH - gameOverWidget.width)/2, (CesDoom.VIRTUAL_HEIGHT - gameOverWidget.height)/2)
+
+		//gameWinWidget.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
+		//gameWinWidget.setPosition((CesDoom.VIRTUAL_WIDTH - gameWinWidget.width)/2, (CesDoom.VIRTUAL_HEIGHT - gameWinWidget.height)/2)
 
 		crosshairWidget.setPosition(CesDoom.VIRTUAL_WIDTH / 2 - 16, CesDoom.VIRTUAL_HEIGHT / 2 - 16)
 		crosshairWidget.setSize(32f, 32f)

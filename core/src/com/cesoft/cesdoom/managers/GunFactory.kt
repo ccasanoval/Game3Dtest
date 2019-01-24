@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Assets
-import com.cesoft.cesdoom.UI.GunFireWidget
+import com.cesoft.cesdoom.ui.GunFireWidget
 import com.cesoft.cesdoom.components.AnimationComponent
 import com.cesoft.cesdoom.components.AnimationParams
 import com.cesoft.cesdoom.components.GunComponent

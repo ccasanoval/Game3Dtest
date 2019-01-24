@@ -110,7 +110,7 @@ class StatusComponent(private val entity: Enemy) : Component {
 
 	/// Reset
 	fun reset() {
-		Log.e(tag, "reset:------------------------------------------------------------")
+		//Log.e(tag, "reset:------------------------------------------------------------")
 		isSaltando = true
 		estado = EnemyComponent.ACTION.WALKING
 		deadStateTime = 0f

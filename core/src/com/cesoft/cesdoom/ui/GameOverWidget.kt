@@ -1,4 +1,4 @@
-package com.cesoft.cesdoom.UI
+package com.cesoft.cesdoom.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -93,6 +93,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage) : Actor() {
 		Gdx.input.isCursorCatched = true
 		Settings.paused = false
 		Settings.gameOver = false
+		Settings.gameWin = false
 	}
 
 	//______________________________________________________________________________________________
@@ -110,7 +111,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage) : Actor() {
 	}
 
 	//______________________________________________________________________________________________
-	fun gameOver() {
+	fun show() {
 		pausar()
 	}
 }

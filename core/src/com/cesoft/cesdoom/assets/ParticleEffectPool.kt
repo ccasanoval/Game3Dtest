@@ -23,13 +23,11 @@ class ParticleEffectPool(private val assets: Assets, camera: PerspectiveCamera)
 	}
 
 	override fun newObject(): ParticleEffect {
-		Log.e("ParticleEffectPool", "newObject ---------------------------------------------------------")
 		return assets.getParticleEffectDie().copy()
 	}
 
 	override fun free(effect: ParticleEffect) {
 		try {
-			Log.e("ParticleEffectPool", "free ---------------------------------------------------------$effect")
 			effect.end()
 			effect.reset()
 		}

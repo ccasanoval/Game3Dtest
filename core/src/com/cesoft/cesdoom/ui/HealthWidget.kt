@@ -1,4 +1,4 @@
-package com.cesoft.cesdoom.UI
+package com.cesoft.cesdoom.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch

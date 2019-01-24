@@ -110,9 +110,7 @@ class GameWorld(game: CesDoom) {
 
 	//______________________________________________________________________________________________
 	private fun createPlayer(assets: Assets, pos: Vector3) {
-		PlayerComponent.ini(colorAmbiente)
-		player = Player.create(pos)//PlayerComponent.create(pos)
-		engine.addEntity(player)
+		player = Player.create(pos, colorAmbiente, engine)
 		gun = GunFactory.create(
 				assets.getCZ805(),
 				GunComponent.TYPE.CZ805,
@@ -175,6 +173,6 @@ class GameWorld(game: CesDoom) {
 	//______________________________________________________________________________________________
 	fun enemyDied(enemy: Enemy) {
 		removeEnemy(enemy)
-		PlayerComponent.score += 20
+		PlayerComponent.addScore(20)
 	}
 }

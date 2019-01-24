@@ -52,12 +52,12 @@ class Gate(private val id: Int) : Entity() {
                     //TODO:Get position and traslate
                     val posTemp = Vector3(pos.x, pos.y, pos.z + offsetOpened)
                     model.instance.transform.setTranslation(posTemp)
-                    Log.e(tag, "update($id)-00-------- $offsetOpened $delta  $isOpening ---------------- $posTemp ")
+                    //Log.e(tag, "update($id)-00-------- $offsetOpened $delta  $isOpening ---------------- $posTemp ")
                 }
                 90f -> {
                     val posTemp = Vector3(pos.x + offsetOpened, pos.y, pos.z)
                     model.instance.transform.setTranslation(posTemp)
-                    Log.e(tag, "update($id)-90--------offset=$offsetOpened delta=$delta open=$isOpening ---------------- pos=$posTemp ")
+                    //Log.e(tag, "update($id)-90--------offset=$offsetOpened delta=$delta open=$isOpening ---------------- pos=$posTemp ")
                 }
             }
         }

@@ -13,9 +13,11 @@ object Log {
             ApplicationType.WebGL -> Unit
             ApplicationType.Applet -> Unit
         }*/
-        if(debugMode)
-            System.err.println("$tag: $msg")
-
+        if(debugMode) {
+            //System.err.println("$tag: $msg")
+            //System.err.flush()
+            Gdx.app.error(tag, msg)
+        }
 
         /*Gdx.app.log("MyTag", "my informative message");
         Gdx.app.error("MyTag", "my error message", exception);
