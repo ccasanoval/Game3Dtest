@@ -37,7 +37,7 @@ class AboutScreen(internal val game: CesDoom) : Screen, InputProcessor {
 	//______________________________________________________________________________________________
 	private fun configureWidgers() {
 		backgroundImage.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
-		backButton.setSize(175f, 75f)
+		backButton.setSize(175f, 85f)
 		backButton.setPosition(CesDoom.VIRTUAL_WIDTH - backButton.width - 5, 5f)
 
 		texto.setWrap(true)
@@ -58,9 +58,6 @@ class AboutScreen(internal val game: CesDoom) : Screen, InputProcessor {
 		stage.addActor(backButton)
 		stage.addActor(win)
 		stage.addActor(scrollPane)
-
-		//scrollPane.widget = texto
-		scrollPane.addActor(texto)
 	}
 
 	//______________________________________________________________________________________________

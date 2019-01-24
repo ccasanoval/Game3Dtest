@@ -61,7 +61,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 	private fun setListeners() {
 		super.addListener(object : InputListener() {
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
-				if(Settings.gameOver)return false
+				if(Settings.gameOver || Settings.gameWin)return false
 				if(keycode == Input.Keys.ESCAPE || keycode == Input.Keys.BACK) {
 					handleUpdates()
 					return true

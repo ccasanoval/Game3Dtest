@@ -32,17 +32,13 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
     private fun configureWidgers() {
         backgroundImage.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
 
-        backButton.setSize(175f, 80f)
+        backButton.setSize(175f, 85f)
         backButton.setPosition(CesDoom.VIRTUAL_WIDTH - backButton.width - 5, 5f)
 
         win.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-100)
         win.setPosition(50f,100f)
         win.zIndex = 10
         //win.touchable = Touchable.disabled
-
-        stage.addActor(backgroundImage)
-        stage.addActor(backButton)
-        stage.addActor(win)
 
         // Inside Window
         tituloLabel.setColor(.9f, .9f, .9f, 1f)
@@ -53,6 +49,10 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
 
         win.addActor(tituloLabel)
         win.addActor(soundButton)
+
+		stage.addActor(backgroundImage)
+        stage.addActor(backButton)
+        stage.addActor(win)
     }
 
     //______________________________________________________________________________________________
