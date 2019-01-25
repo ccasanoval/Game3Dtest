@@ -15,7 +15,7 @@ import com.cesoft.cesdoom.bullet.MotionState
 object PlayerComponent : Component
 {
 	const val MASA = .65f
-	const val ALTURA = 17f
+	const val ALTURA = 22f
 	const val RADIO = 12f
 	const val FUERZA_MOVIL = 2000f
 	const val FUERZA_PC = 5000f

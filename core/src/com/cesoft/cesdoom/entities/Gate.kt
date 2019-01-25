@@ -13,7 +13,7 @@ class Gate(private val id: Int) : Entity() {
 
     companion object {
         val tag: String = Gate::class.java.simpleName
-        private const val STEP_OPEN = 6f
+        private const val STEP_OPEN = 7f
     }
 
     private var offsetOpened = 0f

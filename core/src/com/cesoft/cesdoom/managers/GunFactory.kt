@@ -79,7 +79,7 @@ object GunFactory {
 
 	//______________________________________________________________________________________________
 	fun playSound(assets: Assets) {
-		if(Settings.soundEnabled) {
+		if(Settings.isSoundEnabled) {
 			val sound = assets.getSoundCZ805()
 			if (!sound.isPlaying)
 				sound.play()

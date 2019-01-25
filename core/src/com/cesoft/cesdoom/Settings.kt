@@ -4,6 +4,52 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Net
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 
+/*
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Preferences
+
+class AppPreferences {
+
+	protected val prefs: Preferences
+		get() = Gdx.app.getPreferences(PREFS_NAME)
+
+	var isSoundEffectsEnabled: Boolean
+		get() = prefs.getBoolean(PREF_SOUND_ENABLED, true)
+		set(soundEffectsEnabled) {
+			prefs.putBoolean(PREF_SOUND_ENABLED, soundEffectsEnabled)
+			prefs.flush()
+		}
+
+	var isMusicEnabled: Boolean
+		get() = prefs.getBoolean(PREF_MUSIC_ENABLED, true)
+		set(musicEnabled) {
+			prefs.putBoolean(PREF_MUSIC_ENABLED, musicEnabled)
+			prefs.flush()
+		}
+
+	var musicVolume: Float
+		get() = prefs.getFloat(PREF_MUSIC_VOLUME, 0.5f)
+		set(volume) {
+			prefs.putFloat(PREF_MUSIC_VOLUME, volume)
+			prefs.flush()
+		}
+
+	var soundVolume: Float
+		get() = prefs.getFloat(PREF_SOUND_VOL, 0.5f)
+		set(volume) {
+			prefs.putFloat(PREF_SOUND_VOL, volume)
+			prefs.flush()
+		}
+
+	companion object {
+		private val PREF_MUSIC_VOLUME = "volume"
+		private val PREF_MUSIC_ENABLED = "music.enabled"
+		private val PREF_SOUND_ENABLED = "sound.enabled"
+		private val PREF_SOUND_VOL = "sound"
+		private val PREFS_NAME = "b2dtut"
+	}
+}*/
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -13,7 +59,12 @@ object Settings {
 	var gameOver: Boolean = false
 	var gameWin: Boolean = false
 	var mainMenu: Boolean = false
-	var soundEnabled = false
+	var isSoundEnabled = false
+
+	fun getMusicVolume() = 50f
+	fun setMusicVolume(volume: Float) {
+		;
+	}
 
 	//var highscores = intArrayOf(1000, 800, 500, 300, 100)
 	//val file = ".spaceglad"

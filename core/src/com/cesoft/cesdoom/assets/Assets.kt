@@ -60,7 +60,7 @@ class Assets {
 		skin.load(fileHandle)
 	}
 
-	// SOUND
+	// SOUND TODO:Disparo: solo uno y repetir mietras dispara!! usar sound que lo carga en memoria, mas eficiente que music!!!, call music dispose!!
 	//______________________________________________________________________________________________
 	fun iniSoundCZ805() {
 		//https://freesound.org/people/SuperPhat/sounds/416417/

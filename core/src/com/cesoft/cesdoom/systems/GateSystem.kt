@@ -22,7 +22,6 @@ class GateSystem : EntitySystem(), EntityListener {
     }
 
     override fun entityAdded(entity: Entity?) {
-
     }
 
 
