@@ -38,7 +38,8 @@ class Assets {
 		val SOBRE="SOBRE"
 		val ATRAS="ATRAS"
 		val CONFIG="CONFIG"
-		val CONFIG_SOUND="CONFIG_SOUND"
+		val CONFIG_SOUND_VOLUME="CONFIG_SOUND_VOLUME"
+		val CONFIG_SOUND_ONOF="CONFIG_SOUND_ONOF"
 	}
 
 	private val assetManager = AssetManager()

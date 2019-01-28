@@ -1,8 +1,8 @@
 package com.cesoft.cesdoom
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Net
-import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
+import com.cesoft.cesdoom.assets.Assets
 
 /*
 import com.badlogic.gdx.Gdx
@@ -61,9 +61,14 @@ object Settings {
 	var mainMenu: Boolean = false
 	var isSoundEnabled = false
 
-	fun getMusicVolume() = 50f
+	private var soundVolume = 100f
+
+	fun getMusicVolume() = soundVolume
 	fun setMusicVolume(volume: Float) {
-		;
+		soundVolume = volume
+		//Assets.getSoundEnemy1() .setVolume()
+		//getSoundEnemy1Die()
+		//getSoundFootSteps()
 	}
 
 	//var highscores = intArrayOf(1000, 800, 500, 300, 100)
