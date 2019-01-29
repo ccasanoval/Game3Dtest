@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.GameWorld
-import com.cesoft.cesdoom.Settings
+import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.systems.RenderSystem
 import com.cesoft.cesdoom.util.Log
 
@@ -18,7 +18,7 @@ class GameScreen(private val game: CesDoom) : Screen {
 		val tag: String = GameScreen::class.java.simpleName
 	}
 	init {
-		Settings.paused = false
+		Status.paused = false
 		Gdx.input.inputProcessor = game.gameUI.stage
 		Gdx.input.isCursorCatched = true
 	}

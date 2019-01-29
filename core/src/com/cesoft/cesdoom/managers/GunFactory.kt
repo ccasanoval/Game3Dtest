@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.ui.GunFireWidget
 import com.cesoft.cesdoom.components.AnimationComponent
@@ -79,10 +78,6 @@ object GunFactory {
 
 	//______________________________________________________________________________________________
 	fun playSound(assets: Assets) {
-		if(Settings.isSoundEnabled) {
-			val sound = assets.getSoundCZ805()
-			if (!sound.isPlaying)
-				sound.play()
-		}
+		assets.playSound(Assets.SOUND_RIFLE)
 	}
 }

@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesdoom.assets.Assets
-import com.cesoft.cesdoom.Settings
+import com.cesoft.cesdoom.Status
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -34,7 +34,7 @@ class HealthWidget(assets: Assets) : Actor() {
 
 	//______________________________________________________________________________________________
 	override fun act(delta: Float) {
-		if(Settings.paused) return
+		if(Status.paused) return
 		healthBar.act(delta)
 		label.act(delta)
 	}

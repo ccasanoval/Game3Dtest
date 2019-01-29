@@ -98,7 +98,7 @@ class MapGraph(val width: Float, val height: Float, val scale: Int)
     }
 
     fun findPath(orig: Point, dest: Point): GraphPath<Node> {
-        val path = MapGraphSmooth()//DefaultGraphPath<Node>()
+        val path = MapGraphSmooth()
         val pathFinder = IndexedAStarPathFinder<Node>(this)
         val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
         val nodeOrig = getNode(orig)
@@ -110,21 +110,18 @@ Log.e(tag, "findPath a------:----- $nodeOrig $nodeDest")
     }
 
     fun findPath(orig: Vector2, dest: Vector2): ArrayList<Vector2> {
-        val path = MapGraphSmooth()//DefaultGraphPath<Node>()
+        val path = MapGraphSmooth()
         val nodeOrig = getNode(orig)
         val nodeDest = getNode(dest)
         val pathFinder = IndexedAStarPathFinder<Node>(this)
         val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
 
         try {
-            val t0 = System.currentTimeMillis()
-//Log.e(tag, "findPath a------:----- $nodeOrig $nodeDest  $path")
-            val b2 = pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
-            val t1 = System.currentTimeMillis() - t0
-//Log.e(tag, "findPath:----- $b2 ${path.count}  delay= $t1 ms")
+//            val t0 = System.currentTimeMillis()
+            pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
+//            val t1 = System.currentTimeMillis() - t0
             pathSmoother.smoothPath(path)
-            val t2 = System.currentTimeMillis() - t0 - t1
-//Log.e(tag, "smoothPath:----- $b2 ${path.count}  delay= $t2 ms")
+//Log.e(tag, "smoothPath:----- $b2 ${path.count}  delay= ${System.currentTimeMillis() - t0 - t1} ms")
 
             val res = ArrayList<Vector2>()
             for(step in path) {
@@ -140,8 +137,8 @@ Log.e(tag, "findPath a------:----- $nodeOrig $nodeDest")
         return ArrayList()
     }
 
-    override fun getIndex(Node: Node): Int {
-        return Node.index
+    override fun getIndex(node: Node): Int {
+        return node.index
     }
 
     override fun getNodeCount(): Int {

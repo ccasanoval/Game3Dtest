@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.cesoft.cesdoom.Settings
+import com.cesoft.cesdoom.Status
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -15,11 +15,11 @@ class CrosshairWidget : Actor() {
 	private val crosshairInnerRing: Image= Image(Texture(Gdx.files.internal("crosshair/crossHairInnerRing.png")))
 
 	override fun act(delta: Float) {
-		if(Settings.paused) return
+		if(Status.paused) return
 	}
 
 	override fun draw(batch: Batch?, parentAlpha: Float) {
-		if(Settings.paused) return
+		if(Status.paused) return
 		crosshairDot.draw(batch!!, parentAlpha)
 		crosshairInnerRing.draw(batch, parentAlpha)
 	}

@@ -1,8 +1,11 @@
 package com.cesoft.cesdoom
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.util.Log
 
 /*
 import com.badlogic.gdx.Gdx
@@ -54,21 +57,29 @@ class AppPreferences {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object Settings {
+	private const val PREF_NAME = "CesDooM_Prefs"
+	private const val PREF_SOUND_ONOFF = "sound_onoff"
+	private const val PREF_SOUND_VOLUME = "sound_volume"
 
-	var paused: Boolean = false
-	var gameOver: Boolean = false
-	var gameWin: Boolean = false
-	var mainMenu: Boolean = false
 	var isSoundEnabled = false
+	var soundVolume:Float = 1f
+		set(value) {
+			if(value in 0.0f..1.0f)
+				field = value
+		}
 
-	private var soundVolume = 100f
 
-	fun getMusicVolume() = soundVolume
-	fun setMusicVolume(volume: Float) {
-		soundVolume = volume
-		//Assets.getSoundEnemy1() .setVolume()
-		//getSoundEnemy1Die()
-		//getSoundFootSteps()
+	/// Preferencias
+	//
+	private val prefs: Preferences = Gdx.app.getPreferences(PREF_NAME)
+	fun loadPrefs() {
+		isSoundEnabled = prefs.getBoolean(PREF_SOUND_ONOFF)
+		soundVolume = prefs.getFloat(PREF_SOUND_VOLUME)
+	}
+	fun savePrefs() {
+		prefs.putBoolean(PREF_SOUND_ONOFF, isSoundEnabled)
+		prefs.putFloat(PREF_SOUND_VOLUME, soundVolume)
+		prefs.flush()
 	}
 
 	//var highscores = intArrayOf(1000, 800, 500, 300, 100)

@@ -46,6 +46,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		//Settings.load()
 		Gdx.input.isCatchBackKey = true
 		setScreen(MainMenuScreen(this))
+		Settings.loadPrefs()
 	}
 
 	//______________________________________________________________________________________________
@@ -84,14 +85,14 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		Log.e(tag, "reset:--------------------------------------------------------")
 		delScreen()
 		setScreen(LoadingScreen(this))
-		Settings.gameOver = false
-		Settings.mainMenu = false
+		Status.gameOver = false
+		Status.mainMenu = false
 		//<android:hardwareAccelerated="false">
 	}
 	//______________________________________________________________________________________________
 	fun reset2Menu() {
-		Settings.mainMenu = true
-		Settings.gameOver = false
+		Status.mainMenu = true
+		Status.gameOver = false
 		delScreen()
 		setScreen(MainMenuScreen(this))
 	}
@@ -119,22 +120,22 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		catch (ignore: GdxRuntimeException) {assets.iniWallMetal3()}
 
 		// Sounds
-		try {assets.getSoundCZ805()}
-		catch (ignore: Exception) {assets.iniSoundCZ805()}
-		try {assets.getSoundEnemy1()}
-		catch (ignore: Exception) {assets.iniSoundEnemy1()}
-		try {assets.getSoundEnemy1Die()}
-		catch (ignore: Exception) {assets.iniSoundEnemy1Die()}
+		try {assets.getSoundRifle()}
+		catch (ignore: Exception) {assets.iniSoundRifle()}
+		try {assets.getSoundEnemy()}
+		catch (ignore: Exception) {assets.iniSoundEnemy()}
+		try {assets.getSoundEnemyDie()}
+		catch (ignore: Exception) {assets.iniSoundEnemyDie()}
 		try {assets.getSoundFootSteps()}
 		catch (ignore: Exception) {assets.iniSoundFootSteps()}
 
 		// Enemy
-		try {assets.getEnemy1()}
-		catch (ignore: Exception) {assets.iniEnemy1()}
+		try {assets.getEnemy()}
+		catch (ignore: Exception) {assets.iniEnemy()}
 
 		// Weapons
-		try {assets.getCZ805()}
-		catch (ignore: Exception) {assets.iniCZ805()}
+		try {assets.getRifle()}
+		catch (ignore: Exception) {assets.getRifle()}
 		try {assets.getFireShot()}
 		catch (ignore: Exception) {assets.iniFireShot()}
 

@@ -21,7 +21,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.cesoft.cesdoom.RenderUtils.OcclusionCuller
 import com.cesoft.cesdoom.RenderUtils.OcclusionBuffer
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase
-import com.cesoft.cesdoom.Settings
+import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.entities.Gun
 import com.cesoft.cesdoom.util.Log
 
@@ -145,7 +145,7 @@ class RenderSystem(
 		if(countDrawn > countMax)countMax = countDrawn
 		batch.end()
 
-		if( ! Settings.paused) {
+		if( ! Status.paused) {
 			//drawShadows(delta)
 			renderParticleEffects()
 		}
@@ -208,7 +208,7 @@ class RenderSystem(
 //				if(model.frustumCullingData.isVisible(perspectiveCamera))
 //					batch.render(model.instance)
 //			}
-//			//if(entities.get(x).getComponent(AnimationComponent::class.java) != null && !Settings.paused)
+//			//if(entities.get(x).getComponent(AnimationComponent::class.java) != null && !Status.paused)
 //			//	entities.get(x).getComponent(AnimationComponent::class.java).update(delta)
 //		}
 //		batch.end()

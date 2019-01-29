@@ -20,13 +20,9 @@ import com.cesoft.cesdoom.systems.*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //TODO: Constructor para laberinto & MapPathFinder
 //TODO: Columnas en maze, maze cerrado !!
-//TODO: Steering AI !!!!!! https://www.gamedevelopment.blog/full-libgdx-game-tutorial-ashley-steering-behaviors/
-//TODO: Velocidad carga y velocidad ejecucion (mobile 20 fps !!!)
 
 //TODO: Configurar joystick Android -> Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga y salto?
-//TODO: about screen...
 
-//TODO: Logs solo en debug
 //TODO: Dependecy Injection?
 //TODO: Shadows? Fog?
 
@@ -112,7 +108,7 @@ class GameWorld(game: CesDoom) {
 	private fun createPlayer(assets: Assets, pos: Vector3) {
 		player = Player.create(pos, colorAmbiente, engine)
 		gun = GunFactory.create(
-				assets.getCZ805(),
+				assets.getRifle(),
 				GunComponent.TYPE.CZ805,
 				assets.getFireShot())
 		engine.addEntity(gun)
@@ -134,11 +130,11 @@ class GameWorld(game: CesDoom) {
 		}
 	}
 	private fun checkPause() {
-		bulletSystem.setProcessing( ! Settings.paused)
-		enemySystem.setProcessing( ! Settings.paused)
-		playerSystem.setProcessing( ! Settings.paused)
-		statusSystem.setProcessing( ! Settings.paused)
-		gateSystem.setProcessing( ! Settings.paused)
+		bulletSystem.setProcessing( ! Status.paused)
+		enemySystem.setProcessing( ! Status.paused)
+		playerSystem.setProcessing( ! Status.paused)
+		statusSystem.setProcessing( ! Status.paused)
+		gateSystem.setProcessing( ! Status.paused)
 	}
 
 	fun pause() {

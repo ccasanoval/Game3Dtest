@@ -21,6 +21,8 @@ import com.cesoft.cesdoom.ui.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent.ALTURA
 import com.cesoft.cesdoom.components.PlayerComponent.FUERZA_MOVIL
 import com.cesoft.cesdoom.managers.GunFactory
@@ -150,12 +152,12 @@ class PlayerSystem(
 
 	//______________________________________________________________________________________________
 	private fun updateMovement(delta: Float) {
-		updateRotacion(delta)
-		updateTraslacion(delta)
-		updateSaltando()
+		updateRotation(delta)
+		updateTraslation(delta)
+		updateJumping()
 	}
 	//______________________________________________________________________________________________
-	private fun updateRotacion(delta: Float)
+	private fun updateRotation(delta: Float)
 	{
 		if(PlayerComponent.isDead())return
 
@@ -201,7 +203,7 @@ class PlayerSystem(
 		camera.update()
 	}
 	//______________________________________________________________________________________________
-	private fun updateTraslacion(delta: Float)
+	private fun updateTraslation(delta: Float)
 	{
 		posTemp.set(0f, 0f, 0f)
 
@@ -235,8 +237,8 @@ class PlayerSystem(
 				posTemp2.set(Vector3.Zero)
 			else {
 				animFootStep(delta)
-				if(Settings.isSoundEnabled && ! game.assets.getSoundFootSteps().isPlaying)
-					game.assets.getSoundFootSteps().play()
+				if(Settings.isSoundEnabled)// && ! game.assets.getSoundFootSteps().isPlaying)
+					game.assets.playSound(Assets.SOUND_FOOTSTEPS)
 			}
 			posTemp.add(posTemp2)
 			posTemp.scl(FUERZA_MOVIL * delta)
@@ -247,8 +249,8 @@ class PlayerSystem(
 			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) posTemp2.set(camera.direction).crs(camera.up)
 			else posTemp2.set(Vector3.Zero)
-			if(Settings.isSoundEnabled && ! posTemp2.isZero)
-				game.assets.getSoundFootSteps().play()
+			if( ! posTemp2.isZero)
+				game.assets.playSound(Assets.SOUND_FOOTSTEPS)
 			posTemp.add(posTemp2)
 			posTemp.scl(PlayerComponent.FUERZA_PC * delta)
 		}
@@ -258,7 +260,7 @@ class PlayerSystem(
 
 	}
 	//______________________________________________________________________________________________
-	private fun updateSaltando() {
+	private fun updateJumping() {
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || btnA)
 		{
 			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+playerComponent.isJumping)
@@ -392,9 +394,9 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private var delayDeath = 0f
 	private fun checkGameOver(delta: Float) {
-		if(PlayerComponent.isDead() && !Settings.paused) {
+		if(PlayerComponent.isDead() && !Status.paused) {
 			if(delayDeath >= 2f) {
-				Settings.paused = true
+				Status.paused = true
 				game.gameUI.gameOverWidget.show()
 			}
 			delayDeath += delta
@@ -403,9 +405,9 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private var delayYouWin = 0f
 	private fun checkYouWin(delta: Float) {
-		if(PlayerComponent.isWinning && !Settings.paused) {
+		if(PlayerComponent.isWinning && !Status.paused) {
 			if(delayYouWin >= 0f) {
-				Settings.paused = true
+				Status.paused = true
 				game.gameUI.gameWinWidget.show()
 				//game.gameUI.gameOverWidget.show()
 			}

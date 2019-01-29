@@ -30,15 +30,14 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
     //private val soundCheckbox = CheckBox(null, game.assets.skin)
 
 
-
     init {
-        configureWidgers()
+        configure()
         setListeners()
         Gdx.input.inputProcessor = this
     }
 
     //______________________________________________________________________________________________
-    private fun configureWidgers() {
+    private fun configure() {
 
         backgroundImage.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
 
@@ -67,7 +66,7 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
         volumeLabel.setSize(500f, 60f)
         volumeLabel.setPosition(xWin+10f, win.height - cy - yWin)
         cy += volumeLabel.height + 0f
-        volumeSlider.value = Settings.getMusicVolume()
+        volumeSlider.value = Settings.soundVolume
         volumeSlider.setSize(550f, 80f)
         volumeSlider.setPosition(xWin+10f, win.height - cy - yWin)
 
@@ -86,7 +85,11 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
     }
 
     //______________________________________________________________________________________________
-    private fun goBack() = game.setScreen(MainMenuScreen(game))
+    private fun goBack() {
+        Settings.savePrefs()
+        game.setScreen(MainMenuScreen(game))
+    }
+    //______________________________________________________________________________________________
     private fun setListeners() {
 
         backButton.addListener {
@@ -100,7 +103,7 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
 //        })
 
         volumeSlider.addListener {
-            Settings.setMusicVolume(volumeSlider.value)
+            Settings.soundVolume = volumeSlider.value
             return@addListener false
         }
         soundButton.addListener {

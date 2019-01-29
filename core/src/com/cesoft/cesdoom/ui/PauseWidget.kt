@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
+import com.cesoft.cesdoom.Status
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +62,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 	private fun setListeners() {
 		super.addListener(object : InputListener() {
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
-				if(Settings.gameOver || Settings.gameWin)return false
+				if(Status.gameOver || Status.gameWin)return false
 				if(keycode == Input.Keys.ESCAPE || keycode == Input.Keys.BACK) {
 					handleUpdates()
 					return true
@@ -101,12 +102,12 @@ class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 		game.pauseGame()
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
-		Settings.paused = true
+		Status.paused = true
 	}
 	private fun reanudar() {
 		window.remove()
 		Gdx.input.isCursorCatched = true
-		Settings.paused = false
+		Status.paused = false
 	}
 
 	//______________________________________________________________________________________________

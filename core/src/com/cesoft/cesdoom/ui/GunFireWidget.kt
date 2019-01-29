@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.CesDoom
-import com.cesoft.cesdoom.Settings
+import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.util.Log
 
 
@@ -30,11 +30,11 @@ class GunFireWidget(private val fire: Image, x: Float, y: Float) : Actor() {
 	}
 
 	override fun act(delta: Float) {
-		if(Settings.paused) return
+		if(Status.paused) return
 	}
 
 	override fun draw(batch: Batch?, parentAlpha: Float) {
-		if(Settings.paused) return
+		if(Status.paused) return
 		fire.draw(batch!!, parentAlpha)
 	}
 

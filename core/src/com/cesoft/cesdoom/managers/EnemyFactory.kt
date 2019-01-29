@@ -224,8 +224,7 @@ object EnemyFactory
 		val status = enemy.getComponent(StatusComponent::class.java)
 		if(status.isDead())
 		{
-			if(Settings.isSoundEnabled)
-				assets.getSoundEnemy1Die().play()
+			assets.playSound(Assets.SOUND_ENEMY_DIE)
 
 			val model = enemy.getComponent(ModelComponent::class.java)
 			if(model.blendingAttribute != null)

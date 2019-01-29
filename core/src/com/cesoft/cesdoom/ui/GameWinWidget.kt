@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
-import com.cesoft.cesdoom.Settings
+import com.cesoft.cesdoom.Status
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,16 +87,16 @@ class GameWinWidget(private val game: CesDoom, stage: Stage) : Actor() {
 	{
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
-		Settings.paused = true
-		Settings.gameWin = true
+		Status.paused = true
+		Status.gameWin = true
 	}
 	private fun reanudar()
 	{
 		window.remove()
 		Gdx.input.isCursorCatched = true
-		Settings.paused = false
-		Settings.gameWin = false
-		Settings.gameOver = false
+		Status.paused = false
+		Status.gameWin = false
+		Status.gameOver = false
 	}
 
 	//______________________________________________________________________________________________

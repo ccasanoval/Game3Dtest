@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.GameWorld
-import com.cesoft.cesdoom.Settings
+import com.cesoft.cesdoom.Status
 
 
 /**
@@ -17,7 +17,7 @@ class GameVrScreen(private var game: CesDoom): Screen {//, CardBoardAndroidAppli
 	private var gameWorld: GameWorld = GameWorld(game)
 
 	init {
-		Settings.paused = false
+		Status.paused = false
 		Gdx.input.inputProcessor = game.gameUI.stage
 		Gdx.input.isCursorCatched = true
 	}

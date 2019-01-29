@@ -2,7 +2,6 @@ package com.cesoft.cesdoom.assets
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.Texture
@@ -13,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.I18NBundle
+import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
 
@@ -28,18 +28,54 @@ class Assets {
 		private var i18n = Gdx.files.internal("i18n/cesdoom")
 
 		// I18n
-		val MENU="MENU"
-		val JUGAR="JUGAR"
-		val SALIR="SALIR"
-		val RECARGAR="RECARGAR"
-		val PUNTUACIONES="PUNTUACIONES"
-		val CREDITOS="CREDITOS"
-		val SOBRE_TXT="SOBRE_TXT"
-		val SOBRE="SOBRE"
-		val ATRAS="ATRAS"
-		val CONFIG="CONFIG"
-		val CONFIG_SOUND_VOLUME="CONFIG_SOUND_VOLUME"
-		val CONFIG_SOUND_ONOF="CONFIG_SOUND_ONOF"
+		const val MENU="MENU"
+		const val JUGAR="JUGAR"
+		const val SALIR="SALIR"
+		const val RECARGAR="RECARGAR"
+		const val PUNTUACIONES="PUNTUACIONES"
+		const val CREDITOS="CREDITOS"
+		const val SOBRE_TXT="SOBRE_TXT"
+		const val SOBRE="SOBRE"
+		const val ATRAS="ATRAS"
+		const val CONFIG="CONFIG"
+		const val CONFIG_SOUND_VOLUME="CONFIG_SOUND_VOLUME"
+		const val CONFIG_SOUND_ONOF="CONFIG_SOUND_ONOF"
+
+		/// MODELS
+		private const val MODEL_DOME = "scene/spaceDome/spacedome.g3db"
+		private const val MODEL_MONSTER = "foes/monster1/a.g3db"
+		private const val MODEL_RIFLE = "weapons/cz805/a.g3db"
+
+		/// IMG
+		private const val IMG_FIRE_SHOT = "weapons/fire.png"
+		private const val IMG_GROUND = "scene/ground.jpg"
+		private const val IMG_SKYLINE = "scene/skyline.png"
+		private const val IMG_JUNK = "scene/junk.png"
+		private const val IMG_METAL1 = "scene/wall/metal1.jpg"
+		private const val IMG_METAL2 = "scene/wall/metal2.png"
+		private const val IMG_METAL3 = "scene/wall/metal3.png"
+		private const val IMG_GATE = "scene/gate/doomdoor1.jpg"
+
+		/// PARTICLES
+		private const val PARTICLES_ENEMY = "particles/dieparticle.pfx"
+		/// TEXTURE
+		private const val TXT_LOADING = "data/loading.pack"
+
+		/// SOUNDS
+		const val SOUND_RIFLE = "sounds/assaultrifle.ogg"
+		const val SOUND_ENEMY = "sounds/enemy1.ogg"
+		const val SOUND_ENEMY_DIE = "sounds/enemy1die.ogg"
+		const val SOUND_FOOTSTEPS = "sounds/footsteps.ogg"
+		//TODO:
+		//TODO:Disparo: solo uno y repetir mietras dispara!! usar sound que lo carga en memoria, mas eficiente que music!!!, call music dispose!!
+		//TODO:Monstruo: solo suena si esta a menos de xx metros!!
+		const val SOUND_DOOR_OPEN = "sounds/.ogg"
+		const val SOUND_DOOR_LOCKED = "sounds/.ogg"
+		const val SOUND_SWITCH = "sounds/.ogg"
+		const val SOUND_GAME_OVER = "sounds/.ogg"
+		const val SOUND_YOU_WIN = "sounds/.ogg"
+		const val SOUND_PLAYER_HURT = "sounds/.ogg"
+		const val MUSIC = "sounds/.ogg" //doom music?
 	}
 
 	private val assetManager = AssetManager()
@@ -61,95 +97,98 @@ class Assets {
 		skin.load(fileHandle)
 	}
 
-	// SOUND TODO:Disparo: solo uno y repetir mietras dispara!! usar sound que lo carga en memoria, mas eficiente que music!!!, call music dispose!!
+	// SOUND
 	//______________________________________________________________________________________________
-	fun iniSoundCZ805() {
+	fun playSound(soundName: String) {
+		val sound = assetManager.get(soundName, Sound::class.java)
+		if(Settings.isSoundEnabled)
+			sound.play(Settings.soundVolume)
+	}
+
+	fun iniSoundRifle() {
 		//https://freesound.org/people/SuperPhat/sounds/416417/
-		assetManager.load("sounds/assaultrifle.ogg", Music::class.java)
+		assetManager.load(SOUND_RIFLE, Sound::class.java)
 	}
-	fun getSoundCZ805() = assetManager.get("sounds/assaultrifle.ogg", Music::class.java)
-	fun endSoundCZ805() = assetManager.get("sounds/assaultrifle.ogg", Music::class.java).dispose()
+	fun getSoundRifle() = assetManager.get(SOUND_RIFLE, Sound::class.java)
+	fun endSoundRifle() = assetManager.get(SOUND_RIFLE, Sound::class.java).dispose()
 	//______________________________________________________________________________________________
-	fun iniSoundEnemy1() {
+	fun iniSoundEnemy() {
 		//https://freesound.org/people/cylon8472/sounds/326743/
-		assetManager.load("sounds/enemy1.ogg", Music::class.java)
+		assetManager.load(SOUND_ENEMY, Sound::class.java)
 	}
-	fun getSoundEnemy1() = assetManager.get("sounds/enemy1.ogg", Music::class.java)
-	fun endSoundEnemy1() = assetManager.get("sounds/enemy1.ogg", Music::class.java).dispose()
+	fun getSoundEnemy() = assetManager.get(SOUND_ENEMY, Sound::class.java)
+	fun endSoundEnemy() = assetManager.get(SOUND_ENEMY, Sound::class.java).dispose()
 	//
-	fun iniSoundEnemy1Die() = assetManager.load("sounds/enemy1die.ogg", Sound::class.java)
-	fun getSoundEnemy1Die() = assetManager.get("sounds/enemy1die.ogg", Sound::class.java)
-	fun endSoundEnemy1Die() = assetManager.get("sounds/enemy1die.ogg", Sound::class.java).dispose()
+	fun iniSoundEnemyDie() = assetManager.load(SOUND_ENEMY_DIE, Sound::class.java)
+	fun getSoundEnemyDie() = assetManager.get(SOUND_ENEMY_DIE, Sound::class.java)
+	fun endSoundEnemyDie() = assetManager.get(SOUND_ENEMY_DIE, Sound::class.java).dispose()
 	//
-	fun iniSoundFootSteps() = assetManager.load("sounds/footsteps.ogg", Music::class.java)
-	fun getSoundFootSteps() = assetManager.get("sounds/footsteps.ogg", Music::class.java)
-	fun endSoundFootSteps() = assetManager.get("sounds/footsteps.ogg", Music::class.java).dispose()
+	fun iniSoundFootSteps() = assetManager.load(SOUND_FOOTSTEPS, Sound::class.java)
+	fun getSoundFootSteps() = assetManager.get(SOUND_FOOTSTEPS, Sound::class.java)
+	fun endSoundFootSteps() = assetManager.get(SOUND_FOOTSTEPS, Sound::class.java).dispose()
 
 
 	// LOADING
     //______________________________________________________________________________________________
     fun iniLoading() {
-        assetManager.load("data/loading.pack", TextureAtlas::class.java)
+        assetManager.load(TXT_LOADING, TextureAtlas::class.java)
         assetManager.finishLoading()
     }
-	fun getLoading():TextureAtlas = assetManager.get("data/loading.pack", TextureAtlas::class.java)
-    fun endLoading() {
-        assetManager.unload("data/loading.pack")
-    }
+	fun getLoading():TextureAtlas = assetManager.get(TXT_LOADING, TextureAtlas::class.java)
+    fun endLoading() = assetManager.unload(TXT_LOADING)
 
 	// MODELS
 	//______________________________________________________________________________________________
-	fun iniDome() = assetManager.load("scene/spaceDome/spacedome.g3db", Model::class.java)
-	fun getDome():Model = assetManager.get("scene/spaceDome/spacedome.g3db", Model::class.java)
+	fun iniDome() = assetManager.load(MODEL_DOME, Model::class.java)
+	fun getDome():Model = assetManager.get(MODEL_DOME, Model::class.java)
 	//______________________________________________________________________________________________
-	fun iniEnemy1() = assetManager.load("foes/monster1/a.g3db", Model::class.java)
-	fun getEnemy1():Model = assetManager.get("foes/monster1/a.g3db", Model::class.java)
+	fun iniEnemy() = assetManager.load(MODEL_MONSTER, Model::class.java)
+	fun getEnemy():Model = assetManager.get(MODEL_MONSTER, Model::class.java)
 	//______________________________________________________________________________________________
-	fun iniCZ805() = assetManager.load("weapons/cz805/a.g3db", Model::class.java)
-	fun getCZ805():Model = assetManager.get("weapons/cz805/a.g3db", Model::class.java)
+	fun iniRifle() = assetManager.load(MODEL_RIFLE, Model::class.java)
+	fun getRifle():Model = assetManager.get(MODEL_RIFLE, Model::class.java)
 
 	// IMAGES
 	//______________________________________________________________________________________________
-	//fun endSuelo() = assetManager.unload("scene/ground.jpg")
-	fun iniSuelo() = assetManager.load("scene/ground.jpg", Texture::class.java)
-	fun getSuelo():Texture = assetManager.get("scene/ground.jpg", Texture::class.java)
+	//fun endSuelo() = assetManager.unload(IMG_GROUND)
+	fun iniSuelo() = assetManager.load(IMG_GROUND, Texture::class.java)
+	fun getSuelo():Texture = assetManager.get(IMG_GROUND, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniSkyline() = assetManager.load("scene/skyline.png", Texture::class.java)
-	fun getSkyline():Texture = assetManager.get("scene/skyline.png", Texture::class.java)
+	fun iniSkyline() = assetManager.load(IMG_SKYLINE, Texture::class.java)
+	fun getSkyline():Texture = assetManager.get(IMG_SKYLINE, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniJunk() = assetManager.load("scene/junk.png", Texture::class.java)
-	fun getJunk():Texture = assetManager.get("scene/junk.png", Texture::class.java)
+	fun iniJunk() = assetManager.load(IMG_JUNK, Texture::class.java)
+	fun getJunk():Texture = assetManager.get(IMG_JUNK, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniWallMetal1() = assetManager.load("scene/wall/metal1.jpg", Texture::class.java)
-	fun getWallMetal1():Texture = assetManager.get("scene/wall/metal1.jpg", Texture::class.java)
+	fun iniWallMetal1() = assetManager.load(IMG_METAL1, Texture::class.java)
+	fun getWallMetal1():Texture = assetManager.get(IMG_METAL1, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniGate() = assetManager.load("scene/gate/doomdoor1.jpg", Texture::class.java)
-	fun getGate():Texture = assetManager.get("scene/gate/doomdoor1.jpg", Texture::class.java)
+	fun iniWallMetal2() = assetManager.load(IMG_METAL2, Texture::class.java)
+	fun getWallMetal2():Texture = assetManager.get(IMG_METAL2, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniWallMetal2() = assetManager.load("scene/wall/metal2.png", Texture::class.java)
-	fun getWallMetal2():Texture = assetManager.get("scene/wall/metal2.png", Texture::class.java)
+	fun iniWallMetal3() = assetManager.load(IMG_METAL3, Texture::class.java)
+	fun getWallMetal3():Texture = assetManager.get(IMG_METAL3, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniWallMetal3() = assetManager.load("scene/wall/metal3.png", Texture::class.java)
-	fun getWallMetal3():Texture = assetManager.get("scene/wall/metal3.png", Texture::class.java)
+	fun iniGate() = assetManager.load(IMG_GATE, Texture::class.java)
+	fun getGate():Texture = assetManager.get(IMG_GATE, Texture::class.java)
+
 	//______________________________________________________________________________________________
-	fun iniFireShot() = assetManager.load("weapons/fire.png", Texture::class.java)
-	fun getFireShot():Image = Image(assetManager.get("weapons/fire.png", Texture::class.java))
-	private fun endFireShot() = assetManager.get("weapons/fire.png", Texture::class.java).dispose()
+	fun iniFireShot() = assetManager.load(IMG_FIRE_SHOT, Texture::class.java)
+	fun getFireShot():Image = Image(assetManager.get(IMG_FIRE_SHOT, Texture::class.java))
+	private fun endFireShot() = assetManager.get(IMG_FIRE_SHOT, Texture::class.java).dispose()
 
 	// PARTICLES
 	//______________________________________________________________________________________________
 	var particleEffectPool: ParticleEffectPool? = null
 	fun iniParticleEffectPool(camera: PerspectiveCamera) {
-		//Log.e(tag, "iniParticleEffectPool--------------------------------------- 1")
 		if(particleEffectPool == null) {
-			//Log.e(tag, "iniParticleEffectPool--------------------------------------- 2")
 			particleEffectPool = ParticleEffectPool(this, camera)
-			assetManager.load("particles/dieparticle.pfx", ParticleEffect::class.java, particleEffectPool!!.loadParam)
-			assetManager.finishLoadingAsset("particles/dieparticle.pfx")
+			assetManager.load(PARTICLES_ENEMY, ParticleEffect::class.java, particleEffectPool!!.loadParam)
+			assetManager.finishLoadingAsset(PARTICLES_ENEMY)
 		}
 	}
 	fun getParticleEffectDie(): ParticleEffect {
-		return assetManager.get("particles/dieparticle.pfx", ParticleEffect::class.java)
+		return assetManager.get(PARTICLES_ENEMY, ParticleEffect::class.java)
 	}
 	fun getParticleSystem() : ParticleSystem? {
 		return particleEffectPool?.particleSystem
@@ -162,8 +201,8 @@ class Assets {
 
 		try {
 		getDome().dispose()
-		getEnemy1().dispose()
-		getCZ805().dispose()
+		getEnemy().dispose()
+		getRifle().dispose()
 		getSuelo().dispose()
 		getSkyline().dispose()
 		getJunk().dispose()
@@ -172,9 +211,9 @@ class Assets {
 		getWallMetal3().dispose()
 		endFireShot()
 
-		getSoundCZ805().dispose()
-		getSoundEnemy1().dispose()
-		getSoundEnemy1Die().dispose()
+		getSoundRifle().dispose()
+		getSoundEnemy().dispose()
+		getSoundEnemyDie().dispose()
 		getSoundFootSteps().dispose()
 		}
 		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e1: $e") }
