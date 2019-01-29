@@ -8,17 +8,17 @@ import com.badlogic.ashley.core.Family
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.*
-import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.entities.Gate
 import com.cesoft.cesdoom.entities.Player
+import com.cesoft.cesdoom.entities.Switch
 import com.cesoft.cesdoom.util.Log
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class BulletSystem(private val gameWorld: GameWorld) : EntitySystem(), EntityListener {
+class BulletSystem : EntitySystem(), EntityListener {
 
 	companion object {
 		private val tag : String = BulletSystem::class.java.simpleName
@@ -87,8 +87,8 @@ Log.e(tag, "CesContactListener:--***************************------------${Bullet
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerSwitch(iSwitch: Int) {
-		//val switch = switches[iSwitch] as Switch
-		//switch.isActivated = true
+		val switch = switches[iSwitch] as Switch
+		switch.activate()
 	}
 
 	//______________________________________________________________________________________________
@@ -105,7 +105,6 @@ Log.e(tag, "CesContactListener:--***************************------------${Bullet
 	}
 
 	//______________________________________________________________________________________________
-	//private val enemies = mutableMapOf<Int, Entity>()
 	private var gateIndex = 0
 	private val gates = mutableMapOf<Int, Entity>()
 	private var switchIndex = 0
@@ -133,20 +132,6 @@ Log.e(tag, "CesContactListener:--***************************------------${Bullet
 				switches[switchIndex] = entity
 				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
 			}
-			/*BulletComponent.ENEMY_FLAG -> {
-				enemyIndex++
-				bullet.rigidBody.userIndex = enemyIndex
-				bullet.rigidBody.userIndex2 = enemyIndex
-				enemies[enemyIndex] = entity
-				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
-			}*/
-			/*BulletComponent.SHOT_FLAG -> {
-				shotIndex++
-				bullet.rigidBody.userIndex = shotIndex
-				bullet.rigidBody.userIndex2 = shotIndex
-				shots[shotIndex] = entity
-				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
-			}*/
 			//else -> Log.e(tag, "Collision else added: "+bullet.rigidBody.userValue)
 		}
 		collisionWorld.addRigidBody(bullet.rigidBody)
@@ -162,6 +147,5 @@ Log.e(tag, "CesContactListener:--***************************------------${Bullet
 
 	//______________________________________________________________________________________________
 	override fun entityRemoved(entity: Entity) {
-		//entity.getComponent(BulletComponent::class.java)
 	}
 }

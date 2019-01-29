@@ -17,6 +17,7 @@ import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.ParticleEffectPool
+import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.systems.RenderSystem
 
 
@@ -224,7 +225,7 @@ object EnemyFactory
 		val status = enemy.getComponent(StatusComponent::class.java)
 		if(status.isDead())
 		{
-			assets.playSound(Assets.SOUND_ENEMY_DIE)
+			Sounds.play(Sounds.SoundType.ENEMY_DIE)
 
 			val model = enemy.getComponent(ModelComponent::class.java)
 			if(model.blendingAttribute != null)

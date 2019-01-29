@@ -12,13 +12,13 @@ import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.I18NBundle
-import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TEXTURES: https://steamcommunity.com/id/Hoover1979/images/?appid=2280
+// TEXTURES: DOOM LIKE: https://imgur.com/a/6zVaU
 class Assets {
 
 	companion object {
@@ -42,7 +42,7 @@ class Assets {
 		const val CONFIG_SOUND_ONOF="CONFIG_SOUND_ONOF"
 
 		/// MODELS
-		private const val MODEL_DOME = "scene/spaceDome/spacedome.g3db"
+		private const val MODEL_DOME = "scene/dome/spacedome.g3db"
 		private const val MODEL_MONSTER = "foes/monster1/a.g3db"
 		private const val MODEL_RIFLE = "weapons/cz805/a.g3db"
 
@@ -55,28 +55,16 @@ class Assets {
 		private const val IMG_METAL2 = "scene/wall/metal2.png"
 		private const val IMG_METAL3 = "scene/wall/metal3.png"
 		private const val IMG_GATE = "scene/gate/doomdoor1.jpg"
+		private const val IMG_SWITCH_ON = "scene/switch/switchOn.png"
+		private const val IMG_SWITCH_OFF = "scene/switch/switchOff.png"
 
 		/// PARTICLES
 		private const val PARTICLES_ENEMY = "particles/dieparticle.pfx"
 		/// TEXTURE
 		private const val TXT_LOADING = "data/loading.pack"
 
-		/// SOUNDS
-		const val SOUND_RIFLE = "sounds/assaultrifle.ogg"
-		const val SOUND_ENEMY = "sounds/enemy1.ogg"
-		const val SOUND_ENEMY_DIE = "sounds/enemy1die.ogg"
-		const val SOUND_FOOTSTEPS = "sounds/footsteps.ogg"
-		//TODO:
-		//TODO:Disparo: solo uno y repetir mietras dispara!! usar sound que lo carga en memoria, mas eficiente que music!!!, call music dispose!!
-		//TODO:Monstruo: solo suena si esta a menos de xx metros!!
-		const val SOUND_DOOR_OPEN = "sounds/.ogg"
-		const val SOUND_DOOR_LOCKED = "sounds/.ogg"
-		const val SOUND_SWITCH = "sounds/.ogg"
-		const val SOUND_GAME_OVER = "sounds/.ogg"
-		const val SOUND_YOU_WIN = "sounds/.ogg"
-		const val SOUND_PLAYER_HURT = "sounds/.ogg"
-		const val MUSIC = "sounds/.ogg" //doom music?
 	}
+
 
 	private val assetManager = AssetManager()
 
@@ -95,37 +83,32 @@ class Assets {
 		if(atlasFile.exists())
 			skin.addRegions(TextureAtlas(atlasFile))
 		skin.load(fileHandle)
+		Sounds.ini(assetManager)
 	}
 
 	// SOUND
 	//______________________________________________________________________________________________
-	fun playSound(soundName: String) {
-		val sound = assetManager.get(soundName, Sound::class.java)
-		if(Settings.isSoundEnabled)
-			sound.play(Settings.soundVolume)
-	}
-
 	fun iniSoundRifle() {
 		//https://freesound.org/people/SuperPhat/sounds/416417/
-		assetManager.load(SOUND_RIFLE, Sound::class.java)
+		assetManager.load(Sounds.SOUND_RIFLE, Sound::class.java)
 	}
-	fun getSoundRifle() = assetManager.get(SOUND_RIFLE, Sound::class.java)
-	fun endSoundRifle() = assetManager.get(SOUND_RIFLE, Sound::class.java).dispose()
+	fun getSoundRifle() = assetManager.get(Sounds.SOUND_RIFLE, Sound::class.java)
+	fun endSoundRifle() = assetManager.get(Sounds.SOUND_RIFLE, Sound::class.java).dispose()
 	//______________________________________________________________________________________________
 	fun iniSoundEnemy() {
 		//https://freesound.org/people/cylon8472/sounds/326743/
-		assetManager.load(SOUND_ENEMY, Sound::class.java)
+		assetManager.load(Sounds.SOUND_ENEMY, Sound::class.java)
 	}
-	fun getSoundEnemy() = assetManager.get(SOUND_ENEMY, Sound::class.java)
-	fun endSoundEnemy() = assetManager.get(SOUND_ENEMY, Sound::class.java).dispose()
+	fun getSoundEnemy() = assetManager.get(Sounds.SOUND_ENEMY, Sound::class.java)
+	fun endSoundEnemy() = assetManager.get(Sounds.SOUND_ENEMY, Sound::class.java).dispose()
 	//
-	fun iniSoundEnemyDie() = assetManager.load(SOUND_ENEMY_DIE, Sound::class.java)
-	fun getSoundEnemyDie() = assetManager.get(SOUND_ENEMY_DIE, Sound::class.java)
-	fun endSoundEnemyDie() = assetManager.get(SOUND_ENEMY_DIE, Sound::class.java).dispose()
+	fun iniSoundEnemyDie() = assetManager.load(Sounds.SOUND_ENEMY_DIE, Sound::class.java)
+	fun getSoundEnemyDie() = assetManager.get(Sounds.SOUND_ENEMY_DIE, Sound::class.java)
+	fun endSoundEnemyDie() = assetManager.get(Sounds.SOUND_ENEMY_DIE, Sound::class.java).dispose()
 	//
-	fun iniSoundFootSteps() = assetManager.load(SOUND_FOOTSTEPS, Sound::class.java)
-	fun getSoundFootSteps() = assetManager.get(SOUND_FOOTSTEPS, Sound::class.java)
-	fun endSoundFootSteps() = assetManager.get(SOUND_FOOTSTEPS, Sound::class.java).dispose()
+	fun iniSoundFootSteps() = assetManager.load(Sounds.SOUND_FOOT_STEPS, Sound::class.java)
+	fun getSoundFootSteps() = assetManager.get(Sounds.SOUND_FOOT_STEPS, Sound::class.java)
+	fun endSoundFootSteps() = assetManager.get(Sounds.SOUND_FOOT_STEPS, Sound::class.java).dispose()
 
 
 	// LOADING
@@ -171,6 +154,11 @@ class Assets {
 	//______________________________________________________________________________________________
 	fun iniGate() = assetManager.load(IMG_GATE, Texture::class.java)
 	fun getGate():Texture = assetManager.get(IMG_GATE, Texture::class.java)
+	//______________________________________________________________________________________________
+	fun iniSwitchOn() = assetManager.load(IMG_SWITCH_ON, Texture::class.java)
+	fun getSwitchOn():Texture = assetManager.get(IMG_SWITCH_ON, Texture::class.java)
+	fun iniSwitchOff() = assetManager.load(IMG_SWITCH_OFF, Texture::class.java)
+	fun getSwitchOff():Texture = assetManager.get(IMG_SWITCH_OFF, Texture::class.java)
 
 	//______________________________________________________________________________________________
 	fun iniFireShot() = assetManager.load(IMG_FIRE_SHOT, Texture::class.java)

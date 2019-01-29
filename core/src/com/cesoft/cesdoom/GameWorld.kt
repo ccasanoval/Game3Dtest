@@ -68,7 +68,7 @@ class GameWorld(game: CesDoom) {
 		val lonMundo = 4000f
 
 		///----
-		bulletSystem = BulletSystem(this)
+		bulletSystem = BulletSystem()
 		renderSystem = RenderSystem(colorAmbiente, assets, bulletSystem.broadphase)
 		enemySystem = EnemySystem(game)
 		playerSystem = PlayerSystem(game, renderSystem.perspectiveCamera, bulletSystem)
@@ -160,10 +160,6 @@ class GameWorld(game: CesDoom) {
 	fun removeEnemy(enemy: Enemy) {
 		bulletSystem.removeBody(enemy)
 		engine.removeEntity(enemy)
-	}
-	fun removeShot(entity: Entity) {
-		bulletSystem.removeBody(entity)
-		engine.removeEntity(entity)
 	}
 
 	//______________________________________________________________________________________________

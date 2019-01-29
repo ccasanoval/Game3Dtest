@@ -111,6 +111,11 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		// Gate
 		try {assets.getGate()}
 		catch (ignore: GdxRuntimeException) {assets.iniGate()}
+		// Switch
+		try {assets.getSwitchOn()}
+		catch (ignore: GdxRuntimeException) {assets.iniSwitchOn()}
+		try {assets.getSwitchOff()}
+		catch (ignore: GdxRuntimeException) {assets.iniSwitchOff()}
 		// Wall
 		try {assets.getWallMetal1()}
 		catch (ignore: GdxRuntimeException) {assets.iniWallMetal1()}
@@ -135,7 +140,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 
 		// Weapons
 		try {assets.getRifle()}
-		catch (ignore: Exception) {assets.getRifle()}
+		catch (ignore: Exception) {assets.iniRifle()}
 		try {assets.getFireShot()}
 		catch (ignore: Exception) {assets.iniFireShot()}
 

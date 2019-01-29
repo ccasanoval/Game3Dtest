@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.GateComponent
+import com.cesoft.cesdoom.components.SwitchComponent
+import com.cesoft.cesdoom.entities.Switch
 import com.cesoft.cesdoom.map.MapGraphFactory
 import com.cesoft.cesdoom.util.Log
 
@@ -41,6 +43,7 @@ object MazeFactory
 
 		RampFactory.init(assets.getWallMetal2(), assets.getWallMetal3())
 
+		SwitchFactory.ini(assets.getSwitchOn(), assets.getSwitchOff())
         GateFactory.ini(assets.getGate())
 
 //		createSector(engine, 0f)
@@ -153,6 +156,8 @@ object MazeFactory
         for(x in -13..13 step 2) {
             if (x == 1) {
                 //GATE
+				SwitchFactory.create(Vector3(0f,0f, -WallFactory.LONG-SwitchComponent.SIZE/2), 90f, e)
+				SwitchFactory.create(Vector3(0f,0f, +WallFactory.LONG+SwitchComponent.SIZE/2), 90f, e)
                 GateFactory.create(mapFactory, Vector3(x*lng, 0f, +6f * lng2), 90f, e)
                 GateFactory.create(mapFactory, Vector3(x*lng, 0f, -6f * lng2), 90f, e)
 				YouWinFactory.create(Vector3(x*lng, 0f, +6f * lng2 + (2*YouWinFactory.SIZE+GateComponent.THICK)), e)

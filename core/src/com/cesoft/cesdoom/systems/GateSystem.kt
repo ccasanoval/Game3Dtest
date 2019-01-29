@@ -11,18 +11,10 @@ import com.cesoft.cesdoom.util.Log
 //
 class GateSystem : EntitySystem(), EntityListener {
     private var gates: ImmutableArray<Gate>? = null
-    //private var player: Player? = null
-    //private val gates = ArrayList<Gate>()
 
-    init {
-        //GateFactory.init(game)
-    }
+    override fun entityRemoved(entity: Entity?) {}
 
-    override fun entityRemoved(entity: Entity?) {
-    }
-
-    override fun entityAdded(entity: Entity?) {
-    }
+    override fun entityAdded(entity: Entity?) {}
 
 
     //______________________________________________________________________________________________

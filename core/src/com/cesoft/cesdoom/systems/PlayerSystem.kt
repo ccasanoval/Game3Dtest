@@ -22,7 +22,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
-import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent.ALTURA
 import com.cesoft.cesdoom.components.PlayerComponent.FUERZA_MOVIL
 import com.cesoft.cesdoom.managers.GunFactory
@@ -216,48 +216,55 @@ class PlayerSystem(
 		//TODO: no mover si esta saltando?
 		//if(playerComponent!!.isSaltando)return
 		if(CesDoom.isMobile) {
-			var hayMovimiento = false
-			if(ControllerWidget.movementVector.y > +0.20f || yPad == Direccion.ADELANTE) {
-				posTemp.add(camera.direction)
-				hayMovimiento = true
-			}
-			else if(ControllerWidget.movementVector.y < -0.20f || yPad == Direccion.ATRAS) {
-				posTemp.sub(camera.direction)
-				hayMovimiento = true
-			}
-			if(     ControllerWidget.movementVector.x < -0.25f || xPad == Direccion.IZQUIERDA) {
-				posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
-				hayMovimiento = true
-			}
-			else if(ControllerWidget.movementVector.x > +0.25f || xPad == Direccion.DERECHA) {
-				posTemp2.set(camera.direction).crs(camera.up)
-				hayMovimiento = true
-			}
-			if( ! hayMovimiento)
-				posTemp2.set(Vector3.Zero)
-			else {
-				animFootStep(delta)
-				if(Settings.isSoundEnabled)// && ! game.assets.getSoundFootSteps().isPlaying)
-					game.assets.playSound(Assets.SOUND_FOOTSTEPS)
-			}
-			posTemp.add(posTemp2)
-			posTemp.scl(FUERZA_MOVIL * delta)
+			updateTraslationMovile(delta)
 		}
 		else {
-			if(Gdx.input.isKeyPressed(Input.Keys.UP)) posTemp.add(camera.direction)
-			else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) posTemp.sub(camera.direction)
-			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
-			else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) posTemp2.set(camera.direction).crs(camera.up)
-			else posTemp2.set(Vector3.Zero)
-			if( ! posTemp2.isZero)
-				game.assets.playSound(Assets.SOUND_FOOTSTEPS)
-			posTemp.add(posTemp2)
-			posTemp.scl(PlayerComponent.FUERZA_PC * delta)
+			updateTraslationDesktop(delta)
 		}
 		posTemp.y = 0f
 		posTemp.y = bulletComponent.rigidBody.linearVelocity.y
 		bulletComponent.rigidBody.linearVelocity = posTemp
-
+	}
+	//______________________________________________________________________________________________
+	private fun updateTraslationMovile(delta: Float) {
+		var hayMovimiento = false
+		if(ControllerWidget.movementVector.y > +0.20f || yPad == Direccion.ADELANTE) {
+			posTemp.add(camera.direction)
+			hayMovimiento = true
+		}
+		else if(ControllerWidget.movementVector.y < -0.20f || yPad == Direccion.ATRAS) {
+			posTemp.sub(camera.direction)
+			hayMovimiento = true
+		}
+		if(     ControllerWidget.movementVector.x < -0.25f || xPad == Direccion.IZQUIERDA) {
+			posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
+			hayMovimiento = true
+		}
+		else if(ControllerWidget.movementVector.x > +0.25f || xPad == Direccion.DERECHA) {
+			posTemp2.set(camera.direction).crs(camera.up)
+			hayMovimiento = true
+		}
+		if( ! hayMovimiento)
+			posTemp2.set(Vector3.Zero)
+		else {
+			animFootStep(delta)
+			if(Settings.isSoundEnabled)// && ! game.assets.getSoundFootSteps().isPlaying)
+				Sounds.play(Sounds.SoundType.FOOT_STEPS)
+		}
+		posTemp.add(posTemp2)
+		posTemp.scl(FUERZA_MOVIL * delta)
+	}
+	//______________________________________________________________________________________________
+	private fun updateTraslationDesktop(delta: Float) {
+		if(Gdx.input.isKeyPressed(Input.Keys.UP)) posTemp.add(camera.direction)
+		else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) posTemp.sub(camera.direction)
+		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
+		else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) posTemp2.set(camera.direction).crs(camera.up)
+		else posTemp2.set(Vector3.Zero)
+		if( ! posTemp2.isZero)
+			Sounds.play(Sounds.SoundType.FOOT_STEPS)
+		posTemp.add(posTemp2)
+		posTemp.scl(PlayerComponent.FUERZA_PC * delta)
 	}
 	//______________________________________________________________________________________________
 	private fun updateJumping() {
