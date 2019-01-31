@@ -40,6 +40,7 @@ class GameScreen : Screen {
 	}
 
 	override fun dispose() {
+		Sounds.stopMusic()
 		gameWorld.dispose()
 		Log.e("GameScreen", "dispose------------------------------------------------")
 	}

@@ -26,12 +26,11 @@ import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent.ALTURA
 import com.cesoft.cesdoom.components.PlayerComponent.FUERZA_MOVIL
 import com.cesoft.cesdoom.managers.GunFactory
-import com.cesoft.cesdoom.ui.GameUI
 import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+// TODO: Joystick!!
 class PlayerSystem(
 		private val game: CesDoom,
 		private val camera: Camera,
@@ -400,12 +399,10 @@ class PlayerSystem(
 	private var delayDeath = 0f
 	private fun checkGameOver(delta: Float) {
 		if(PlayerComponent.isDead() && !Status.paused) {
-			if(delayDeath == 0f) {
-				Sounds.play(Sounds.SoundType.GAME_OVER)
-			}
 			if(delayDeath >= 2f) {
 				Status.paused = true
 				CesDoom.instance.gameUI.gameOverWidget.show()
+				Sounds.play(Sounds.SoundType.GAME_OVER)
 			}
 			delayDeath += delta
 		}

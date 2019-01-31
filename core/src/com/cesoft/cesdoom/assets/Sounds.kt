@@ -8,30 +8,31 @@ import com.cesoft.cesdoom.util.Log
 
 object Sounds {
 
-    const val SOUND_RIFLE = "sounds/assaultrifle.ogg"
-    const val SOUND_ENEMY = "sounds/enemy1.ogg"
-    const val SOUND_ENEMY_DIE = "sounds/enemy1die.ogg"
-    const val SOUND_FOOT_STEPS = "sounds/footsteps.ogg"
-    //TODO:
-    //TODO:Disparo: solo uno y repetir mietras dispara!! usar sound que lo carga en memoria, mas eficiente que music!!!, call music dispose!!
+    private const val SOUND_RIFLE = "sounds/assaultrifle.ogg"
+    private const val SOUND_ENEMY_ATTACK = "sounds/enemyAttack.ogg"
+    private const val SOUND_ENEMY_DIE = "sounds/enemyDie.ogg"
+    private const val SOUND_FOOT_STEPS = "sounds/footsteps.ogg"
     //TODO:Monstruo: solo suena si esta a menos de xx metros!!
-    const val SOUND_GATE_OPENS = "sounds/gate.ogg"
-    const val SOUND_GATE_LOCKED = "sounds/footsteps.ogg"
-    const val SOUND_SWITCH = "sounds/switch.ogg"
-    const val SOUND_GAME_OVER = "sounds/footsteps.ogg"
-    const val SOUND_YOU_WIN = "sounds/footsteps.ogg"
-    const val SOUND_PLAYER_HURT = "sounds/footsteps.ogg"
+    private const val SOUND_GATE_OPENS = "sounds/gate.ogg"
+    private const val SOUND_GATE_LOCKED = "sounds/gatelocked.ogg"
+    private const val SOUND_SWITCH = "sounds/switch.ogg"
+    private const val SOUND_GAME_OVER = "sounds/gameOver2.ogg"
+    private const val SOUND_YOU_WIN = "sounds/missionCompleted.ogg"
+    private const val SOUND_PLAYER_HURT = "sounds/playerHurt.ogg"
     // Effects : https://archive.org/details/dsbossit ***
     // http://www.wolfensteingoodies.com/archives/olddoom/music.htm
-    const val MUSIC = "sounds/tnt_doom.ogg" // Thanks to http://sycraft.org/content/audio/doom.shtml
+    private const val MUSIC = "sounds/doom.ogg" // Thanks to http://sycraft.org/content/audio/doom.shtml
 
-    enum class SoundType { RIFLE, ENEMY, ENEMY_DIE, FOOT_STEPS, GATE_OPENS, GATE_LOCKED, SWITCH, GAME_OVER, YOU_WIN, PLAYER_HURT, }
+    enum class SoundType {
+		RIFLE, ENEMY_ATTACK, ENEMY_DIE, FOOT_STEPS, GATE_OPENS, GATE_LOCKED, SWITCH,
+		GAME_OVER, YOU_WIN, PLAYER_HURT,
+	}
 
     private val lastPlayed = HashMap<SoundType, Long>()
     private fun soundByType(type: SoundType) : String {
         return when(type) {
             SoundType.RIFLE -> SOUND_RIFLE
-            SoundType.ENEMY -> SOUND_ENEMY
+            SoundType.ENEMY_ATTACK -> SOUND_ENEMY_ATTACK
             SoundType.ENEMY_DIE -> SOUND_ENEMY_DIE
             SoundType.FOOT_STEPS -> SOUND_FOOT_STEPS
             SoundType.GATE_OPENS -> SOUND_GATE_OPENS
@@ -42,6 +43,16 @@ object Sounds {
             SoundType.PLAYER_HURT -> SOUND_PLAYER_HURT
         }
     }
+	private fun minDelay(soundType: SoundType): Int {
+		return when(soundType) {
+			Sounds.SoundType.RIFLE -> 250
+			Sounds.SoundType.FOOT_STEPS -> 700
+			Sounds.SoundType.ENEMY_DIE -> 2000
+			Sounds.SoundType.ENEMY_ATTACK -> 1500
+			Sounds.SoundType.GATE_OPENS -> 4000
+			else-> 300
+		}
+	}
 
     private lateinit var assetManager: AssetManager
     fun ini(assetManager: AssetManager) {
@@ -56,7 +67,7 @@ object Sounds {
     fun dispose() {
         assetManager.get(MUSIC, Music::class.java).dispose()
         assetManager.get(Sounds.SOUND_RIFLE, Sound::class.java).dispose()
-        assetManager.get(Sounds.SOUND_ENEMY, Sound::class.java).dispose()
+        assetManager.get(Sounds.SOUND_ENEMY_ATTACK, Sound::class.java).dispose()
         assetManager.get(Sounds.SOUND_ENEMY_DIE, Sound::class.java).dispose()
         assetManager.get(Sounds.SOUND_FOOT_STEPS, Sound::class.java).dispose()
         //assetManager.dispose()
@@ -65,17 +76,24 @@ object Sounds {
     fun playMusic() {
         val music = assetManager.get(MUSIC, Music::class.java)
         if(Settings.isMusicEnabled && !music.isPlaying) {
+			music.isLooping = true
+			music.volume = Settings.musicVolume
             music.play()
         }
     }
+	fun stopMusic() {
+		val music = assetManager.get(MUSIC, Music::class.java)
+		music.stop()
+	}
     fun play(soundType: SoundType) {
         val sound = assetManager.get(soundByType(soundType), Sound::class.java)
         if(Settings.isSoundEnabled) {
             val last = lastPlayed[soundType] ?: 0
-            if(System.currentTimeMillis() > last + 300) {
+            if(System.currentTimeMillis() > last + minDelay(soundType)) {
                 try {
                     sound.play(Settings.soundVolume)
-                } catch (e: Exception) { Log.e("Sounds", "play:e: $e") }
+                }
+				catch (e: Exception) { Log.e("Sounds", "play:e: $e") }
                 lastPlayed[soundType] = System.currentTimeMillis()
             }
         }

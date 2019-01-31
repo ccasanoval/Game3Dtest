@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.ParticleEffectPool
+import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.managers.MazeFactory
@@ -37,7 +38,7 @@ class Enemy(val id: Int) : Entity() {
 	companion object {
 	    val tag: String = Enemy::class.java.simpleName
 		const val RADIO = 18f
-		const val BITE_PAIN = 40f
+		const val BITE_PAIN = 80f
 	}
 
 	fun getStatus() = StatusComponent(this)
@@ -128,6 +129,7 @@ class Enemy(val id: Int) : Entity() {
 			status.setAttacking()
 			val pain = BITE_PAIN
 			PlayerComponent.hurt(delta * pain)
+			Sounds.play(Sounds.SoundType.ENEMY_ATTACK)
 			fuerza = 0f
 		}
 		/// Esta cerca, corre a por el

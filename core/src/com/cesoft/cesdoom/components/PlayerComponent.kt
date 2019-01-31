@@ -2,6 +2,7 @@ package com.cesoft.cesdoom.components
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
+import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.util.Log
 
 
@@ -11,7 +12,7 @@ object PlayerComponent : Component
 {
 	const val MASA = .65f
 	const val ALTURA = 22f
-	const val RADIO = 12f
+	const val RADIO = 16f
 	const val FUERZA_MOVIL = 2000f
 	const val FUERZA_PC = 5000f
 	const val MESSAGE_DURATION = 5000f
@@ -53,15 +54,18 @@ object PlayerComponent : Component
 		if(System.currentTimeMillis() > lastHurt+800) {
 			health -= pain
 			colorAmbiente.color.set(.8f, 0f, 0f, 1f)//Pasar RenderObject y llamar a CamaraRoja(true)...
+			Sounds.play(Sounds.SoundType.PLAYER_HURT)
 			lastHurt = System.currentTimeMillis()
 		}
 	}
 
 	fun update() {
-		if(!message.isEmpty() && lastMessage+MESSAGE_DURATION < System.currentTimeMillis()) {
+		val now = System.currentTimeMillis()
+		if( ! message.isEmpty() && now > lastMessage + MESSAGE_DURATION) {
 			message = ""
 		}
-		if(lastHurt+50 < System.currentTimeMillis())
+		if(now > lastHurt+80) {
 			colorAmbiente.color.set(.8f, .8f, .8f, 1f)//Pasar RenderObject y llamar a CamaraRoja(false)...
+		}
 	}
 }
