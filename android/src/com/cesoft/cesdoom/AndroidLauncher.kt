@@ -22,6 +22,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 //AndroidApplication(),
 class AndroidLauncher: AndroidApplication() {//CardBoardAndroidApplication(), CardBoardApplicationListener {
 
+//TODO: VR
 //	private lateinit var game: CesDoom
 //	private lateinit var cam: CardboardCamera
 //	private val Z_NEAR = 0.1f

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.cesoft.cesdoom.ui.GameUI
 import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.screens.GameScreen
 import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen
@@ -24,14 +25,16 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 
 	companion object {
 		private val tag: String = CesDoom::class.java.simpleName
-		val VIRTUAL_WIDTH = 1024f
-		val VIRTUAL_HEIGHT = 576f
+		const val VIRTUAL_WIDTH = 1024f
+		const val VIRTUAL_HEIGHT = 576f
 		var isMobile = false
 			private set
+
+		lateinit var instance: CesDoom
 	}
 	private var screen: Screen? = null
-	lateinit var assets: Assets
-	lateinit var gameUI: GameUI
+	lateinit var gameUI: GameUI//TODO: Set private... que accedan por funciones de cesdoom
+	lateinit var assets: Assets//TODO: Set private... que accedan por funciones de cesdoom
 
 	init {
 	    Log.debugMode = debugMode
@@ -39,11 +42,12 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 
 	//______________________________________________________________________________________________
 	override fun create() {
+		Log.e(tag, "CREATE--------------------------------------------------------------------------------")
 		isMobile = Gdx.app.type == Application.ApplicationType.Android
-
+		instance = this
 		assets = Assets()
-		gameUI = GameUI(this)
-		//Settings.load()
+		gameUI = GameUI()
+
 		Gdx.input.isCatchBackKey = true
 		setScreen(MainMenuScreen(this))
 		Settings.loadPrefs()
@@ -62,9 +66,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	}
 
 	//______________________________________________________________________________________________
-	private fun delScreen()
-	{
-		Log.e(tag, "delScreen:--------------------------------------------------------")
+	private fun delScreen() {
 		screen?.let {
 			it.hide()
 			it.dispose()
@@ -82,7 +84,6 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	}
 	//______________________________________________________________________________________________
 	fun reset() {
-		Log.e(tag, "reset:--------------------------------------------------------")
 		delScreen()
 		setScreen(LoadingScreen(this))
 		Status.gameOver = false
@@ -99,15 +100,14 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 
 	//______________________________________________________________________________________________
 	override fun dispose() {
-		Log.e("CesDoom", "dispose:--------------------------------------------------------")
-		//Settings.save()
+		Log.e("CesDoom", "dispose------------------------------------------------")
 		delScreen()
+		Sounds.dispose()
 		gameUI.dispose()
 		assets.dispose()
 	}
 
 	fun loadResources() {
-		Log.e("CesDoom", "loadResources------------------------------------------------")
 		// Gate
 		try {assets.getGate()}
 		catch (ignore: GdxRuntimeException) {assets.iniGate()}
@@ -125,14 +125,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		catch (ignore: GdxRuntimeException) {assets.iniWallMetal3()}
 
 		// Sounds
-		try {assets.getSoundRifle()}
-		catch (ignore: Exception) {assets.iniSoundRifle()}
-		try {assets.getSoundEnemy()}
-		catch (ignore: Exception) {assets.iniSoundEnemy()}
-		try {assets.getSoundEnemyDie()}
-		catch (ignore: Exception) {assets.iniSoundEnemyDie()}
-		try {assets.getSoundFootSteps()}
-		catch (ignore: Exception) {assets.iniSoundFootSteps()}
+		Sounds.load()
 
 		// Enemy
 		try {assets.getEnemy()}

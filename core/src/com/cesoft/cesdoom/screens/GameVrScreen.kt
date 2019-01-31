@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.ui.GameUI
 
 
 /**
@@ -18,18 +19,18 @@ class GameVrScreen(private var game: CesDoom): Screen {//, CardBoardAndroidAppli
 
 	init {
 		Status.paused = false
-		Gdx.input.inputProcessor = game.gameUI.stage
+		Gdx.input.inputProcessor = CesDoom.instance.gameUI.stage
 		Gdx.input.isCursorCatched = true
 	}
 
 	override fun render(delta: Float) {
-		game.gameUI.update(delta)
+		CesDoom.instance.gameUI.update(delta)
 		gameWorld.render(delta)
-		game.gameUI.render()
+		CesDoom.instance.gameUI.render()
 	}
 
 	override fun resize(width: Int, height: Int) {
-		game.gameUI.resize(width, height)
+		CesDoom.instance.gameUI.resize(width, height)
 		gameWorld.resize(width, height)
 	}
 

@@ -221,7 +221,7 @@ object EnemyFactory
 		renderSystem?.addParticleEffect(effect)
 	}
 
-	fun update(delta: Float, enemy: Enemy, posPlayer: Vector3, assets: Assets) {
+	fun update(delta: Float, enemy: Enemy, posPlayer: Vector3) {
 		val status = enemy.getComponent(StatusComponent::class.java)
 		if(status.isDead())
 		{

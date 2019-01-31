@@ -78,7 +78,7 @@ object GunFactory {
 	}
 
 	//______________________________________________________________________________________________
-	fun playSound(assets: Assets) {
+	fun playSound() {
 		Sounds.play(Sounds.SoundType.RIFLE)
 	}
 }

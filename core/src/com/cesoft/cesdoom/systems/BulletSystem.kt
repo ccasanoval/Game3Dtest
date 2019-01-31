@@ -77,26 +77,23 @@ Log.e(tag, "CesContactListener:--***************************------------${Bullet
 
 	//______________________________________________________________________________________________
 	private fun collPlayerGate(iGate: Int) {
-		val gate = gates[iGate] as Gate
-		gate.isOpening = true
+		gates[iGate]?.tryToOpen()
 	}
 
 	//______________________________________________________________________________________________
 	private fun collPlayerYouWin() {
-		(player as Player).youWin()
+		player.youWin()
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerSwitch(iSwitch: Int) {
-		val switch = switches[iSwitch] as Switch
-		switch.activate()
+		val switch = switches[iSwitch]
+		val gate = gates[iSwitch]
+		switch?.activate()
+		gate?.unlock()
 	}
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-		//for(entity in enemies)
-		//	gameWorld.removeEnemy(entity.value as Enemy)
-		//for(entity in shots)
-		//	gameWorld.removeShot(entity.value)
 		collisionWorld.dispose()
 		solver.dispose()
 		broadphase.dispose()
@@ -106,30 +103,30 @@ Log.e(tag, "CesContactListener:--***************************------------${Bullet
 
 	//______________________________________________________________________________________________
 	private var gateIndex = 0
-	private val gates = mutableMapOf<Int, Entity>()
+	private val gates = mutableMapOf<Int, Gate>()
 	private var switchIndex = 0
-	private val switches = mutableMapOf<Int, Entity>()
-	private lateinit var player : Entity
+	private val switches = mutableMapOf<Int, Switch>()
+	private lateinit var player : Player
 	override fun entityAdded(entity: Entity) {
 		val bullet = entity.getComponent(BulletComponent::class.java)
 
 		//Log.e(tag, "Collision else added: --------------------------"+bullet.rigidBody.userValue)
 		when(bullet.rigidBody.userValue) {
 			BulletComponent.PLAYER_FLAG -> {
-				player = entity
+				player = entity as Player
 			}
 			BulletComponent.GATE_FLAG -> {
 				gateIndex++
 				bullet.rigidBody.userIndex = gateIndex
 				bullet.rigidBody.userIndex2 = gateIndex
-				gates[gateIndex] = entity
+				gates[gateIndex] = entity as Gate
 				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
 			}
 			BulletComponent.SWITCH_FLAG -> {
 				switchIndex++
 				bullet.rigidBody.userIndex = switchIndex
 				bullet.rigidBody.userIndex2 = switchIndex
-				switches[switchIndex] = entity
+				switches[switchIndex] = entity as Switch
 				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
 			}
 			//else -> Log.e(tag, "Collision else added: "+bullet.rigidBody.userValue)

@@ -11,6 +11,7 @@ import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.util.Log
@@ -47,7 +48,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 			for (entity in enemies) {
 				if(entity.getStatus().isDead())return
 				val posPlayer = player!!.getPosition()
-				EnemyFactory.update(delta, entity, posPlayer.cpy(), game.assets)
+				EnemyFactory.update(delta, entity, posPlayer.cpy())
 			}
 
 			spawIfNeeded()
@@ -119,11 +120,11 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 		for(i in allEnemies.size until MAX) {
 			//Log.e("EnemySystem", "spawnAllEnemies:-------------------------------$i  "+allEnemies.size+" ")
 			val enemy = EnemyFactory.create(i,
-						game.assets.particleEffectPool!!,
-						game.render,
-						game.assets.getEnemy(),
-						EnemyComponent.TYPE.MONSTER1,
-						Vector3())//La posicion se resetea en Enemy.reset  (0f, 150f, 350f)
+					game.assets.particleEffectPool!!,
+					game.render,
+					game.assets.getEnemy(),
+					EnemyComponent.TYPE.MONSTER1,
+					Vector3())//La posicion se resetea en Enemy.reset  (0f, 150f, 350f)
 			allEnemies.add(enemy)
 		}
 	}

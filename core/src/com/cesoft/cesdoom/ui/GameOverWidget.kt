@@ -18,7 +18,7 @@ import com.cesoft.cesdoom.Status
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameOverWidget(private val game: CesDoom, stage: Stage) : Actor() {
+class GameOverWidget(stage: Stage) : Actor() {
 	private var image: Image = Image(Texture(Gdx.files.internal("data/gameOver.png")))
 	private var window: Window
 	private var btnRestart: TextButton
@@ -33,15 +33,19 @@ class GameOverWidget(private val game: CesDoom, stage: Stage) : Actor() {
 		ws.titleFontColor = Color.BLUE
 		window = Window("", ws)
 		//
-		btnRestart = TextButton(game.assets.getString(Assets.RECARGAR), game.assets.skin)
+		btnRestart = TextButton(CesDoom.instance.assets.getString(Assets.RECARGAR), CesDoom.instance.assets.skin)
 		btnRestart.label.setFontScale(2f)
-		btnMenu = TextButton(game.assets.getString(Assets.MENU), game.assets.skin)
+		btnMenu = TextButton(CesDoom.instance.assets.getString(Assets.MENU), CesDoom.instance.assets.skin)
 		btnMenu.label.setFontScale(2f)
-		btnQuit = TextButton(Assets.SALIR, game.assets.skin)
+		btnQuit = TextButton(Assets.SALIR, CesDoom.instance.assets.skin)
 		btnQuit.label.setFontScale(2f)
 		//
 		configureWidgets()
 		setListeners()
+		//
+		setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
+		setPosition((CesDoom.VIRTUAL_WIDTH - width)/2, (CesDoom.VIRTUAL_HEIGHT - height)/2)
+
 	}
 
 	private fun configureWidgets() {
@@ -62,14 +66,14 @@ class GameOverWidget(private val game: CesDoom, stage: Stage) : Actor() {
 	private fun setListeners() {
 		btnRestart.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				game.reset()
+				CesDoom.instance.reset()
 				reanudar()
 			}
 		})
 		btnMenu.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
 				reanudar()
-				game.reset2Menu()
+				CesDoom.instance.reset2Menu()
 			}
 		})
 		btnQuit.addListener(object : ClickListener() {

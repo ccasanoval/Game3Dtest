@@ -5,22 +5,25 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameUI(game: CesDoom) {
+class GameUI {
 
-	var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
-	var healthWidget: HealthWidget = HealthWidget(game.assets)
+	var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
+	var healthWidget = HealthWidget()
 		private set
-	private var scoreWidget: ScoreWidget = ScoreWidget(game.assets)
-	private var pauseWidget: PauseWidget = PauseWidget(game, stage)
+	private var scoreWidget: ScoreWidget = ScoreWidget()
+	private var messageWidget: MessageWidget = MessageWidget()
+	private var pauseWidget: PauseWidget = PauseWidget(stage)
 	private var crosshairWidget: CrosshairWidget = CrosshairWidget()
-	private var fpsLabel: Label = Label("", game.assets.skin)
-	var gameOverWidget: GameOverWidget = GameOverWidget(game, stage)
+	private var fpsLabel: Label = Label("", CesDoom.instance.assets.skin)
+	var gameOverWidget: GameOverWidget = GameOverWidget(stage)
 		private set
-	var gameWinWidget: GameWinWidget = GameWinWidget(game, stage)
+	var gameWinWidget: GameWinWidget = GameWinWidget(stage)
 		private set
 
 	init {
@@ -34,13 +37,14 @@ class GameUI(game: CesDoom) {
 		//TODO: ammoWidget -> Muestra la municion disponible ¿recargar?
 		scoreWidget.setSize(225f, 25f)
 		scoreWidget.setPosition(0f, CesDoom.VIRTUAL_HEIGHT - scoreWidget.height)
+		messageWidget.setSize(500f, 25f)
+		messageWidget.setPosition(CesDoom.VIRTUAL_WIDTH - messageWidget.width, CesDoom.VIRTUAL_HEIGHT - messageWidget.height)
 
 		pauseWidget.setSize(500f, 350f)
 		pauseWidget.setPosition(CesDoom.VIRTUAL_WIDTH - pauseWidget.width, CesDoom.VIRTUAL_HEIGHT - pauseWidget.height)
 
-		gameOverWidget.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
-		gameOverWidget.setPosition((CesDoom.VIRTUAL_WIDTH - gameOverWidget.width)/2, (CesDoom.VIRTUAL_HEIGHT - gameOverWidget.height)/2)
-
+		//gameOverWidget.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
+		//gameOverWidget.setPosition((CesDoom.VIRTUAL_WIDTH - gameOverWidget.width)/2, (CesDoom.VIRTUAL_HEIGHT - gameOverWidget.height)/2)
 		//gameWinWidget.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
 		//gameWinWidget.setPosition((CesDoom.VIRTUAL_WIDTH - gameWinWidget.width)/2, (CesDoom.VIRTUAL_HEIGHT - gameWinWidget.height)/2)
 
@@ -51,6 +55,7 @@ class GameUI(game: CesDoom) {
 
 		stage.addActor(healthWidget)
 		stage.addActor(scoreWidget)
+		stage.addActor(messageWidget)
 		stage.addActor(crosshairWidget)
 		stage.keyboardFocus = pauseWidget
 		stage.addActor(fpsLabel)

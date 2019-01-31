@@ -37,6 +37,7 @@ class Enemy(val id: Int) : Entity() {
 	companion object {
 	    val tag: String = Enemy::class.java.simpleName
 		const val RADIO = 18f
+		const val BITE_PAIN = 40f
 	}
 
 	fun getStatus() = StatusComponent(this)
@@ -94,7 +95,6 @@ class Enemy(val id: Int) : Entity() {
 		this.rigidBodyInfo = rigidBodyInfo
     }
 
-
 	private var posTemp = Vector3()
 	private var nextStep3D = Vector3()
 	private var stepCalc2D = Vector2()
@@ -126,7 +126,7 @@ class Enemy(val id: Int) : Entity() {
 		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
 		else if(distanciaConPlayer < Enemy.RADIO + PlayerComponent.RADIO+2) {
 			status.setAttacking()
-			val pain = 20f
+			val pain = BITE_PAIN
 			PlayerComponent.hurt(delta * pain)
 			fuerza = 0f
 		}

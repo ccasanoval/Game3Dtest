@@ -29,9 +29,8 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class RenderSystem(
-		colorAmbiente: ColorAttribute,
-		private val assets: Assets,
-		private val broadphase2: btDbvtBroadphase)
+		colorAmbiente: ColorAttribute/*,
+		private val broadphase2: btDbvtBroadphase*/)
 	: EntitySystem() {
 
 	companion object {
@@ -67,7 +66,7 @@ class RenderSystem(
 		gunCamera.far = 50f
 
 		/// Particulas
-		assets.iniParticleEffectPool(perspectiveCamera)
+		CesDoom.instance.assets.iniParticleEffectPool(perspectiveCamera)
 
 		/// Ambiente
 		environment.set(colorAmbiente)
@@ -154,10 +153,8 @@ class RenderSystem(
 
 	//______________________________________________________________________________________________
 	private fun renderParticleEffects() {
-		//Log.e(tag, "renderParticleEffects-------1-----------------------------------------------------")
 		batch.begin(perspectiveCamera)
-		assets.getParticleSystem()?.let {
-//Log.e(tag, "renderParticleEffects-----2-------------------------------------------------------"+it)
+		CesDoom.instance.assets.getParticleSystem()?.let {
 			it.update()
 			it.begin()
 			it.draw()
@@ -229,17 +226,18 @@ class RenderSystem(
 		batch.dispose()
 		visibleEntities.clear()
 		isDisposed = true
+		//delParticleEffect(effect: ParticleEffect) ?
 	}
 
 	///private val particleEffects = ArrayList<ParticleEffect>()
 	fun addParticleEffect(effect: ParticleEffect) {
 		effect.init()
 		effect.start()
-		assets.getParticleSystem()?.add(effect)
+		CesDoom.instance.assets.getParticleSystem()?.add(effect)
 	}
 	fun delParticleEffect(effect: ParticleEffect) {
 		effect.end()
 		effect.reset()
-		assets.getParticleSystem()?.remove(effect)
+		CesDoom.instance.assets.getParticleSystem()?.remove(effect)
 	}
 }

@@ -37,7 +37,7 @@ import com.cesoft.cesdoom.systems.*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameWorld(game: CesDoom) {
+class GameWorld(val game: CesDoom) {
 
 	private val debugCollision = false
 	private var debugDrawer: DebugDrawer? = null
@@ -64,14 +64,13 @@ class GameWorld(game: CesDoom) {
 	init {
 		Bullet.init()
 
-		val assets = game.assets
 		val lonMundo = 4000f
 
 		///----
 		bulletSystem = BulletSystem()
-		renderSystem = RenderSystem(colorAmbiente, assets, bulletSystem.broadphase)
-		enemySystem = EnemySystem(game)
+		renderSystem = RenderSystem(colorAmbiente)//, Assets, bulletSystem.broadphase)
 		playerSystem = PlayerSystem(game, renderSystem.perspectiveCamera, bulletSystem)
+		enemySystem = EnemySystem(game)
 		statusSystem = StatusSystem(this)
 		gateSystem = GateSystem()
 
@@ -92,25 +91,25 @@ class GameWorld(game: CesDoom) {
 
 		// TODO: Cargar desde constructor...
 		/// SCENE
-		engine.addEntity(SceneFactory.getDome(assets.getDome()))
-		engine.addEntity(SceneFactory.getSuelo(assets.getSuelo(), lonMundo))
-		SceneFactory.loadSkyline(assets.getSkyline(), engine, lonMundo/2f)
-		SceneFactory.loadJunk(assets.getJunk(), engine, lonMundo/4f)
+		engine.addEntity(SceneFactory.getDome(game.assets.getDome()))
+		engine.addEntity(SceneFactory.getSuelo(game.assets.getSuelo(), lonMundo))
+		SceneFactory.loadSkyline(game.assets.getSkyline(), engine, lonMundo/2f)
+		SceneFactory.loadJunk(game.assets.getJunk(), engine, lonMundo/4f)
 
 		/// MAZE
-		MazeFactory.create(assets, engine)
+		MazeFactory.create(engine)
 
 		/// PLAYER
-		createPlayer(assets, Vector3(0f,150f,0f))
+		createPlayer(Vector3(0f,150f,0f))
 	}
 
 	//______________________________________________________________________________________________
-	private fun createPlayer(assets: Assets, pos: Vector3) {
+	private fun createPlayer(pos: Vector3) {
 		player = Player.create(pos, colorAmbiente, engine)
 		gun = GunFactory.create(
-				assets.getRifle(),
+				game.assets.getRifle(),
 				GunComponent.TYPE.CZ805,
-				assets.getFireShot())
+				game.assets.getFireShot())
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun

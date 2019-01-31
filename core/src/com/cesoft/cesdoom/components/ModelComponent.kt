@@ -11,12 +11,8 @@ import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class ModelComponent(
-	model: Model,
-	pos: Vector3
-	)
-	: Component
-{
+class ModelComponent(model: Model, pos: Vector3) : Component {
+
 	var instance: ModelInstance = ModelInstance(model, Matrix4().setToTranslation(pos))
 	var blendingAttribute:BlendingAttribute? = null
 

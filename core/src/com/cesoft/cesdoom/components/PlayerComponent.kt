@@ -1,13 +1,8 @@
 package com.cesoft.cesdoom.components
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import com.badlogic.gdx.math.Matrix4
-import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.physics.bullet.collision.*
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
-import com.cesoft.cesdoom.bullet.MotionState
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,6 +14,7 @@ object PlayerComponent : Component
 	const val RADIO = 12f
 	const val FUERZA_MOVIL = 2000f
 	const val FUERZA_PC = 5000f
+	const val MESSAGE_DURATION = 5000f
 
 	var isWinning = false
 		private set
@@ -29,6 +25,14 @@ object PlayerComponent : Component
 	var isJumping = false
 		//private set
 	lateinit var colorAmbiente : ColorAttribute
+
+	private var lastMessage = 0L
+	var message: String = ""
+		set(value) {
+			field = value
+			lastMessage = System.currentTimeMillis()
+			Log.e("PlayerComponent", "message:set:----------------------------------- $lastMessage")
+		}
 
 	//TODO: pasar funciones a entidad Player ?
 	fun ini(colorAmbiente: ColorAttribute) {
@@ -54,6 +58,9 @@ object PlayerComponent : Component
 	}
 
 	fun update() {
+		if(!message.isEmpty() && lastMessage+MESSAGE_DURATION < System.currentTimeMillis()) {
+			message = ""
+		}
 		if(lastHurt+50 < System.currentTimeMillis())
 			colorAmbiente.color.set(.8f, .8f, .8f, 1f)//Pasar RenderObject y llamar a CamaraRoja(false)...
 	}

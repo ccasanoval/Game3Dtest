@@ -14,9 +14,12 @@ import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
+import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.ModelComponent
+import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.components.SwitchComponent
 import com.cesoft.cesdoom.entities.Switch
 
@@ -33,35 +36,28 @@ object SwitchFactory {
                     or VertexAttributes.Usage.Normal
                     or VertexAttributes.Usage.TextureCoordinates).toLong()
 
-
-    fun ini(textureOn: Texture, textureOff: Texture) {
-        Switch.textureOn = textureOn
-        Switch.textureOff = textureOff
-    }
-
-
     //______________________________________________________________________________________________
-    private var counter = 0
-    fun create(pos: Vector3, angle: Float, engine: Engine): Switch {
+    fun create(pos: Vector3, angle: Float, id: String, engine: Engine): Switch {
 
         /// Entity
-        val entity = Switch(counter++)
-        pos.y = WallFactory.HIGH
+        val entity = Switch(id)
+        pos.y = PlayerComponent.ALTURA + SwitchComponent.SIZE  //1.05f * WallFactory.HIGH
 
         /// Component
         entity.add(SwitchComponent)
 
         /// Material
-        val materialOn = Material(ColorAttribute.createDiffuse(Color.WHITE))
+        /*val materialOn = Material(ColorAttribute.createDiffuse(Color.WHITE))
         Switch.textureOn.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         val textureAttributeOn = TextureAttribute(TextureAttribute.Diffuse, Switch.textureOn)
         textureAttributeOn.scaleU = 1f
         textureAttributeOn.scaleV = 1f
-        materialOn.set(textureAttributeOn)
+        materialOn.set(textureAttributeOn)*/
 
+        val textureOff = CesDoom.instance.assets.getSwitchOff()
         val materialOff = Material(ColorAttribute.createDiffuse(Color.WHITE))
-        Switch.textureOff.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-        val textureAttributeOff = TextureAttribute(TextureAttribute.Diffuse, Switch.textureOff)
+        textureOff.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+        val textureAttributeOff = TextureAttribute(TextureAttribute.Diffuse, textureOff)
         textureAttributeOff.scaleU = 1f
         textureAttributeOff.scaleV = 1f
         materialOff.set(textureAttributeOff)

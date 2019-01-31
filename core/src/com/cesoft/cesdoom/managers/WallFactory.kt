@@ -18,9 +18,11 @@ import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.map.MapGraphFactory
 import com.cesoft.cesdoom.systems.RenderSystem
@@ -48,29 +50,33 @@ object WallFactory {
 			or VertexAttributes.Usage.Normal
 			or VertexAttributes.Usage.TextureCoordinates).toLong()
 
-	private val material0 = Material(ColorAttribute.createDiffuse(Color.WHITE))
-	private val material1 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
+	private val material1 = Material(ColorAttribute.createDiffuse(Color.WHITE))
 	private val material2 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
-	fun ini(texture0: Texture, texture1: Texture, texture2: Texture) {
+	private val material3 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
 
-		texture0.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-		val textureAttribute0 = TextureAttribute(TextureAttribute.Diffuse, texture0)
-		textureAttribute0.scaleU = 2f
-		textureAttribute0.scaleV = 2f
-		material0.set(textureAttribute0)
+	fun iniMaterials(assets: Assets) {
+		val texture1 = assets.getWallMetal1()
+		val texture2 = assets.getWallMetal2()
+		val texture3 = assets.getWallMetal3()
 
 		texture1.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture1)
-		textureAttribute1.scaleU = 3f
-		textureAttribute1.scaleV = 3f * RampFactory.LONG / RampFactory.HIGH
+		textureAttribute1.scaleU = 2f
+		textureAttribute1.scaleV = 2f
 		material1.set(textureAttribute1)
 
 		texture2.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute2 = TextureAttribute(TextureAttribute.Diffuse, texture2)
-		textureAttribute2.scaleU = 2f
-		textureAttribute2.scaleV = 2f * RampFactory.LONG / RampFactory.HIGH
+		textureAttribute2.scaleU = 3f
+		textureAttribute2.scaleV = 3f * RampFactory.LONG / RampFactory.HIGH
 		material2.set(textureAttribute2)
-		material2.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
+
+		texture3.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+		val textureAttribute3 = TextureAttribute(TextureAttribute.Diffuse, texture3)
+		textureAttribute3.scaleU = 3f
+		textureAttribute3.scaleV = 2f * RampFactory.LONG / RampFactory.HIGH
+		material3.set(textureAttribute3)
+		material3.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
 	}
 
 
@@ -86,9 +92,9 @@ object WallFactory {
 
 		/// MATERIAL
 		val material = when(type) {
-			Type.BRICK -> material0
-			Type.STEEL -> material1
-			Type.GRILLE -> material2
+			Type.BRICK -> material1
+			Type.STEEL -> material2
+			Type.GRILLE -> material3
 		}
 
 		/// MODELO

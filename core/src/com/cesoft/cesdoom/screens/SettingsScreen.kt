@@ -5,12 +5,20 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
+import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,11 +31,16 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
 
     private val win = Window("SettingsScreen", game.assets.skin, "special")
     private val titleLabel = Label(game.assets.getString(Assets.CONFIG), game.assets.skin)
-    private val soundButton = TextButton(game.assets.getString(Assets.CONFIG_SOUND_ONOF), game.assets.skin, "toggle")
-    private val volumeLabel = Label(game.assets.getString(Assets.CONFIG_SOUND_VOLUME), game.assets.skin)
-    private val volumeSlider = Slider( 0f, 1f, 0.1f,false, game.assets.skin)
-    //private val titleSound = Label(game.assets.getString(Assets.CONFIG_SOUND_ONOF), game.assets.skin)
-    //private val soundCheckbox = CheckBox(null, game.assets.skin)
+
+    private val soundButton = TextButton(game.assets.getString(Assets.CONFIG_SOUND_EFFECTS_ONOF), game.assets.skin, "toggle")
+    private val soundVolumeLabel = Label(game.assets.getString(Assets.CONFIG_SOUND_EFFECTS_VOLUME), game.assets.skin)
+    private val soundVolumeSlider = Slider( 0f, 1f, 0.1f,false, game.assets.skin)
+
+    private val musicButton = TextButton(game.assets.getString(Assets.CONFIG_MUSIC_ONOF), game.assets.skin, "toggle")
+    private val musicVolumeLabel = Label(game.assets.getString(Assets.CONFIG_MUSIC_VOLUME), game.assets.skin)
+    private val musicVolumeSlider = Slider( 0f, 1f, 0.1f,false, game.assets.skin)
+    //private val titleSound = Label(Assets.getString(Assets.CONFIG_SOUND_ONOF), Assets.skin)
+    //private val soundCheckbox = CheckBox(null, Assets.skin)
 
 
     init {
@@ -50,38 +63,55 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
         win.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-100)
         win.setPosition(xWin, yWin)
         win.zIndex = 10
+        //win.touchable = Touchable.disabled
 
-        var cy = 10f
+        // Title
+        var cy = 10f + yWin
         titleLabel.setColor(.9f, .9f, .9f, 1f)
         titleLabel.setFontScale(2f)
-        titleLabel.setSize(500f, 80f)
-        titleLabel.setPosition(xWin+10f, win.height - cy - yWin)
-
+        titleLabel.setSize(500f, 70f)
+        titleLabel.setPosition(xWin+10f, win.height - cy)
         cy += titleLabel.height + 10f
+
+        // Sound On/Off
         soundButton.isChecked = Settings.isSoundEnabled
-        soundButton.setSize(400f, 80f)
-        soundButton.setPosition(xWin, win.height - cy - yWin)
+        soundButton.setSize(350f, 80f)
+        soundButton.setPosition(xWin, win.height - cy)
+        cy += soundButton.height + 0f -55f
+        //Sound Effects Volume
+        soundVolumeLabel.setSize(500f, 30f)
+        soundVolumeLabel.setPosition(xWin+10f, win.height - cy)
+        cy += soundVolumeLabel.height + 0f
+        soundVolumeSlider.value = Settings.soundVolume
+        soundVolumeSlider.setSize(550f, 30f)
+        soundVolumeSlider.setPosition(xWin+10f, win.height - cy)
+        cy += soundVolumeSlider.height + 80f
 
-        cy += soundButton.height + 5f
-        volumeLabel.setSize(500f, 60f)
-        volumeLabel.setPosition(xWin+10f, win.height - cy - yWin)
-        cy += volumeLabel.height + 0f
-        volumeSlider.value = Settings.soundVolume
-        volumeSlider.setSize(550f, 80f)
-        volumeSlider.setPosition(xWin+10f, win.height - cy - yWin)
-
-        /*soundCheckbox.isChecked = Settings.isSoundEnabled
-        soundCheckbox.setSize(350f, 80f)
-        soundCheckbox.setPosition(20f, 120f)*/
+        // Music On/Off
+        musicButton.isChecked = Settings.isMusicEnabled
+        musicButton.setSize(250f, 80f)
+        musicButton.setPosition(xWin, win.height - cy)
+        cy += musicButton.height + 0f -55f
+        //Music Volume
+        musicVolumeLabel.setSize(500f, 30f)
+        musicVolumeLabel.setPosition(xWin+10f, win.height - cy)
+        cy += musicVolumeLabel.height + 0f
+        musicVolumeSlider.value = Settings.soundVolume
+        musicVolumeSlider.setSize(550f, 30f)
+        musicVolumeSlider.setPosition(xWin+10f, win.height - cy)
 
         win.addActor(titleLabel)
         win.addActor(soundButton)
-        win.addActor(volumeLabel)
-        win.addActor(volumeSlider)
+        win.addActor(soundVolumeLabel)
+        win.addActor(soundVolumeSlider)
+        win.addActor(musicButton)
+        win.addActor(musicVolumeLabel)
+        win.addActor(musicVolumeSlider)
 
 		stage.addActor(backgroundImage)
         stage.addActor(backButton)
         stage.addActor(win)
+        //stage.isDebugAll = true
     }
 
     //______________________________________________________________________________________________
@@ -102,12 +132,21 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
 //            }
 //        })
 
-        volumeSlider.addListener {
-            Settings.soundVolume = volumeSlider.value
+        soundVolumeSlider.addListener {
+            Settings.soundVolume = soundVolumeSlider.value
             return@addListener false
         }
         soundButton.addListener {
             Settings.isSoundEnabled = soundButton.isChecked
+            return@addListener false
+        }
+
+        musicVolumeSlider.addListener {
+            Settings.musicVolume = musicVolumeSlider.value
+            return@addListener false
+        }
+        musicButton.addListener {
+            Settings.isMusicEnabled = musicButton.isChecked
             return@addListener false
         }
     }

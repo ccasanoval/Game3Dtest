@@ -26,6 +26,7 @@ import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent.ALTURA
 import com.cesoft.cesdoom.components.PlayerComponent.FUERZA_MOVIL
 import com.cesoft.cesdoom.managers.GunFactory
+import com.cesoft.cesdoom.ui.GameUI
 import com.cesoft.cesdoom.util.Log
 
 
@@ -248,7 +249,7 @@ class PlayerSystem(
 			posTemp2.set(Vector3.Zero)
 		else {
 			animFootStep(delta)
-			if(Settings.isSoundEnabled)// && ! game.assets.getSoundFootSteps().isPlaying)
+			if(Settings.isSoundEnabled)// && ! Assets.getSoundFootSteps().isPlaying)
 				Sounds.play(Sounds.SoundType.FOOT_STEPS)
 		}
 		posTemp.add(posTemp2)
@@ -293,8 +294,7 @@ class PlayerSystem(
 		camera.update()
 	}
 	//______________________________________________________________________________________________
-	private fun getPosition() : Vector3
-	{
+	private fun getPosition() : Vector3 {
 		val transform = Matrix4()
 		bulletComponent.rigidBody.motionState.getWorldTransform(transform)
 		return transform.getTranslation(posTemp)
@@ -302,20 +302,19 @@ class PlayerSystem(
 
 	//______________________________________________________________________________________________
 	private fun updateStatus() {
-		game.gameUI.healthWidget.setValue(PlayerComponent.health)
+		CesDoom.instance.gameUI.healthWidget.setValue(PlayerComponent.health)
 	}
 
 	//______________________________________________________________________________________________
 	//TODO: quiza depende de GunComponent?
 	private var deltaFire = 100f
 	private var deltaReload = 100f
-	private fun updateWeapon(delta: Float)
-	{
+	private fun updateWeapon(delta: Float) {
 		// Gdx.input.isTouched
 		deltaFire += delta
 		deltaReload += delta
 		if(ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || fire1) {
-			GunFactory.playSound(game.assets)
+			GunFactory.playSound()
 			if(deltaFire > 0.15f) {
 				deltaFire = 0f
 				fire()
@@ -346,8 +345,8 @@ class PlayerSystem(
 	//
 	private val rayFrom = Vector3()
 	private val rayTo = Vector3()
-	private fun fire()
-	{
+	private fun fire() {
+
 		GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
 
 		//-------------------
@@ -360,8 +359,7 @@ class PlayerSystem(
 		rayTestCB.setRayFromWorld(rayFrom)
 		rayTestCB.setRayToWorld(rayTo)
 		bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB)
-		if(rayTestCB.hasHit())
-		{
+		if(rayTestCB.hasHit()) {
 			//Gdx.app.error("CesDoom", "-------------------------- DISPARO DIO ------------------------------")
 			val entity = rayTestCB.collisionObject.userData as Entity
 			/// Enemy
@@ -402,9 +400,12 @@ class PlayerSystem(
 	private var delayDeath = 0f
 	private fun checkGameOver(delta: Float) {
 		if(PlayerComponent.isDead() && !Status.paused) {
+			if(delayDeath == 0f) {
+				Sounds.play(Sounds.SoundType.GAME_OVER)
+			}
 			if(delayDeath >= 2f) {
 				Status.paused = true
-				game.gameUI.gameOverWidget.show()
+				CesDoom.instance.gameUI.gameOverWidget.show()
 			}
 			delayDeath += delta
 		}
@@ -413,10 +414,13 @@ class PlayerSystem(
 	private var delayYouWin = 0f
 	private fun checkYouWin(delta: Float) {
 		if(PlayerComponent.isWinning && !Status.paused) {
-			if(delayYouWin >= 0f) {
+			if(delayYouWin == 0f) {
+				Sounds.play(Sounds.SoundType.YOU_WIN)
+			}
+			if(delayYouWin >= 1f) {
 				Status.paused = true
-				game.gameUI.gameWinWidget.show()
-				//game.gameUI.gameOverWidget.show()
+				CesDoom.instance.gameUI.gameWinWidget.show()
+				//GameUI.gameOverWidget.show()
 			}
 			delayYouWin += delta
 		}

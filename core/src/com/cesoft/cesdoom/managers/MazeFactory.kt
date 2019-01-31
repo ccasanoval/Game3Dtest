@@ -3,27 +3,16 @@ package com.cesoft.cesdoom.managers
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.GateComponent
 import com.cesoft.cesdoom.components.SwitchComponent
-import com.cesoft.cesdoom.entities.Switch
 import com.cesoft.cesdoom.map.MapGraphFactory
 import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-object MazeFactory
-{
+object MazeFactory {
 
-	// TODO: Steering MapPathFinder (must reset origin of MapPathFinder...) Constructor?
-	// Wall : 00 -> z = 2*WallFactory.LONG
-	// Wall : 90 -> x = 2*WallFactory.LONG
-	// Wall : 45 -> x = 2*WallFactory.LONG * sin(45)  &  z = 2*WallFactory.LONG * sin(45)
-	/*
-	val height = (RampFactory.LONG+11.5*WallFactory.LONG).toInt()
-	val width = (RampFactory.LONG+11.5*WallFactory.LONG).toInt()
-	val MapPathFinder = ByteArray(width*height)
-	*/
 	//480x1 == 240x2 == 160x3 == 120x4
 	const val lng = WallFactory.LONG
 	const val lng2 = 2*WallFactory.LONG
@@ -34,17 +23,16 @@ object MazeFactory
 
 
 	//______________________________________________________________________________________________
-	fun create(assets: Assets, engine: Engine)
-	{
-		WallFactory.ini(
-				assets.getWallMetal1(),
-				assets.getWallMetal2(),
-				assets.getWallMetal3())
+	fun create(engine: Engine) {
+		WallFactory.iniMaterials(CesDoom.instance.assets)
+		/*WallFactory.ini(
+				Assets.getWallMetal1(),
+				Assets.getWallMetal2(),
+				Assets.getWallMetal3())*/
 
-		RampFactory.init(assets.getWallMetal2(), assets.getWallMetal3())
+		//RampFactory.init(Assets.getWallMetal2(), Assets.getWallMetal3())
 
-		SwitchFactory.ini(assets.getSwitchOn(), assets.getSwitchOff())
-        GateFactory.ini(assets.getGate())
+		//SwitchFactory.ini(assets.getSwitchOn(), assets.getSwitchOff())
 
 //		createSector(engine, 0f)
 //		createSector(engine, +RampFactory.LONG+5.5f*WallFactory.LONG-3)
@@ -155,12 +143,15 @@ object MazeFactory
         }
         for(x in -13..13 step 2) {
             if (x == 1) {
-                //GATE
-				SwitchFactory.create(Vector3(0f,0f, -WallFactory.LONG-SwitchComponent.SIZE/2), 90f, e)
-				SwitchFactory.create(Vector3(0f,0f, +WallFactory.LONG+SwitchComponent.SIZE/2), 90f, e)
-                GateFactory.create(mapFactory, Vector3(x*lng, 0f, +6f * lng2), 90f, e)
-                GateFactory.create(mapFactory, Vector3(x*lng, 0f, -6f * lng2), 90f, e)
+				// SALIDA 0
+				var id = " A "
+				SwitchFactory.create(Vector3(0f,0f, -WallFactory.LONG-SwitchComponent.SIZE/2), 90f, id, e)
+				GateFactory.create(mapFactory, Vector3(x*lng, 0f, +6f * lng2), 90f, id, e)
 				YouWinFactory.create(Vector3(x*lng, 0f, +6f * lng2 + (2*YouWinFactory.SIZE+GateComponent.THICK)), e)
+				// SALIDA 1
+				id = " B "
+				SwitchFactory.create(Vector3(0f,0f, +WallFactory.LONG+SwitchComponent.SIZE/2), 90f, id, e)
+                GateFactory.create(mapFactory, Vector3(x*lng, 0f, -6f * lng2), 90f, id, e)
 				YouWinFactory.create(Vector3(x*lng, 0f, -6f * lng2 - (2*YouWinFactory.SIZE+GateComponent.THICK)), e)
                 continue
             }
@@ -171,7 +162,7 @@ object MazeFactory
 
 
 		//TESTING
-        GateFactory.create(mapFactory, Vector3(+GateComponent.LONG+.2f, 0f, 0f), 0f, e)
+        GateFactory.create(mapFactory, Vector3(+GateComponent.LONG+.2f, 0f, 0f), 0f, " C ", e).unlock()
 		//GateFactory.create(mapFactory, Vector3(-GateComponent.LONG, 0f, 0f), 0f, e)
 		//YouWinFactory.create(Vector3(-2*GateComponent.LONG, 0f, 0f), e)
 

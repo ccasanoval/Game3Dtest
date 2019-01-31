@@ -2,6 +2,7 @@ package com.cesoft.cesdoom.assets
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.Texture
@@ -14,11 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.I18NBundle
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
+//import javax.inject.Singleton
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TEXTURES: https://steamcommunity.com/id/Hoover1979/images/?appid=2280
 // TEXTURES: DOOM LIKE: https://imgur.com/a/6zVaU
+//@Singleton
 class Assets {
 
 	companion object {
@@ -38,8 +41,13 @@ class Assets {
 		const val SOBRE="SOBRE"
 		const val ATRAS="ATRAS"
 		const val CONFIG="CONFIG"
-		const val CONFIG_SOUND_VOLUME="CONFIG_SOUND_VOLUME"
-		const val CONFIG_SOUND_ONOF="CONFIG_SOUND_ONOF"
+		const val CONFIG_SOUND_EFFECTS_VOLUME="CONFIG_SOUND_EFFECTS_VOLUME"
+		const val CONFIG_SOUND_EFFECTS_ONOF="CONFIG_SOUND_EFFECTS_ONOF"
+        const val CONFIG_MUSIC_VOLUME="CONFIG_MUSIC_VOLUME"
+        const val CONFIG_MUSIC_ONOF="CONFIG_MUSIC_ONOF"
+		const val GATE_LOCKED="GATE_LOCKED"
+		const val GATE_OPENS="GATE_OPENS"
+		const val GATE_UNLOCKED="GATE_UNLOCKED"
 
 		/// MODELS
 		private const val MODEL_DOME = "scene/dome/spacedome.g3db"
@@ -62,7 +70,6 @@ class Assets {
 		private const val PARTICLES_ENEMY = "particles/dieparticle.pfx"
 		/// TEXTURE
 		private const val TXT_LOADING = "data/loading.pack"
-
 	}
 
 
@@ -75,7 +82,7 @@ class Assets {
 	/// i18n
 	private var i18nBundle = I18NBundle.createBundle(i18n)!!
 		fun getString(clave: String):String = i18nBundle.get(clave)
-		fun formatString(clave: String, param: Int):String = i18nBundle.format(clave, param)
+		fun formatString(clave: String, param: Any):String = i18nBundle.format(clave, param)
 
 	//______________________________________________________________________________________________
 	init {
@@ -85,31 +92,6 @@ class Assets {
 		skin.load(fileHandle)
 		Sounds.ini(assetManager)
 	}
-
-	// SOUND
-	//______________________________________________________________________________________________
-	fun iniSoundRifle() {
-		//https://freesound.org/people/SuperPhat/sounds/416417/
-		assetManager.load(Sounds.SOUND_RIFLE, Sound::class.java)
-	}
-	fun getSoundRifle() = assetManager.get(Sounds.SOUND_RIFLE, Sound::class.java)
-	fun endSoundRifle() = assetManager.get(Sounds.SOUND_RIFLE, Sound::class.java).dispose()
-	//______________________________________________________________________________________________
-	fun iniSoundEnemy() {
-		//https://freesound.org/people/cylon8472/sounds/326743/
-		assetManager.load(Sounds.SOUND_ENEMY, Sound::class.java)
-	}
-	fun getSoundEnemy() = assetManager.get(Sounds.SOUND_ENEMY, Sound::class.java)
-	fun endSoundEnemy() = assetManager.get(Sounds.SOUND_ENEMY, Sound::class.java).dispose()
-	//
-	fun iniSoundEnemyDie() = assetManager.load(Sounds.SOUND_ENEMY_DIE, Sound::class.java)
-	fun getSoundEnemyDie() = assetManager.get(Sounds.SOUND_ENEMY_DIE, Sound::class.java)
-	fun endSoundEnemyDie() = assetManager.get(Sounds.SOUND_ENEMY_DIE, Sound::class.java).dispose()
-	//
-	fun iniSoundFootSteps() = assetManager.load(Sounds.SOUND_FOOT_STEPS, Sound::class.java)
-	fun getSoundFootSteps() = assetManager.get(Sounds.SOUND_FOOT_STEPS, Sound::class.java)
-	fun endSoundFootSteps() = assetManager.get(Sounds.SOUND_FOOT_STEPS, Sound::class.java).dispose()
-
 
 	// LOADING
     //______________________________________________________________________________________________
@@ -170,7 +152,7 @@ class Assets {
 	var particleEffectPool: ParticleEffectPool? = null
 	fun iniParticleEffectPool(camera: PerspectiveCamera) {
 		if(particleEffectPool == null) {
-			particleEffectPool = ParticleEffectPool(this, camera)
+			particleEffectPool = ParticleEffectPool(camera)
 			assetManager.load(PARTICLES_ENEMY, ParticleEffect::class.java, particleEffectPool!!.loadParam)
 			assetManager.finishLoadingAsset(PARTICLES_ENEMY)
 		}
@@ -188,21 +170,21 @@ class Assets {
 		Log.e(tag, "dispose------------------------------------------------------------------------")
 
 		try {
-		getDome().dispose()
-		getEnemy().dispose()
-		getRifle().dispose()
-		getSuelo().dispose()
-		getSkyline().dispose()
-		getJunk().dispose()
-		getWallMetal1().dispose()
-		getWallMetal2().dispose()
-		getWallMetal3().dispose()
-		endFireShot()
+			getDome().dispose()
+			getEnemy().dispose()
+			getRifle().dispose()
+			getSuelo().dispose()
+			getSkyline().dispose()
+			getJunk().dispose()
+			getWallMetal1().dispose()
+			getWallMetal2().dispose()
+			getWallMetal3().dispose()
+			endFireShot()
 
-		getSoundRifle().dispose()
-		getSoundEnemy().dispose()
-		getSoundEnemyDie().dispose()
-		getSoundFootSteps().dispose()
+//			getSoundRifle().dispose()
+//			getSoundEnemy().dispose()
+//			getSoundEnemyDie().dispose()
+//			getSoundFootSteps().dispose()
 		}
 		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e1: $e") }
 

@@ -7,12 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
 import com.badlogic.gdx.utils.Align
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.Status
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class HealthWidget(assets: Assets) : Actor() {
+class HealthWidget : Actor() {
 	private val healthBar: ProgressBar
 	private val progressBarStyle: ProgressBar.ProgressBarStyle
 	private val label: Label
@@ -20,15 +21,15 @@ class HealthWidget(assets: Assets) : Actor() {
 	//______________________________________________________________________________________________
 	init {
 		progressBarStyle = ProgressBar.ProgressBarStyle(
-				assets.skin.newDrawable("progress-bar-back", Color.RED),
-				assets.skin.newDrawable("white", Color.GREEN))
+				CesDoom.instance.assets.skin.newDrawable("progress-bar-back", Color.RED),
+				CesDoom.instance.assets.skin.newDrawable("white", Color.GREEN))
 		progressBarStyle.knobBefore = progressBarStyle.knob
 		healthBar = ProgressBar(0f, 100f, 1f, false, progressBarStyle)
 
 		val ls = Label.LabelStyle()
 		ls.font = BitmapFont()
 		ls.fontColor = Color.YELLOW
-		label = Label("Energía", ls)
+		label = Label("", ls)
 		label.setAlignment(Align.center)
 	}
 

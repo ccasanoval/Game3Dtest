@@ -15,7 +15,9 @@ import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.GateComponent
@@ -44,21 +46,20 @@ object GateFactory {
                     or VertexAttributes.Usage.Normal
                     or VertexAttributes.Usage.TextureCoordinates).toLong()
 
-    private lateinit var texture: Texture
+    /*private lateinit var texture: Texture
     fun ini(texture: Texture) {
         this.texture = texture
-    }
+    }*/
 
 
     //______________________________________________________________________________________________
-    private var counter = 0
-    fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, engine: Engine): Gate {
+    fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, id: String, engine: Engine): Gate {
 
         /// GraphMap
         WallMapFactory.create(mapFactory, pos, angle, 0)
 
         /// Entity
-        val entity = Gate(counter++)
+        val entity = Gate(id)
         pos.y += HIGH
 
         /// Component
@@ -67,6 +68,7 @@ object GateFactory {
 
         /// Material
         val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
+        val texture = CesDoom.instance.assets.getGate()
         texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture)
         textureAttribute1.scaleU = 1f

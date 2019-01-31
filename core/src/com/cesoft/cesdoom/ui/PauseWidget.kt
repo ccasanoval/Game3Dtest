@@ -11,15 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
-import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.assets.Assets
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
+class PauseWidget(stage: Stage) : Actor() {
 
 	private var window: Window
 	private var btnRestart: TextButton
@@ -35,14 +34,14 @@ class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 		ws.titleFontColor = Color.BLUE
 		window = Window("", ws)
 		//
-		btnRestart = TextButton(game.assets.getString(Assets.RECARGAR), game.assets.skin)
-		btnMenu = TextButton(game.assets.getString(Assets.MENU), game.assets.skin)
-		btnQuit = TextButton(Assets.SALIR, game.assets.skin)
-		btnRestart = TextButton(game.assets.getString(Assets.RECARGAR), game.assets.skin)
+		btnRestart = TextButton(CesDoom.instance.assets.getString(Assets.RECARGAR), CesDoom.instance.assets.skin)
+		btnMenu = TextButton(CesDoom.instance.assets.getString(Assets.MENU), CesDoom.instance.assets.skin)
+		btnQuit = TextButton(Assets.SALIR, CesDoom.instance.assets.skin)
+		btnRestart = TextButton(CesDoom.instance.assets.getString(Assets.RECARGAR), CesDoom.instance.assets.skin)
 		btnRestart.label.setFontScale(2f)
-		btnMenu = TextButton(game.assets.getString(Assets.MENU), game.assets.skin)
+		btnMenu = TextButton(CesDoom.instance.assets.getString(Assets.MENU), CesDoom.instance.assets.skin)
 		btnMenu.label.setFontScale(2f)
-		btnQuit = TextButton(Assets.SALIR, game.assets.skin)
+		btnQuit = TextButton(Assets.SALIR, CesDoom.instance.assets.skin)
 		btnQuit.label.setFontScale(2f)
 		//
 		configureWidgets()
@@ -73,14 +72,14 @@ class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 
 		btnRestart.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				game.reset()
+				CesDoom.instance.reset()
 				reanudar()
 			}
 		})
 		btnMenu.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
 				reanudar()
-				game.reset2Menu()
+				CesDoom.instance.reset2Menu()
 			}
 		})
 		btnQuit.addListener(object : ClickListener() {
@@ -99,7 +98,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage) : Actor() {
 	}
 	private fun pausar() {
 		//TODO: pausar enemy system de creaer mas bichos
-		game.pauseGame()
+		CesDoom.instance.pauseGame()
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
 		Status.paused = true

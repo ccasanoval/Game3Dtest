@@ -19,7 +19,9 @@ import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.systems.RenderSystem
 
 
@@ -43,14 +45,16 @@ object RampFactory {
 					or VertexAttributes.Usage.Normal
 					or VertexAttributes.Usage.TextureCoordinates).toLong()
 
-	fun init(texture1: Texture, texture2: Texture) {
+	init {
+		val texture1 = CesDoom.instance.assets.getWallMetal2()
+		val texture2 = CesDoom.instance.assets.getWallMetal3()
+
 		/// MODELO1
 		texture1.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture1)
 		textureAttribute1.scaleU = 3f
 		textureAttribute1.scaleV = 3f * LONG / HIGH
 		material1.set(textureAttribute1)
-		//model1 = modelBuilder1.createBox(THICK *2, HIGH *2, LONG *2, material1, POSITION_NORMAL)
 
 		/// MODELO2
 		texture2.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)

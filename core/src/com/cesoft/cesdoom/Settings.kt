@@ -7,62 +7,24 @@ import com.badlogic.gdx.audio.Sound
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.util.Log
 
-/*
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Preferences
-
-class AppPreferences {
-
-	protected val prefs: Preferences
-		get() = Gdx.app.getPreferences(PREFS_NAME)
-
-	var isSoundEffectsEnabled: Boolean
-		get() = prefs.getBoolean(PREF_SOUND_ENABLED, true)
-		set(soundEffectsEnabled) {
-			prefs.putBoolean(PREF_SOUND_ENABLED, soundEffectsEnabled)
-			prefs.flush()
-		}
-
-	var isMusicEnabled: Boolean
-		get() = prefs.getBoolean(PREF_MUSIC_ENABLED, true)
-		set(musicEnabled) {
-			prefs.putBoolean(PREF_MUSIC_ENABLED, musicEnabled)
-			prefs.flush()
-		}
-
-	var musicVolume: Float
-		get() = prefs.getFloat(PREF_MUSIC_VOLUME, 0.5f)
-		set(volume) {
-			prefs.putFloat(PREF_MUSIC_VOLUME, volume)
-			prefs.flush()
-		}
-
-	var soundVolume: Float
-		get() = prefs.getFloat(PREF_SOUND_VOL, 0.5f)
-		set(volume) {
-			prefs.putFloat(PREF_SOUND_VOL, volume)
-			prefs.flush()
-		}
-
-	companion object {
-		private val PREF_MUSIC_VOLUME = "volume"
-		private val PREF_MUSIC_ENABLED = "music.enabled"
-		private val PREF_SOUND_ENABLED = "sound.enabled"
-		private val PREF_SOUND_VOL = "sound"
-		private val PREFS_NAME = "b2dtut"
-	}
-}*/
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object Settings {
 	private const val PREF_NAME = "CesDooM_Prefs"
-	private const val PREF_SOUND_ONOFF = "sound_onoff"
-	private const val PREF_SOUND_VOLUME = "sound_volume"
+	private const val PREF_MUSIC_ONOFF = "music_onoff"
+	private const val PREF_MUSIC_VOLUME = "music_volume"
+	private const val PREF_SOUND_EFFECTS_ONOFF = "sound_onoff"
+	private const val PREF_SOUND_EFFECTS_VOLUME = "sound_volume"
 
+	var isMusicEnabled = false
 	var isSoundEnabled = false
 	var soundVolume:Float = 1f
+		set(value) {
+			if(value in 0.0f..1.0f)
+				field = value
+		}
+	var musicVolume:Float = 1f
 		set(value) {
 			if(value in 0.0f..1.0f)
 				field = value
@@ -73,12 +35,16 @@ object Settings {
 	//
 	private val prefs: Preferences = Gdx.app.getPreferences(PREF_NAME)
 	fun loadPrefs() {
-		isSoundEnabled = prefs.getBoolean(PREF_SOUND_ONOFF)
-		soundVolume = prefs.getFloat(PREF_SOUND_VOLUME)
+		isMusicEnabled = prefs.getBoolean(PREF_MUSIC_ONOFF, true)
+		musicVolume = prefs.getFloat(PREF_MUSIC_VOLUME, musicVolume)
+		isSoundEnabled = prefs.getBoolean(PREF_SOUND_EFFECTS_ONOFF, true)
+		soundVolume = prefs.getFloat(PREF_SOUND_EFFECTS_VOLUME, soundVolume)
 	}
 	fun savePrefs() {
-		prefs.putBoolean(PREF_SOUND_ONOFF, isSoundEnabled)
-		prefs.putFloat(PREF_SOUND_VOLUME, soundVolume)
+		prefs.putBoolean(PREF_MUSIC_ONOFF, isMusicEnabled)
+		prefs.putFloat(PREF_MUSIC_VOLUME, musicVolume)
+		prefs.putBoolean(PREF_SOUND_EFFECTS_ONOFF, isSoundEnabled)
+		prefs.putFloat(PREF_SOUND_EFFECTS_VOLUME, soundVolume)
 		prefs.flush()
 	}
 

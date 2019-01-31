@@ -6,9 +6,10 @@ import com.badlogic.gdx.graphics.g3d.particles.ParticleEffectLoader
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
 import com.badlogic.gdx.utils.Pool
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.util.Log
 
-class ParticleEffectPool(private val assets: Assets, camera: PerspectiveCamera)
+class ParticleEffectPool(camera: PerspectiveCamera)
 	: Pool<ParticleEffect>() {
 
 	val particleSystem = ParticleSystem()
@@ -23,7 +24,7 @@ class ParticleEffectPool(private val assets: Assets, camera: PerspectiveCamera)
 	}
 
 	override fun newObject(): ParticleEffect {
-		return assets.getParticleEffectDie().copy()
+		return CesDoom.instance.assets.getParticleEffectDie().copy()
 	}
 
 	override fun free(effect: ParticleEffect) {
