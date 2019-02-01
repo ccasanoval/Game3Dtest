@@ -11,7 +11,6 @@ class Vertex(private val orig: Node, private val dest: Node) : Connection<Node> 
     init {
         if(dest.isValido)
             this.coste = orig.point.dist2(dest.point).toFloat()
-                //Vector2.dst(origen.point.x.toFloat(), origen.point.y.toFloat(), destino.point.x.toFloat(), destino.point.y.toFloat())
         else
             this.coste = java.lang.Float.MAX_VALUE / 2
     }

@@ -21,7 +21,7 @@ import com.cesoft.cesdoom.util.Log
 class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 
 	companion object {
-		private const val MAX = 4				//TODO: aumenta cuando supera x puntos...
+		private const val MAX_ENEMIES = 4		//TODO: aumenta cuando supera x puntos...
 		private const val SPAWN_DELAY = 5*1000	//TODO: si pausa o background, debe actualizar time!!!
 	}
 
@@ -66,7 +66,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 		spawnAllEnemies()
 		enemies?.let { enemies ->
 
-			if(enemies.size() < MAX) {
+			if(enemies.size() < MAX_ENEMIES) {
                 val id = getNextEnemyId()
 				if(id >= allEnemies.size)return//Max enemy number reached
 				try {
@@ -84,7 +84,7 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 			id=0
 		}
 		else {
-			for(id0 in 0 until MAX) {
+			for(id0 in 0 until MAX_ENEMIES) {
 				if( ! isEnemyActive(id0)) {
 					id = id0
 					break
@@ -116,8 +116,8 @@ class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
 	}
 
 	private fun spawnAllEnemies() {
-		if(allEnemies.size < MAX)//allEnemies.isEmpty() ||
-		for(i in allEnemies.size until MAX) {
+		if(allEnemies.size < MAX_ENEMIES)//allEnemies.isEmpty() ||
+		for(i in allEnemies.size until MAX_ENEMIES) {
 			//Log.e("EnemySystem", "spawnAllEnemies:-------------------------------$i  "+allEnemies.size+" ")
 			val enemy = EnemyFactory.create(i,
 					game.assets.particleEffectPool!!,

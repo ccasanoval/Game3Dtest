@@ -12,7 +12,7 @@ import com.badlogic.gdx.ai.pfa.PathSmoother
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class MapGraph(val width: Float, val height: Float, val scale: Int)
+class MapGraph(val width: Float, val height: Float, private val scale: Int)
     : IndexedGraph<Node> {
 
     companion object {
@@ -73,8 +73,8 @@ class MapGraph(val width: Float, val height: Float, val scale: Int)
         return node
     }
 
-    fun addNode(Node: Node) {
-        nodes.add(Node)
+    fun addNode(node: Node) {
+        nodes.add(node)
     }
 
     /*fun clear() {

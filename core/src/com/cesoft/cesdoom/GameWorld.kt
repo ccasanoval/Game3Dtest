@@ -18,12 +18,20 @@ import com.cesoft.cesdoom.systems.*
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+//TODO:
+//
+//TODO: Mejorar FPS (Enemy consume mucho, es todo por pathfinding?)
+//TODO: Modo dios como huevo
+//TODO: HEALTH objects+
+//TODO: AMMO limit and objects+
+//TODO: Levels+
+//
 //TODO: Constructor para laberinto & MapPathFinder
-//TODO: Columnas en maze, maze cerrado !!
+//TODO: Columnas en maze
 
 //TODO: Configurar joystick Android -> Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga y salto?
 
-//TODO: Dependecy Injection?
+//TODO: Dependecy Injection? https://github.com/denisk20/libgdx-dagger2
 //TODO: Shadows? Fog?
 
 //VR
@@ -32,8 +40,6 @@ import com.cesoft.cesdoom.systems.*
 //https://github.com/Brummi/VRDemo
 //https://github.com/nooone/gdx-vr
 
-//
-//https://www.gamefromscratch.com/page/LibGDX-Tutorial-series.aspx
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //

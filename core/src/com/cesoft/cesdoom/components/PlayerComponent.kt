@@ -19,6 +19,7 @@ object PlayerComponent : Component {
 	const val FUERZA_MOVIL = 2000f
 	const val FUERZA_PC = 5000f
 
+	var isGodModeOn = false
 
 	var isWinning = false
 		private set
@@ -35,7 +36,6 @@ object PlayerComponent : Component {
 		set(value) {
 			field = value
 			lastMessage = System.currentTimeMillis()
-			Log.e("PlayerComponent", "message:set:----------------------------------- $lastMessage")
 		}
 
 	//TODO: pasar funciones a entidad Player ?
@@ -54,6 +54,7 @@ object PlayerComponent : Component {
 
 	private var lastHurt = 0L
 	fun hurt(pain: Float) {
+		if(isGodModeOn)return
 		if(System.currentTimeMillis() > lastHurt+800) {
 			health -= pain
 			colorAmbiente.color.set(.8f, 0f, 0f, 1f)//Pasar RenderObject y llamar a CamaraRoja(true)...

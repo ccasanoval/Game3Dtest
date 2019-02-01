@@ -14,8 +14,6 @@ import com.badlogic.gdx.physics.bullet.collision.btSphereShape
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.EnemyComponent.ACTION.*
 import com.cesoft.cesdoom.entities.Enemy
-import com.cesoft.cesdoom.Settings
-import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.ParticleEffectPool
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.systems.RenderSystem
@@ -23,8 +21,7 @@ import com.cesoft.cesdoom.systems.RenderSystem
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-object EnemyFactory
-{
+object EnemyFactory {
 	private val tag: String = EnemyFactory::class.java.simpleName
 
 	private var renderSystem: RenderSystem? = null
@@ -100,6 +97,7 @@ object EnemyFactory
 
 		/// STEERING
 		//entity.add(SteeringComponent(rigidBody, RADIO))
+		//https://www.gamedevelopment.blog/full-libgdx-game-tutorial-ashley-steering-behaviors/
 
 		entity.init(type, mase, particlePool, rigidBody, rigidBodyInfo)
 		activeEnemies.add(entity)
@@ -107,8 +105,9 @@ object EnemyFactory
 	}
 
 	//______________________________________________________________________________________________
-	private fun setAnimation(entity: Entity, action: EnemyComponent.ACTION)
-	{
+	private var currentAnimat = EnemyComponent.ACTION.IDLE
+	private fun setAnimation(entity: Entity, action: EnemyComponent.ACTION) {
+		currentAnimat = action
 		val type = entity.getComponent(EnemyComponent::class.java).type
 		val animParams = getAnimationParams(type, action)
 		if(animParams.id.isEmpty())return
@@ -116,6 +115,7 @@ object EnemyFactory
 	}
 	//______________________________________________________________________________________________
 	private val random = java.util.Random()
+	private const val ACTION_NAME = "MilkShape3D Skele|DefaultAction"
 	private fun getAnimationParams(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) : AnimationParams {
 		val loop = -1
 		val speed = 1f
@@ -124,39 +124,43 @@ object EnemyFactory
 			EnemyComponent.TYPE.MONSTER1 ->
 				return when(action) {//TODO: Hacer estos objetos staticos!!! asi no tienes que crearlos....
 					EnemyComponent.ACTION.WALKING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 0f, time)
+						AnimationParams(ACTION_NAME, loop, speed, 0f, time)
 					EnemyComponent.ACTION.RUNNING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 6f, time)
+						AnimationParams(ACTION_NAME, loop, speed, 6f, time)
 					EnemyComponent.ACTION.ATTACKING -> {
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 12.8f, time)
+						AnimationParams(ACTION_NAME, loop, speed, 12.8f, time)
 //						when(random.nextInt(3)) {
-//							0 -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 12.8f, time)
-//							else -> AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 10f, time)
+//							0 -> AnimationParams(ACTION_NAME, loop, speed, 12.8f, time)
+//							else -> AnimationParams(ACTION_NAME, loop, speed, 10f, time)
 //						}
 					}
 					EnemyComponent.ACTION.IDLE ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 19.12f, time)
+						AnimationParams(ACTION_NAME, loop, speed, 19.12f, time)
 					EnemyComponent.ACTION.REINCARNATING ->
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 0f, time)
+						AnimationParams(ACTION_NAME, loop, speed, 0f, time)
 					EnemyComponent.ACTION.ACHING -> {
 						if(random.nextInt(2) == 0)
-							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 15.6f, time)
+							AnimationParams(ACTION_NAME, loop, speed, 15.6f, time)
 						else
-							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 20f, time)
+							AnimationParams(ACTION_NAME, loop, speed, 20f, time)
 					}
 					EnemyComponent.ACTION.DYING -> {
-						AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 22.6f, time)
+						AnimationParams(ACTION_NAME, loop, speed, 22.6f, time)
 						/*if(random.nextInt(2) == 0) {
 							Log.e("----******************--------- Enemy Factory DYING 1")
-							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 15.6f, time)
+							AnimationParams(ACTION_NAME, loop, speed, 15.6f, time)
 						}
 						else {
 							Log.e("-----*********************-------- Enemy Factory DYING 2")
-							AnimationParams("MilkShape3D Skele|DefaultAction", loop, speed, 20f, time)
+							AnimationParams(ACTION_NAME, loop, speed, 20f, time)
 						}*/
 					}
 				}
-				/*
+		}
+	}
+	//______________________________________________________________________________________________
+	private object ActDuration {
+		/*
 				0-30  walk				0-1.2
 				0-120 walk				0-4.8
 				150-190 run				6-7.6
@@ -169,11 +173,6 @@ object EnemyFactory
 				565-650 death-03		22.6-26
 				//
 				650 --> 26s   ==> 25 fps */
-		}
-	}
-	//______________________________________________________________________________________________
-	private object ActDuration
-	{
 		val actionDuration = mapOf(
 				WALKING to 4.8f,
 				RUNNING to 2.4f,
@@ -191,23 +190,28 @@ object EnemyFactory
 
 	//______________________________________________________________________________________________
 	fun playRunning(entity: Entity) {
-		setAnimation(entity, EnemyComponent.ACTION.RUNNING)
+		setAnimation(entity, RUNNING)
 	}
 	//______________________________________________________________________________________________
 	fun playWalking(entity: Entity) {
-		setAnimation(entity, EnemyComponent.ACTION.WALKING)
+		setAnimation(entity, WALKING)
 	}
 	//______________________________________________________________________________________________
 	fun playAttack(entity: Entity) {
-		setAnimation(entity, EnemyComponent.ACTION.ATTACKING)
+		setAnimation(entity, ATTACKING)
 	}
 	//______________________________________________________________________________________________
 	fun playAching(entity: Entity) {
-		setAnimation(entity, EnemyComponent.ACTION.ACHING)
+		setAnimation(entity, ACHING)
 	}
 	//______________________________________________________________________________________________
 	fun playDying(entity: Entity) {
-		setAnimation(entity, EnemyComponent.ACTION.DYING)
+		//si no termino la animacion ACHIN, no poner esta....
+		if(currentAnimat != ACHING)
+			setAnimation(entity, EnemyComponent.ACTION.DYING)
+		else
+			setAnimation(entity, EnemyComponent.ACTION.ACHING)
+
 		val model = entity.getComponent(ModelComponent::class.java)
 		val enemy = entity as Enemy
 		val effect = enemy.particleEffect!!
@@ -241,6 +245,6 @@ object EnemyFactory
 		val animat = enemy.getComponent(AnimationComponent::class.java)
 		animat?.update(delta)
 		///
-		enemy.mover(posPlayer, delta)
+		enemy.update(posPlayer, delta)
 	}
 }

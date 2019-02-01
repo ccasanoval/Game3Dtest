@@ -54,12 +54,12 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
 
 
     fun print() {
-        var col = " \t"
+        var col = " \t\t"
         for(x in 0 until map.cx)
             col += " "+(x%10)
         Log.e("MAP", col)
         for(y in 0 until map.cy) {
-            var row = "$y \t"
+            var row = "$y \t\t"
             for(x in 0 until map.cx) {
                 row += if(map.getNode(x,y).isValido) ". " else "1 "
             }
@@ -67,12 +67,12 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
         }
     }
     fun print2() {
-        var col = "  \t"
+        var col = "  \t\t"
         for(x in 0 until map.cx)
             col += " "+(x%10)
         Log.e("MAP", col)
         for(y in 0 until map.cy) {
-            var row = "$y \t"
+            var row = "$y \t\t"
             for(x in 0 until map.cx) {
                 row += mapData[map.calcIndex(x, y)]
             }
@@ -85,11 +85,6 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
     /// TEST ---------------------------------------------------------------------------------------
 
     constructor(cx: Int, cy: Int) : this(cx.toFloat(), cy.toFloat(), 1)
-
-    /*fun addCollider(x: Int, y: Int) {
-        val index = x + y*map.cx
-        mapData[index] = 1
-    }*/
 
     fun compile(mapData: IntArray) : MapGraph {
         //map.clear()
