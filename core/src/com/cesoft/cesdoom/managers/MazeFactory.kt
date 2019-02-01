@@ -163,7 +163,7 @@ object MazeFactory {
 
 		//TESTING
         GateFactory.create(mapFactory, Vector3(+GateComponent.LONG+.2f, 0f, 0f), 0f, " C ", e).unlock()
-		//GateFactory.create(mapFactory, Vector3(-GateComponent.LONG, 0f, 0f), 0f, e)
+        GateFactory.create(mapFactory, Vector3(-GateComponent.LONG-.2f, 0f, 0f), 0f, " D ", e).unlock()
 		//YouWinFactory.create(Vector3(-2*GateComponent.LONG, 0f, 0f), e)
 
 		//createSectorTest(engine, +1, +1)

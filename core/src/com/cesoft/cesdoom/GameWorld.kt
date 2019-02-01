@@ -162,14 +162,12 @@ class GameWorld(val game: CesDoom) {
 	}
 
 	//______________________________________________________________________________________________
-	fun removeEnemy(enemy: Enemy) {
+	fun removeEnemyCollider(enemy: Enemy) {
 		bulletSystem.removeBody(enemy)
-		engine.removeEntity(enemy)
 	}
-
 	//______________________________________________________________________________________________
 	fun enemyDied(enemy: Enemy) {
-		removeEnemy(enemy)
+		engine.removeEntity(enemy)
 		PlayerComponent.addScore(20)
 	}
 }

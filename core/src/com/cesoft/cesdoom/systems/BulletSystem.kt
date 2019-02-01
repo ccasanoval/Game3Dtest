@@ -12,8 +12,6 @@ import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.entities.Gate
 import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.entities.Switch
-import com.cesoft.cesdoom.util.Log
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +25,7 @@ class BulletSystem : EntitySystem(), EntityListener {
 
 	private val collisionConfig: btCollisionConfiguration = btDefaultCollisionConfiguration()
 	private val dispatcher: btCollisionDispatcher = btCollisionDispatcher(collisionConfig)
-	val broadphase = btDbvtBroadphase()
+	private val broadphase = btDbvtBroadphase()
 	private val solver: btConstraintSolver = btSequentialImpulseConstraintSolver()
 	val collisionWorld: btDiscreteDynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig)
 

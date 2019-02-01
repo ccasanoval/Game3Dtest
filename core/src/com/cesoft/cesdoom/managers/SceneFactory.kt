@@ -25,7 +25,7 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object SceneFactory {
-	private val POSITION_NORMAL =
+	private const val POSITION_NORMAL =
 			(VertexAttributes.Usage.Position
 			or VertexAttributes.Usage.Normal
 			or VertexAttributes.Usage.TextureCoordinates).toLong()
@@ -34,15 +34,13 @@ object SceneFactory {
 	private val posTemp = Vector3()
 	private val dimTemp = Vector3()
 
-	//private var modelStatus = mutableMapOf<GunComponent.TYPE, Boolean>()
-
 
 	//______________________________________________________________________________________________
-	val materialJunk = Material(ColorAttribute.createDiffuse(Color.WHITE))
-	val ratioJunk = 546f/1000f
+	private val materialJunk = Material(ColorAttribute.createDiffuse(Color.WHITE))
+	private const val ratioJunk = 546f/1000f
 	//
-	private val THICK_JUNK = 0.1f
-	private val LONG_JUNK = 500f
+	private const val THICK_JUNK = 0.1f
+	private const val LONG_JUNK = 500f
 	private val HIGH_JUNK = 500f * ratioJunk
 	private val UP_JUNK = HIGH_JUNK/2
 	private val dimJunk = Vector3(THICK_JUNK, HIGH_JUNK, LONG_JUNK)
@@ -73,8 +71,8 @@ object SceneFactory {
 	}
 
 	//______________________________________________________________________________________________
-	val materialSkyline = Material(ColorAttribute.createDiffuse(Color.DARK_GRAY))
-	val ratioSkyline = 380f/1400f
+	private val materialSkyline = Material(ColorAttribute.createDiffuse(Color.DARK_GRAY))
+	private val ratioSkyline = 380f/1400f
 	//
 	fun loadSkyline(texture: Texture, engine: Engine, len: Float) {
 		val THICK = 0.1f
@@ -118,7 +116,7 @@ object SceneFactory {
 	}
 
 	//______________________________________________________________________________________________
-	val materialSuelo = Material(ColorAttribute.createDiffuse(Color.WHITE))
+	private val materialSuelo = Material(ColorAttribute.createDiffuse(Color.WHITE))
 	fun getSuelo(texture: Texture, len: Float): Entity {
 		val entity = Entity()
 

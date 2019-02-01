@@ -236,7 +236,7 @@ class PlayerSystem(
 			posTemp.sub(camera.direction)
 			hayMovimiento = true
 		}
-		if(     ControllerWidget.movementVector.x < -0.25f || xPad == Direccion.IZQUIERDA) {
+		if(ControllerWidget.movementVector.x < -0.25f || xPad == Direccion.IZQUIERDA) {
 			posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			hayMovimiento = true
 		}
@@ -399,7 +399,10 @@ class PlayerSystem(
 	private var delayDeath = 0f
 	private fun checkGameOver(delta: Float) {
 		if(PlayerComponent.isDead() && !Status.paused) {
-			if(delayDeath >= 2f) {
+			if(delayDeath == 0f) {
+				Sounds.play(Sounds.SoundType.PLAYER_DYING)
+			}
+			else if(delayDeath >= 2f) {
 				Status.paused = true
 				CesDoom.instance.gameUI.gameOverWidget.show()
 				Sounds.play(Sounds.SoundType.GAME_OVER)

@@ -1,9 +1,9 @@
 package com.cesoft.cesdoom.components
 
 import com.badlogic.ashley.core.Component
+import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.managers.EnemyFactory
-import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class StatusComponent(private val entity: Enemy) : Component {
@@ -36,6 +36,7 @@ class StatusComponent(private val entity: Enemy) : Component {
 			achingStateTime = 0f
 			setAchingState()
 			EnemyFactory.playAching(entity)
+			Sounds.play(Sounds.SoundType.ENEMY_HURT)
 		}
 		else {
 			health -= 5f
@@ -81,19 +82,14 @@ class StatusComponent(private val entity: Enemy) : Component {
 	//______________________________________________________________________________________________
 	fun update(delta: Float) {
 		//EnemyFactory.update(entity, delta)
-		if( ! isDead() && health < 0)
-		{
+		if( ! isDead() && health < 0) {
 			EnemyFactory.playDying(entity)
 			setDeadState()
-			Log.e(tag, "update:HEALTH < 0--------------------------------------"+isDead())
 		}
-		else if(isDead())
-		{
+		else if(isDead()) {
 			deadStateTime += delta
-			//EnemyFactory.endDying(entity)
 		}
-		else if(isAching())
-		{
+		else if(isAching()) {
 			achingStateTime += delta
 			if(isAchingOver()) {
 				achingStateTime=0f

@@ -46,7 +46,6 @@ object EnemyFactory {
 		renderSystem = render
 		val entity = Enemy(id)//enemyPool.obtain()
 
-
 		/// Enemy Component
 		val enemyComponent = EnemyComponent(type)
 		entity.add(enemyComponent)
@@ -180,12 +179,12 @@ object EnemyFactory {
 				IDLE to 0.88f,
 				REINCARNATING to 26f,//TODO
 				ACHING to 2.5f,
-				DYING to 3.4f
+				DYING to 2.8f//3.4f
 		)
 	}
 	private val typeActionDuration = mapOf(EnemyComponent.TYPE.MONSTER1 to ActDuration)
 	fun getActionDuration(type: EnemyComponent.TYPE, action: EnemyComponent.ACTION) =
-		typeActionDuration[type]!!.actionDuration[action]!!
+			typeActionDuration.getValue(type).actionDuration.getValue(action)
 
 
 	//______________________________________________________________________________________________
@@ -227,8 +226,9 @@ object EnemyFactory {
 
 	fun update(delta: Float, enemy: Enemy, posPlayer: Vector3) {
 		val status = enemy.getComponent(StatusComponent::class.java)
-		if(status.isDead())
-		{
+		if(status.isDead()) {
+
+
 			Sounds.play(Sounds.SoundType.ENEMY_DIE)
 
 			val model = enemy.getComponent(ModelComponent::class.java)

@@ -195,16 +195,16 @@ class Enemy(val id: Int) : Entity() {
 	private fun statusMov(distPlayer: Float) : StatusMov {
 		val status = getComponent(StatusComponent::class.java)
 		/// No está en condiciones de atacar: herido, muerto o sobre el suelo
-		if(status.isAching() || status.isDead() || posTemp.y > RADIO+2)
-			return StatusMov.QUIET
+		return if(status.isAching() || status.isDead() || posTemp.y > RADIO+2)
+			StatusMov.QUIET
 		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
 		else if(distPlayer < Enemy.RADIO + PlayerComponent.RADIO+4)
-			return StatusMov.ATTACK
+			StatusMov.ATTACK
 		/// Esta cerca, corre a por el
 		else if(distPlayer < 180f)
-			return StatusMov.RUN
+			StatusMov.RUN
 		/// Esta lejos, camina buscando
 		else
-			return StatusMov.WALK
+			StatusMov.WALK
 	}
 }

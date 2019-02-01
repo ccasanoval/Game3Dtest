@@ -13,7 +13,7 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class GameScreen : Screen {
-	private var gameWorld: GameWorld = GameWorld(CesDoom.instance)
+	private var gameWorld = GameWorld(CesDoom.instance)
 
 	companion object {
 		val tag: String = GameScreen::class.java.simpleName

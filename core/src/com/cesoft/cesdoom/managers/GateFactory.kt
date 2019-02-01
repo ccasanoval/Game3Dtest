@@ -56,7 +56,7 @@ object GateFactory {
     fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, id: String, engine: Engine): Gate {
 
         /// GraphMap
-        WallMapFactory.create(mapFactory, pos, angle, 0)
+        //WallMapFactory.create(mapFactory, pos, angle, 0)
 
         /// Entity
         val entity = Gate(id)

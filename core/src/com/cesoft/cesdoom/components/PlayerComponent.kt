@@ -58,7 +58,7 @@ object PlayerComponent : Component {
 		if(System.currentTimeMillis() > lastHurt+800) {
 			health -= pain
 			colorAmbiente.color.set(.8f, 0f, 0f, 1f)//Pasar RenderObject y llamar a CamaraRoja(true)...
-			Sounds.play(Sounds.SoundType.PLAYER_HURT)
+			if(health > 5)Sounds.play(Sounds.SoundType.PLAYER_HURT)
 			lastHurt = System.currentTimeMillis()
 		}
 	}
