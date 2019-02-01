@@ -31,25 +31,7 @@ class GameUI {
 	}
 
 	private fun configureWidgets() {
-		healthWidget.setSize(225f, 60f)
-		healthWidget.setPosition(CesDoom.VIRTUAL_WIDTH/2 - healthWidget.width/2, 0f)
-
 		//TODO: ammoWidget -> Muestra la municion disponible ¿recargar?
-		scoreWidget.setSize(225f, 25f)
-		scoreWidget.setPosition(0f, CesDoom.VIRTUAL_HEIGHT - scoreWidget.height)
-		messageWidget.setSize(500f, 25f)
-		messageWidget.setPosition(CesDoom.VIRTUAL_WIDTH - messageWidget.width, CesDoom.VIRTUAL_HEIGHT - messageWidget.height)
-
-		pauseWidget.setSize(500f, 350f)
-		pauseWidget.setPosition(CesDoom.VIRTUAL_WIDTH - pauseWidget.width, CesDoom.VIRTUAL_HEIGHT - pauseWidget.height)
-
-		//gameOverWidget.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
-		//gameOverWidget.setPosition((CesDoom.VIRTUAL_WIDTH - gameOverWidget.width)/2, (CesDoom.VIRTUAL_HEIGHT - gameOverWidget.height)/2)
-		//gameWinWidget.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
-		//gameWinWidget.setPosition((CesDoom.VIRTUAL_WIDTH - gameWinWidget.width)/2, (CesDoom.VIRTUAL_HEIGHT - gameWinWidget.height)/2)
-
-		crosshairWidget.setPosition(CesDoom.VIRTUAL_WIDTH / 2 - 16, CesDoom.VIRTUAL_HEIGHT / 2 - 16)
-		crosshairWidget.setSize(32f, 32f)
 
 		fpsLabel.setPosition(0f, 10f)
 

@@ -21,7 +21,7 @@ object Sounds {
     private const val SOUND_PLAYER_HURT = "sounds/playerHurt.ogg"
     // Effects : https://archive.org/details/dsbossit ***
     // http://www.wolfensteingoodies.com/archives/olddoom/music.htm
-    private const val MUSIC = "sounds/doom.ogg" // Thanks to http://sycraft.org/content/audio/doom.shtml
+    private const val MUSIC = "sounds/tnt_doom.ogg" // Thanks to http://sycraft.org/content/audio/doom.shtml
 
     enum class SoundType {
 		RIFLE, ENEMY_ATTACK, ENEMY_DIE, FOOT_STEPS, GATE_OPENS, GATE_LOCKED, SWITCH,

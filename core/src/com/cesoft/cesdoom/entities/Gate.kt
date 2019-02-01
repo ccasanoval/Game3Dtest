@@ -7,12 +7,11 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.ModelComponent
-import com.cesoft.cesdoom.util.Log
 import com.cesoft.cesdoom.components.GateComponent.MAX_OFFSET_OPEN
 import com.cesoft.cesdoom.components.PlayerComponent
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: Dagger2 for assets, etc...
+//
 class Gate(private val id: String) : Entity() {
 
     companion object {
@@ -24,13 +23,16 @@ class Gate(private val id: String) : Entity() {
     private lateinit var pos: Vector3
     lateinit var rigidBody: btRigidBody
     private lateinit var rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo
+    private lateinit var model: ModelComponent
 
     var isLocked = true
         private set
         fun unlock() { isLocked = false }
     private var offsetOpened = 0f
     private var isOpening = false
+    private var isOpen = false
     private var lockedOnce = 0L
+
     fun tryToOpen() {
         val now = System.currentTimeMillis()
         if(isLocked) {
@@ -40,7 +42,7 @@ class Gate(private val id: String) : Entity() {
                 Sounds.play(Sounds.SoundType.GATE_LOCKED)
             }
         }
-        else if(!isOpening) {
+        else if(!isOpening && !isOpen) {
             isOpening = true
             PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_OPENS, id)
             Sounds.play(Sounds.SoundType.GATE_OPENS)
@@ -48,6 +50,7 @@ class Gate(private val id: String) : Entity() {
     }
 
     fun init(
+            model: ModelComponent,
             angle: Float,
             pos: Vector3,
             rigidBody: btRigidBody,
@@ -56,6 +59,7 @@ class Gate(private val id: String) : Entity() {
         this.pos = pos
         this.rigidBody = rigidBody
         this.rigidBodyInfo = rigidBodyInfo
+        this.model = model
     }
 
 
@@ -64,9 +68,10 @@ class Gate(private val id: String) : Entity() {
             offsetOpened += delta * STEP_OPEN
             if(offsetOpened > MAX_OFFSET_OPEN) {
                 isOpening = false
+                isOpen = true
                 offsetOpened = MAX_OFFSET_OPEN
             }
-            val model = getComponent(ModelComponent::class.java)
+            //val model = getComponent(ModelComponent::class.java)
             when(angle) {
                 00f -> {
                     val posTemp = Vector3(pos.x, pos.y, pos.z + offsetOpened)

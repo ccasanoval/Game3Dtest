@@ -8,14 +8,17 @@ import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-object PlayerComponent : Component
-{
+object PlayerComponent : Component {
+
+	private val tag = PlayerComponent::class.java.simpleName
+
+	private const val MESSAGE_DURATION = 5000L
 	const val MASA = .65f
 	const val ALTURA = 22f
 	const val RADIO = 16f
 	const val FUERZA_MOVIL = 2000f
 	const val FUERZA_PC = 5000f
-	const val MESSAGE_DURATION = 5000f
+
 
 	var isWinning = false
 		private set

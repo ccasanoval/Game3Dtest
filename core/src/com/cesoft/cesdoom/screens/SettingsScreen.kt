@@ -5,19 +5,13 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
-import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-
 
 
 
@@ -39,8 +33,6 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
     private val musicButton = TextButton(game.assets.getString(Assets.CONFIG_MUSIC_ONOF), game.assets.skin, "toggle")
     private val musicVolumeLabel = Label(game.assets.getString(Assets.CONFIG_MUSIC_VOLUME), game.assets.skin)
     private val musicVolumeSlider = Slider( 0f, 1f, 0.1f,false, game.assets.skin)
-    //private val titleSound = Label(Assets.getString(Assets.CONFIG_SOUND_ONOF), Assets.skin)
-    //private val soundCheckbox = CheckBox(null, Assets.skin)
 
 
     init {
@@ -96,7 +88,7 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
         musicVolumeLabel.setSize(500f, 30f)
         musicVolumeLabel.setPosition(xWin+10f, win.height - cy)
         cy += musicVolumeLabel.height + 0f
-        musicVolumeSlider.value = Settings.soundVolume
+        musicVolumeSlider.value = Settings.musicVolume
         musicVolumeSlider.setSize(550f, 30f)
         musicVolumeSlider.setPosition(xWin+10f, win.height - cy)
 
@@ -126,11 +118,6 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
             goBack()
             return@addListener false
         }
-//        backButton.addListener(object : ClickListener() {
-//            override fun clicked(event: InputEvent?, x: Float, y: Float) {
-//                goBack()
-//            }
-//        })
 
         soundVolumeSlider.addListener {
             Settings.soundVolume = soundVolumeSlider.value

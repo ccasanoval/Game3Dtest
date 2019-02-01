@@ -16,18 +16,19 @@ class MessageWidget : Actor() {
 
 	init {
 		message.setAlignment(Align.center)
-		//message.setColor(.9f, .1f, .1f, 1f)
+		setSize(CesDoom.VIRTUAL_WIDTH/2f, CesDoom.VIRTUAL_HEIGHT/23f)
+		setPosition(-100f,-100f)
 	}
 
 	override fun act(delta: Float) {
 		message.act(delta)
-		if(PlayerComponent.message.isEmpty()) {
+		if(PlayerComponent.message.isEmpty() && !message.text.isEmpty()) {
 			message.text = ""
-			message.isVisible = false
+			setPosition(-100f,-100f)
 		}
-		else {
-			message.isVisible = true
+		else if(PlayerComponent.message != message.text) {
 			message.text = PlayerComponent.message
+			setPosition(CesDoom.VIRTUAL_WIDTH - width, CesDoom.VIRTUAL_HEIGHT - height)
 		}
 	}
 

@@ -46,6 +46,9 @@ class PauseWidget(stage: Stage) : Actor() {
 		//
 		configureWidgets()
 		setListeners()
+		//
+		setSize(0.8f*CesDoom.VIRTUAL_WIDTH, 0.8f*CesDoom.VIRTUAL_HEIGHT)
+		setPosition(CesDoom.VIRTUAL_WIDTH - width, CesDoom.VIRTUAL_HEIGHT - height)
 	}
 
 	//______________________________________________________________________________________________

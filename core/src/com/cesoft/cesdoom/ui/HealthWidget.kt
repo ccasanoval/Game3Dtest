@@ -31,6 +31,9 @@ class HealthWidget : Actor() {
 		ls.fontColor = Color.YELLOW
 		label = Label("", ls)
 		label.setAlignment(Align.center)
+
+		setSize(CesDoom.VIRTUAL_WIDTH/4.5f, CesDoom.VIRTUAL_HEIGHT/9.5f)
+		setPosition(CesDoom.VIRTUAL_WIDTH/2 - width/2, 0f)
 	}
 
 	//______________________________________________________________________________________________

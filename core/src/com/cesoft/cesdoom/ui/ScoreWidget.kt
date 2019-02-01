@@ -12,6 +12,11 @@ import com.cesoft.cesdoom.components.PlayerComponent
 class ScoreWidget : Actor() {
 	private var score: TextField = TextField("", CesDoom.instance.assets.skin)
 
+	init {
+		setSize(CesDoom.VIRTUAL_WIDTH/4.5f, CesDoom.VIRTUAL_HEIGHT/23f)
+		setPosition(0f, CesDoom.VIRTUAL_HEIGHT - height)
+	}
+
 	override fun act(delta: Float) {
 		score.act(delta)
 		score.text = CesDoom.instance.assets.formatString(Assets.CREDITOS, PlayerComponent.score)

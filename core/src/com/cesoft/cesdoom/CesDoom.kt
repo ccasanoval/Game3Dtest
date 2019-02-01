@@ -88,6 +88,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		setScreen(LoadingScreen(this))
 		Status.gameOver = false
 		Status.mainMenu = false
+		//TODO: Stop music....
 		//<android:hardwareAccelerated="false">
 	}
 	//______________________________________________________________________________________________

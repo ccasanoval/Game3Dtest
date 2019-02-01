@@ -5,14 +5,21 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class CrosshairWidget : Actor() {
 
+	private val cx = CesDoom.VIRTUAL_WIDTH / 32f
 	private val crosshairDot: Image= Image(Texture(Gdx.files.internal("crosshair/crossHairPoint.png")))
 	private val crosshairInnerRing: Image= Image(Texture(Gdx.files.internal("crosshair/crossHairInnerRing.png")))
+
+	init {
+		setSize(cx, cx)
+		setPosition((CesDoom.VIRTUAL_WIDTH-cx) / 2, (CesDoom.VIRTUAL_HEIGHT-cx) / 2)
+	}
 
 	override fun act(delta: Float) {
 		if(Status.paused) return
@@ -26,8 +33,8 @@ class CrosshairWidget : Actor() {
 
 	override fun setPosition(x: Float, y: Float) {
 		super.setPosition(x, y)
-		crosshairDot.setPosition(x - 16, y - 16)
-		crosshairInnerRing.setPosition(x - 16, y - 16)
+		crosshairDot.setPosition(x - cx/2, y - cx/2)
+		crosshairInnerRing.setPosition(x - cx/2, y - cx/2)
 		crosshairInnerRing.setOrigin(crosshairInnerRing.width / 2, crosshairInnerRing.height / 2)
 	}
 

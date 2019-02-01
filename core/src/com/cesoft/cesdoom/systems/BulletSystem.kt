@@ -57,7 +57,7 @@ class BulletSystem : EntitySystem(), EntityListener {
 			userValue0: Int, partId0: Int, index0: Int, match0: Boolean,
 			userValue1: Int, partId1: Int, index1: Int, match1: Boolean) : Boolean {
 
-Log.e(tag, "CesContactListener:--***************************------------${BulletComponent.getFlag(userValue0)} : ${BulletComponent.getFlag(userValue1)} ---- ${BulletComponent.getIndex(userValue1)}")
+//Log.e(tag, "CesContactListener:--***************************------------${BulletComponent.getFlag(userValue0)} : ${BulletComponent.getFlag(userValue1)} ---- ${BulletComponent.getIndex(userValue1)}")
 
 			when(BulletComponent.getFlag(userValue0)) {
 				BulletComponent.SWITCH_FLAG -> {
@@ -110,7 +110,6 @@ Log.e(tag, "CesContactListener:--***************************------------${Bullet
 	override fun entityAdded(entity: Entity) {
 		val bullet = entity.getComponent(BulletComponent::class.java)
 
-		//Log.e(tag, "Collision else added: --------------------------"+bullet.rigidBody.userValue)
 		when(bullet.rigidBody.userValue) {
 			BulletComponent.PLAYER_FLAG -> {
 				player = entity as Player
@@ -143,6 +142,5 @@ Log.e(tag, "CesContactListener:--***************************------------${Bullet
 	}
 
 	//______________________________________________________________________________________________
-	override fun entityRemoved(entity: Entity) {
-	}
+	override fun entityRemoved(entity: Entity) {}
 }
