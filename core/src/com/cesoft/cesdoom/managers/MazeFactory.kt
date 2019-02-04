@@ -46,6 +46,7 @@ object MazeFactory {
 
 
 		//----- TEST
+		/*
 		mapFactory.print()
 		Log.e("AAA", "")
 		Log.e("AAA", "")
@@ -57,6 +58,7 @@ object MazeFactory {
 		for(step in path) {
 			Log.e("Maze", step.toString())
 		}
+		*/
 		//----- TEST
 
 	}

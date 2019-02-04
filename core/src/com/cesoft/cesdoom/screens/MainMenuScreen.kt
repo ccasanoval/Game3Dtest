@@ -2,7 +2,6 @@ package com.cesoft.cesdoom.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -13,19 +12,27 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class MainMenuScreen(private val game: CesDoom) : Screen {
 	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
-	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/background.png")))//TODO:AssetManager para no repetir carga...
-	private var titleImage: Image = Image(Texture(Gdx.files.internal("data/title.png")))
+	private var backgroundImage: Image// = game.assets.getMainMenuBg()//Image(Texture(Gdx.files.internal("data/background.png")))
+	private var titleImage: Image// = game.assets.getMainMenuTitle()//Image(Texture(Gdx.files.internal("data/title.png")))
 	private var playButton: TextButton = TextButton(game.assets.getString(Assets.JUGAR), game.assets.skin)
 	private var quitButton: TextButton = TextButton(game.assets.getString(Assets.SALIR), game.assets.skin)
 	private var settingsButton: TextButton = TextButton(game.assets.getString(Assets.CONFIG), game.assets.skin)
 	private var aboutButton: TextButton = TextButton(game.assets.getString(Assets.SOBRE), game.assets.skin)
 
 	init {
+		PlayerComponent.isGodModeOn = false
+		game.assets.iniMainMenuBg()
+		game.assets.iniMainMenuTitle()
+		backgroundImage = game.assets.getMainMenuBg()
+		titleImage = game.assets.getMainMenuTitle()
+
 		configureWidgers()
 		setListeners()
 		Gdx.input.inputProcessor = stage
@@ -35,8 +42,8 @@ class MainMenuScreen(private val game: CesDoom) : Screen {
 	private fun configureWidgers() {
 		var y = 110f
         val x = 200f
-		var delay = 0.65f
-		val fadeIn = 0.75f
+		var delay = 0.50f
+		val fadeIn = 0.60f
 		//
 		backgroundImage.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
 		backgroundImage.setColor(1f, 1f, 1f, 0f)
@@ -87,9 +94,21 @@ class MainMenuScreen(private val game: CesDoom) : Screen {
 	}
 
 	private fun setListeners() {
+
+		var counter = 0L
+		var lastClick = 0L
+		titleImage.addListener {
+			val now = System.currentTimeMillis()
+			if(now > lastClick + 500) {
+				lastClick = now
+				if (!PlayerComponent.isGodModeOn && ++counter > 9)
+					PlayerComponent.isGodModeOn = true
+			}
+			return@addListener true
+		}
+
 		playButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				//game.setScreen(LoadingScreen(game))
 				game.reset()
 			}
 		})

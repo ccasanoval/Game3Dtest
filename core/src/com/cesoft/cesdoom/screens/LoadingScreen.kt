@@ -11,8 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.cesoft.cesdoom.CesDoom
-import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.util.Log
 
 /**
  * @author Mats Svensson, modified by CESoft
@@ -86,16 +84,6 @@ class LoadingScreen(private val game: CesDoom) : Screen {
 
         // Add everything to be loaded
         game.loadResources()
-
-
-        var count = 0
-        //logo.zIndex = 1
-        logo.addListener {
-            Log.e(tag, "-------------- GOD ---------------------")
-            count++
-            if(count > 3) PlayerComponent.isGodModeOn = true
-            return@addListener false
-        }
     }
 
     //______________________________________________________________________________________________

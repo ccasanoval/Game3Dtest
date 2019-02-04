@@ -65,6 +65,9 @@ class Assets {
 		private const val IMG_GATE = "scene/gate/doomdoor1.jpg"
 		private const val IMG_SWITCH_ON = "scene/switch/switchOn.png"
 		private const val IMG_SWITCH_OFF = "scene/switch/switchOff.png"
+		//
+		private const val IMG_MM_BG = "data/background.png"
+		private const val IMG_MM_TITLE = "data/title.png"
 
 		/// PARTICLES
 		private const val PARTICLES_ENEMY = "particles/dieparticle.pfx"
@@ -92,6 +95,21 @@ class Assets {
 		skin.load(fileHandle)
 		Sounds.ini(assetManager)
 	}
+
+	// MAIN MENU
+	//______________________________________________________________________________________________
+	fun iniMainMenuBg() {
+		assetManager.load(IMG_MM_BG, Texture::class.java)
+		assetManager.finishLoading()
+	}
+	fun getMainMenuBg():Image = Image(assetManager.get(IMG_MM_BG, Texture::class.java))
+	fun iniMainMenuTitle() {
+		assetManager.load(IMG_MM_TITLE, Texture::class.java)
+		assetManager.finishLoading()
+	}
+	fun getMainMenuTitle():Image = Image(assetManager.get(IMG_MM_TITLE, Texture::class.java))
+
+
 
 	// LOADING
     //______________________________________________________________________________________________

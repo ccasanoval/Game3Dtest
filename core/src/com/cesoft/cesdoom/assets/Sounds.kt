@@ -70,7 +70,9 @@ object Sounds {
     }
 
     fun dispose() {
-        assetManager.get(MUSIC, Music::class.java).dispose()
+        try {
+            assetManager.get(MUSIC, Music::class.java).dispose()
+        } catch (ignore: Exception) { Log.e("Sounds", "--------************* : $ignore ") }
        for(sound in SoundType.values())
             assetManager.get(soundByType(sound), Sound::class.java).dispose()
         //assetManager.dispose()

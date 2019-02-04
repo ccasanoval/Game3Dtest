@@ -19,7 +19,9 @@ android {
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
         }
-
+        debug {
+            res.srcDir 'debug/res'
+        }
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
