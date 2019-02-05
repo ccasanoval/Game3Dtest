@@ -2,8 +2,6 @@ package com.cesoft.cesdoom.assets
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.audio.Music
-import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
@@ -15,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.I18NBundle
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
-//import javax.inject.Singleton
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +51,7 @@ class Assets {
 		private const val MODEL_DOME = "scene/dome/spacedome.g3db"
 		private const val MODEL_MONSTER = "foes/monster1/a.g3db"
 		private const val MODEL_RIFLE = "weapons/cz805/a.g3db"
+		private const val MODEL_AMMO = "items/ammo/bullet.g3db"
 
 		/// IMG
 		private const val IMG_FIRE_SHOT = "weapons/fire.png"
@@ -128,6 +126,9 @@ class Assets {
 	//______________________________________________________________________________________________
 	fun iniEnemy() = assetManager.load(MODEL_MONSTER, Model::class.java)
 	fun getEnemy():Model = assetManager.get(MODEL_MONSTER, Model::class.java)
+	//______________________________________________________________________________________________
+	fun iniAmmo() = assetManager.load(MODEL_AMMO, Model::class.java)
+	fun getAmmo():Model = assetManager.get(MODEL_AMMO, Model::class.java)
 	//______________________________________________________________________________________________
 	fun iniRifle() = assetManager.load(MODEL_RIFLE, Model::class.java)
 	fun getRifle():Model = assetManager.get(MODEL_RIFLE, Model::class.java)

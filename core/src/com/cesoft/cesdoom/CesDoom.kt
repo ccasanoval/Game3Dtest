@@ -111,42 +111,44 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	fun loadResources() {
 		// Gate
 		try {assets.getGate()}
-		catch (ignore: GdxRuntimeException) {assets.iniGate()}
+		catch(ignore: GdxRuntimeException) {assets.iniGate()}
 		// Switch
 		try {assets.getSwitchOn()}
-		catch (ignore: GdxRuntimeException) {assets.iniSwitchOn()}
+		catch(ignore: GdxRuntimeException) {assets.iniSwitchOn()}
 		try {assets.getSwitchOff()}
-		catch (ignore: GdxRuntimeException) {assets.iniSwitchOff()}
+		catch(ignore: GdxRuntimeException) {assets.iniSwitchOff()}
 		// Wall
 		try {assets.getWallMetal1()}
-		catch (ignore: GdxRuntimeException) {assets.iniWallMetal1()}
+		catch(ignore: GdxRuntimeException) {assets.iniWallMetal1()}
 		try {assets.getWallMetal2()}
-		catch (ignore: GdxRuntimeException) {assets.iniWallMetal2()}
+		catch(ignore: GdxRuntimeException) {assets.iniWallMetal2()}
 		try {assets.getWallMetal3()}
-		catch (ignore: GdxRuntimeException) {assets.iniWallMetal3()}
+		catch(ignore: GdxRuntimeException) {assets.iniWallMetal3()}
 
 		// Sounds
 		Sounds.load()
 
 		// Enemy
 		try {assets.getEnemy()}
-		catch (ignore: Exception) {assets.iniEnemy()}
+		catch(ignore: Exception) {assets.iniEnemy()}
 
 		// Weapons
 		try {assets.getRifle()}
-		catch (ignore: Exception) {assets.iniRifle()}
+		catch(ignore: Exception) {assets.iniRifle()}
 		try {assets.getFireShot()}
-		catch (ignore: Exception) {assets.iniFireShot()}
+		catch(ignore: Exception) {assets.iniFireShot()}
 
 		// Scene
+		try {assets.getAmmo()}
+		catch(ignore: GdxRuntimeException) {assets.iniAmmo()}
 		try {assets.getDome()}
-		catch (ignore: GdxRuntimeException) {assets.iniDome()}
+		catch(ignore: GdxRuntimeException) {assets.iniDome()}
 		try {assets.getSuelo()}
-		catch (ignore: GdxRuntimeException) {assets.iniSuelo()}
+		catch(ignore: GdxRuntimeException) {assets.iniSuelo()}
 		try {assets.getSkyline()}
-		catch (ignore: GdxRuntimeException) {assets.iniSkyline()}
+		catch(ignore: GdxRuntimeException) {assets.iniSkyline()}
 		try {assets.getJunk()}
-		catch (ignore: GdxRuntimeException) {assets.iniJunk()}
+		catch(ignore: GdxRuntimeException) {assets.iniJunk()}
 
 		//TODO: Also the rest of the object initialization?
 	}

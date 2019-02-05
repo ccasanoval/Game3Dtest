@@ -1,7 +1,6 @@
 package com.cesoft.cesdoom.managers
 
 import com.badlogic.ashley.core.Engine
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.GateComponent
@@ -169,8 +168,9 @@ object MazeFactory {
 
 
 		// AMMO ------------------
-		AmmoFactory.create(Vector3(+6f * lng2, 0f, 0f), 20, e)
-		AmmoFactory.create(Vector3(-6f * lng2, 0f, 0f), 20, e)
+		val ammoModel = CesDoom.instance.assets.getAmmo()
+		AmmoFactory.create(Vector3(+6f * lng2, 0f, 0f), 20, ammoModel, e)
+		AmmoFactory.create(Vector3(-6f * lng2, 0f, 0f), 20, ammoModel, e)
 
 		// HEALTH  ------------------
 

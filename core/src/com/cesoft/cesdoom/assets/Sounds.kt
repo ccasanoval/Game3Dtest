@@ -11,6 +11,7 @@ object Sounds {
 
     val tag: String = Sounds::class.java.simpleName
 
+	// Thanks to https://freesound.org/
     private const val SOUND_RIFLE = "sounds/assaultrifle.ogg"
     private const val SOUND_ENEMY_ATTACK = "sounds/enemyAttack.ogg"
     private const val SOUND_ENEMY_HURT = "sounds/enemyHurt.ogg"
@@ -24,11 +25,12 @@ object Sounds {
     private const val SOUND_YOU_WIN = "sounds/missionCompleted.ogg"
     private const val SOUND_PLAYER_HURT = "sounds/playerHurt.ogg"
 	private const val SOUND_PLAYER_DYING = "sounds/playerDying.ogg"
-    private const val SOUND_NO_AMMO = "sounds/playerDying.ogg"//TODO
-    private const val SOUND_AMMO_RELOAD = "sounds/playerDying.ogg"//TODO
+    private const val SOUND_NO_AMMO = "sounds/noAmmo.ogg"
+    private const val SOUND_AMMO_RELOAD = "sounds/reload.ogg"
+	private const val SOUND_HEALTH_RELOAD = "sounds/reload.ogg"//TODO
     // Effects : https://archive.org/details/dsbossit ***
     // http://www.wolfensteingoodies.com/archives/olddoom/music.htm
-    private const val MUSIC = "sounds/tnt_doom.ogg" // Thanks to http://sycraft.org/content/audio/doom.shtml
+    private const val MUSIC = "sounds/tnt_doom.ogg" // http://sycraft.org/content/audio/doom.shtml
 
     enum class SoundType {
 		RIFLE, ENEMY_ATTACK, ENEMY_DIE, ENEMY_HURT, FOOT_STEPS, GATE_OPENS, GATE_LOCKED, SWITCH,
@@ -57,6 +59,7 @@ object Sounds {
 	private fun minDelay(soundType: SoundType): Int {
 		return when(soundType) {
 			SoundType.RIFLE -> 100//250
+			Sounds.SoundType.NO_AMMO -> 300
 			SoundType.PLAYER_HURT -> 800
 			SoundType.FOOT_STEPS -> 700
 			SoundType.ENEMY_DIE -> 3600

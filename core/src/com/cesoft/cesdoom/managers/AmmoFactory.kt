@@ -1,20 +1,12 @@
 package com.cesoft.cesdoom.managers
 
 import com.badlogic.ashley.core.Engine
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.VertexAttributes
-import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
-import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.AmmoComponent
 import com.cesoft.cesdoom.components.BulletComponent
@@ -29,14 +21,8 @@ object AmmoFactory {
 
     private val dimCollision = Vector3(AmmoComponent.SIZE*2, AmmoComponent.SIZE*2, AmmoComponent.SIZE*2)
 
-    private val mb = ModelBuilder()
-    private const val POSITION_NORMAL =
-            (VertexAttributes.Usage.Position
-                    or VertexAttributes.Usage.Normal
-                    or VertexAttributes.Usage.TextureCoordinates).toLong()
-
     //______________________________________________________________________________________________
-    fun create(pos: Vector3, cuantity: Int, engine: Engine): Ammo {
+    fun create(pos: Vector3, cuantity: Int, model: Model, engine: Engine): Ammo {
 
         /// Entity
         val entity = Ammo(cuantity)
@@ -45,21 +31,20 @@ object AmmoFactory {
         /// Component
         entity.add(AmmoComponent)
 
-        /// Material
-        val texture = CesDoom.instance.assets.getSwitchOff()//TODO: Cambiar por textura bala o modelo bala...
-        val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
-        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-        val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
-        textureAttribute.scaleU = 1f
-        textureAttribute.scaleV = 1f
-        material.set(textureAttribute)
-
         /// Model
-        val model : Model = mb.createBox(AmmoComponent.SIZE, AmmoComponent.SIZE, AmmoComponent.SIZE, material, POSITION_NORMAL)
+        //val model : Model = mb.createBox(AmmoComponent.SIZE, AmmoComponent.SIZE, AmmoComponent.SIZE, material, POSITION_NORMAL)
         val modelComponent = ModelComponent(model, pos)
 
-        modelComponent.instance.materials.get(0).set(textureAttribute)
-        entity.add(modelComponent)
+		/// Material
+//        val texture = CesDoom.instance.assets.getSwitchOff()//TODO: Cambiar por textura bala o modelo bala...
+//        val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
+//        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+//        val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
+//        textureAttribute.scaleU = 1f
+//        textureAttribute.scaleV = 1f
+//        material.set(textureAttribute)
+//        modelComponent.instance.materials.get(0).set(textureAttribute)
+    	entity.add(modelComponent)
 
         /// Position and Shape
         val transf = modelComponent.instance.transform

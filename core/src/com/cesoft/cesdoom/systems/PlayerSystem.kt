@@ -336,7 +336,7 @@ class PlayerSystem(
 				checkBulletKillEnemy()
 			}
 			else {
-				//Sounds.play(Sounds.SoundType.NO_AMMO)TODO
+				Sounds.play(Sounds.SoundType.NO_AMMO)
 			}
 		}
 
@@ -378,30 +378,24 @@ class PlayerSystem(
 		rayTestAll.setRayToWorld(rayTo)
 		if(rayTestAll.collisionObjects != null)
 			rayTestAll.collisionObjects.clear()
-		//Gdx.app.error("CesDoom", "-------------------------- DISPARO z------------------------------ "+rayTestAll.collisionFilterMask)
 		//rayTestAll.collisionFilterMask = rayTestAll.collisionFilterMask or BulletComponent.ENEMY_FLAG
 		//rayTestAll.collisionFilterGroup = rayTestAll.collisionFilterGroup or BulletComponent.ENEMY_FLAG
 		bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestAll)
 
 		if(rayTestAll.hasHit()) {
-			Gdx.app.error("CesDoom", "---------------------------------------- DISPARO DIO 2-------------------------------------------- "+rayTestAll.collisionObjects.size())
 			for(i in rayTestAll.collisionObjects.size()-1 downTo 0 ) {
 				val collider = rayTestAll.collisionObjects.atConst(i)
 				if(collider is btRigidBody) {
-					Gdx.app.error("CesDoom", "$i -------------------------- DISPARO DIO 2 :::: $collider // ${collider.userValue}  //  ${collider.userData}")
-
 					if(collider.userValue == BulletComponent.SCENE_FLAG
 							|| collider.userValue == BulletComponent.GATE_FLAG
 							|| collider.userValue == BulletComponent.SWITCH_FLAG
 							//|| collider.userValue == BulletComponent.GROUND_FLAG
 							|| collider.userValue == BulletComponent.AMMO_FLAG
 							|| collider.userValue == BulletComponent.HEALTH_FLAG) {
-						Gdx.app.error("CesDoom", "$i -------------------------- WALL")
 						// Dio primero con una pared, bala muerta
 						break
 					}
 					if(collider.userValue == BulletComponent.ENEMY_FLAG) {
-						Gdx.app.error("CesDoom", "$i -------------------------- ENEMY")
 						// Dio primero con enemigo, bala buena
 						val entity = collider.userData as Entity
 						entity.getComponent(StatusComponent::class.java)?.hurt()
