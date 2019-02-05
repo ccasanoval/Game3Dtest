@@ -16,7 +16,7 @@ object PlayerComponent : Component {
 	const val MASA = .65f
 	const val ALTURA = 22f
 	const val RADIO = 16f
-	const val FUERZA_MOVIL = 2000f
+	const val FUERZA_MOVIL = 2200f
 	const val FUERZA_PC = 5000f
 
 	var isGodModeOn = false

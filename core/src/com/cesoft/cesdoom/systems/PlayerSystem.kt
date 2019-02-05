@@ -19,22 +19,16 @@ import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.ui.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.collision.AllHitsRayResultCallback
-import com.badlogic.gdx.physics.bullet.collision.ClosestNotMeRayResultCallback
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent.ALTURA
 import com.cesoft.cesdoom.components.PlayerComponent.FUERZA_MOVIL
-import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
-import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy.CollisionFilterGroups
-
 
 
 
@@ -138,9 +132,7 @@ class PlayerSystem(
 	private lateinit var playerComponent : PlayerComponent
 	private lateinit var bulletComponent : BulletComponent
 
-	private val rayTestCB = ClosestRayResultCallback(Vector3.Zero, Vector3.Z)
 	private val rayTestAll = AllHitsRayResultCallback(Vector3.Zero, Vector3.Z)
-	//private var rayTestNM = ClosestNotMeRayResultCallback(btCollisionObject())
 	private var altura = ALTURA//TODO:CES:testing altura = ALTURA+400
 	lateinit var gun: Entity
 
@@ -320,22 +312,22 @@ class PlayerSystem(
 
 	//______________________________________________________________________________________________
 	//TODO: quiza depende de GunComponent?
+	private val DELAY_FIRE = 0.15f
+	private val DELAY_RELOAD = 0.35f
 	private var deltaFire = 100f
-	private var deltaReload = 100f
 	private fun updateWeapon(delta: Float) {
 		// Gdx.input.isTouched
 
 		val isFiring = (ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || fire1)
 		deltaFire += delta
-		deltaReload += delta
 
 		if(AmmoComponent.reloading) {
 			AmmoComponent.reloading = false
 			GunFactory.animate(gun, GunComponent.ACTION.RELOAD)
-			deltaFire = 0f
+			deltaFire = -DELAY_RELOAD
 			//return
 		}
-		else if(isFiring && deltaFire > 0.15f) {
+		else if(isFiring && deltaFire > DELAY_FIRE) {
 			if(AmmoComponent.ammo > 0) {
 				deltaFire = 0f
 				AmmoComponent.fire()
@@ -379,23 +371,9 @@ class PlayerSystem(
 		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
 		rayFrom.set(ray.origin)
 		rayTo.set(ray.direction).scl(250f).add(rayFrom)
-//		rayTestCB.collisionObject = null
-//		rayTestCB.closestHitFraction = 1f
-//		rayTestCB.setRayFromWorld(rayFrom)
-//		rayTestCB.setRayToWorld(rayTo)
-//Gdx.app.error("CesDoom", "-------------------------- DISPARO  ${rayTestCB.collisionFilterMask} ")
-		//rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT//CF_CUSTOM_MATERIAL_CALLBACK
-		//rayTestCB.collisionFilterMask = rayTestAll.collisionFilterMask or BulletComponent.ENEMY_FLAG
-//		bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB)
-//		if(rayTestCB.hasHit()) {
-//			val entity = rayTestCB.collisionObject.userData as Entity
-////Gdx.app.error("CesDoom", "-------------------------- DISPARO DIO ------------------------------ $entity ")
-//			/// Enemy
-//			entity.getComponent(StatusComponent::class.java)?.hurt()
-//		}
-
+		//
 		rayTestAll.collisionObject = null
-		rayTestAll.closestHitFraction = 1f
+		rayTestAll.closestHitFraction = .8f//1
 		rayTestAll.setRayFromWorld(rayFrom)
 		rayTestAll.setRayToWorld(rayTo)
 		if(rayTestAll.collisionObjects != null)
@@ -415,7 +393,7 @@ class PlayerSystem(
 					if(collider.userValue == BulletComponent.SCENE_FLAG
 							|| collider.userValue == BulletComponent.GATE_FLAG
 							|| collider.userValue == BulletComponent.SWITCH_FLAG
-							|| collider.userValue == BulletComponent.GROUND_FLAG
+							//|| collider.userValue == BulletComponent.GROUND_FLAG
 							|| collider.userValue == BulletComponent.AMMO_FLAG
 							|| collider.userValue == BulletComponent.HEALTH_FLAG) {
 						Gdx.app.error("CesDoom", "$i -------------------------- WALL")

@@ -3,10 +3,10 @@ package com.cesoft.cesdoom.entities
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
+import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.AmmoComponent
 import com.cesoft.cesdoom.components.ModelComponent
-import com.cesoft.cesdoom.managers.GunFactory
-import com.cesoft.cesdoom.systems.PlayerSystem
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,8 @@ class Ammo(private val cuantity: Int) : Entity() {
         val tag: String = Ammo::class.java.simpleName
     }
 
-    private var isPickedUp = false
+    var isPickedUp = false
+        private set
     private var angle = 0f
     private lateinit var pos: Vector3
     lateinit var rigidBody: btRigidBody
@@ -36,7 +37,7 @@ class Ammo(private val cuantity: Int) : Entity() {
     }
 
     fun update(delta: Float) {
-        angle += delta * 100
+        angle += delta * 2
         model.instance.transform.rotate(Vector3.Y, angle)
     }
 
@@ -44,12 +45,8 @@ class Ammo(private val cuantity: Int) : Entity() {
         if(isPickedUp)return
         isPickedUp = true
 
-        //Sounds.play(Sounds.SoundType.AMMO)//TODO
+        Sounds.play(Sounds.SoundType.AMMO_RELOAD)
         AmmoComponent.add(cuantity)
         AmmoComponent.reloading = true
-
-        //TODO: delete component
-        //val modelComponent = getComponent(ModelComponent::class.java)
-        //engine.removeEntity(this)
     }
 }

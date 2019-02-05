@@ -52,6 +52,7 @@ class GameWorld(val game: CesDoom) {
 	private var statusSystem: StatusSystem
 	private var gateSystem: GateSystem
 	private var ammoSystem: AmmoSystem
+	//private var healthSystem: AmmoSystem//TODO
 	var renderSystem: RenderSystem
 
 	private var engine: Engine = Engine()
@@ -78,6 +79,7 @@ class GameWorld(val game: CesDoom) {
 		statusSystem = StatusSystem(this)
 		gateSystem = GateSystem()
 		ammoSystem = AmmoSystem()
+		//healthSystem = HealthSystem()//TODO
 
 		///----
 		engine.addSystem(renderSystem)
@@ -86,6 +88,8 @@ class GameWorld(val game: CesDoom) {
 		engine.addSystem(enemySystem)
 		engine.addSystem(statusSystem)
 		engine.addSystem(gateSystem)
+		engine.addSystem(ammoSystem)
+		//engine.addSystem(healthSystem)//TODO
 
 		///---
 		if(debugCollision) {
