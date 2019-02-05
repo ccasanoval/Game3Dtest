@@ -6,7 +6,10 @@ import com.badlogic.gdx.audio.Sound
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.util.Log
 
+
 object Sounds {
+
+    val tag: String = Sounds::class.java.simpleName
 
     private const val SOUND_RIFLE = "sounds/assaultrifle.ogg"
     private const val SOUND_ENEMY_ATTACK = "sounds/enemyAttack.ogg"
@@ -72,9 +75,11 @@ object Sounds {
     fun dispose() {
         try {
             assetManager.get(MUSIC, Music::class.java).dispose()
-        } catch (ignore: Exception) { Log.e("Sounds", "--------************* : $ignore ") }
+        } catch(e: Exception) { Log.e(tag, "dispose:e: $e ") }
        for(sound in SoundType.values())
-            assetManager.get(soundByType(sound), Sound::class.java).dispose()
+           try {
+                assetManager.get(soundByType(sound), Sound::class.java).dispose()
+           } catch(e: Exception) { Log.e(tag, "dispose:e: $e ") }
         //assetManager.dispose()
     }
 
@@ -98,7 +103,7 @@ object Sounds {
                 try {
                     sound.play(Settings.soundVolume)
                 }
-				catch (e: Exception) { Log.e("Sounds", "play:e: $e") }
+				catch(e: Exception) { Log.e(tag, "play:e: $e") }
                 lastPlayed[soundType] = System.currentTimeMillis()
             }
         }

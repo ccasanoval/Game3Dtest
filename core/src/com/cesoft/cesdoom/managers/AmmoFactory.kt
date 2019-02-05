@@ -16,18 +16,18 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.bullet.MotionState
+import com.cesoft.cesdoom.components.AmmoComponent
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.components.SwitchComponent
-import com.cesoft.cesdoom.entities.Switch
+import com.cesoft.cesdoom.entities.Ammo
 
+// DECAL & BILLBOARD :
+// https://github.com/libgdx/libgdx/blob/master/tests/gdx-tests/src/com/badlogic/gdx/tests/SimpleDecalTest.java
+// https://github.com/libgdx/libgdx/wiki/Decals
+object AmmoFactory {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-object SwitchFactory {
-
-    private val dimCollision = Vector3(SwitchComponent.SIZE, SwitchComponent.SIZE, SwitchComponent.SIZE)
+    private val dimCollision = Vector3(AmmoComponent.SIZE*2, AmmoComponent.SIZE*2, AmmoComponent.SIZE*2)
 
     private val mb = ModelBuilder()
     private const val POSITION_NORMAL =
@@ -36,37 +36,29 @@ object SwitchFactory {
                     or VertexAttributes.Usage.TextureCoordinates).toLong()
 
     //______________________________________________________________________________________________
-    fun create(pos: Vector3, angle: Float, id: String, engine: Engine): Switch {
+    fun create(pos: Vector3, cuantity: Int, engine: Engine): Ammo {
 
         /// Entity
-        val entity = Switch(id)
-        pos.y = PlayerComponent.ALTURA + SwitchComponent.SIZE  //1.05f * WallFactory.HIGH
+        val entity = Ammo(cuantity)
+        pos.y = PlayerComponent.ALTURA + AmmoComponent.SIZE
 
         /// Component
-        entity.add(SwitchComponent)
+        entity.add(AmmoComponent)
 
         /// Material
-        /*val materialOn = Material(ColorAttribute.createDiffuse(Color.WHITE))
-        Switch.textureOn.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-        val textureAttributeOn = TextureAttribute(TextureAttribute.Diffuse, Switch.textureOn)
-        textureAttributeOn.scaleU = 1f
-        textureAttributeOn.scaleV = 1f
-        materialOn.set(textureAttributeOn)*/
-
-        val textureOff = CesDoom.instance.assets.getSwitchOff()
-        val materialOff = Material(ColorAttribute.createDiffuse(Color.WHITE))
-        textureOff.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-        val textureAttributeOff = TextureAttribute(TextureAttribute.Diffuse, textureOff)
-        textureAttributeOff.scaleU = 1f
-        textureAttributeOff.scaleV = 1f
-        materialOff.set(textureAttributeOff)
+        val texture = CesDoom.instance.assets.getSwitchOff()//TODO: Cambiar por textura bala o modelo bala...
+        val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
+        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+        val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
+        textureAttribute.scaleU = 1f
+        textureAttribute.scaleV = 1f
+        material.set(textureAttribute)
 
         /// Model
-        val model : Model = mb.createBox(SwitchComponent.SIZE, SwitchComponent.SIZE, SwitchComponent.SIZE, materialOff, POSITION_NORMAL)
+        val model : Model = mb.createBox(AmmoComponent.SIZE, AmmoComponent.SIZE, AmmoComponent.SIZE, material, POSITION_NORMAL)
         val modelComponent = ModelComponent(model, pos)
 
-        modelComponent.instance.materials.get(0).set(textureAttributeOff)
-        //modelComponent.instance.materials.get(1).set(textureAttributeOn)
+        modelComponent.instance.materials.get(0).set(textureAttribute)
         entity.add(modelComponent)
 
         /// Position and Shape
@@ -79,18 +71,16 @@ object SwitchFactory {
         val rigidBody = btRigidBody(bodyInfo)
         rigidBody.userData = entity
         rigidBody.motionState = motionState
-        rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
+        rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE
         rigidBody.contactCallbackFilter = 0
-        rigidBody.contactCallbackFlag = BulletComponent.SWITCH_FLAG
-        rigidBody.userValue = BulletComponent.SWITCH_FLAG
+        rigidBody.contactCallbackFlag = BulletComponent.AMMO_FLAG
+        rigidBody.userValue = BulletComponent.AMMO_FLAG
         rigidBody.activationState = Collision.DISABLE_DEACTIVATION
-        rigidBody.friction = 1f
-        rigidBody.rollingFriction = 1f
-        rigidBody.spinningFriction = 1f
         entity.add(BulletComponent(rigidBody, bodyInfo))
 
-        entity.init(angle, pos, rigidBody, bodyInfo)
+        entity.init(modelComponent, pos, rigidBody, bodyInfo)
         engine.addEntity(entity)
         return entity
     }
+
 }

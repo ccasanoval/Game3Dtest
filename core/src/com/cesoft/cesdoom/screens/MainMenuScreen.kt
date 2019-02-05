@@ -101,8 +101,10 @@ class MainMenuScreen(private val game: CesDoom) : Screen {
 			val now = System.currentTimeMillis()
 			if(now > lastClick + 500) {
 				lastClick = now
-				if (!PlayerComponent.isGodModeOn && ++counter > 9)
+				if (!PlayerComponent.isGodModeOn && ++counter > 9) {
+					Log.e("MainMenuScreen", "GOD MODE ON !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 					PlayerComponent.isGodModeOn = true
+				}
 			}
 			return@addListener true
 		}

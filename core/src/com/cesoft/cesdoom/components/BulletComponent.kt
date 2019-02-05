@@ -19,7 +19,9 @@ class BulletComponent(
 		const val GATE_FLAG = 1 shl 3		// 8
 		const val YOU_WIN_FLAG = 1 shl 4	// 16
 		const val SWITCH_FLAG = 1 shl 5		// 32
-		const val GROUND_FLAG = 1 shl 6		// 64
+		const val AMMO_FLAG = 1 shl 6		// 64
+		const val HEALTH_FLAG = 1 shl 7		// 128
+		const val GROUND_FLAG = 1 shl 8		// 256
 
 		private const val INDEX_MASK = 0x7FFF0000
 		private const val FLAG_MASK = 0x0000FFFF

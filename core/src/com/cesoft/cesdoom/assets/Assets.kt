@@ -37,6 +37,7 @@ class Assets {
 		const val RECARGAR="RECARGAR"
 		const val PUNTUACIONES="PUNTUACIONES"
 		const val CREDITOS="CREDITOS"
+		const val AMMO="AMMO"
 		const val SOBRE_TXT="SOBRE_TXT"
 		const val SOBRE="SOBRE"
 		const val ATRAS="ATRAS"

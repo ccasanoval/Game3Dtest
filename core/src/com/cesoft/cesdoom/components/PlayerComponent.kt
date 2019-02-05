@@ -45,6 +45,7 @@ object PlayerComponent : Component {
 		this.health = 100f
 		this.score = 0
 		this.colorAmbiente = colorAmbiente
+		AmmoComponent.reset(50)//TODO:30?
 	}
 
 	fun isDead() = health < 1

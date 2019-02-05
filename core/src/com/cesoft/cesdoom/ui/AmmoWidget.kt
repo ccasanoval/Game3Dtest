@@ -5,12 +5,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
-import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.components.AmmoComponent
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class ScoreWidget : Actor() {
+class AmmoWidget : Actor() {
 	companion object {
 		const val cx = CesDoom.VIRTUAL_WIDTH/5f
 		const val cy = CesDoom.VIRTUAL_HEIGHT/23f
@@ -20,12 +20,12 @@ class ScoreWidget : Actor() {
 
 	init {
 		setSize(cx, cy)
-		setPosition(0f, CesDoom.VIRTUAL_HEIGHT - height)
+		setPosition(ScoreWidget.cx+10, CesDoom.VIRTUAL_HEIGHT - height)
 	}
 
 	override fun act(delta: Float) {
 		text.act(delta)
-		text.text = CesDoom.instance.assets.formatString(Assets.CREDITOS, PlayerComponent.score)
+		text.text = CesDoom.instance.assets.formatString(Assets.AMMO, AmmoComponent.ammo)
 	}
 
 	override fun draw(batch: Batch?, parentAlpha: Float) {

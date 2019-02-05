@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
-import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.GunComponent
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.entities.Enemy
@@ -20,16 +19,15 @@ import com.cesoft.cesdoom.systems.*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //TODO:
 //
+//TODO: Joystick!!
 //TODO: Mejorar FPS (Enemy consume mucho, es todo por pathfinding?)
-//TODO: Modo dios como huevo
 //TODO: HEALTH objects+
-//TODO: AMMO limit and objects+
 //TODO: Levels+
 //
 //TODO: Constructor para laberinto & MapPathFinder
-//TODO: Columnas en maze
+//TODO: Columnas en maze + rampas
 
-//TODO: Configurar joystick Android -> Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga y salto?
+//TODO: mandos de pantalla : Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga (cargadores) y salto?
 
 //TODO: Dependecy Injection? https://github.com/denisk20/libgdx-dagger2
 //TODO: Shadows? Fog?
@@ -50,11 +48,11 @@ class GameWorld(val game: CesDoom) {
 
 	private var bulletSystem: BulletSystem
 	private var playerSystem: PlayerSystem
-
-	var renderSystem: RenderSystem
 	private var enemySystem: EnemySystem
 	private var statusSystem: StatusSystem
 	private var gateSystem: GateSystem
+	private var ammoSystem: AmmoSystem
+	var renderSystem: RenderSystem
 
 	private var engine: Engine = Engine()
 	private lateinit var player: Entity
@@ -74,11 +72,12 @@ class GameWorld(val game: CesDoom) {
 
 		///----
 		bulletSystem = BulletSystem()
-		renderSystem = RenderSystem(colorAmbiente)//, Assets, bulletSystem.broadphase)
-		playerSystem = PlayerSystem(game, renderSystem.perspectiveCamera, bulletSystem)
+		renderSystem = RenderSystem(colorAmbiente)
+		playerSystem = PlayerSystem(renderSystem.perspectiveCamera, bulletSystem)
 		enemySystem = EnemySystem(game)
 		statusSystem = StatusSystem(this)
 		gateSystem = GateSystem()
+		ammoSystem = AmmoSystem()
 
 		///----
 		engine.addSystem(renderSystem)

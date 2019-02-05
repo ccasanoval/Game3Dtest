@@ -9,9 +9,11 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.*
 import com.cesoft.cesdoom.components.*
+import com.cesoft.cesdoom.entities.Ammo
 import com.cesoft.cesdoom.entities.Gate
 import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.entities.Switch
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +69,12 @@ class BulletSystem : EntitySystem(), EntityListener {
 				BulletComponent.YOU_WIN_FLAG -> {
 					collPlayerYouWin()
 				}
+				BulletComponent.AMMO_FLAG -> {
+					collPlayerAmmo(BulletComponent.getIndex(userValue0))
+				}
+				BulletComponent.HEALTH_FLAG -> {
+					collPlayerHealth(BulletComponent.getIndex(userValue0))
+				}
 				//BulletComponent.SHOT_FLAG -> collShotWall() //TODO: dejar marca de disparo en pared
 			}
 			return true
@@ -81,6 +89,17 @@ class BulletSystem : EntitySystem(), EntityListener {
 	//______________________________________________________________________________________________
 	private fun collPlayerYouWin() {
 		player.youWin()
+	}
+	//______________________________________________________________________________________________
+	private fun collPlayerAmmo(iAmmo: Int) {
+		val ammo = ammos[iAmmo] as Ammo
+		removeBody(ammo)
+		ammos.remove(iAmmo)
+		ammo.pickup()//TODO all inside pickup...
+	}
+	//______________________________________________________________________________________________
+	private fun collPlayerHealth(iHealth: Int) {
+		Log.e(tag, "collPlayerHealth----------------------------------- *************** $iHealth")
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerSwitch(iSwitch: Int) {
@@ -104,6 +123,8 @@ class BulletSystem : EntitySystem(), EntityListener {
 	private val gates = mutableMapOf<Int, Gate>()
 	private var switchIndex = 0
 	private val switches = mutableMapOf<Int, Switch>()
+	private var ammoIndex = 0
+	private val ammos = mutableMapOf<Int, Ammo>()
 	private lateinit var player : Player
 	override fun entityAdded(entity: Entity) {
 		val bullet = entity.getComponent(BulletComponent::class.java)
@@ -124,6 +145,13 @@ class BulletSystem : EntitySystem(), EntityListener {
 				bullet.rigidBody.userIndex = switchIndex
 				bullet.rigidBody.userIndex2 = switchIndex
 				switches[switchIndex] = entity as Switch
+				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
+			}
+			BulletComponent.AMMO_FLAG -> {
+				ammoIndex++
+				bullet.rigidBody.userIndex = ammoIndex
+				bullet.rigidBody.userIndex2 = ammoIndex
+				ammos[ammoIndex] = entity as Ammo
 				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
 			}
 			//else -> Log.e(tag, "Collision else added: "+bullet.rigidBody.userValue)

@@ -34,8 +34,13 @@ class Player : Entity() {
             rigidBody.motionState = MotionState(Matrix4().translate(pos))
             // The onContactAdded callback will only be triggered if at least one of the two colliding bodies has the CF_CUSTOM_MATERIAL_CALLBACK
             rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-            rigidBody.contactCallbackFilter = BulletComponent.SWITCH_FLAG or BulletComponent.GATE_FLAG or BulletComponent.YOU_WIN_FLAG
-                                            //BulletComponent.GROUND_FLAG or BulletComponent.ENEMY_FLAG or BulletComponent.SCENE_FLAG
+            rigidBody.contactCallbackFilter =
+                            BulletComponent.SWITCH_FLAG or
+                            BulletComponent.GATE_FLAG or
+                            BulletComponent.YOU_WIN_FLAG or
+                            BulletComponent.AMMO_FLAG or
+                            BulletComponent.HEALTH_FLAG
+                          //BulletComponent.GROUND_FLAG or BulletComponent.ENEMY_FLAG or BulletComponent.SCENE_FLAG
             rigidBody.contactCallbackFlag = BulletComponent.PLAYER_FLAG
             rigidBody.userValue = BulletComponent.PLAYER_FLAG
             rigidBody.activationState = Collision.DISABLE_DEACTIVATION

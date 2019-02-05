@@ -162,11 +162,19 @@ object MazeFactory {
         }
 		// Extra Exterior ------------------
 
-
-		//TESTING
-        GateFactory.create(mapFactory, Vector3(+GateComponent.LONG+.2f, 0f, 0f), 0f, " C ", e).unlock()
-        GateFactory.create(mapFactory, Vector3(-GateComponent.LONG-.2f, 0f, 0f), 0f, " D ", e).unlock()
+		// TESTING GATES
+		GateFactory.create(mapFactory, Vector3(+GateComponent.LONG+.2f, 0f, 0f), 0f, " C ", e).unlock()
+		GateFactory.create(mapFactory, Vector3(-GateComponent.LONG-.2f, 0f, 0f), 0f, " D ", e).unlock()
 		//YouWinFactory.create(Vector3(-2*GateComponent.LONG, 0f, 0f), e)
+
+
+		// AMMO ------------------
+		AmmoFactory.create(Vector3(+6f * lng2, 0f, 0f), 20, e)
+		AmmoFactory.create(Vector3(-6f * lng2, 0f, 0f), 20, e)
+
+		// HEALTH  ------------------
+
+
 
 		//createSectorTest(engine, +1, +1)
 		//createSectorTest(engine, -1, +1)

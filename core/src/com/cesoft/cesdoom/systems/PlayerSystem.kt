@@ -19,20 +19,28 @@ import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.ui.ControllerWidget
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.physics.bullet.Bullet
+import com.badlogic.gdx.physics.bullet.collision.AllHitsRayResultCallback
+import com.badlogic.gdx.physics.bullet.collision.ClosestNotMeRayResultCallback
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
+import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent.ALTURA
 import com.cesoft.cesdoom.components.PlayerComponent.FUERZA_MOVIL
+import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
+import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy.CollisionFilterGroups
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Joystick!!
 class PlayerSystem(
-		private val game: CesDoom,
 		private val camera: Camera,
 		private val bulletSystem: BulletSystem
 	)
@@ -123,10 +131,16 @@ class PlayerSystem(
 	}
 	//////////
 
+
+
+
+
 	private lateinit var playerComponent : PlayerComponent
 	private lateinit var bulletComponent : BulletComponent
 
-	private var rayTestCB: ClosestRayResultCallback = ClosestRayResultCallback(Vector3.Zero, Vector3.Z)
+	private val rayTestCB = ClosestRayResultCallback(Vector3.Zero, Vector3.Z)
+	private val rayTestAll = AllHitsRayResultCallback(Vector3.Zero, Vector3.Z)
+	//private var rayTestNM = ClosestNotMeRayResultCallback(btCollisionObject())
 	private var altura = ALTURA//TODO:CES:testing altura = ALTURA+400
 	lateinit var gun: Entity
 
@@ -216,7 +230,7 @@ class PlayerSystem(
 		//TODO: no mover si esta saltando?
 		//if(playerComponent!!.isSaltando)return
 		if(CesDoom.isMobile) {
-			updateTraslationMovile(delta)
+			updateTraslationMobile(delta)
 		}
 		else {
 			updateTraslationDesktop(delta)
@@ -226,7 +240,7 @@ class PlayerSystem(
 		bulletComponent.rigidBody.linearVelocity = posTemp
 	}
 	//______________________________________________________________________________________________
-	private fun updateTraslationMovile(delta: Float) {
+	private fun updateTraslationMobile(delta: Float) {
 		var hayMovimiento = false
 		if(ControllerWidget.movementVector.y > +0.20f || yPad == Direccion.ADELANTE) {
 			posTemp.add(camera.direction)
@@ -310,17 +324,31 @@ class PlayerSystem(
 	private var deltaReload = 100f
 	private fun updateWeapon(delta: Float) {
 		// Gdx.input.isTouched
+
+		val isFiring = (ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || fire1)
 		deltaFire += delta
 		deltaReload += delta
-		if(ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || fire1) {
-			GunFactory.playSound()
-			if(deltaFire > 0.15f) {
+
+		if(AmmoComponent.reloading) {
+			AmmoComponent.reloading = false
+			GunFactory.animate(gun, GunComponent.ACTION.RELOAD)
+			deltaFire = 0f
+			//return
+		}
+		else if(isFiring && deltaFire > 0.15f) {
+			if(AmmoComponent.ammo > 0) {
 				deltaFire = 0f
-				fire()
+				AmmoComponent.fire()
+				GunFactory.playSound()
+				GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
+				checkBulletKillEnemy()
+			}
+			else {
+				//Sounds.play(Sounds.SoundType.NO_AMMO)TODO
 			}
 		}
-		//TODO: add ammo, que se gaste, mas contador
-		else if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) || btnB) {
+
+		/*else if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) || btnB) {
 			if(deltaReload > 5f) {
 				deltaReload = 0f
 				GunFactory.animate(gun, GunComponent.ACTION.RELOAD)
@@ -337,47 +365,76 @@ class PlayerSystem(
 				deltaReload = 0f
 				GunFactory.animate(gun, GunComponent.ACTION.DRAW)
 			}
-		}
+		}*/
 		gun.getComponent(AnimationComponent::class.java).update(delta)
 	}
 	//______________________________________________________________________________________________
 	//
 	private val rayFrom = Vector3()
 	private val rayTo = Vector3()
-	private fun fire() {
-
-		GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
+	private fun checkBulletKillEnemy() {
 
 		//-------------------
 		/// COLLISION BY RAY
 		val ray = camera.getPickRay((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat())
 		rayFrom.set(ray.origin)
 		rayTo.set(ray.direction).scl(250f).add(rayFrom)
-		rayTestCB.collisionObject = null
-		rayTestCB.closestHitFraction = 1f
-		rayTestCB.setRayFromWorld(rayFrom)
-		rayTestCB.setRayToWorld(rayTo)
-		bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB)
-		if(rayTestCB.hasHit()) {
-			//Gdx.app.error("CesDoom", "-------------------------- DISPARO DIO ------------------------------")
-			val entity = rayTestCB.collisionObject.userData as Entity
-			/// Enemy
-			entity.getComponent(StatusComponent::class.java)?.hurt()
-			/// Draw shot on Wall or Enemy
-			//TODO: draw nubecilla de humo !!!!!!!!!!!!!!!!
-			/*val pos = Vector3()
-			rayTestCB.getHitPointWorld(pos)
+//		rayTestCB.collisionObject = null
+//		rayTestCB.closestHitFraction = 1f
+//		rayTestCB.setRayFromWorld(rayFrom)
+//		rayTestCB.setRayToWorld(rayTo)
+//Gdx.app.error("CesDoom", "-------------------------- DISPARO  ${rayTestCB.collisionFilterMask} ")
+		//rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT//CF_CUSTOM_MATERIAL_CALLBACK
+		//rayTestCB.collisionFilterMask = rayTestAll.collisionFilterMask or BulletComponent.ENEMY_FLAG
+//		bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB)
+//		if(rayTestCB.hasHit()) {
+//			val entity = rayTestCB.collisionObject.userData as Entity
+////Gdx.app.error("CesDoom", "-------------------------- DISPARO DIO ------------------------------ $entity ")
+//			/// Enemy
+//			entity.getComponent(StatusComponent::class.java)?.hurt()
+//		}
 
-			val mb = ModelBuilder()
-			val material = Material(ColorAttribute.createDiffuse(Color.RED))
-			val flags = VertexAttributes.Usage.ColorUnpacked or VertexAttributes.Usage.Position
-			val model : Model = mb.createBox(.5f, .5f, .5f, material, flags.toLong())
-			val modelComponent = ModelComponent(model, pos)
-			val entityDest = Entity()
-			entityDest.add(modelComponent)
-			engine!!.addEntity(entityDest)*/
+		rayTestAll.collisionObject = null
+		rayTestAll.closestHitFraction = 1f
+		rayTestAll.setRayFromWorld(rayFrom)
+		rayTestAll.setRayToWorld(rayTo)
+		if(rayTestAll.collisionObjects != null)
+			rayTestAll.collisionObjects.clear()
+		//Gdx.app.error("CesDoom", "-------------------------- DISPARO z------------------------------ "+rayTestAll.collisionFilterMask)
+		//rayTestAll.collisionFilterMask = rayTestAll.collisionFilterMask or BulletComponent.ENEMY_FLAG
+		//rayTestAll.collisionFilterGroup = rayTestAll.collisionFilterGroup or BulletComponent.ENEMY_FLAG
+		bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestAll)
+
+		if(rayTestAll.hasHit()) {
+			Gdx.app.error("CesDoom", "---------------------------------------- DISPARO DIO 2-------------------------------------------- "+rayTestAll.collisionObjects.size())
+			for(i in rayTestAll.collisionObjects.size()-1 downTo 0 ) {
+				val collider = rayTestAll.collisionObjects.atConst(i)
+				if(collider is btRigidBody) {
+					Gdx.app.error("CesDoom", "$i -------------------------- DISPARO DIO 2 :::: $collider // ${collider.userValue}  //  ${collider.userData}")
+
+					if(collider.userValue == BulletComponent.SCENE_FLAG
+							|| collider.userValue == BulletComponent.GATE_FLAG
+							|| collider.userValue == BulletComponent.SWITCH_FLAG
+							|| collider.userValue == BulletComponent.GROUND_FLAG
+							|| collider.userValue == BulletComponent.AMMO_FLAG
+							|| collider.userValue == BulletComponent.HEALTH_FLAG) {
+						Gdx.app.error("CesDoom", "$i -------------------------- WALL")
+						// Dio primero con una pared, bala muerta
+						break
+					}
+					if(collider.userValue == BulletComponent.ENEMY_FLAG) {
+						Gdx.app.error("CesDoom", "$i -------------------------- ENEMY")
+						// Dio primero con enemigo, bala buena
+						val entity = collider.userData as Entity
+						entity.getComponent(StatusComponent::class.java)?.hurt()
+						break
+					}
+				}
+			}
 		}
+
 	}
+
 
 	private var isFootUp = false
 	private var yFoot = 0f
