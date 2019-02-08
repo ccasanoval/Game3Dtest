@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.ashley.core.Family
+import com.badlogic.ashley.signals.Signal
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.*
@@ -13,16 +14,30 @@ import com.cesoft.cesdoom.entities.Ammo
 import com.cesoft.cesdoom.entities.Gate
 import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.entities.Switch
+import com.cesoft.cesdoom.events.BulletEvent
+import com.cesoft.cesdoom.events.BulletQueue
+import com.cesoft.cesdoom.events.GameQueue
+import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class BulletSystem : EntitySystem(), EntityListener {
+class BulletSystem(
+		private val eventSignal: Signal<BulletEvent>,
+		private val gameEventSignal: Signal<GameEvent>)
+	: EntitySystem(), EntityListener {
 
 	companion object {
 		private val tag : String = BulletSystem::class.java.simpleName
 		private const val GRAVITY = -200f
+	}
+
+	//private val eventQueue = GameQueue()
+	private val eventQueue = BulletQueue()
+	init {
+		//gameEventSignal.add(eventQueue)
+		eventSignal.add(eventQueue)
 	}
 
 	private val collisionConfig: btCollisionConfiguration = btDefaultCollisionConfiguration()
@@ -47,6 +62,8 @@ class BulletSystem : EntitySystem(), EntityListener {
 		//TODO: haz que no salte muros si delta crece por lentitud al procesar...
 		// Calcular colisiones
 		collisionWorld.stepSimulation(Math.min(1f / 30f, delta), 5, 1f / 60f)
+		//
+		processEvents()
 	}
 
 	//______________________________________________________________________________________________
@@ -88,14 +105,18 @@ class BulletSystem : EntitySystem(), EntityListener {
 
 	//______________________________________________________________________________________________
 	private fun collPlayerYouWin() {
-		player.youWin()
+		gameEventSignal.dispatch(GameEvent.YouWin)
+		//player.youWin()
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerAmmo(iAmmo: Int) {
+		gameEventSignal.dispatch(GameEvent(GameEvent.Type.AMMO_PICKUP, AmmoComponent.MAGAZINE_CAPACITY, ammos[iAmmo]!!))
+
+		Log.e(tag, "collPlayerAmmo--------${ammos.size}-------- $iAmmo // ${ammos[iAmmo]}")
+		//TODO all inside ammo pickup...?----------------------------------------------
 		val ammo = ammos[iAmmo] as Ammo
 		removeBody(ammo)
-		ammos.remove(iAmmo)
-		ammo.pickup()//TODO all inside pickup...
+		/*ammos.remove(iAmmo)*/
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerHealth(iHealth: Int) {
@@ -161,12 +182,29 @@ class BulletSystem : EntitySystem(), EntityListener {
 
 
 	//______________________________________________________________________________________________
-	fun removeBody(entity: Entity) {
+	private fun removeBody(entity: Entity) {
 		val comp = entity.getComponent(BulletComponent::class.java)
 		if(comp != null)
 			collisionWorld.removeCollisionObject(comp.rigidBody)
 	}
+	//______________________________________________________________________________________________
+	override fun entityRemoved(entity: Entity) {
+		Log.e(tag, "entityRemoved--------------------------- $entity")
+	}
+
+
+
+
 
 	//______________________________________________________________________________________________
-	override fun entityRemoved(entity: Entity) {}
+	private fun processEvents() {
+		for(event in eventQueue.events) {
+			when(event.type) {
+				BulletEvent.Type.REMOVE -> {
+					removeBody(event.entity)
+				}
+				//else -> Unit
+			}
+		}
+	}
 }

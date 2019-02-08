@@ -169,8 +169,8 @@ object MazeFactory {
 
 		// AMMO ------------------
 		val ammoModel = CesDoom.instance.assets.getAmmo()
-		AmmoFactory.create(Vector3(+6f * lng2, 0f, 0f), 20, ammoModel, e)
-		AmmoFactory.create(Vector3(-6f * lng2, 0f, 0f), 20, ammoModel, e)
+		AmmoFactory.create(Vector3(+6f * lng2, 0f, 0f), ammoModel, e)
+		AmmoFactory.create(Vector3(-6f * lng2, 0f, 0f), ammoModel, e)
 
 		// HEALTH  ------------------
 

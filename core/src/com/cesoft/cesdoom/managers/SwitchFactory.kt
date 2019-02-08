@@ -40,7 +40,7 @@ object SwitchFactory {
 
         /// Entity
         val entity = Switch(id)
-        pos.y = PlayerComponent.ALTURA + SwitchComponent.SIZE  //1.05f * WallFactory.HIGH
+        pos.y = PlayerComponent.TALL + SwitchComponent.SIZE +1  //1.05f * WallFactory.HIGH
 
         /// Component
         entity.add(SwitchComponent)

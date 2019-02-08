@@ -5,131 +5,411 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.ashley.core.Family
+import com.badlogic.ashley.signals.Signal
 import com.badlogic.ashley.utils.ImmutableArray
+import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter
+import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.math.Quaternion
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.cesoft.cesdoom.components.*
-import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.CesDoom
-import com.cesoft.cesdoom.Status
-import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.assets.Sounds
+import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.entities.Player
+import com.cesoft.cesdoom.events.BulletEvent
+import com.cesoft.cesdoom.events.EnemyEvent
+import com.cesoft.cesdoom.events.EnemyQueue
+import com.cesoft.cesdoom.events.GameEvent
+import com.cesoft.cesdoom.managers.EnemyActions
+import com.cesoft.cesdoom.managers.EnemyFactory
+import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.util.Log
 
+//TODO: Divide and refactor.. other system?
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class EnemySystem(private val game: CesDoom) : EntitySystem(), EntityListener {
+class EnemySystem(
+		eventSignal: Signal<EnemyEvent>,
+		private val gameEventSignal: Signal<GameEvent>,
+		private val bulletEventSignal: Signal<BulletEvent>,
+		private val game: CesDoom
+) : EntitySystem(), EntityListener {
 
 	companion object {
-		private const val MAX_ENEMIES = 4		//TODO: aumenta cuando supera x puntos...
-		private const val SPAWN_DELAY = 5*1000	//TODO: si pausa o background, debe actualizar time!!!
+		private val tag: String = EnemySystem::class.java.simpleName
 	}
 
-	private var enemies: ImmutableArray<Enemy>? = null
+	private val EnemyFactory = EnemyFactory()
 	private var player: Player? = null
-	private val allEnemies = ArrayList<Enemy>()
-
+	private val enemyQueue = EnemyQueue()
 	init {
-		Log.e("EnemySystem", "INI ---------------------------------------------------------")
-		EnemyFactory.init(game)
+		Log.e(tag, "INI ---------------------------------------------------------")
+		eventSignal.add(enemyQueue)
 	}
 
+	/// Implements EntityListener
+	//______________________________________________________________________________________________
+	override fun entityRemoved(entity: Entity) = Unit
+	override fun entityAdded(entity: Entity) {
+		player = entity as Player
+	}
+
+	/// Extends EntitySystem
 	//______________________________________________________________________________________________
 	override fun addedToEngine(e: Engine) {
-		enemies = e.getEntitiesFor(Family.all(EnemyComponent::class.java, StatusComponent::class.java).get()) as ImmutableArray<Enemy>?
+		EnemyFactory.enemies = e.getEntitiesFor(Family.all(EnemyComponent::class.java, StatusComponent::class.java).get()) as ImmutableArray<Entity>
 		e.addEntityListener(Family.one(PlayerComponent::class.java).get(), this)
 	}
 
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
-		//TODO: humo donde aparece bicho...
-		enemies?.let { enemies ->
-
-			for (entity in enemies) {
-				if(entity.getStatus().isDead())return
-				val posPlayer = player!!.getPosition()
-				EnemyFactory.update(delta, entity, posPlayer.cpy())
-			}
-
-			spawIfNeeded()
-		}
+		processEvents()
+		updateEnemies(delta)
+		EnemyFactory.spawnIfNeeded(engine, game.assets)
 	}
 
-	//https://blog.egorand.me/concurrency-primitives-in-kotlin/
-	//@Volatile private var spawning = false
-	private var countSpawnPosition = 0
-	private var lastSpawn = System.currentTimeMillis()
-	private fun spawIfNeeded() {
-        if(Status.paused)lastSpawn = System.currentTimeMillis()
-		if(System.currentTimeMillis() < lastSpawn + SPAWN_DELAY)return
-		lastSpawn = System.currentTimeMillis()
-		spawnAllEnemies()
-		enemies?.let { enemies ->
 
-			if(enemies.size() < MAX_ENEMIES) {
-                val id = getNextEnemyId()
-				if(id >= allEnemies.size)return//Max enemy number reached
-				try {
-					engine.addEntity(getNextEnemy(id))
+	//______________________________________________________________________________________________
+	private fun processEvents() {
+		for(event in enemyQueue.events) {
+			when(event.type) {
+				EnemyEvent.Type.HURT -> {
+					hurt(event.enemy)
 				}
-				catch(e: Throwable) {//TODO: on pause, reset timer...
-					Log.e("EnemySystem", "spawnIfNeeded:e:-------------------------------$e")
-				}//TODO: check before fail
-			}
-		} ?: run { }
-	}
-	private fun getNextEnemyId() : Int {
-		var id=allEnemies.size
-		if(enemies?.size() == 0) {
-			id=0
-		}
-		else {
-			for(id0 in 0 until MAX_ENEMIES) {
-				if( ! isEnemyActive(id0)) {
-					id = id0
-					break
-				}
+				//else -> Unit
 			}
 		}
-		return id
 	}
-	private fun getNextEnemy(id: Int) : Enemy {
-		val enemy = allEnemies[id]
-		val pos = when(countSpawnPosition++ % 4) {
-			0 -> Vector3(+250f, 150f, -250f)
-			1 -> Vector3(-250f, 150f, -250f)
-			2 -> Vector3(+250f, 150f, +250f)
-			else -> Vector3(-250f, 150f, -250f)
+	private fun updateEnemies(delta: Float) {
+		EnemyFactory.enemies.let { enemies ->
+			for(entity in enemies) {
+				//val enemy = entity as Enemy
+				//val status = StatusComponent.get(entity)
+				//Log.e(tag, "updateEnemies------- id=${enemy.id} / ${status.estado}  $enemy")
+				val posPlayer = player!!.getPosition().cpy()
+				updateEnemy(entity, delta, posPlayer)
+			}
 		}
-		enemy.reset(pos)
-		return enemy
 	}
 
-	private fun isEnemyActive(id: Int) : Boolean {
-		enemies?.let { enemies ->
-			for(i in 0 until enemies.size()) {
-				if(enemies[i].id == id)
-					return true
-			}
-		}
-		return false
-	}
 
-	private fun spawnAllEnemies() {
-		if(allEnemies.size < MAX_ENEMIES)//allEnemies.isEmpty() ||
-		for(i in allEnemies.size until MAX_ENEMIES) {
-			//Log.e("EnemySystem", "spawnAllEnemies:-------------------------------$i  "+allEnemies.size+" ")
-			val enemy = EnemyFactory.create(i,
-					game.assets.particleEffectPool!!,
-					game.render,
-					game.assets.getEnemy(),
-					EnemyComponent.TYPE.MONSTER1,
-					Vector3())//La posicion se resetea en Enemy.reset  (0f, 150f, 350f)
-			allEnemies.add(enemy)
-		}
+	//______________________________________________________________________________________________
+	private fun updateEnemy(entity: Entity, delta: Float, posPlayer: Vector3) {
+
+		updateDeath(entity, delta)
+		if(isDeadOver(entity))return
+		///
+		updateMovement(entity, posPlayer, delta)
+		///
+		AnimationComponent.get(entity).update(delta)
 	}
 
 	//______________________________________________________________________________________________
-	override fun entityAdded(entity: Entity) { player = entity as Player }
-	override fun entityRemoved(entity: Entity) { }
+	private fun updateDeath(entity: Entity, delta: Float) {
+		val status = StatusComponent.get(entity)
+		updateStatusSys(entity, delta)
+		if(status.isDead()) {
+			if (deathProgress(entity) == 0f)
+				Sounds.play(Sounds.SoundType.ENEMY_DIE)
+
+			val model = ModelComponent.get(entity)
+			if (model.blendingAttribute != null)
+				model.blendingAttribute!!.opacity = 1 - deathProgress(entity)
+		}
+	}
+	//______________________________________________________________________________________________
+	private var lastAttack = 0L
+	private fun updateMovement(entity: Entity, playerPosition: Vector3, delta: Float) {
+
+		val force: Float
+		val enemy = EnemyComponent.get(entity)
+		val model = ModelComponent.get(entity)
+
+		model.instance.transform.getTranslation(enemy.posTemp)
+		enemy.currentPos2D = Vector2(enemy.posTemp.x, enemy.posTemp.z)
+		val distPlayer = enemy.posTemp.dst(playerPosition)
+
+		val statusMov = statusMov(entity, distPlayer)
+		when(statusMov) {
+			StatusMov.QUIET -> {
+				force = 0f
+			}
+			StatusMov.ATTACK -> {
+				setAttacking(entity)
+				val now = System.currentTimeMillis()
+				if(now > lastAttack + EnemyComponent.DELAY_ATTACK) {
+					lastAttack = now
+					gameEventSignal.dispatch(GameEvent(GameEvent.Type.PLAYER_HURT, EnemyComponent.BITE_PAIN))
+					Sounds.play(Sounds.SoundType.ENEMY_ATTACK)
+				}
+				force = 0f
+			}
+			StatusMov.RUN -> {
+				force = if (CesDoom.isMobile) 1600f else 2200f
+				setRunning(entity)
+			}
+			StatusMov.WALK -> {
+				force = if (CesDoom.isMobile) 800f else 900f
+				setWalking(entity)
+			}
+		}
+
+		/// Si hay movimiento, calcula el camino
+		//if( ! status.isAttacking() && force != 0f)
+		if (statusMov == StatusMov.WALK || statusMov == StatusMov.RUN)
+			calcPath(entity, playerPosition)
+
+		/// Mueve
+		moveEnemy(entity, playerPosition, force, delta)
+	}
+	//______________________________________________________________________________________________
+	private fun moveEnemy(entity: Entity, playerPosition: Vector3, force: Float, delta: Float) {
+
+		val enemy = EnemyComponent.get(entity)
+		val rigidBody = BulletComponent.get(entity).rigidBody
+
+
+		val model = ModelComponent.get(entity)
+		model.instance.transform.getTranslation(enemy.posTemp)
+		val dX = playerPosition.x - enemy.posTemp.x
+		val dZ = playerPosition.z - enemy.posTemp.z
+
+		/// Set velocity
+		val dir = enemy.nextStep3D.add(enemy.posTemp.scl(-1f)).nor().scl(force * delta)
+		dir.y = rigidBody.linearVelocity.y
+		rigidBody.linearVelocity = dir
+
+		val transf = Matrix4()
+		rigidBody.getWorldTransform(transf)
+		transf.getTranslation(enemy.posTemp)
+
+		/// Set position and rotation
+		val theta = Math.atan2(dX.toDouble(), dZ.toDouble()).toFloat()
+		val rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(theta.toDouble()).toFloat())
+		model.instance.transform.set(enemy.posTemp, rot)
+	}
+
+	private fun calcPath(entity: Entity, playerPosition: Vector3) {
+
+		val enemy = EnemyComponent.get(entity)
+		val player2D = Vector2(playerPosition.x, playerPosition.z)
+		val map = MazeFactory.mapFactory.map
+
+		//TODO: Si player cambia mucho la posicion, obliga a recalcular
+		enemy.stepCounter++ //Obliga a recalcular pase lo que pase cada x ciclos
+//		if(stepCounter%20==0)Log.e(tag, "$id------ A")
+//		if(pathIndex == 0)Log.e(tag, "$id------ BB")
+//		if(path != null && pathIndex >= path!!.size)Log.e(tag, "$id------ CCC")
+		if (enemy.stepCounter % 20 == 0 || enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
+			//timePathfinding = System.currentTimeMillis()
+			enemy.path = map.findPath(enemy.currentPos2D, player2D)
+			//Log.e(tag, "$id------ CCC -------------------------------------- ${path?.size}")
+			enemy.path?.let { path ->
+				if (path.size > 1) {
+					enemy.pathIndex = 2
+					enemy.stepCalc2D = path[1]
+					enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.posTemp.y, enemy.stepCalc2D.y)
+					//if(path.size > 2)Log.e(tag, "PATH---------************************  ${path[0]}      *** ${path[1]}      ${path[2]}")
+				} else
+					enemy.nextStep3D = Vector3(player2D.x, enemy.posTemp.y, player2D.y)
+			}
+		} else {
+			val next = enemy.path!![enemy.pathIndex]
+
+			if (enemy.currentPos2D.dst(next) < 5) {
+				enemy.pathIndex++
+			}
+			if (enemy.pathIndex >= enemy.path!!.size) {
+				enemy.pathIndex = 0
+			} else {
+				enemy.stepCalc2D = next
+				enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.posTemp.y, enemy.stepCalc2D.y)
+			}
+		}
+		//Log.e(tag, "$id PATH---------******************::: $stepCalc2D")
+		//Log.e(tag, "$id ENEMY--------- $currentPos2D")
+		//Log.e(tag, "$id PLAYER--------- $player2D")
+	}
+
+	private enum class StatusMov { QUIET, ATTACK, RUN, WALK }
+
+	private fun statusMov(entity: Entity, distPlayer: Float): StatusMov {
+		val enemy = EnemyComponent.get(entity)
+		val status = StatusComponent.get(entity)
+		/// No está en condiciones de atacar: herido, muerto o sobre el suelo
+		return if (status.isAching() || status.isDead() || enemy.posTemp.y > EnemyComponent.RADIO + 2)
+			StatusMov.QUIET
+		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
+		else if (distPlayer < EnemyComponent.RADIO + PlayerComponent.RADIO + 4)
+			StatusMov.ATTACK
+		/// Esta cerca, corre a por el
+		else if (distPlayer < 180f)
+			StatusMov.RUN
+		/// Esta lejos, camina buscando
+		else
+			StatusMov.WALK
+	}
+
+
+
+
+
+	private fun updateStatusSys(entity: Entity, delta: Float) {
+		updateStatus(entity, delta)
+		val status = StatusComponent.get(entity)
+		if(status.isDead()) {
+			when {
+				deathProgress(entity) == 0f -> {
+					Log.e(tag, "updateStatusSys-------------------------status.isDead() ")
+					gameEventSignal.dispatch(GameEvent.EnemyDead)
+				}
+				deathProgress(entity) >= 1f -> {
+					Log.e(tag, "updateStatusSys-------------------------isDeadOver() ")
+					status.alive = false
+					engine.removeEntity(entity)
+					gameEventSignal.dispatch(GameEvent(GameEvent.Type.ENEMY_DEAD, EnemyComponent.KILL_REWARD, entity))
+					//entity.remove(StatusComponent::class.java)
+					//TODO: val reward = EnemyComponent.get(entity).reward by type of enemy
+				}
+			}
+		}
+	}
+
+	private fun updateStatus(entity: Entity, delta: Float) {
+		val status = StatusComponent.get(entity)
+		if( ! status.isDead() && status.health < 0) {
+			removeCollider(entity)
+			playDying(entity)
+			setDeadState(entity)
+		} else if (status.isDead()) {
+			status.deadStateTime += delta
+		} else if (status.isAching()) {
+			status.achingStateTime += delta
+			if (isAchingOver(entity)) {
+				status.achingStateTime = 0f
+				status.estado = EnemyComponent.ACTION.REINCARNATING
+				playReincarnating(entity)
+				//setWalking(entity)
+			}
+		}
+	}
+
+	private fun removeCollider(entity: Entity) {
+		bulletEventSignal.dispatch(BulletEvent(BulletEvent.Type.REMOVE, entity))
+	}
+
+	//______________________________________________________________________________________________
+	/*private fun setAnimation(entity: Entity, action: EnemyComponent.ACTION) {
+		val enemy = EnemyComponent.get(entity)
+		enemy.currentAnimat = action
+		val animParams = EnemyActions.getActionParams(action, enemy.type)
+		animParams?.let { params ->
+			if(params.id.isEmpty()) return
+			AnimationComponent.get(entity).animate(params)
+		}
+	}*/
+
+
+	//______________________________________________________________________________________________
+	private fun playReincarnating(entity: Entity) {
+		EnemyActions.setAnimation(entity, EnemyComponent.ACTION.REINCARNATING)
+	}
+	//______________________________________________________________________________________________
+	private fun playRunning(entity: Entity) {
+		EnemyActions.setAnimation(entity, EnemyComponent.ACTION.RUNNING)
+	}
+	//______________________________________________________________________________________________
+	private fun playWalking(entity: Entity) {
+		EnemyActions.setAnimation(entity, EnemyComponent.ACTION.WALKING)
+	}
+	//______________________________________________________________________________________________
+	private fun playAttack(entity: Entity) {
+		EnemyActions.setAnimation(entity, EnemyComponent.ACTION.ATTACKING)
+	}
+	//______________________________________________________________________________________________
+	private fun playAching(entity: Entity) {
+		EnemyActions.setAnimation(entity, EnemyComponent.ACTION.ACHING)
+	}
+	//______________________________________________________________________________________________
+	private fun playDying(entity: Entity) {
+		EnemyActions.setAnimation(entity, EnemyComponent.ACTION.DYING)
+
+		/// Particle Effects
+		val enemy = EnemyComponent.get(entity)
+		val model = ModelComponent.get(entity)
+		val effect = enemy.particleEffect!!
+		val emitter = effect.controllers.first().emitter as RegularEmitter
+		emitter.emissionMode = RegularEmitter.EmissionMode.EnabledUntilCycleEnd
+		effect.setTransform(model.instance.transform)
+		effect.scale(5f, 8f, 5f)
+		effect.init()
+		effect.start()
+		game.render.addParticleEffect(effect)
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	private fun setDeadState(entity: Entity) {
+		val status = entity.getComponent(StatusComponent::class.java)
+		status.estado = EnemyComponent.ACTION.DYING
+		status.deadStateTime = 0f
+	}
+
+	private fun isDeadOver(entity: Entity) = deathProgress(entity) > 1
+	private fun deathProgress(entity: Entity): Float {
+		val status = StatusComponent.get(entity)
+		val enemy = EnemyComponent.get(entity)
+		return status.deadStateTime / EnemyActions.getActionDuration(EnemyComponent.ACTION.DYING, enemy.type)
+	}
+
+
+	private fun isAchingOver(entity: Entity): Boolean {
+		val status = StatusComponent.get(entity)
+		val enemy = EnemyComponent.get(entity)
+		return status.achingStateTime > EnemyActions.getActionDuration(EnemyComponent.ACTION.ACHING, enemy.type)
+	}
+
+	private fun setAttacking(entity: Entity) {
+		val status = entity.getComponent(StatusComponent::class.java)
+		if (status.isDead() || status.isAching()) return
+		if (!status.isAttacking()) {
+			status.setAttackingState()
+			playAttack(entity)
+		}
+	}
+
+	private fun hurt(entity: Entity, pain: Float = 50f) {
+		val status = entity.getComponent(StatusComponent::class.java)
+		if (status.isDead()) return
+		if (!status.isAching()) {
+			status.health -= pain
+			status.achingStateTime = 0f
+			status.setAchingState()
+			playAching(entity)
+			Sounds.play(Sounds.SoundType.ENEMY_HURT)
+		} else {
+			status.health -= pain/4f
+		}
+	}
+
+	private fun setRunning(entity: Entity) {
+		val status = entity.getComponent(StatusComponent::class.java)
+		if (status.isDead() || status.isAching()) return
+		if (!status.isRunning()) {
+			status.setRunningState()
+			playRunning(entity)
+		}
+	}
+
+	private fun setWalking(entity: Entity) {
+		val status = entity.getComponent(StatusComponent::class.java)
+		if(status.isDead() || status.isAching()) return
+		if( ! status.isWalking()) {
+			status.setWalkingState()
+			playWalking(entity)
+		}
+	}
+
 }

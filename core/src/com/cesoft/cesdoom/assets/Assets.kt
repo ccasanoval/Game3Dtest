@@ -200,11 +200,6 @@ class Assets {
 			getWallMetal2().dispose()
 			getWallMetal3().dispose()
 			endFireShot()
-
-//			getSoundRifle().dispose()
-//			getSoundEnemy().dispose()
-//			getSoundEnemyDie().dispose()
-//			getSoundFootSteps().dispose()
 		}
 		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e1: $e") }
 

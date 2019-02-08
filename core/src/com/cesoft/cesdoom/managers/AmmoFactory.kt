@@ -17,33 +17,24 @@ import com.cesoft.cesdoom.entities.Ammo
 // DECAL & BILLBOARD :
 // https://github.com/libgdx/libgdx/blob/master/tests/gdx-tests/src/com/badlogic/gdx/tests/SimpleDecalTest.java
 // https://github.com/libgdx/libgdx/wiki/Decals
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 object AmmoFactory {
 
-    private val dimCollision = Vector3(AmmoComponent.SIZE*2, AmmoComponent.SIZE*2, AmmoComponent.SIZE*2)
+    private val dimCollision = Vector3(AmmoComponent.SIZE, AmmoComponent.SIZE, AmmoComponent.SIZE)
 
     //______________________________________________________________________________________________
-    fun create(pos: Vector3, cuantity: Int, model: Model, engine: Engine): Ammo {
+    fun create(pos: Vector3, model: Model, engine: Engine): Ammo {
 
         /// Entity
-        val entity = Ammo(cuantity)
-        pos.y = PlayerComponent.ALTURA + AmmoComponent.SIZE
+        val entity = Ammo()
+        pos.y = PlayerComponent.TALL + AmmoComponent.SIZE
 
         /// Component
-        entity.add(AmmoComponent)
+        entity.add(AmmoComponent())
 
         /// Model
-        //val model : Model = mb.createBox(AmmoComponent.SIZE, AmmoComponent.SIZE, AmmoComponent.SIZE, material, POSITION_NORMAL)
         val modelComponent = ModelComponent(model, pos)
-
-		/// Material
-//        val texture = CesDoom.instance.assets.getSwitchOff()//TODO: Cambiar por textura bala o modelo bala...
-//        val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
-//        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-//        val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
-//        textureAttribute.scaleU = 1f
-//        textureAttribute.scaleV = 1f
-//        material.set(textureAttribute)
-//        modelComponent.instance.materials.get(0).set(textureAttribute)
     	entity.add(modelComponent)
 
         /// Position and Shape
@@ -63,7 +54,7 @@ object AmmoFactory {
         rigidBody.activationState = Collision.DISABLE_DEACTIVATION
         entity.add(BulletComponent(rigidBody, bodyInfo))
 
-        entity.init(modelComponent, pos, rigidBody, bodyInfo)
+        //TODO entity.init(modelComponent, pos, rigidBody, bodyInfo)
         engine.addEntity(entity)
         return entity
     }

@@ -83,7 +83,7 @@ class GameWinWidget(stage: Stage) : Actor() {
 	}
 
 	//______________________________________________________________________________________________
-	private fun pausar()
+	private fun pause()
 	{
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
@@ -115,6 +115,6 @@ class GameWinWidget(stage: Stage) : Actor() {
 
 	//______________________________________________________________________________________________
 	fun show() {
-		pausar()
+		pause()
 	}
 }

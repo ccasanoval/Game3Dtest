@@ -27,14 +27,14 @@ object Sounds {
 	private const val SOUND_PLAYER_DYING = "sounds/playerDying.ogg"
     private const val SOUND_NO_AMMO = "sounds/noAmmo.ogg"
     private const val SOUND_AMMO_RELOAD = "sounds/reload.ogg"
-	private const val SOUND_HEALTH_RELOAD = "sounds/reload.ogg"//TODO
+	private const val SOUND_PLAYER_HEAL = "sounds/reloadHealth.ogg"
     // Effects : https://archive.org/details/dsbossit ***
     // http://www.wolfensteingoodies.com/archives/olddoom/music.htm
     private const val MUSIC = "sounds/tnt_doom.ogg" // http://sycraft.org/content/audio/doom.shtml
 
     enum class SoundType {
 		RIFLE, ENEMY_ATTACK, ENEMY_DIE, ENEMY_HURT, FOOT_STEPS, GATE_OPENS, GATE_LOCKED, SWITCH,
-		GAME_OVER, YOU_WIN, PLAYER_HURT, PLAYER_DYING, NO_AMMO, AMMO_RELOAD
+		GAME_OVER, YOU_WIN, PLAYER_HURT, PLAYER_DYING, NO_AMMO, AMMO_RELOAD, PLAYER_HEAL
 	}
 
     private val lastPlayed = HashMap<SoundType, Long>()
@@ -54,6 +54,7 @@ object Sounds {
 			SoundType.PLAYER_DYING -> SOUND_PLAYER_DYING
             SoundType.NO_AMMO -> SOUND_NO_AMMO
             SoundType.AMMO_RELOAD -> SOUND_AMMO_RELOAD
+            SoundType.PLAYER_HEAL -> SOUND_PLAYER_HEAL
         }
     }
 	private fun minDelay(soundType: SoundType): Int {

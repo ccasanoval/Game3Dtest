@@ -2,16 +2,18 @@ package com.cesoft.cesdoom
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.signals.Signal
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.cesoft.cesdoom.components.GunComponent
-import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.entities.Enemy
 import com.cesoft.cesdoom.entities.Gun
-import com.cesoft.cesdoom.entities.Player
+import com.cesoft.cesdoom.events.BulletEvent
+import com.cesoft.cesdoom.events.EnemyEvent
+import com.cesoft.cesdoom.events.GameEvent
+import com.cesoft.cesdoom.events.RenderEvent
 import com.cesoft.cesdoom.managers.*
 import com.cesoft.cesdoom.systems.*
 
@@ -41,10 +43,15 @@ import com.cesoft.cesdoom.systems.*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameWorld(val game: CesDoom) {
+class GameWorld(private val game: CesDoom) {
 
 	private val debugCollision = false
 	private var debugDrawer: DebugDrawer? = null
+
+	private val gameEventSignal: Signal<GameEvent>
+	private val enemyEventSignal: Signal<EnemyEvent>
+	private val renderEventSignal: Signal<RenderEvent>
+	private val bulletEventSignal: Signal<BulletEvent>
 
 	private var bulletSystem: BulletSystem
 	private var playerSystem: PlayerSystem
@@ -52,14 +59,14 @@ class GameWorld(val game: CesDoom) {
 	private var statusSystem: StatusSystem
 	private var gateSystem: GateSystem
 	private var ammoSystem: AmmoSystem
-	//private var healthSystem: AmmoSystem//TODO
+	private var healthSystem: HealthSystem
 	var renderSystem: RenderSystem
 
 	private var engine: Engine = Engine()
 	private lateinit var player: Entity
 	private lateinit var gun: Gun
 
-	private val colorAmbiente = ColorAttribute(ColorAttribute.AmbientLight, 0.7f, 0.2f, 0.2f, 1f)
+	private val colorAmbiente = ColorAttribute(ColorAttribute.AmbientLight, 0.9f, 0.7f, 0.7f, 1f)
 
 	companion object {
 	    val tag: String = GameWorld::class.java.simpleName
@@ -72,14 +79,24 @@ class GameWorld(val game: CesDoom) {
 		val lonMundo = 4000f
 
 		///----
-		bulletSystem = BulletSystem()
-		renderSystem = RenderSystem(colorAmbiente)
-		playerSystem = PlayerSystem(renderSystem.perspectiveCamera, bulletSystem)
-		enemySystem = EnemySystem(game)
+		gameEventSignal = Signal()
+		enemyEventSignal = Signal()
+		renderEventSignal = Signal()
+		bulletEventSignal = Signal()
+
+		///----
+		bulletSystem = BulletSystem(bulletEventSignal, gameEventSignal)
+		renderSystem = RenderSystem(game.assets, renderEventSignal, colorAmbiente)
+		playerSystem = PlayerSystem(
+				gameEventSignal, enemyEventSignal, renderEventSignal,
+				colorAmbiente,
+				renderSystem.perspectiveCamera,//TODO: quitar referencias? usar eventos?
+				bulletSystem)//TODO: quitar referencias? usar eventos?
+		enemySystem = EnemySystem(enemyEventSignal, gameEventSignal, bulletEventSignal, game)
 		statusSystem = StatusSystem(this)
 		gateSystem = GateSystem()
-		ammoSystem = AmmoSystem()
-		//healthSystem = HealthSystem()//TODO
+		ammoSystem = AmmoSystem(gameEventSignal)
+		healthSystem = HealthSystem(gameEventSignal)
 
 		///----
 		engine.addSystem(renderSystem)
@@ -89,7 +106,7 @@ class GameWorld(val game: CesDoom) {
 		engine.addSystem(statusSystem)
 		engine.addSystem(gateSystem)
 		engine.addSystem(ammoSystem)
-		//engine.addSystem(healthSystem)//TODO
+		engine.addSystem(healthSystem)
 
 		///---
 		if(debugCollision) {
@@ -114,7 +131,7 @@ class GameWorld(val game: CesDoom) {
 
 	//______________________________________________________________________________________________
 	private fun createPlayer(pos: Vector3) {
-		player = Player.create(pos, colorAmbiente, engine)
+		player = playerSystem.createPlayer(pos, engine)
 		gun = GunFactory.create(
 				game.assets.getRifle(),
 				GunComponent.TYPE.CZ805,
@@ -146,9 +163,11 @@ class GameWorld(val game: CesDoom) {
 	}
 
 	fun pause() {
+		//TODO: evento a enemies etc para que paren temporizadores
 		//enemySystem.pause()
 	}
 	fun resume() {
+		//TODO: evento a enemies etc para que inicien temporizadores
 		//enemySystem.resume()
 	}
 
@@ -160,17 +179,7 @@ class GameWorld(val game: CesDoom) {
 	//______________________________________________________________________________________________
 	fun dispose() {
 		bulletSystem.dispose()
-		playerSystem.dispose()
 		renderSystem.dispose()
 	}
 
-	//______________________________________________________________________________________________
-	fun removeEnemyCollider(enemy: Enemy) {
-		bulletSystem.removeBody(enemy)
-	}
-	//______________________________________________________________________________________________
-	fun enemyDied(enemy: Enemy) {
-		engine.removeEntity(enemy)
-		PlayerComponent.addScore(20)
-	}
 }

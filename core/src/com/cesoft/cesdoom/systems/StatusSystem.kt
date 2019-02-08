@@ -20,15 +20,15 @@ class StatusSystem(private val gameWorld: GameWorld) : EntitySystem() {
 	}
 
 	//______________________________________________________________________________________________
-	override fun update(delta: Float) {
-		for(entity in entities) {
-			val status = entity.getComponent(StatusComponent::class.java)
-			status.update(delta)
-			if(status.isDead())
-				gameWorld.removeEnemyCollider(entity as Enemy)
-			if(status.isDeadOver()) {
-				gameWorld.enemyDied(entity as Enemy)
-			}
-		}
-	}
+//	override fun update(delta: Float) {
+//		for(entity in entities) {
+//			val status = entity.getComponent(StatusComponent::class.java)
+//			status.update(delta)
+//			if(status.isDead())
+//				gameWorld.removeEnemyCollider(entity as Enemy)
+//			if(status.isDeadOver()) {
+//				gameWorld.enemyDied(entity as Enemy)
+//			}
+//		}
+//	}
 }
