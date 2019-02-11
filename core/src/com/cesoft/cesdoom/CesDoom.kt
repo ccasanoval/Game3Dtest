@@ -141,6 +141,8 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		// Scene
 		try {assets.getAmmo()}
 		catch(ignore: GdxRuntimeException) {assets.iniAmmo()}
+		try {assets.getHealth()}
+		catch(ignore: GdxRuntimeException) {assets.iniHealth()}
 		try {assets.getDome()}
 		catch(ignore: GdxRuntimeException) {assets.iniDome()}
 		try {assets.getSuelo()}

@@ -15,7 +15,7 @@ class AnimationComponent(instance: ModelInstance) : Component {
 	}
 
 	fun animate(params: AnimationParams) {
-		animationController.animate(params.id, params.offset, params.duration, params.loop, params.speed, null, 0f)
+		//animationController.animate(params.id, params.offset, params.duration, params.loop, params.speed, null, 0f)
 	}
 
 	fun update(delta: Float) {

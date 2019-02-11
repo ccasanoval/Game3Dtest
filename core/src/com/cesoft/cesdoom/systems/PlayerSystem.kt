@@ -142,7 +142,8 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		engine!!.addEntityListener(Family.all(PlayerComponent::class.java).get(), this)
-		addListener(this)
+		if(CesDoom.isMobile)
+			addListener(this)
 	}
 
 	//______________________________________________________________________________________________

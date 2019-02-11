@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesdoom.CesDoom
-import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.Status
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,8 +67,8 @@ class HealthWidget : Actor() {
 	}
 
 	//______________________________________________________________________________________________
-	fun setValue(value: Float) {
-		healthBar.value = value-3
-		label.setText(value.toInt().toString()+" %")
+	fun setValue(value: Int) {
+		healthBar.value = (value-3).toFloat()
+		label.setText("$value %")
 	}
 }

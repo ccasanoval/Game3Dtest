@@ -6,7 +6,6 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.GateComponent
 import com.cesoft.cesdoom.components.SwitchComponent
 import com.cesoft.cesdoom.map.MapGraphFactory
-import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -164,8 +163,6 @@ object MazeFactory {
 		// TESTING GATES
 		GateFactory.create(mapFactory, Vector3(+GateComponent.LONG+.2f, 0f, 0f), 0f, " C ", e).unlock()
 		GateFactory.create(mapFactory, Vector3(-GateComponent.LONG-.2f, 0f, 0f), 0f, " D ", e).unlock()
-		//YouWinFactory.create(Vector3(-2*GateComponent.LONG, 0f, 0f), e)
-
 
 		// AMMO ------------------
 		val ammoModel = CesDoom.instance.assets.getAmmo()
@@ -173,8 +170,9 @@ object MazeFactory {
 		AmmoFactory.create(Vector3(-6f * lng2, 0f, 0f), 20, ammoModel, e)
 
 		// HEALTH  ------------------
-
-
+		val healthModel = CesDoom.instance.assets.getHealth()
+		HealthFactory.create(Vector3(+6f * lng2, 0f, +5f * lng2), 20, healthModel, e)
+		HealthFactory.create(Vector3(-6f * lng2, 0f, -5f * lng2), 20, healthModel, e)
 
 		//createSectorTest(engine, +1, +1)
 		//createSectorTest(engine, -1, +1)

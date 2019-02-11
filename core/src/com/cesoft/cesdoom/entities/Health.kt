@@ -4,21 +4,21 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.assets.Sounds
-import com.cesoft.cesdoom.components.AmmoComponent
+import com.cesoft.cesdoom.components.HealthComponent
 import com.cesoft.cesdoom.components.ModelComponent
+import com.cesoft.cesdoom.components.PlayerComponent
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class Ammo(private val cuantity: Int) : Entity() {
+class Health(private val cuantity: Int) : Entity() {
 
     companion object {
-        val tag: String = Ammo::class.java.simpleName
+        val tag: String = Health::class.java.simpleName
     }
 
     var isPickedUp = false
         private set
-    private var angle = 0f
     private lateinit var pos: Vector3
     lateinit var rigidBody: btRigidBody
     private lateinit var rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo
@@ -43,8 +43,9 @@ class Ammo(private val cuantity: Int) : Entity() {
         if(isPickedUp)return
         isPickedUp = true
 
-        Sounds.play(Sounds.SoundType.AMMO_RELOAD)
-        AmmoComponent.add(cuantity)
-        AmmoComponent.reloading = true
+        Sounds.play(Sounds.SoundType.HEALTH_RELOAD)
+		PlayerComponent.add(cuantity)
+        //HealthComponent.add(cuantity)
+        HealthComponent.reloading = true
     }
 }

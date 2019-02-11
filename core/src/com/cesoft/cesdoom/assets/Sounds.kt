@@ -34,7 +34,7 @@ object Sounds {
 
     enum class SoundType {
 		RIFLE, ENEMY_ATTACK, ENEMY_DIE, ENEMY_HURT, FOOT_STEPS, GATE_OPENS, GATE_LOCKED, SWITCH,
-		GAME_OVER, YOU_WIN, PLAYER_HURT, PLAYER_DYING, NO_AMMO, AMMO_RELOAD
+		GAME_OVER, YOU_WIN, PLAYER_HURT, PLAYER_DYING, NO_AMMO, AMMO_RELOAD, HEALTH_RELOAD
 	}
 
     private val lastPlayed = HashMap<SoundType, Long>()
@@ -54,6 +54,7 @@ object Sounds {
 			SoundType.PLAYER_DYING -> SOUND_PLAYER_DYING
             SoundType.NO_AMMO -> SOUND_NO_AMMO
             SoundType.AMMO_RELOAD -> SOUND_AMMO_RELOAD
+			SoundType.HEALTH_RELOAD -> SOUND_HEALTH_RELOAD
         }
     }
 	private fun minDelay(soundType: SoundType): Int {

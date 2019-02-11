@@ -2,34 +2,34 @@ package com.cesoft.cesdoom.systems
 
 import com.badlogic.ashley.core.*
 import com.badlogic.ashley.utils.ImmutableArray
-import com.cesoft.cesdoom.components.AmmoComponent
-import com.cesoft.cesdoom.entities.Ammo
+import com.cesoft.cesdoom.components.HealthComponent
+import com.cesoft.cesdoom.entities.Health
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class AmmoSystem : EntitySystem(), EntityListener {
-    private var ammo: ImmutableArray<Ammo>? = null
+class HealthSystem : EntitySystem(), EntityListener {
+    private lateinit var health: ImmutableArray<Entity>
 
     override fun entityRemoved(entity: Entity?) {
-        ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Ammo>?
+        health = engine.getEntitiesFor(Family.all(HealthComponent::class.java).get())
     }
 
     override fun entityAdded(entity: Entity?) {
-        ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Ammo>?
+        health = engine.getEntitiesFor(Family.all(HealthComponent::class.java).get())
     }
 
 
     //______________________________________________________________________________________________
     override fun addedToEngine(engine: Engine) {
-        ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Ammo>?
+        health = engine.getEntitiesFor(Family.all(HealthComponent::class.java).get())
     }
 
     //______________________________________________________________________________________________
-    override fun update(delta: Float) {//TODO: Hacer lo mismo con status system... no hace falta usar GameWorld
-        ammo?.let { ammo ->
-            for(entity in ammo) {
-                if(entity.isPickedUp) {
+    override fun update(delta: Float) {
+        health.let { health ->
+            for(entity in health) {
+                if((entity as Health).isPickedUp) {
                     engine.removeEntity(entity)
                 }
                 else {

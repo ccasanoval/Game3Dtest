@@ -13,7 +13,6 @@ import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.managers.MazeFactory
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +102,7 @@ class Enemy(val id: Int) : Entity() {
 			StatusMov.ATTACK -> {
 				status.setAttacking()
 				val pain = BITE_PAIN
-				PlayerComponent.hurt(delta * pain)
+				PlayerComponent.hurt((delta * pain).toInt())
 				Sounds.play(Sounds.SoundType.ENEMY_ATTACK)
 				force = 0f
 			}

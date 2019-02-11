@@ -3,13 +3,11 @@ package com.cesoft.cesdoom.components
 import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.cesoft.cesdoom.assets.Sounds
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object PlayerComponent : Component {
-
 	private val tag = PlayerComponent::class.java.simpleName
 
 	private const val MESSAGE_DURATION = 5000L
@@ -23,8 +21,19 @@ object PlayerComponent : Component {
 
 	var isWinning = false
 		private set
-	var health: Float = 100f
-		private set
+
+	//var health: Float = 100f
+		//private set
+	var health: Int = 0
+        private set
+    fun reset(cuantity: Int) {
+        health = cuantity
+    }
+    fun add(cuantity: Int) {
+        if(cuantity in 1..500)
+            health += cuantity
+    }
+
 	var score: Int = 0
 		private set
 	var isJumping = false
@@ -42,7 +51,7 @@ object PlayerComponent : Component {
 	fun ini(colorAmbiente: ColorAttribute) {
 		this.isWinning = false
 		this.isJumping = false
-		this.health = 100f
+		this.health = 100
 		this.score = 0
 		this.colorAmbiente = colorAmbiente
 		AmmoComponent.reset(50)//TODO:30?
@@ -54,7 +63,7 @@ object PlayerComponent : Component {
 	//fun jump(v: Boolean) { isJumping = v }
 
 	private var lastHurt = 0L
-	fun hurt(pain: Float) {
+	fun hurt(pain: Int) {
 		if(isGodModeOn)return
 		if(System.currentTimeMillis() > lastHurt+800) {
 			health -= pain
