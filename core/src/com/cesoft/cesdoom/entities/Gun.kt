@@ -9,7 +9,6 @@ class Gun : Entity() {
 	lateinit var fire: GunFireWidget
 
 	fun dispose() {
-		//Log.e("Gun", "dispose:------------------------------------------------------")
 		fire.remove()
 		fire.dispose()
 		removeAll()

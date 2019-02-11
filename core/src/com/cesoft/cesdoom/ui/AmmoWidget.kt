@@ -6,8 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.components.WidgetComponent
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

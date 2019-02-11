@@ -44,7 +44,7 @@ class Switch(private val id: String) : Entity() {
 
         Sounds.play(Sounds.SoundType.SWITCH)
 
-        PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_UNLOCKED, id)//TODO MESSAGE
+        PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_UNLOCKED, id)//TODO: MessageSystem + dispatch signal
 
         val modelComponent = ModelComponent.get(this)
         val textureAttributeOn = TextureAttribute(TextureAttribute.Diffuse, textureOn)

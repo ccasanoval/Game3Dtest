@@ -33,22 +33,6 @@ class Gate(private val id: String) : Entity() {
     private var isOpen = false
     private var lockedOnce = 0L
 
-    fun tryToOpen() {
-        val now = System.currentTimeMillis()
-        if(isLocked) {
-            if(now > lockedOnce+2000) {
-                lockedOnce = now
-                PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_LOCKED, id)//TODO send signal
-                Sounds.play(Sounds.SoundType.GATE_LOCKED)
-            }
-        }
-        else if(!isOpening && !isOpen) {
-            isOpening = true
-            PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_OPENS, id)//TODO send signal
-            Sounds.play(Sounds.SoundType.GATE_OPENS)
-        }
-    }
-
     fun init(
             model: ModelComponent,
             angle: Float,
@@ -62,7 +46,6 @@ class Gate(private val id: String) : Entity() {
         this.model = model
     }
 
-
     fun update(delta: Float) {
         if(isOpening) {
             offsetOpened += delta * STEP_OPEN
@@ -71,7 +54,6 @@ class Gate(private val id: String) : Entity() {
                 isOpen = true
                 offsetOpened = MAX_OFFSET_OPEN
             }
-            //val model = getComponent(ModelComponent::class.java)
             when(angle) {
                 00f -> {
                     val posTemp = Vector3(pos.x, pos.y, pos.z + offsetOpened)
@@ -82,6 +64,22 @@ class Gate(private val id: String) : Entity() {
                     model.instance.transform.setTranslation(posTemp)
                 }
             }
+        }
+    }
+
+    fun tryToOpen() {
+        val now = System.currentTimeMillis()
+        if(isLocked) {
+            if(now > lockedOnce+2000) {
+                lockedOnce = now
+                PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_LOCKED, id)//TODO send signal
+                Sounds.play(Sounds.SoundType.GATE_LOCKED)
+            }
+        }
+        else if(!isOpening && !isOpen) {
+            isOpening = true
+            PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_OPENS, id)//TODO send signal
+            Sounds.play(Sounds.SoundType.GATE_OPENS)
         }
     }
 }

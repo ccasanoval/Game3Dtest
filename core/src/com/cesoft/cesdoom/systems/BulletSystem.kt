@@ -103,7 +103,6 @@ class BulletSystem(
 	//______________________________________________________________________________________________
 	private fun collPlayerYouWin() {
 		gameEventSignal.dispatch(GameEvent.YouWin)
-		//player.youWin()
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerAmmo(iAmmo: Int) {

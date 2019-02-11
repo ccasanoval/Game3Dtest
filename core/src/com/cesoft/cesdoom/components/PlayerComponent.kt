@@ -24,7 +24,7 @@ class PlayerComponent : Component {
 
         ///TODO: most of this to GameStatus object...
         var isGodModeOn = false
-        var ammo: Int = 0
+        var ammo: Int = 0           //TODO: MessageSystem + dispatch signal
         var isWinning = false
         var isJumping = false
 
@@ -52,12 +52,12 @@ class PlayerComponent : Component {
         }
 
         /// Score -----------------
-        var score: Int = 0
+        var score: Int = 0          //TODO: MessageSystem + dispatch signal
         fun addScore(pts: Int) { PlayerComponent.score += pts }
 
 
         /// Health -----------------
-        var health: Int = 100
+        var health: Int = 100       //TODO: MessageSystem + dispatch signal
             private set
         fun hurt(pain: Int) {
             health -= pain
@@ -76,7 +76,7 @@ class PlayerComponent : Component {
 
 
         /// Messages -----------------
-        private var lastMessage = 0L
+        private var lastMessage = 0L    //TODO: MessageSystem + dispatch signal
         var message: String = ""
             get() {
                 val now = System.currentTimeMillis()

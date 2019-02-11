@@ -5,10 +5,7 @@ import com.badlogic.ashley.signals.Signal
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
-import com.badlogic.gdx.controllers.Controller
-import com.badlogic.gdx.controllers.ControllerListener
 import com.badlogic.gdx.controllers.Controllers.addListener
-import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.math.Vector3
@@ -33,6 +30,7 @@ import com.cesoft.cesdoom.events.GameQueue
 import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.events.RenderEvent
 import com.cesoft.cesdoom.managers.GunFactory
+import com.cesoft.cesdoom.managers.PlayerInput
 import com.cesoft.cesdoom.util.Log
 
 
@@ -47,7 +45,7 @@ class PlayerSystem(
 		private val camera: Camera,
 		private val bulletSystem: BulletSystem
 	)
-	: EntitySystem(), EntityListener, InputProcessor, ControllerListener
+	: EntitySystem(), EntityListener//, InputProcessor//, ControllerListener
 {
 	companion object {
 	    val tag: String = PlayerSystem::class.java.simpleName
@@ -59,107 +57,20 @@ class PlayerSystem(
 	}
 
 
-	//----------------------------------------------------------------------------------------------
-	///// ControllerListener
-	// TODO: REFACTOR to class que agrupe todo input...
-	enum class Direccion { NONE, ATRAS, ADELANTE, IZQUIERDA, DERECHA }
-	private var xPad: Direccion = Direccion.NONE
-	private var yPad: Direccion = Direccion.NONE
-	private var fire1: Boolean = false
-	private var fire2: Boolean = false
-	private var btnA: Boolean = false
-	private var btnB: Boolean = false
-	private var btnC: Boolean = false
-	private var btnD: Boolean = false
-	/////-------------------------------------------------------------------------------------------
-	override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
-		//Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
-		if(axisCode == com.badlogic.gdx.controllers.mappings.Ouya.AXIS_LEFT_X) {
-			xPad = when {
-				value > 0 -> Direccion.DERECHA
-				value < 0 -> Direccion.IZQUIERDA
-				else -> Direccion.NONE
-			}
-		}
-		else if(axisCode == com.badlogic.gdx.controllers.mappings.Ouya.AXIS_LEFT_Y) {
-			yPad = when {
-				value > 0 -> Direccion.ATRAS
-				value < 0 -> Direccion.ADELANTE
-				else -> Direccion.NONE
-			}
-		}
-		return false
-	}
-	override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
-		when(buttonCode) {
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = false
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = false
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_A -> btnA = false
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = false
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = false
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_Y -> btnD = false
-			else -> Log.e(tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
-		}
-		//else if(buttonCode == com.badlogic.gdx.controllers.mappings.Xbox.A)
-		return false
-	}
-	override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
-		when(buttonCode) {
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = true
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = true
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_A -> btnA = true
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = true
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = true
-			com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_Y -> btnD = true
-			else -> Log.e(tag, "buttonDown:---------------"+controller?.name+" : "+buttonCode)
-		}
-		return false
-	}
-	////
-	override fun connected(controller: Controller?) {
-		Log.e(tag, "connected:------------"+controller?.name)
-	}
-	override fun disconnected(controller: Controller?) {
-		Log.e(tag, "disconnected:------------"+controller?.name)
-	}
-	////
-	override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
-		Log.e(tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
-		return false
-	}
-	override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-		Log.e(tag, "ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
-		return false
-	}
-	override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-		Log.e(tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
-		return false
-	}
-	override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
-		Log.e(tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
-		return false
-	}
-	//////////
-
-
-
-
-
 	lateinit var player: Player
 	private lateinit var bulletComponent: BulletComponent
-
 	private val rayTestAll = AllHitsRayResultCallback(Vector3.Zero, Vector3.Z)
-
 	lateinit var gun: Entity
-
 	private val posTemp = Vector3()
 	private val posTemp2 = Vector3()
+
+	private val input = PlayerInput()
 
 	/// Extends EntitySystem
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		engine!!.addEntityListener(Family.all(PlayerComponent::class.java).get(), this)
-		addListener(this)
+		addListener(input)
 	}
 
 	/// Implements EntityListener
@@ -171,15 +82,16 @@ class PlayerSystem(
 	}
 	override fun entityRemoved(entity: Entity) {}
 
+	/// Implements InputProcessor
 	//______________________________________________________________________________________________
-	override fun keyDown(keycode: Int): Boolean = false
-	override fun keyUp(keycode: Int): Boolean = false
-	override fun keyTyped(character: Char): Boolean = false
-	override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = false
-	override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = false
-	override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = false
-	override fun mouseMoved(screenX: Int, screenY: Int): Boolean = false
-	override fun scrolled(amount: Int): Boolean = false
+//	override fun keyDown(keycode: Int): Boolean = false
+//	override fun keyUp(keycode: Int): Boolean = false
+//	override fun keyTyped(character: Char): Boolean = false
+//	override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = false
+//	override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = false
+//	override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = false
+//	override fun mouseMoved(screenX: Int, screenY: Int): Boolean = false
+//	override fun scrolled(amount: Int): Boolean = false
 
 
 	//______________________________________________________________________________________________
@@ -232,16 +144,15 @@ class PlayerSystem(
 		updateJumping()
 	}
 	//______________________________________________________________________________________________
-	private fun updateRotation(delta: Float)
-	{
+	private fun updateRotation(delta: Float) {	//TODO: cuando no presione rotacion, centrar poco a poco...
 		if(PlayerComponent.isDead())return
 
 		val deltaX: Float
 		val deltaY: Float
 
 		if(CesDoom.isMobile) {
-			deltaX = -ControllerWidget.watchVector.x * 85f * delta
-			deltaY = ControllerWidget.watchVector.y * 85f * delta
+			deltaX = -ControllerWidget.watchVector.x * 90f * delta
+			deltaY = ControllerWidget.watchVector.y * 60f * delta
 		}
 		else {
 			deltaX = -Gdx.input.deltaX * 5f * delta
@@ -302,19 +213,19 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private fun updateTranslationMobile(delta: Float) {
 		var hayMovimiento = false
-		if(ControllerWidget.movementVector.y > +0.20f || yPad == Direccion.ADELANTE) {
+		if(ControllerWidget.movementVector.y > +0.20f || input.yPad == PlayerInput.Direccion.ADELANTE) {
 			posTemp.add(camera.direction)
 			hayMovimiento = true
 		}
-		else if(ControllerWidget.movementVector.y < -0.20f || yPad == Direccion.ATRAS) {
+		else if(ControllerWidget.movementVector.y < -0.20f || input.yPad == PlayerInput.Direccion.ATRAS) {
 			posTemp.sub(camera.direction)
 			hayMovimiento = true
 		}
-		if(ControllerWidget.movementVector.x < -0.25f || xPad == Direccion.IZQUIERDA) {
+		if(ControllerWidget.movementVector.x < -0.25f || input.xPad == PlayerInput.Direccion.IZQUIERDA) {
 			posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			hayMovimiento = true
 		}
-		else if(ControllerWidget.movementVector.x > +0.25f || xPad == Direccion.DERECHA) {
+		else if(ControllerWidget.movementVector.x > +0.25f || input.xPad == PlayerInput.Direccion.DERECHA) {
 			posTemp2.set(camera.direction).crs(camera.up)
 			hayMovimiento = true
 		}
@@ -342,7 +253,7 @@ class PlayerSystem(
 	}
 	//______________________________________________________________________________________________
 	private fun updateJumping() {
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || btnA)
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || input.btnA)
 		{
 			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+PlayerComponent.isJumping)
 			if( ! PlayerComponent.isJumping) {
@@ -380,7 +291,7 @@ class PlayerSystem(
 	private var deltaFire = 100f
 	private fun updateWeapon(delta: Float) {
 
-		val isFiring = (ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || fire1)
+		val isFiring = (ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || input.fire1)
 		deltaFire += delta
 
 		if(PlayerComponent.isReloading) {
@@ -477,7 +388,6 @@ class PlayerSystem(
 	private var delayDeath = 0f
 	private fun checkGameOver(delta: Float) {
 		if(PlayerComponent.isDead() && !Status.paused) {
-			changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.0f, 0.0f, 1f))
 			if(delayDeath == 0f) {
 				Sounds.play(Sounds.SoundType.PLAYER_DYING)
 				changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.0f, 0.0f, 1f))
@@ -486,7 +396,6 @@ class PlayerSystem(
 				Status.paused = true
 				CesDoom.instance.gameUI.gameOverWidget.show()
 				Sounds.play(Sounds.SoundType.GAME_OVER)
-				changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.0f, 0.0f, 1f))
 			}
 			delayDeath += delta
 		}
@@ -581,6 +490,7 @@ class PlayerSystem(
 		renderEventSignal.dispatch(RenderEvent(RenderEvent.Type.SET_AMBIENT_COLOR, color))
 	}
 	private fun restoreAmbientColor() {
+		if(PlayerComponent.isDead())return
 		val now = System.currentTimeMillis()
 		if(isChangingColor && now > lastColorChange+COLOR_DELAY) {
 			isChangingColor = false
@@ -597,8 +507,6 @@ class PlayerSystem(
 	}
 
 
-
-
 	private fun resetPlayerComponent() {
 		PlayerComponent.isWinning = false
 		PlayerComponent.isJumping = false
@@ -606,8 +514,6 @@ class PlayerSystem(
 		PlayerComponent.score = 0
 		PlayerComponent.tall = PlayerComponent.TALL
 		PlayerComponent.resetHealth()
-		//playerComponent.ammo = AmmoComponent.MAGAZINE_CAPACITY
-		//playerComponent.colorAmbiente = colorAmbiente
 	}
 
 	private fun youWin() {
