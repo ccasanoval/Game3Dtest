@@ -23,11 +23,10 @@ import com.cesoft.cesdoom.systems.*
 //
 //TODO: Joystick!!
 //TODO: Mejorar FPS (Enemy consume mucho, es todo por pathfinding?)
-//TODO: HEALTH objects+
 //TODO: Levels+
 //
 //TODO: Constructor para laberinto & MapPathFinder
-//TODO: Columnas en maze + rampas
+//TODO: Columnas en maze
 
 //TODO: mandos de pantalla : Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga (cargadores) y salto?
 
@@ -56,7 +55,7 @@ class GameWorld(private val game: CesDoom) {
 	private var bulletSystem: BulletSystem
 	private var playerSystem: PlayerSystem
 	private var enemySystem: EnemySystem
-	private var statusSystem: StatusSystem
+	//private var statusSystem: StatusSystem
 	private var gateSystem: GateSystem
 	private var ammoSystem: AmmoSystem
 	private var healthSystem: HealthSystem
@@ -93,7 +92,7 @@ class GameWorld(private val game: CesDoom) {
 				renderSystem.perspectiveCamera,//TODO: quitar referencias? usar eventos?
 				bulletSystem)//TODO: quitar referencias? usar eventos?
 		enemySystem = EnemySystem(enemyEventSignal, gameEventSignal, bulletEventSignal, game)
-		statusSystem = StatusSystem(this)
+		//statusSystem = StatusSystem(this)
 		gateSystem = GateSystem()
 		ammoSystem = AmmoSystem(gameEventSignal)
 		healthSystem = HealthSystem(gameEventSignal)
@@ -103,7 +102,7 @@ class GameWorld(private val game: CesDoom) {
 		engine.addSystem(bulletSystem)
 		engine.addSystem(playerSystem)
 		engine.addSystem(enemySystem)
-		engine.addSystem(statusSystem)
+		//engine.addSystem(statusSystem)
 		engine.addSystem(gateSystem)
 		engine.addSystem(ammoSystem)
 		engine.addSystem(healthSystem)
@@ -158,7 +157,7 @@ class GameWorld(private val game: CesDoom) {
 		bulletSystem.setProcessing( ! Status.paused)
 		enemySystem.setProcessing( ! Status.paused)
 		playerSystem.setProcessing( ! Status.paused)
-		statusSystem.setProcessing( ! Status.paused)
+		//statusSystem.setProcessing( ! Status.paused)
 		gateSystem.setProcessing( ! Status.paused)
 	}
 

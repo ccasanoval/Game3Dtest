@@ -218,7 +218,7 @@ class PlayerSystem(
 				}
 				GameEvent.Type.ENEMY_DEAD -> {
 					if(event.value > 0)
-						addScore(event.value)
+						PlayerComponent.addScore(event.value)
 				}
 				//else -> Unit
 			}
@@ -234,7 +234,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private fun updateRotation(delta: Float)
 	{
-		if(isDead())return
+		if(PlayerComponent.isDead())return
 
 		val deltaX: Float
 		val deltaY: Float
@@ -282,7 +282,7 @@ class PlayerSystem(
 	{
 		posTemp.set(0f, 0f, 0f)
 
-		if(isDead()) {
+		if(PlayerComponent.isDead()) {
 			PlayerComponent.tall -= delta*12f
 			return
 		}
@@ -321,7 +321,7 @@ class PlayerSystem(
 		if( ! hayMovimiento)
 			posTemp2.set(Vector3.Zero)
 		else {
-			animFootStep(delta)
+			PlayerComponent.animFootStep(delta)
 			if(Settings.isSoundEnabled)// && ! Assets.getSoundFootSteps().isPlaying)
 				Sounds.play(Sounds.SoundType.FOOT_STEPS)
 		}
@@ -360,7 +360,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private fun updateCamera() {
 		val pos = getPosition()
-		pos.y += PlayerComponent.tall/1.5f +yFoot
+		pos.y += PlayerComponent.tall/1.5f +PlayerComponent.yFoot
 		pos.x += camera.direction.x*PlayerComponent.RADIO/2 // camara adelantada a colision, para no disparar a self bullet body
 		pos.z += camera.direction.z*PlayerComponent.RADIO/2
 		camera.position.set(pos)
@@ -379,7 +379,6 @@ class PlayerSystem(
 	private val DELAY_RELOAD = 0.35f
 	private var deltaFire = 100f
 	private fun updateWeapon(delta: Float) {
-		// Gdx.input.isTouched
 
 		val isFiring = (ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || fire1)
 		deltaFire += delta
@@ -394,8 +393,7 @@ class PlayerSystem(
 		else if(isFiring && deltaFire > DELAY_FIRE) {
 			if(PlayerComponent.ammo > 0) {
 				deltaFire = 0f
-
-				GunFactory.playSound()
+				Sounds.play(Sounds.SoundType.RIFLE)
 				GunFactory.animate(gun, GunComponent.ACTION.SHOOT)
 				discountAmmo()
 				checkBulletKillEnemy()
@@ -423,7 +421,6 @@ class PlayerSystem(
 				GunFactory.animate(gun, GunComponent.ACTION.DRAW)
 			}
 		}*/
-		//gun.getComponent(AnimationComponent::class.java).update(delta)
 		AnimationComponent.get(gun).update(delta)
 	}
 	//______________________________________________________________________________________________
@@ -476,31 +473,16 @@ class PlayerSystem(
 	}
 
 
-	private var isFootUp = false
-	private var yFoot = 0f
-	private fun animFootStep(delta: Float)
-	{
-		if(isFootUp) {
-			yFoot += delta*7
-			if(yFoot > 0.8f)
-				isFootUp = false
-		}
-		else {
-			yFoot -= delta*7
-			if(yFoot < -0.8f)
-				isFootUp = true
-		}
-	}
-
 	//______________________________________________________________________________________________
 	private var delayDeath = 0f
 	private fun checkGameOver(delta: Float) {
-		if(isDead() && !Status.paused) {
+		if(PlayerComponent.isDead() && !Status.paused) {
+			changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.0f, 0.0f, 1f))
 			if(delayDeath == 0f) {
 				Sounds.play(Sounds.SoundType.PLAYER_DYING)
 				changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.0f, 0.0f, 1f))
 			}
-			else if(delayDeath >= 2f) {
+			else if(delayDeath > 2.5f) {
 				Status.paused = true
 				CesDoom.instance.gameUI.gameOverWidget.show()
 				Sounds.play(Sounds.SoundType.GAME_OVER)
@@ -584,14 +566,12 @@ class PlayerSystem(
 			changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.0f, 0.0f, 1f))
 			if(PlayerComponent.health > 5)
 				Sounds.play(Sounds.SoundType.PLAYER_HURT)
-			Log.e(tag, "hurt----------------------------------")
 		}
 	}
 	private fun heal(value: Int) {
 		PlayerComponent.heal(value)
 		changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0f, .8f, 0f, 1f))
 		Sounds.play(Sounds.SoundType.PLAYER_HEAL)
-		Log.e(tag, "heal----------------------------------")
 	}
 	private var isChangingColor = false
 	private var lastColorChange = 0L
@@ -605,7 +585,6 @@ class PlayerSystem(
 		if(isChangingColor && now > lastColorChange+COLOR_DELAY) {
 			isChangingColor = false
 			renderEventSignal.dispatch(RenderEvent(RenderEvent.Type.SET_AMBIENT_COLOR, colorAmbientConst))
-			Log.e(tag, "restoreColor----------------------------------")
 		}
 	}
 
@@ -630,12 +609,6 @@ class PlayerSystem(
 		//playerComponent.ammo = AmmoComponent.MAGAZINE_CAPACITY
 		//playerComponent.colorAmbiente = colorAmbiente
 	}
-
-	private fun isDead() = PlayerComponent.health < 1
-	private fun addScore(pts: Int) { PlayerComponent.score += pts }
-	//private fun jump(v: Boolean) { isJumping = v }
-
-
 
 	private fun youWin() {
 		PlayerComponent.isWinning = true

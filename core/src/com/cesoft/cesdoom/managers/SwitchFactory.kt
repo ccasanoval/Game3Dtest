@@ -36,7 +36,7 @@ object SwitchFactory {
                     or VertexAttributes.Usage.TextureCoordinates).toLong()
 
     //______________________________________________________________________________________________
-    fun create(pos: Vector3, angle: Float, id: String, engine: Engine): Switch {
+    fun create(engine: Engine, pos: Vector3, angle: Float, id: String): Switch {
 
         /// Entity
         val entity = Switch(id)

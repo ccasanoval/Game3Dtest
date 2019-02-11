@@ -16,7 +16,6 @@ import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.entities.Switch
 import com.cesoft.cesdoom.events.BulletEvent
 import com.cesoft.cesdoom.events.BulletQueue
-import com.cesoft.cesdoom.events.GameQueue
 import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.util.Log
 
@@ -24,7 +23,7 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class BulletSystem(
-		private val eventSignal: Signal<BulletEvent>,
+		eventSignal: Signal<BulletEvent>,
 		private val gameEventSignal: Signal<GameEvent>)
 	: EntitySystem(), EntityListener {
 
@@ -33,18 +32,16 @@ class BulletSystem(
 		private const val GRAVITY = -200f
 	}
 
-	//private val eventQueue = GameQueue()
 	private val eventQueue = BulletQueue()
 	init {
-		//gameEventSignal.add(eventQueue)
 		eventSignal.add(eventQueue)
 	}
 
 	private val collisionConfig: btCollisionConfiguration = btDefaultCollisionConfiguration()
 	private val dispatcher: btCollisionDispatcher = btCollisionDispatcher(collisionConfig)
-	private val broadphase = btDbvtBroadphase()
+	private val broadPhase = btDbvtBroadphase()
 	private val solver: btConstraintSolver = btSequentialImpulseConstraintSolver()
-	val collisionWorld: btDiscreteDynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig)
+	val collisionWorld: btDiscreteDynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConfig)
 
 	//______________________________________________________________________________________________
 	init {
@@ -111,16 +108,11 @@ class BulletSystem(
 	//______________________________________________________________________________________________
 	private fun collPlayerAmmo(iAmmo: Int) {
 		gameEventSignal.dispatch(GameEvent(GameEvent.Type.AMMO_PICKUP, AmmoComponent.MAGAZINE_CAPACITY, ammos[iAmmo]!!))
-
-		Log.e(tag, "collPlayerAmmo--------${ammos.size}-------- $iAmmo // ${ammos[iAmmo]}")
-		//TODO all inside ammo pickup...?----------------------------------------------
 		val ammo = ammos[iAmmo] as Ammo
 		removeBody(ammo)
-		/*ammos.remove(iAmmo)*/
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerHealth(iHealth: Int) {
-		Log.e(tag, "collPlayerHealth----------------------------------- *************** $iHealth")
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerSwitch(iSwitch: Int) {
@@ -134,7 +126,7 @@ class BulletSystem(
 	fun dispose() {
 		collisionWorld.dispose()
 		solver.dispose()
-		broadphase.dispose()
+		broadPhase.dispose()
 		dispatcher.dispose()
 		collisionConfig.dispose()
 	}
@@ -148,7 +140,7 @@ class BulletSystem(
 	private val ammos = mutableMapOf<Int, Ammo>()
 	private lateinit var player : Player
 	override fun entityAdded(entity: Entity) {
-		val bullet = entity.getComponent(BulletComponent::class.java)
+		val bullet = BulletComponent.get(entity)
 
 		when(bullet.rigidBody.userValue) {
 			BulletComponent.PLAYER_FLAG -> {
@@ -183,17 +175,14 @@ class BulletSystem(
 
 	//______________________________________________________________________________________________
 	private fun removeBody(entity: Entity) {
-		val comp = entity.getComponent(BulletComponent::class.java)
-		if(comp != null)
+		val comp = BulletComponent.get(entity)
+		//if(comp != null)
 			collisionWorld.removeCollisionObject(comp.rigidBody)
 	}
 	//______________________________________________________________________________________________
 	override fun entityRemoved(entity: Entity) {
-		Log.e(tag, "entityRemoved--------------------------- $entity")
+		//Log.e(tag, "entityRemoved--------------------------- $entity")
 	}
-
-
-
 
 
 	//______________________________________________________________________________________________

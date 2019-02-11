@@ -46,7 +46,7 @@ class Switch(private val id: String) : Entity() {
 
         PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_UNLOCKED, id)//TODO MESSAGE
 
-        val modelComponent = getComponent(ModelComponent::class.java)
+        val modelComponent = ModelComponent.get(this)
         val textureAttributeOn = TextureAttribute(TextureAttribute.Diffuse, textureOn)
         modelComponent.instance.materials.get(0).set(textureAttributeOn)
     }

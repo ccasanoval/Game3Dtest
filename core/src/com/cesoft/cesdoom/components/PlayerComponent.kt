@@ -34,7 +34,27 @@ class PlayerComponent : Component {
         var isReloadingHealth = false
 
 
+        /// Walk camera vibration -----------------
+        var yFoot = 0f
+        private var isFootUp = false
+        fun animFootStep(delta: Float)
+        {
+            if(isFootUp) {
+                PlayerComponent.yFoot += delta*7
+                if(PlayerComponent.yFoot > 0.8f)
+                    isFootUp = false
+            }
+            else {
+                PlayerComponent.yFoot -= delta*7
+                if(PlayerComponent.yFoot < -0.8f)
+                    isFootUp = true
+            }
+        }
+
+        /// Score -----------------
         var score: Int = 0
+        fun addScore(pts: Int) { PlayerComponent.score += pts }
+
 
         /// Health -----------------
         var health: Int = 100
@@ -52,6 +72,7 @@ class PlayerComponent : Component {
         fun resetHealth() {
             health = HEALTH_FULL
         }
+        fun isDead() = PlayerComponent.health < 1
 
 
         /// Messages -----------------

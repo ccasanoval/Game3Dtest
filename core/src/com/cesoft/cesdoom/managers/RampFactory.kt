@@ -1,5 +1,6 @@
 package com.cesoft.cesdoom.managers
 
+import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
@@ -19,18 +20,21 @@ import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
-import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.map.MapGraphFactory
 import com.cesoft.cesdoom.systems.RenderSystem
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-object RampFactory {
-	const val LONG = 30f
-	const val HIGH = 20f
-	const val THICK = 1f
+class RampFactory(assets: Assets) {
+	companion object {
+		const val LONG = 30f
+		const val HIGH = 20f
+		const val THICK = 1f
+	}
+
 	private val dim0 = Vector3(THICK*2, HIGH*2, LONG*2)
 	private val dim90 = Vector3(LONG*2, THICK*2, HIGH*2)
 	private val dimMax = Vector3(LONG*2, LONG*2, LONG*2)
@@ -46,8 +50,8 @@ object RampFactory {
 					or VertexAttributes.Usage.TextureCoordinates).toLong()
 
 	init {
-		val texture1 = CesDoom.instance.assets.getWallMetal2()
-		val texture2 = CesDoom.instance.assets.getWallMetal3()
+		val texture1 = assets.getWallMetal2()
+		val texture2 = assets.getWallMetal3()
 
 		/// MODELO1
 		texture1.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
@@ -66,7 +70,7 @@ object RampFactory {
 	}
 
 	//______________________________________________________________________________________________
-	fun create(pos: Vector3, angleX: Float = 0f, angleY: Float = 0f, angleZ: Float = 0f, type: Boolean = true): Entity {
+	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angleX: Float = 0f, angleY: Float = 0f, angleZ: Float = 0f, type: Boolean = true): Entity {
 		val entity = Entity()
 
 		/// MODELO
@@ -112,6 +116,7 @@ object RampFactory {
 		rigidBody.spinningFriction = 1f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 
+		engine.addEntity(entity)
 		return entity
 	}
 }

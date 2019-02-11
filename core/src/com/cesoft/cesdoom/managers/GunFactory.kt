@@ -4,8 +4,6 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.cesoft.cesdoom.assets.Assets
-import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.ui.GunFireWidget
 import com.cesoft.cesdoom.components.AnimationComponent
 import com.cesoft.cesdoom.components.AnimationParams
@@ -40,7 +38,7 @@ object GunFactory {
 					for(i in 0 until model.nodes.size - 1)
 						model.nodes[i].scale.scl(0.03f)
 				}
-				val modelComponent = ModelComponent(model, Vector3(25f, -10f, -15f))
+				val modelComponent = ModelComponent(model, Vector3(25f, -9f, -15f))
 				modelComponent.instance.transform.rotate(0f, 1f, 0f, 185f)
 				modelComponent.instance.transform.rotate(1f, 0f, 0f, -7f)
 				entity.add(modelComponent).add(AnimationComponent(modelComponent.instance))
@@ -52,7 +50,7 @@ object GunFactory {
 
 	//______________________________________________________________________________________________
 	fun animate(entity: Entity, action: GunComponent.ACTION) {
-		val type = entity.getComponent(GunComponent::class.java).type
+		val type = GunComponent.get(entity).type
 
 		if(action == GunComponent.ACTION.SHOOT) {
 			(entity as Gun).fire.draw()/// Muzzle Flash
@@ -62,7 +60,7 @@ object GunFactory {
 		if(animParams.id.isEmpty())return
 
 		if( ! animParams.id.isEmpty())
-		entity.getComponent(AnimationComponent::class.java).animate(animParams)
+			AnimationComponent.get(entity).animate(animParams)
 	}
 	//______________________________________________________________________________________________
 	private fun getAnimationParams(type: GunComponent.TYPE, action: GunComponent.ACTION) : AnimationParams {
@@ -77,8 +75,4 @@ object GunFactory {
 		}
 	}
 
-	//______________________________________________________________________________________________
-	fun playSound() {
-		Sounds.play(Sounds.SoundType.RIFLE)
-	}
 }

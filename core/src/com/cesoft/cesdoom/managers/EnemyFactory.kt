@@ -27,7 +27,7 @@ class EnemyFactory {
 
     companion object {
         private val tag: String = EnemyFactory::class.java.simpleName
-        private const val MAX_ENEMIES = 3      	//TODO: aumenta cuando supera x puntos...
+        private const val MAX_ENEMIES = 4
         private const val SPAWN_DELAY = 5*1000	//TODO: si pausa o background, debe actualizar time!!!
     }
 
@@ -107,14 +107,14 @@ class EnemyFactory {
         resetComponents(entity)
 
         /// Model
-        val model = entity.getComponent(ModelComponent::class.java)
+        val model = ModelComponent.get(entity)
         if (model.blendingAttribute != null)
             model.blendingAttribute!!.opacity = 1f
         val rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(0.0).toFloat())
         model.instance.transform.set(position, rot)
 
         /// Collision
-        val bullet = entity.getComponent(BulletComponent::class.java)
+        val bullet = BulletComponent.get(entity)
         bullet.rigidBody.linearVelocity = Vector3.Zero
         val transf = Matrix4()
         transf.setTranslation(position)
@@ -169,7 +169,6 @@ class EnemyFactory {
                 entity.add(modelComponent)
                 /// ANIMATION
                 entity.add(AnimationComponent(modelComponent.instance))
-                //setAnimation(entity, EnemyComponent.ACTION.WALKING)//TODO
             }
         }
 

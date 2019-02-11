@@ -35,6 +35,7 @@ class EnemyComponent(val type: TYPE) : Component
 		REINCARNATING,
 	}
 
+	var orientation: Double = 0.0
 	var posTemp = Vector3()
 	var nextStep3D = Vector3()
 	var stepCalc2D = Vector2()

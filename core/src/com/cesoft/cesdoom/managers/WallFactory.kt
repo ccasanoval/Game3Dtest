@@ -81,7 +81,7 @@ object WallFactory {
 
 
 	//______________________________________________________________________________________________
-	fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, engine: Engine, type: Type = Type.BRICK): Entity {
+	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angle: Float, type: Type = Type.BRICK): Entity {
 
 		/// GraphMap
 		WallMapFactory.create(mapFactory, pos, angle, 0)

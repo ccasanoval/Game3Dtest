@@ -75,6 +75,7 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 		/// Ambiente
 		environment.set(colorAmbiente)
 		environment.add(DirectionalLight().set(0.7f, 0.3f, 0.1f, -1f, -0.8f, -0.4f))
+		//environment.set(ColorAttribute(ColorAttribute.Fog, 0.1f, 0.3f, 0.1f, 1f))
 		/// Sombras
 //		shadowLight = DirectionalShadowLight(1024 * 5, 1024 * 5, 200f, 200f, 1f, 300f)
 //		shadowLight.set(0.9f, 0.9f, 0.9f, 0f, -0.1f, 0.1f)
@@ -129,20 +130,17 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 		}
 		else {*/
 			batch.begin(perspectiveCamera)
-			for(it in entities)
-			{
-				if(it.getComponent(GunComponent::class.java) == null)
-				{
-					val model = it.getComponent(ModelComponent::class.java) ?: continue
-					try {
-						if(model.frustumCullingData.isVisible(perspectiveCamera)) {
-							batch.render(model.instance, environment)
-							countDrawn++
-						}
+			for(entity in entities) {
+				if(entity is Gun)continue
+				val model = ModelComponent.get(entity)
+				try {
+					if(model.frustumCullingData.isVisible(perspectiveCamera)) {
+						batch.render(model.instance, environment)
+						countDrawn++
 					}
-					catch(e: Exception) {
-						Log.e(tag, "RenderSystem:update:e:-----------$model-------------$e")
-					}
+				}
+				catch(e: Exception) {
+					Log.e(tag, "RenderSystem:update:e:$model:$e")
 				}
 			}
 		//}
@@ -154,6 +152,7 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 			//drawShadows(delta)
 			renderParticleEffects()
 		}
+
 		drawGun(delta)
 	}
 
@@ -174,9 +173,10 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 	private var isDrawGunUp = true
 	private var yDrawGunOrg = -999f
 	private fun drawGun(delta: Float) {
+		if(PlayerComponent.isDead())return
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT)
 		batch.begin(gunCamera)
-		val modelo = gun.getComponent(ModelComponent::class.java)
+		val modelo = ModelComponent.get(gun)
 		animGunRespiracion(modelo, delta)
 		batch.render(modelo.instance)
 		batch.end()
@@ -228,7 +228,7 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-		gun.reset()
+		gun.dispose()
 		batch.dispose()
 		visibleEntities.clear()
 		isDisposed = true
@@ -241,11 +241,11 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 		effect.start()
 		CesDoom.instance.assets.getParticleSystem()?.add(effect)
 	}
-	fun delParticleEffect(effect: ParticleEffect) {
-		effect.end()
-		effect.reset()
-		CesDoom.instance.assets.getParticleSystem()?.remove(effect)
-	}
+//	fun delParticleEffect(effect: ParticleEffect) {
+//		effect.end()
+//		effect.reset()
+//		CesDoom.instance.assets.getParticleSystem()?.remove(effect)
+//	}
 
 
 	//______________________________________________________________________________________________
