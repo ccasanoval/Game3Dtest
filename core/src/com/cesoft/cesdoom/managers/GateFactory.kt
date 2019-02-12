@@ -53,7 +53,7 @@ object GateFactory {
 
 
     //______________________________________________________________________________________________
-    fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, id: String, engine: Engine): Gate {
+    fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angle: Float, id: String): Gate {
 
         /// GraphMap
         //WallMapFactory.create(mapFactory, pos, angle, 0)

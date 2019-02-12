@@ -9,6 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.components.PlayerComponent
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -38,6 +40,7 @@ class HealthWidget : Actor() {
 	//______________________________________________________________________________________________
 	override fun act(delta: Float) {
 		if(Status.paused) return
+		updateValue()
 		healthBar.act(delta)
 		label.act(delta)
 	}
@@ -67,8 +70,9 @@ class HealthWidget : Actor() {
 	}
 
 	//______________________________________________________________________________________________
-	fun setValue(value: Int) {
-		healthBar.value = (value-3).toFloat()
+	private fun updateValue() {
+		val value = PlayerComponent.health
+		healthBar.value = value-3f
 		label.setText("$value %")
 	}
 }

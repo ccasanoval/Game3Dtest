@@ -36,11 +36,11 @@ object SwitchFactory {
                     or VertexAttributes.Usage.TextureCoordinates).toLong()
 
     //______________________________________________________________________________________________
-    fun create(pos: Vector3, angle: Float, id: String, engine: Engine): Switch {
+    fun create(engine: Engine, pos: Vector3, angle: Float, id: String): Switch {
 
         /// Entity
         val entity = Switch(id)
-        pos.y = PlayerComponent.ALTURA + SwitchComponent.SIZE  //1.05f * WallFactory.HIGH
+        pos.y = PlayerComponent.TALL + SwitchComponent.SIZE +1  //1.05f * WallFactory.HIGH
 
         /// Component
         entity.add(SwitchComponent)

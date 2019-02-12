@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,13 +22,13 @@ class MessageWidget : Actor() {
 	override fun act(delta: Float) {
 		message.act(delta)
 		if(PlayerComponent.message.isEmpty() && !message.text.isEmpty()) {
-			if(PlayerComponent.isGodModeOn) {
+			/*if(PlayerComponent.isGodModeOn) {
 				message.text = " * GOD MODE * "
 			}
-			else {
-				message.text = ""
-				setPosition(-100f, -100f)
-			}
+			else {*/
+			message.text = ""
+			setPosition(-100f, -100f)
+			//}
 		}
 		else if(PlayerComponent.message != message.text) {
 			message.text = PlayerComponent.message

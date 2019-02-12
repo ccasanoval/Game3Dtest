@@ -1,41 +1,63 @@
 package com.cesoft.cesdoom.systems
 
 import com.badlogic.ashley.core.*
+import com.badlogic.ashley.signals.Signal
 import com.badlogic.ashley.utils.ImmutableArray
+import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.components.AmmoComponent
+import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.entities.Ammo
+import com.cesoft.cesdoom.events.GameEvent
+import com.cesoft.cesdoom.events.GameQueue
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class AmmoSystem : EntitySystem(), EntityListener {
-    private var ammo: ImmutableArray<Ammo>? = null
+class AmmoSystem(gameEventSignal: Signal<GameEvent>) : EntitySystem(), EntityListener {
 
+    private val eventQueue = GameQueue()
+    init {
+        gameEventSignal.add(eventQueue)
+    }
+
+    /// Implements EntityListener
+    private lateinit var ammo: ImmutableArray<Entity>
     override fun entityRemoved(entity: Entity?) {
-        ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Ammo>?
+        ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Entity>
     }
-
     override fun entityAdded(entity: Entity?) {
-        ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Ammo>?
+        ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Entity>
     }
 
-
-    //______________________________________________________________________________________________
+    /// Extends EntitySystem
     override fun addedToEngine(engine: Engine) {
-        ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Ammo>?
+        ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Entity>
     }
-
-    //______________________________________________________________________________________________
-    override fun update(delta: Float) {//TODO: Hacer lo mismo con status system... no hace falta usar GameWorld
-        ammo?.let { ammo ->
-            for(entity in ammo) {
-                if(entity.isPickedUp) {
-                    engine.removeEntity(entity)
+    override fun update(delta: Float) {
+        processEvents()
+        for(entity in ammo) {
+            (entity as Ammo).update(engine)
+//            val obj = AmmoComponent.get(entity)
+//            if(obj.isPickedUp) {
+//                engine.removeEntity(entity)
+//            }
+//            else {
+//                val model = ModelComponent.get(entity)
+//                model.instance.transform.rotate(Vector3.Y, 5f)
+//            }
+        }
+    }
+    private fun processEvents() {
+        for(event in eventQueue.events) {
+            when(event.type) {
+                GameEvent.Type.AMMO_PICKUP -> {
+                    //val ammo = AmmoComponent.get(event.entity!!)
+                    //ammo.isPickedUp = true
+                    (event.entity!! as Ammo).pickup()
                 }
-                else {
-                    entity.update()
-                }
+                else -> Unit
             }
         }
     }
+
 }

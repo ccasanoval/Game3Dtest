@@ -1,18 +1,17 @@
 package com.cesoft.cesdoom.components
 
 import com.badlogic.ashley.core.Component
+import com.badlogic.ashley.core.ComponentMapper
+import com.badlogic.ashley.core.Entity
 
-object HealthComponent : Component {
-    const val SIZE = 5f
+class HealthComponent: Component {
 
-    var reloading: Boolean = false
-    /*var health: Int = 0
-        private set
-    fun reset(cuantity: Int) {
-        health = cuantity
+    companion object {
+        private val mapper: ComponentMapper<HealthComponent> = ComponentMapper.getFor(HealthComponent::class.java)
+        fun get(entity: Entity): HealthComponent = mapper.get(entity)
+
+        const val SIZE = 5f
+        const val DRUG_CAPACITY = 25
     }
-    fun add(cuantity: Int) {
-        if(cuantity in 1..500)
-            health += cuantity
-    }*/
+
 }

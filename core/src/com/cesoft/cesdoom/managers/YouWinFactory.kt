@@ -19,7 +19,7 @@ object YouWinFactory {
 	const val SIZE = 30f
 
 	//______________________________________________________________________________________________
-	fun create(pos: Vector3, engine: Engine): Entity {
+	fun create(engine: Engine, pos: Vector3): Entity {
 
 		/// Entity
 		val entity = Entity()

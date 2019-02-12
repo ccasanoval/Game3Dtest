@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.ashley.core.Family
+import com.badlogic.ashley.signals.Signal
 import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
@@ -14,30 +15,28 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.math.Vector3
-import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.*
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.cesoft.cesdoom.RenderUtils.OcclusionCuller
 import com.cesoft.cesdoom.RenderUtils.OcclusionBuffer
-import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.entities.Gun
+import com.cesoft.cesdoom.events.RenderEvent
+import com.cesoft.cesdoom.events.RenderQueue
 import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class RenderSystem(
-		colorAmbiente: ColorAttribute/*,
-		private val broadphase2: btDbvtBroadphase*/)
-	: EntitySystem() {
+class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbiente: ColorAttribute): EntitySystem() {
 
 	companion object {
-	    val tag: String = RenderSystem::class.java.simpleName
+	    private val tag: String = RenderSystem::class.java.simpleName
 		private val FOV = 67f
-		val CF_OCCLUDER_OBJECT: Int = 512
 	}
+	private val renderQueue = RenderQueue()
 
 	private lateinit var entities: ImmutableArray<Entity>
 	private var batch: ModelBatch = ModelBatch()
@@ -55,9 +54,13 @@ class RenderSystem(
 	private val OCL_BUFFER_EXTENTS = intArrayOf(128, 256, 512, 32, 64)
 	val visibleEntities = arrayListOf<Entity?>()
 
+
 	//______________________________________________________________________________________________
 	init {
 		Log.e(tag, "INI ---------------------------------------------------------")
+
+		/// Events
+		eventSignal.add(renderQueue)
 
 		/// Camaras
 		perspectiveCamera.far = 12000f // Para que vea el cielo (dome)
@@ -66,11 +69,12 @@ class RenderSystem(
 		gunCamera.far = 50f
 
 		/// Particulas
-		CesDoom.instance.assets.iniParticleEffectPool(perspectiveCamera)
+		assets.iniParticleEffectPool(perspectiveCamera)
 
 		/// Ambiente
 		environment.set(colorAmbiente)
 		environment.add(DirectionalLight().set(0.7f, 0.3f, 0.1f, -1f, -0.8f, -0.4f))
+		//environment.set(ColorAttribute(ColorAttribute.Fog, 0.1f, 0.3f, 0.1f, 1f))
 		/// Sombras
 //		shadowLight = DirectionalShadowLight(1024 * 5, 1024 * 5, 200f, 200f, 1f, 300f)
 //		shadowLight.set(0.9f, 0.9f, 0.9f, 0f, -0.1f, 0.1f)
@@ -80,7 +84,7 @@ class RenderSystem(
 		oclBuffer = OcclusionBuffer(OCL_BUFFER_EXTENTS[0], OCL_BUFFER_EXTENTS[0])
 		occlusionCuller = object : OcclusionCuller() {
 			override fun isOccluder(obj: btCollisionObject): Boolean {
-				return obj.collisionFlags and CF_OCCLUDER_OBJECT != 0
+				return obj.collisionFlags and BulletComponent.CF_OCCLUDER_OBJECT != 0
 			}
 			override fun onObjectVisible(obj: btCollisionObject) {
 				val entity = obj.userData as Entity
@@ -99,6 +103,8 @@ class RenderSystem(
 	override fun update(delta: Float) {
 		if(isDisposed)return
 		var countDrawn = 0
+
+		processEvents()
 
 		/*val OCCLUSION = false
 		if(OCCLUSION) {
@@ -123,20 +129,17 @@ class RenderSystem(
 		}
 		else {*/
 			batch.begin(perspectiveCamera)
-			for(it in entities)
-			{
-				if(it.getComponent(GunComponent::class.java) == null)
-				{
-					val model = it.getComponent(ModelComponent::class.java) ?: continue
-					try {
-						if(model.frustumCullingData.isVisible(perspectiveCamera)) {
-							batch.render(model.instance, environment)
-							countDrawn++
-						}
+			for(entity in entities) {
+				if(entity is Gun)continue
+				val model = ModelComponent.get(entity)
+				try {
+					if(model.frustumCullingData.isVisible(perspectiveCamera)) {
+						batch.render(model.instance, environment)
+						countDrawn++
 					}
-					catch(e: Exception) {
-						Log.e(tag, "RenderSystem:update:e:-----------$model-------------$e")
-					}
+				}
+				catch(e: Exception) {
+					Log.e(tag, "RenderSystem:update:e:$model:$e")
 				}
 			}
 		//}
@@ -148,6 +151,7 @@ class RenderSystem(
 			//drawShadows(delta)
 			renderParticleEffects()
 		}
+
 		drawGun(delta)
 	}
 
@@ -168,9 +172,10 @@ class RenderSystem(
 	private var isDrawGunUp = true
 	private var yDrawGunOrg = -999f
 	private fun drawGun(delta: Float) {
+		if(PlayerComponent.isDead())return
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT)
 		batch.begin(gunCamera)
-		val modelo = gun.getComponent(ModelComponent::class.java)
+		val modelo = ModelComponent.get(gun)
 		animGunRespiracion(modelo, delta)
 		batch.render(modelo.instance)
 		batch.end()
@@ -222,22 +227,30 @@ class RenderSystem(
 
 	//______________________________________________________________________________________________
 	fun dispose() {
-		gun.reset()
+		gun.dispose()
 		batch.dispose()
 		visibleEntities.clear()
 		isDisposed = true
-		//delParticleEffect(effect: ParticleEffect) ?
 	}
 
-	///private val particleEffects = ArrayList<ParticleEffect>()
 	fun addParticleEffect(effect: ParticleEffect) {
 		effect.init()
 		effect.start()
 		CesDoom.instance.assets.getParticleSystem()?.add(effect)
 	}
-	fun delParticleEffect(effect: ParticleEffect) {
-		effect.end()
-		effect.reset()
-		CesDoom.instance.assets.getParticleSystem()?.remove(effect)
+
+
+
+	//______________________________________________________________________________________________
+	private fun processEvents() {
+		for(event in renderQueue.events) {
+			when (event.type) {
+				RenderEvent.Type.SET_AMBIENT_COLOR -> {
+					val colorAmbiente = event.param as ColorAttribute
+					environment.set(colorAmbiente)
+				}
+				//else -> Unit
+			}
+		}
 	}
 }

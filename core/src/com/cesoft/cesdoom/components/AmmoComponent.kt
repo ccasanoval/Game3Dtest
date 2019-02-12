@@ -1,23 +1,17 @@
 package com.cesoft.cesdoom.components
 
 import com.badlogic.ashley.core.Component
+import com.badlogic.ashley.core.ComponentMapper
+import com.badlogic.ashley.core.Entity
 
-object AmmoComponent : Component {
-    const val SIZE = 5f
-    const val CARTRIDGE = 22f
+class AmmoComponent : Component {
 
-    var reloading: Boolean = false
-    var ammo: Int = 0
-        private set
-    fun reset(cuantity: Int) {
-        ammo = cuantity
+    companion object {
+        private val mapper: ComponentMapper<AmmoComponent> = ComponentMapper.getFor(AmmoComponent::class.java)
+        fun get(entity: Entity):AmmoComponent = mapper.get(entity)
+
+        const val SIZE = 5f
+        const val MAGAZINE_CAPACITY = 30
     }
-    fun add(cuantity: Int) {
-        if(cuantity in 1..500)
-            ammo += cuantity
-    }
-    fun fire() {
-        if( ! PlayerComponent.isGodModeOn && ammo > 0)
-            ammo--
-    }
+
 }

@@ -5,28 +5,40 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.ashley.core.Family
+import com.badlogic.ashley.signals.Signal
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.*
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.entities.*
+import com.cesoft.cesdoom.events.BulletEvent
+import com.cesoft.cesdoom.events.BulletQueue
+import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class BulletSystem : EntitySystem(), EntityListener {
+class BulletSystem(
+		eventSignal: Signal<BulletEvent>,
+		private val gameEventSignal: Signal<GameEvent>)
+	: EntitySystem(), EntityListener {
 
 	companion object {
 		private val tag : String = BulletSystem::class.java.simpleName
 		private const val GRAVITY = -200f
 	}
 
+	private val eventQueue = BulletQueue()
+	init {
+		eventSignal.add(eventQueue)
+	}
+
 	private val collisionConfig: btCollisionConfiguration = btDefaultCollisionConfiguration()
 	private val dispatcher: btCollisionDispatcher = btCollisionDispatcher(collisionConfig)
-	private val broadphase = btDbvtBroadphase()
+	private val broadPhase = btDbvtBroadphase()
 	private val solver: btConstraintSolver = btSequentialImpulseConstraintSolver()
-	val collisionWorld: btDiscreteDynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig)
+	val collisionWorld: btDiscreteDynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConfig)
 
 	//______________________________________________________________________________________________
 	init {
@@ -44,6 +56,8 @@ class BulletSystem : EntitySystem(), EntityListener {
 		//TODO: haz que no salte muros si delta crece por lentitud al procesar...
 		// Calcular colisiones
 		collisionWorld.stepSimulation(Math.min(1f / 30f, delta), 5, 1f / 60f)
+		//
+		processEvents()
 	}
 
 	//______________________________________________________________________________________________
@@ -85,22 +99,19 @@ class BulletSystem : EntitySystem(), EntityListener {
 
 	//______________________________________________________________________________________________
 	private fun collPlayerYouWin() {
-		player.youWin()
+		gameEventSignal.dispatch(GameEvent.YouWin)
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerAmmo(iAmmo: Int) {
+		gameEventSignal.dispatch(GameEvent(GameEvent.Type.AMMO_PICKUP, AmmoComponent.MAGAZINE_CAPACITY, ammos[iAmmo]!!))
 		val ammo = ammos[iAmmo] as Ammo
 		removeBody(ammo)
-		ammos.remove(iAmmo)
-		ammo.pickup()//TODO all inside pickup...
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerHealth(iHealth: Int) {
-		Log.e(tag, "collPlayerHealth----------------------------------- *************** $iHealth")
-		val h = health[iHealth] as Health
-		removeBody(h)
-		health.remove(iHealth)
-		h.pickup()
+		gameEventSignal.dispatch(GameEvent(GameEvent.Type.HEALTH_PICKUP, HealthComponent.DRUG_CAPACITY, healths[iHealth]!!))
+		val health = healths[iHealth] as Health
+		removeBody(health)
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerSwitch(iSwitch: Int) {
@@ -114,7 +125,7 @@ class BulletSystem : EntitySystem(), EntityListener {
 	fun dispose() {
 		collisionWorld.dispose()
 		solver.dispose()
-		broadphase.dispose()
+		broadPhase.dispose()
 		dispatcher.dispose()
 		collisionConfig.dispose()
 	}
@@ -127,10 +138,10 @@ class BulletSystem : EntitySystem(), EntityListener {
 	private var ammoIndex = 0
 	private val ammos = mutableMapOf<Int, Ammo>()
 	private var healthIndex = 0
-	private val health = mutableMapOf<Int, Health>()
+	private val healths = mutableMapOf<Int, Health>()
 	private lateinit var player : Player
 	override fun entityAdded(entity: Entity) {
-		val bullet = entity.getComponent(BulletComponent::class.java)
+		val bullet = BulletComponent.get(entity)
 
 		when(bullet.rigidBody.userValue) {
 			BulletComponent.PLAYER_FLAG -> {
@@ -161,7 +172,7 @@ class BulletSystem : EntitySystem(), EntityListener {
 				healthIndex++
 				bullet.rigidBody.userIndex = healthIndex
 				bullet.rigidBody.userIndex2 = healthIndex
-				health[healthIndex] = entity as Health
+				healths[healthIndex] = entity as Health
 				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
 			}
 			//else -> Log.e(tag, "Collision else added: "+bullet.rigidBody.userValue)
@@ -171,12 +182,26 @@ class BulletSystem : EntitySystem(), EntityListener {
 
 
 	//______________________________________________________________________________________________
-	fun removeBody(entity: Entity) {
-		val comp = entity.getComponent(BulletComponent::class.java)
-		if(comp != null)
+	private fun removeBody(entity: Entity) {
+		val comp = BulletComponent.get(entity)
+		//if(comp != null)
 			collisionWorld.removeCollisionObject(comp.rigidBody)
 	}
+	//______________________________________________________________________________________________
+	override fun entityRemoved(entity: Entity) {
+		//Log.e(tag, "entityRemoved--------------------------- $entity")
+	}
+
 
 	//______________________________________________________________________________________________
-	override fun entityRemoved(entity: Entity) {}
+	private fun processEvents() {
+		for(event in eventQueue.events) {
+			when(event.type) {
+				BulletEvent.Type.REMOVE -> {
+					removeBody(event.entity)
+				}
+				//else -> Unit
+			}
+		}
+	}
 }

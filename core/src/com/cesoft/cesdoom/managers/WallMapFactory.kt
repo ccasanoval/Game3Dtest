@@ -8,11 +8,11 @@ import com.cesoft.cesdoom.map.MapGraphFactory
 //
 object WallMapFactory {
 
+    private const val thick = (WallFactory.THICK.toInt() * 2.5).toInt()	// Debe ser mayor para que no haga colision con enemigo, que no es un punto sino un objeto 3D / o cambiar scale
+    private const val long =  (WallFactory.LONG.toInt()  * 2.5).toInt() //Check, 3 works
+
     fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, ignore: Int) {
 
-        val thick = WallFactory.THICK.toInt() * 3	// Debe ser mayor para que no haga colision con enemigo, que no es un punto sino un objeto 3D / o cambiar scale
-        val long = WallFactory.LONG.toInt()   * 3
-        //Log.e("WallFactory", "---------------- ${WallFactory.THICK}   ${WallFactory.LONG}")
         when(angle) {//TODO: change by sin + cos of angle...
             +00f -> //--- Vertical
                 for(x_ in -thick/2..thick/2)

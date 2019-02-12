@@ -71,8 +71,6 @@ class Assets {
 		private const val IMG_MM_BG = "data/background.png"
 		private const val IMG_MM_TITLE = "data/title.png"
 
-		/// PARTICLES
-		private const val PARTICLES_ENEMY = "particles/dieparticle.pfx"
 		/// TEXTURE
 		private const val TXT_LOADING = "data/loading.pack"
 	}
@@ -141,7 +139,6 @@ class Assets {
 
 	// IMAGES
 	//______________________________________________________________________________________________
-	//fun endSuelo() = assetManager.unload(IMG_GROUND)
 	fun iniSuelo() = assetManager.load(IMG_GROUND, Texture::class.java)
 	fun getSuelo():Texture = assetManager.get(IMG_GROUND, Texture::class.java)
 	//______________________________________________________________________________________________
@@ -175,16 +172,14 @@ class Assets {
 
 	// PARTICLES
 	//______________________________________________________________________________________________
-	var particleEffectPool: ParticleEffectPool? = null
+	private var particleEffectPool: ParticleEffectPool? = null
 	fun iniParticleEffectPool(camera: PerspectiveCamera) {
-		if(particleEffectPool == null) {
-			particleEffectPool = ParticleEffectPool(camera)
-			assetManager.load(PARTICLES_ENEMY, ParticleEffect::class.java, particleEffectPool!!.loadParam)
-			assetManager.finishLoadingAsset(PARTICLES_ENEMY)
-		}
+		if(particleEffectPool == null)
+			particleEffectPool = ParticleEffectPool(assetManager)
+		particleEffectPool?.setCamera(camera)
 	}
-	fun getParticleEffectDie(): ParticleEffect {
-		return assetManager.get(PARTICLES_ENEMY, ParticleEffect::class.java)
+	fun newParticleEffect(): ParticleEffect {
+		return particleEffectPool!!.obtain()
 	}
 	fun getParticleSystem() : ParticleSystem? {
 		return particleEffectPool?.particleSystem
@@ -206,17 +201,12 @@ class Assets {
 			getWallMetal2().dispose()
 			getWallMetal3().dispose()
 			endFireShot()
-
-//			getSoundRifle().dispose()
-//			getSoundEnemy().dispose()
-//			getSoundEnemyDie().dispose()
-//			getSoundFootSteps().dispose()
 		}
 		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e1: $e") }
 
-
 		skin.dispose()
-		//endParticleEffectDeath()
+		particleEffectPool?.dispose()
+		particleEffectPool=null
 		GunFactory.dispose()
 		try { assetManager.dispose() }
 		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e2: $e") }

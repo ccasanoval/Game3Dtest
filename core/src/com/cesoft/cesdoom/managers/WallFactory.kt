@@ -81,7 +81,7 @@ object WallFactory {
 
 
 	//______________________________________________________________________________________________
-	fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, engine: Engine, type: Type = Type.BRICK): Entity {
+	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angle: Float, type: Type = Type.BRICK): Entity {
 
 		/// GraphMap
 		WallMapFactory.create(mapFactory, pos, angle, 0)
@@ -129,7 +129,7 @@ object WallFactory {
 		rigidBody.motionState = motionState
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 		rigidBody.contactCallbackFilter = 0//BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
-		rigidBody.contactCallbackFlag = RenderSystem.CF_OCCLUDER_OBJECT//BulletComponent.SCENE_FLAG or
+		rigidBody.contactCallbackFlag = BulletComponent.CF_OCCLUDER_OBJECT//BulletComponent.SCENE_FLAG or
 		rigidBody.userValue = BulletComponent.SCENE_FLAG
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f

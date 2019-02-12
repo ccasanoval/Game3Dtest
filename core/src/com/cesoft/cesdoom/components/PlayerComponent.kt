@@ -1,85 +1,96 @@
 package com.cesoft.cesdoom.components
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import com.cesoft.cesdoom.assets.Sounds
+import com.badlogic.ashley.core.ComponentMapper
+import com.badlogic.ashley.core.Entity
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-object PlayerComponent : Component {
-	private val tag = PlayerComponent::class.java.simpleName
+class PlayerComponent : Component {
 
-	private const val MESSAGE_DURATION = 5000L
-	const val MASA = .65f
-	const val ALTURA = 22f
-	const val RADIO = 16f
-	const val FUERZA_MOVIL = 2200f
-	const val FUERZA_PC = 5000f
+    companion object {
+        private val mapper: ComponentMapper<PlayerComponent> = ComponentMapper.getFor(PlayerComponent::class.java)
+        fun get(entity: Entity):PlayerComponent = mapper.get(entity)
 
-	var isGodModeOn = false
+        private const val MESSAGE_DURATION = 5000L
 
-	var isWinning = false
-		private set
+        const val TALL = 22f
+        private const val HEALTH_FULL = 100
+        const val IMPULSE_MOBIL = 2200f
+        const val IMPULSE_PC = 5000f
+        const val MASE = .65f
+        const val RADIO = 16f
 
-	//var health: Float = 100f
-		//private set
-	var health: Int = 0
-        private set
-    fun reset(cuantity: Int) {
-        health = cuantity
+        ///TODO: most of this to GameStatus object...
+        var isGodModeOn = false
+        var ammo: Int = 0           //TODO: MessageSystem + dispatch signal
+        var isWinning = false
+        var isJumping = false
+
+        var tall = PlayerComponent.TALL
+
+        var isReloading = false
+        //var isReloadingHealth = false
+
+
+        /// Walk camera vibration -----------------
+        var yFoot = 0f
+        private var isFootUp = false
+        fun animFootStep(delta: Float)
+        {
+            if(isFootUp) {
+                PlayerComponent.yFoot += delta*7
+                if(PlayerComponent.yFoot > 0.8f)
+                    isFootUp = false
+            }
+            else {
+                PlayerComponent.yFoot -= delta*7
+                if(PlayerComponent.yFoot < -0.8f)
+                    isFootUp = true
+            }
+        }
+
+        /// Score -----------------
+        var score: Int = 0          //TODO: MessageSystem + dispatch signal
+        fun addScore(pts: Int) { PlayerComponent.score += pts }
+
+
+        /// Health -----------------
+        var health: Int = 100       //TODO: MessageSystem + dispatch signal
+            private set
+        fun hurt(pain: Int) {
+            health -= pain
+            if(health < 0)
+                health = 0
+        }
+        fun heal(pain: Int) {
+            health += pain
+            if(health > 150)
+                health = 150
+        }
+        fun resetHealth() {
+            health = HEALTH_FULL
+        }
+        fun isDead() = PlayerComponent.health < 1
+
+
+        /// Messages -----------------
+        private var lastMessage = 0L    //TODO: MessageSystem + dispatch signal
+        var message: String = ""
+            get() {
+                val now = System.currentTimeMillis()
+                if(now > lastMessage + PlayerComponent.MESSAGE_DURATION)
+                    field = if(isGodModeOn)
+                        "* GoD Mode On *"
+                    else
+                        ""
+                return field
+            }
+            set(value) {
+                field = value
+                lastMessage = System.currentTimeMillis()
+            }
     }
-    fun add(cuantity: Int) {
-        if(cuantity in 1..500)
-            health += cuantity
-    }
 
-	var score: Int = 0
-		private set
-	var isJumping = false
-		//private set
-	lateinit var colorAmbiente : ColorAttribute
-
-	private var lastMessage = 0L
-	var message: String = ""
-		set(value) {
-			field = value
-			lastMessage = System.currentTimeMillis()
-		}
-
-	//TODO: pasar funciones a entidad Player ?
-	fun ini(colorAmbiente: ColorAttribute) {
-		this.isWinning = false
-		this.isJumping = false
-		this.health = 100
-		this.score = 0
-		this.colorAmbiente = colorAmbiente
-		AmmoComponent.reset(50)//TODO:30?
-	}
-
-	fun isDead() = health < 1
-	fun winning() { isWinning = true }
-	fun addScore(pts: Int) { score += pts }
-	//fun jump(v: Boolean) { isJumping = v }
-
-	private var lastHurt = 0L
-	fun hurt(pain: Int) {
-		if(isGodModeOn)return
-		if(System.currentTimeMillis() > lastHurt+800) {
-			health -= pain
-			colorAmbiente.color.set(.8f, 0f, 0f, 1f)//Pasar RenderObject y llamar a CamaraRoja(true)...
-			if(health > 5)Sounds.play(Sounds.SoundType.PLAYER_HURT)
-			lastHurt = System.currentTimeMillis()
-		}
-	}
-
-	fun update() {
-		val now = System.currentTimeMillis()
-		if( ! message.isEmpty() && now > lastMessage + MESSAGE_DURATION) {
-			message = ""
-		}
-		if(now > lastHurt+80) {
-			colorAmbiente.color.set(.8f, .8f, .8f, 1f)//Pasar RenderObject y llamar a CamaraRoja(false)...
-		}
-	}
 }

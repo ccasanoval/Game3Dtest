@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
-import com.cesoft.cesdoom.components.AmmoComponent
+import com.cesoft.cesdoom.components.PlayerComponent
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,8 +24,9 @@ class AmmoWidget : Actor() {
 	}
 
 	override fun act(delta: Float) {
+		//Log.e("Ammowidget", "act-------------------------------- ${WidgetComponent.ammo}")
 		text.act(delta)
-		text.text = CesDoom.instance.assets.formatString(Assets.AMMO, AmmoComponent.ammo)
+		text.text = CesDoom.instance.assets.formatString(Assets.AMMO, PlayerComponent.ammo)
 	}
 
 	override fun draw(batch: Batch?, parentAlpha: Float) {

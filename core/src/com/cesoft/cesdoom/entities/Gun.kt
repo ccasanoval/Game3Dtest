@@ -8,20 +8,13 @@ class Gun : Entity() {
 
 	lateinit var fire: GunFireWidget
 
-	fun dispose_() {
-		//Log.e("Gun", "dispose:------------------------------------------------------")
+	fun dispose() {
 		fire.remove()
 		fire.dispose()
 		removeAll()
 	}
-	fun reset() {
-		//Log.e("Gun", "reset:------------------------------------------------------")
-		//removeAll()
-	}
 
     fun init(fire: GunFireWidget) {
-        //this.position.set(position)
-        //this.type = type
 		this.fire = fire
     }
 }

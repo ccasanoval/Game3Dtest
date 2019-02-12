@@ -36,26 +36,46 @@ class ControllerWidget {
 		movementPad.style = moveStyle
 		watchPad.style = touchpadStyle
 		firePad.style = fireStyle
-		val alfa = 0.5f
-		val color = 1f
-		movementPad.setColor(color, color, color, alfa)
-		watchPad.setColor(color, color, color, alfa)
-		firePad.setColor(color, color, color, alfa)
+		firePad2.style = fireStyle
+		val alpha = 0.65f
+		movementPad.setColor(1f, 1f, 1f, alpha)
+		watchPad.setColor(1f, 1f, 1f, alpha)
+		firePad.setColor(1f, .7f, .7f, alpha)
+		firePad2.setColor(1f, .7f, .7f, alpha)
 	}
 
 	fun addToStage(stage: Stage) {
-		movementPad.setBounds(15f, 15f, 350f, 350f)
-		watchPad.setBounds(stage.width - 315, 15f, 350f, 350f)
-		firePad.setBounds(15f, stage.height-215, 200f, 200f)
+		val margin = 25f
+		val cx = 350f
+		val cx2 = 180f
+
+		val movementPadX = margin
+		val movementPadY = 0f
+		movementPad.setBounds(movementPadX, movementPadY, cx, cx)
+
+		val watchPadX = stage.width - cx - margin
+		val watchPadY = 0f
+		watchPad.setBounds(watchPadX, watchPadY, cx, cx)
+
+		val firePadX = stage.width - cx2
+		val firePadY = 1.75f*cx2
+		firePad.setBounds(firePadX, firePadY, cx2, cx2)
+
+		val firePadX2 = 0f
+		val firePadY2 = 1.75f*cx2
+		firePad2.setBounds(firePadX2, firePadY2, cx2, cx2)
+
 		stage.addActor(movementPad)
 		stage.addActor(watchPad)
 		stage.addActor(firePad)
+		stage.addActor(firePad2)
 	}
 
 	companion object {
-		private var movementPad: Touchpad = Touchpad(5f, Touchpad.TouchpadStyle())
+		private var movementPad: Touchpad = Touchpad(15f, Touchpad.TouchpadStyle())
 		private var watchPad: Touchpad = Touchpad(5f, Touchpad.TouchpadStyle())
-		private var firePad: Touchpad = Touchpad(.1f, Touchpad.TouchpadStyle())
+		private var firePad: Touchpad = Touchpad(0f, Touchpad.TouchpadStyle())
+		private var firePad2: Touchpad = Touchpad(0f, Touchpad.TouchpadStyle())
 		var movementVector: Vector2 = Vector2(0f, 0f)
 			get() = Vector2(movementPad.knobPercentX, movementPad.knobPercentY)
 			private set
@@ -63,7 +83,7 @@ class ControllerWidget {
 			get() = Vector2(watchPad.knobPercentX, watchPad.knobPercentY)
 			private set
 		var isFiring: Boolean = false
-			get() = firePad.isTouched
+			get() = firePad.isTouched || firePad2.isTouched
 			private set
 	}
 }

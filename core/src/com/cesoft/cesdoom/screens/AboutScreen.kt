@@ -65,7 +65,6 @@ class AboutScreen(internal val game: CesDoom) : Screen, InputProcessor {
 	private fun setListeners() {
 		backButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				Log.e("AboutScreen", "backButton:clicked------------------------------------------")
 				goBack()
 			}
 		})
