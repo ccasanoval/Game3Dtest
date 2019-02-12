@@ -23,7 +23,7 @@ import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class EnemyFactory {
+class EnemyFactory(assets: Assets) {
 
     companion object {
         private val tag: String = EnemyFactory::class.java.simpleName
@@ -31,12 +31,21 @@ class EnemyFactory {
         private const val SPAWN_DELAY = 5*1000	//TODO: si pausa o background, debe actualizar time!!!
     }
 
-    private val allEnemies = ArrayList<Enemy>()
     lateinit var enemies: ImmutableArray<Entity>
+    private val allEnemies = ArrayList<Enemy>()
+    init {
+        val model = assets.getEnemy()
+        if(allEnemies.size < MAX_ENEMIES) {
+            for(i in allEnemies.size until MAX_ENEMIES) {
+                val enemy = createEnemy(i, model, assets.newParticleEffect())
+                allEnemies.add(enemy)
+            }
+        }
+    }
 
     private fun getNextEnemy(id: Int): Enemy {
         val enemy = allEnemies[id]
-        val pos = when(countSpawnPosition++ % 4) {
+        val pos = when(countSpawnPosition++ % 4) {//TODO:Random
             0 ->    Vector3(+250f, 150f, +250f)
             1 ->    Vector3(+250f, 150f, -250f)
             2 ->    Vector3(-250f, 150f, +250f)
@@ -54,24 +63,14 @@ class EnemyFactory {
         return false
     }
 
-    private fun spawnAllEnemies(model: Model, particleEffect: ParticleEffect) {
-        if(allEnemies.size < MAX_ENEMIES) {
-            for(i in allEnemies.size until MAX_ENEMIES) {
-                val enemy = createEnemy(i, model, particleEffect)
-                allEnemies.add(enemy)
-            }
-        }
-    }
-
     //https://blog.egorand.me/concurrency-primitives-in-kotlin/
     //@Volatile private var spawning = false
     private var countSpawnPosition = 0
     private var lastSpawn = System.currentTimeMillis()
-    fun spawnIfNeeded(engine: Engine, assets: Assets) {
+    fun spawnIfNeeded(engine: Engine) {
         if(Status.paused) lastSpawn = System.currentTimeMillis()
         if(System.currentTimeMillis() < lastSpawn + SPAWN_DELAY) return
         lastSpawn = System.currentTimeMillis()
-        spawnAllEnemies(assets.getEnemy(), assets.particleEffectPool!!.obtain())
 
         if(enemies.size() < MAX_ENEMIES) {
             val id = getNextEnemyId()
@@ -135,7 +134,7 @@ class EnemyFactory {
         status.achingStateTime = 0f
 
         val enemy = EnemyComponent.get(entity)
-        enemy.currentAnimat = EnemyComponent.ACTION.WALKING
+        enemy.currentAnimation = EnemyComponent.ACTION.WALKING
         enemy.posTemp
     }
 
@@ -147,7 +146,6 @@ class EnemyFactory {
             type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER1,
             mass: Float = EnemyComponent.MASS
             ): Enemy {
-
 
         val entity = Enemy(id)//enemyPool.obtain()
 
@@ -181,7 +179,8 @@ class EnemyFactory {
         }
 
         // Particle Effect
-        enemy.particleEffect = particleEffect//particleEffectPool.obtain()
+        enemy.particleEffect = particleEffect
+        Log.e(tag, "create----------------------------------------- $particleEffect")
 
         // Position and Shape
         val shape = btSphereShape(EnemyComponent.RADIO - 1)////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)

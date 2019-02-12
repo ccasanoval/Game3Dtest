@@ -41,7 +41,7 @@ class EnemySystem(
 	}
 
 	private var player: Player? = null
-	private val enemyFactory = EnemyFactory()
+	private val enemyFactory = EnemyFactory(game.assets)
 	private val enemyQueue = EnemyQueue()
 	init {
 		Log.e(tag, "INI ---------------------------------------------------------")
@@ -66,9 +66,8 @@ class EnemySystem(
 	override fun update(delta: Float) {
 		processEvents()
 		updateEnemies(delta)
-		enemyFactory.spawnIfNeeded(engine, game.assets)
+		enemyFactory.spawnIfNeeded(engine)
 	}
-
 
 	//______________________________________________________________________________________________
 	private fun processEvents() {
@@ -107,11 +106,11 @@ class EnemySystem(
 		val status = StatusComponent.get(entity)
 		updateStatusSys(entity, delta)
 		if(status.isDead()) {
-			if (deathProgress(entity) == 0f)
+			if(deathProgress(entity) == 0f)
 				Sounds.play(Sounds.SoundType.ENEMY_DIE)
 
 			val model = ModelComponent.get(entity)
-			if (model.blendingAttribute != null)
+			if(model.blendingAttribute != null)
 				model.blendingAttribute!!.opacity = 1 - deathProgress(entity)
 		}
 	}
@@ -193,8 +192,8 @@ class EnemySystem(
 				enemy.orientation = theta
 			}
 			else {
-				val WEIGHT = 5.0//TODO: referenciar a delta
-				enemy.orientation = (WEIGHT * enemy.orientation + theta) / (WEIGHT + 1)
+				val weight = 5.0//TODO: referenciar a delta
+				enemy.orientation = (weight * enemy.orientation + theta) / (weight + 1)
 			}
 		}
 		val rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(enemy.orientation).toFloat())
@@ -294,7 +293,6 @@ class EnemySystem(
 				status.achingStateTime = 0f
 				status.estado = EnemyComponent.ACTION.REINCARNATING
 				playReincarnating(entity)
-				//setWalking(entity)
 			}
 		}
 	}
@@ -332,13 +330,14 @@ class EnemySystem(
 		val enemy = EnemyComponent.get(entity)
 		val model = ModelComponent.get(entity)
 		val effect = enemy.particleEffect!!
+Log.e(tag, "playDying--------------------------------------------------------- $effect")
 		val emitter = effect.controllers.first().emitter as RegularEmitter
 		emitter.emissionMode = RegularEmitter.EmissionMode.EnabledUntilCycleEnd
 		effect.setTransform(model.instance.transform)
 		effect.scale(5f, 8f, 5f)
 		effect.init()
 		effect.start()
-		game.render.addParticleEffect(effect)
+		game.render.addParticleEffect(effect)//TODO: remove this reference... Event!
 	}
 
 

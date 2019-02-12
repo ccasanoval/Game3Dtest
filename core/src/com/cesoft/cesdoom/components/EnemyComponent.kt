@@ -46,6 +46,6 @@ class EnemyComponent(val type: TYPE) : Component
 	var pathIndex = 0
 
 
-	var currentAnimat = EnemyComponent.ACTION.IDLE
+	var currentAnimation = EnemyComponent.ACTION.IDLE
 	var particleEffect: ParticleEffect? = null
 }

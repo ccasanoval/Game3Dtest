@@ -71,6 +71,7 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 
 		/// Particulas
 		assets.iniParticleEffectPool(perspectiveCamera)//TODO: clean
+		Log.e(tag, "init ------------------------------------------------------------------ $perspectiveCamera")
 
 		/// Ambiente
 		environment.set(colorAmbiente)
@@ -232,20 +233,14 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 		batch.dispose()
 		visibleEntities.clear()
 		isDisposed = true
-		//delParticleEffect(effect: ParticleEffect) ?
 	}
 
-	///private val particleEffects = ArrayList<ParticleEffect>()
 	fun addParticleEffect(effect: ParticleEffect) {
 		effect.init()
 		effect.start()
 		CesDoom.instance.assets.getParticleSystem()?.add(effect)
 	}
-//	fun delParticleEffect(effect: ParticleEffect) {
-//		effect.end()
-//		effect.reset()
-//		CesDoom.instance.assets.getParticleSystem()?.remove(effect)
-//	}
+
 
 
 	//______________________________________________________________________________________________

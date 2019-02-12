@@ -108,7 +108,7 @@ object EnemyActions {
 
     fun setAnimation(entity: Entity, action: EnemyComponent.ACTION) {
         val enemy = EnemyComponent.get(entity)
-        enemy.currentAnimat = action
+        enemy.currentAnimation = action
         val animParams = EnemyActions.getActionParams(action, enemy.type)
         animParams?.let { params ->
             if(params.id.isEmpty()) return

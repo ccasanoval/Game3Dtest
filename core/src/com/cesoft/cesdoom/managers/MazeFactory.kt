@@ -6,7 +6,7 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.GateComponent
 import com.cesoft.cesdoom.components.SwitchComponent
 import com.cesoft.cesdoom.map.MapGraphFactory
-import com.cesoft.cesdoom.util.Log
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -24,14 +24,6 @@ object MazeFactory {
 	//______________________________________________________________________________________________
 	fun create(engine: Engine) {
 		WallFactory.iniMaterials(CesDoom.instance.assets)
-		/*WallFactory.ini(
-				Assets.getWallMetal1(),
-				Assets.getWallMetal2(),
-				Assets.getWallMetal3())*/
-
-		//RampFactory.init(Assets.getWallMetal2(), Assets.getWallMetal3())
-
-		//SwitchFactory.ini(assets.getSwitchOn(), assets.getSwitchOff())
 
 //		createSector(engine, 0f)
 //		createSector(engine, +RampFactory.LONG+5.5f*WallFactory.LONG-3)
@@ -66,7 +58,7 @@ object MazeFactory {
 		val wf = WallFactory
 
 
-		/// Interior -------------
+		/// Inside Wall -------------
 		wf.create(mapFactory, e, Vector3(0 * lng, 0f, +.5f * lng2), 90f)
 		wf.create(mapFactory, e, Vector3(0 * lng, 0f, -.5f * lng2), 90f)
 		//
@@ -76,16 +68,16 @@ object MazeFactory {
 		wf.create(mapFactory, e, Vector3(-1f * lng, 0f, -2 * lng), 00f)
 
 
-		/// Middle -------------
-		wf.create(mapFactory, e, Vector3(+5 * lng, 0f, +2.0f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-5 * lng, 0f, +2.0f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(+5 * lng, 0f, -2.0f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-5 * lng, 0f, -2.0f * lng2), 90f)
+		/// Middle Wall -------------
+		wf.create(mapFactory, e, Vector3(+5 * lng, 0f, +2f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-5 * lng, 0f, +2f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+5 * lng, 0f, -2f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-5 * lng, 0f, -2f * lng2), 90f)
 
-		wf.create(mapFactory, e, Vector3(+3 * lng, 0f, +3.0f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-3 * lng, 0f, +3.0f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(+3 * lng, 0f, -3.0f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-3 * lng, 0f, -3.0f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+3 * lng, 0f, +3f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-3 * lng, 0f, +3f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+3 * lng, 0f, -3f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-3 * lng, 0f, -3f * lng2), 90f)
 
 		wf.create(mapFactory, e, Vector3(+2 * lng2, 0f, +5f * lng), 00f)
 		wf.create(mapFactory, e, Vector3(-2 * lng2, 0f, +5f * lng), 00f)
@@ -93,27 +85,27 @@ object MazeFactory {
 		wf.create(mapFactory, e, Vector3(-2 * lng2, 0f, -5f * lng), 00f)
 
 
-		/// Exterior -------------
+		/// Outer Wall -------------
 		//---
-		wf.create(mapFactory, e, Vector3(+1 * lng, 0f, +4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(+3 * lng, 0f, +4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(+5 * lng, 0f, +4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(+7 * lng, 0f, +4.1f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+1 * lng, 0f, +4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+3 * lng, 0f, +4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+5 * lng, 0f, +4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+7 * lng, 0f, +4f * lng2), 90f)
 		//
-		wf.create(mapFactory, e, Vector3(-1 * lng, 0f, +4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-3 * lng, 0f, +4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-5 * lng, 0f, +4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-7 * lng, 0f, +4.1f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-1 * lng, 0f, +4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-3 * lng, 0f, +4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-5 * lng, 0f, +4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-7 * lng, 0f, +4f * lng2), 90f)
 		//
-		wf.create(mapFactory, e, Vector3(+1 * lng, 0f, -4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(+3 * lng, 0f, -4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(+5 * lng, 0f, -4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(+7 * lng, 0f, -4.1f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+1 * lng, 0f, -4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+3 * lng, 0f, -4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+5 * lng, 0f, -4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(+7 * lng, 0f, -4f * lng2), 90f)
 		//
-		wf.create(mapFactory, e, Vector3(-1 * lng, 0f, -4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-3 * lng, 0f, -4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-5 * lng, 0f, -4.1f * lng2), 90f)
-		wf.create(mapFactory, e, Vector3(-7 * lng, 0f, -4.1f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-1 * lng, 0f, -4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-3 * lng, 0f, -4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-5 * lng, 0f, -4f * lng2), 90f)
+		wf.create(mapFactory, e, Vector3(-7 * lng, 0f, -4f * lng2), 90f)
 
 		//---
 		wf.create(mapFactory, e, Vector3(+4 * lng2, 0f, +1 * lng), 00f)
@@ -134,10 +126,10 @@ object MazeFactory {
 		wf.create(mapFactory, e, Vector3(-4 * lng2, 0f, -3 * lng), 00f)
 		wf.create(mapFactory, e, Vector3(-4 * lng2, 0f, -5 * lng), 00f)
 		//---
-		//Exterior -------------
+		// Outer Wall -------------
 
 
-		// Extra Exterior ------------------
+		/// Extra Outer Wall ------------------
         for(z in -11..11 step 2) {
             wf.create(mapFactory, e, Vector3(+7f * lng2, 0f, z * lng), 00f, WallFactory.Type.GRILLE)
             wf.create(mapFactory, e, Vector3(-7f * lng2, 0f, z * lng), 00f, WallFactory.Type.GRILLE)
@@ -159,9 +151,9 @@ object MazeFactory {
             wf.create(mapFactory, e, Vector3(x * lng, 0f, +6f * lng2), 90f, WallFactory.Type.GRILLE)
             wf.create(mapFactory, e, Vector3(x * lng, 0f, -6f * lng2), 90f, WallFactory.Type.GRILLE)
         }
-		// Extra Exterior ------------------
+		// Extra Outer Wall ------------------
 
-		// TESTING GATES
+		/// Extra Gates
 		GateFactory.create(mapFactory, e, Vector3(+GateComponent.LONG+.2f, 0f, 0f), 0f, " C ").unlock()
 		GateFactory.create(mapFactory, e, Vector3(-GateComponent.LONG-.2f, 0f, 0f), 0f, " D ").unlock()
 		//YouWinFactory.create(Vector3(-2*GateComponent.LONG, 0f, 0f), e)
