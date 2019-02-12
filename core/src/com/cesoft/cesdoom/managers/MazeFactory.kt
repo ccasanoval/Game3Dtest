@@ -165,7 +165,9 @@ object MazeFactory {
 		AmmoFactory.create(Vector3(-6f * lng2, 0f, 0f), ammoModel, e)
 
 		// HEALTH  ------------------
-
+		val healthModel = CesDoom.instance.assets.getHealth()
+		HealthFactory.create(Vector3(+6f * lng2, 0f, +5f * lng2), healthModel, e)
+		HealthFactory.create(Vector3(-6f * lng2, 0f, -5f * lng2), healthModel, e)
 
 		// RAMPS ------------------
 		val rampFactory = RampFactory(CesDoom.instance.assets)

@@ -16,7 +16,7 @@ class GameEvent(val type: Type, val value: Int) : Comparable<GameEvent> {
     companion object {
         val YouWin = GameEvent(Type.YOU_WIN, 0)
         //val AmmoPickup = GameEvent(Type.AMMO_PICKUP, AmmoComponent.MAGAZINE_CAPACITY)
-        val HealthPickup = GameEvent(Type.HEALTH_PICKUP, HealthComponent.DRUG_CAPACITY)
+        //val HealthPickup = GameEvent(Type.HEALTH_PICKUP, HealthComponent.DRUG_CAPACITY)
 
         val EnemyDead = GameEvent(Type.ENEMY_DEAD, 0)
     }

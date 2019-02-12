@@ -40,14 +40,13 @@ class AmmoSystem(gameEventSignal: Signal<GameEvent>) : EntitySystem(), EntityLis
     override fun update(delta: Float) {
         processEvents()
         for(entity in ammo) {
-            val ammo = AmmoComponent.get(entity)
-            if(ammo.isPickedUp) {
+            val obj = AmmoComponent.get(entity)
+            if(obj.isPickedUp) {
                 engine.removeEntity(entity)
             }
             else {
-                ammo.angle += delta * 2
                 val model = ModelComponent.get(entity)
-                model.instance.transform.rotate(Vector3.Y, ammo.angle)
+                model.instance.transform.rotate(Vector3.Y, 5f)
             }
         }
     }

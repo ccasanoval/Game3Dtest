@@ -14,12 +14,5 @@ class AmmoComponent : Component {
         const val MAGAZINE_CAPACITY = 30
     }
 
-    //val cuantity: Int = 0//Tendria que saber como pasar valores con los eventos...
     var isPickedUp = false
-    var angle = 0f
-    //private lateinit var pos: Vector3
-    //lateinit var rigidBody: btRigidBody
-    //private lateinit var rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo
-    //private lateinit var model: ModelComponent
-
 }

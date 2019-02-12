@@ -126,7 +126,7 @@ class PlayerSystem(
 					ammoPickup(event.value)
 				}
 				GameEvent.Type.HEALTH_PICKUP -> {
-					heal(event.value)
+					healthPickup(event.value)
 				}
 				GameEvent.Type.ENEMY_DEAD -> {
 					if(event.value > 0)
@@ -480,7 +480,7 @@ class PlayerSystem(
 	private fun heal(value: Int) {
 		PlayerComponent.heal(value)
 		changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0f, .8f, 0f, 1f))
-		Sounds.play(Sounds.SoundType.PLAYER_HEAL)
+		Sounds.play(Sounds.SoundType.HEALTH_RELOAD)
 	}
 	private var isChangingColor = false
 	private var lastColorChange = 0L
@@ -525,7 +525,8 @@ class PlayerSystem(
 	}
 	private fun healthPickup(value: Int) {
 		PlayerComponent.isReloadingHealth = true
-		PlayerComponent.heal(value)//HealthComponent.DRUG_CAPACITY)
+		heal(value)
+		//PlayerComponent.heal(value)//HealthComponent.DRUG_CAPACITY)
 	}
 
 	private fun ammoReset() {

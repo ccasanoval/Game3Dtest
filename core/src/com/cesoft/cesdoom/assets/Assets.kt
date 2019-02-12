@@ -49,9 +49,12 @@ class Assets {
 
 		/// MODELS
 		private const val MODEL_DOME = "scene/dome/spacedome.g3db"
-		private const val MODEL_MONSTER = "foes/monster1/a.g3db"
+		private const val MODEL_MONSTER1 = "foes/monster1/a.g3db"	//Thanks to https://www.turbosquid.com/FullPreview/Index.cfm/ID/312341
+		private const val MODEL_MONSTER2 = "foes/monster2/out.g3db"
 		private const val MODEL_RIFLE = "weapons/cz805/a.g3db"
 		private const val MODEL_AMMO = "items/ammo/bullet.g3db"
+		private const val MODEL_HEALTH = "items/health/can.g3db"
+		//https://free3d.com/3d-model/spider-animated-low-poly-and-game-ready-87147.html
 
 		/// IMG
 		private const val IMG_FIRE_SHOT = "weapons/fire.png"
@@ -122,11 +125,14 @@ class Assets {
 	fun iniDome() = assetManager.load(MODEL_DOME, Model::class.java)
 	fun getDome():Model = assetManager.get(MODEL_DOME, Model::class.java)
 	//______________________________________________________________________________________________
-	fun iniEnemy() = assetManager.load(MODEL_MONSTER, Model::class.java)
-	fun getEnemy():Model = assetManager.get(MODEL_MONSTER, Model::class.java)
+	fun iniEnemy(type: Int=0) = assetManager.load(MODEL_MONSTER1, Model::class.java)
+	fun getEnemy(type: Int=0):Model = assetManager.get(MODEL_MONSTER1, Model::class.java)
 	//______________________________________________________________________________________________
 	fun iniAmmo() = assetManager.load(MODEL_AMMO, Model::class.java)
 	fun getAmmo():Model = assetManager.get(MODEL_AMMO, Model::class.java)
+	//______________________________________________________________________________________________
+	fun iniHealth() = assetManager.load(MODEL_HEALTH, Model::class.java)
+	fun getHealth():Model = assetManager.get(MODEL_HEALTH, Model::class.java)
 	//______________________________________________________________________________________________
 	fun iniRifle() = assetManager.load(MODEL_RIFLE, Model::class.java)
 	fun getRifle():Model = assetManager.get(MODEL_RIFLE, Model::class.java)

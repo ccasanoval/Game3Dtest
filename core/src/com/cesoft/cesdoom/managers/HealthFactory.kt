@@ -8,30 +8,26 @@ import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.bullet.MotionState
-import com.cesoft.cesdoom.components.AmmoComponent
 import com.cesoft.cesdoom.components.BulletComponent
+import com.cesoft.cesdoom.components.HealthComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.entities.Ammo
+import com.cesoft.cesdoom.entities.Health
 
-// DECAL & BILLBOARD :
-// https://github.com/libgdx/libgdx/blob/master/tests/gdx-tests/src/com/badlogic/gdx/tests/SimpleDecalTest.java
-// https://github.com/libgdx/libgdx/wiki/Decals
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-object AmmoFactory {
 
-    private val dimCollision = Vector3(AmmoComponent.SIZE, AmmoComponent.SIZE, AmmoComponent.SIZE)
+object HealthFactory {
+
+    private val dimCollision = Vector3(HealthComponent.SIZE, HealthComponent.SIZE, HealthComponent.SIZE)
 
     //______________________________________________________________________________________________
-    fun create(pos: Vector3, model: Model, engine: Engine): Ammo {
+    fun create(pos: Vector3, model: Model, engine: Engine): Health {
 
         /// Entity
-        val entity = Ammo()
-        pos.y = PlayerComponent.TALL + AmmoComponent.SIZE/2f
+        val entity = Health()
+        pos.y = PlayerComponent.TALL + HealthComponent.SIZE/2f
 
         /// Component
-        entity.add(AmmoComponent())
+        entity.add(HealthComponent())
 
         /// Model
         val modelComponent = ModelComponent(model, pos)
@@ -49,11 +45,12 @@ object AmmoFactory {
         rigidBody.motionState = motionState
         rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE
         rigidBody.contactCallbackFilter = 0
-        rigidBody.contactCallbackFlag = BulletComponent.AMMO_FLAG
-        rigidBody.userValue = BulletComponent.AMMO_FLAG
+        rigidBody.contactCallbackFlag = BulletComponent.HEALTH_FLAG
+        rigidBody.userValue = BulletComponent.HEALTH_FLAG
         rigidBody.activationState = Collision.DISABLE_DEACTIVATION
         entity.add(BulletComponent(rigidBody, bodyInfo))
 
+        //entity.init(modelComponent, pos, rigidBody, bodyInfo)
         engine.addEntity(entity)
         return entity
     }

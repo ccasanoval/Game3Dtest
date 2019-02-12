@@ -10,10 +10,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.*
 import com.cesoft.cesdoom.components.*
-import com.cesoft.cesdoom.entities.Ammo
-import com.cesoft.cesdoom.entities.Gate
-import com.cesoft.cesdoom.entities.Player
-import com.cesoft.cesdoom.entities.Switch
+import com.cesoft.cesdoom.entities.*
 import com.cesoft.cesdoom.events.BulletEvent
 import com.cesoft.cesdoom.events.BulletQueue
 import com.cesoft.cesdoom.events.GameEvent
@@ -112,6 +109,9 @@ class BulletSystem(
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerHealth(iHealth: Int) {
+		gameEventSignal.dispatch(GameEvent(GameEvent.Type.HEALTH_PICKUP, HealthComponent.DRUG_CAPACITY, healths[iHealth]!!))
+		val health = healths[iHealth] as Health
+		removeBody(health)
 	}
 	//______________________________________________________________________________________________
 	private fun collPlayerSwitch(iSwitch: Int) {
@@ -137,6 +137,8 @@ class BulletSystem(
 	private val switches = mutableMapOf<Int, Switch>()
 	private var ammoIndex = 0
 	private val ammos = mutableMapOf<Int, Ammo>()
+	private var healthIndex = 0
+	private val healths = mutableMapOf<Int, Health>()
 	private lateinit var player : Player
 	override fun entityAdded(entity: Entity) {
 		val bullet = BulletComponent.get(entity)
@@ -164,6 +166,13 @@ class BulletSystem(
 				bullet.rigidBody.userIndex = ammoIndex
 				bullet.rigidBody.userIndex2 = ammoIndex
 				ammos[ammoIndex] = entity as Ammo
+				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
+			}
+			BulletComponent.HEALTH_FLAG -> {
+				healthIndex++
+				bullet.rigidBody.userIndex = healthIndex
+				bullet.rigidBody.userIndex2 = healthIndex
+				healths[healthIndex] = entity as Health
 				bullet.rigidBody.userValue = BulletComponent.calcCode(bullet.rigidBody.userValue, bullet.rigidBody.userIndex)
 			}
 			//else -> Log.e(tag, "Collision else added: "+bullet.rigidBody.userValue)
