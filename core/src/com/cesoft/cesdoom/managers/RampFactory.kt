@@ -74,7 +74,6 @@ class RampFactory(assets: Assets) {
 		val entity = Entity()
 
 		/// MODELO
-		//modelComponent.instance.materials.get(0).set(textureAttribute1)
 		val material = if(type) material1 else material2
 		val modelo : Model = modelBuilder.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
 		val modelComponent = ModelComponent(modelo, pos)
@@ -108,7 +107,7 @@ class RampFactory(assets: Assets) {
 		rigidBody.motionState = motionState
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 		rigidBody.contactCallbackFilter = 0
-		rigidBody.contactCallbackFlag = RenderSystem.CF_OCCLUDER_OBJECT//BulletComponent.SCENE_FLAG or
+		rigidBody.contactCallbackFlag = BulletComponent.CF_OCCLUDER_OBJECT//BulletComponent.SCENE_FLAG or
 		rigidBody.userValue = 0//BulletComponent.SCENE_FLAG
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f

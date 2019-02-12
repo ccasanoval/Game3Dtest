@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.GateComponent
 import com.cesoft.cesdoom.components.SwitchComponent
+import com.cesoft.cesdoom.entities.Ammo
+import com.cesoft.cesdoom.entities.Health
 import com.cesoft.cesdoom.map.MapGraphFactory
 
 
@@ -161,13 +163,13 @@ object MazeFactory {
 
 		// AMMO ------------------
 		val ammoModel = CesDoom.instance.assets.getAmmo()
-		AmmoFactory.create(Vector3(+6f * lng2, 0f, 0f), ammoModel, e)
-		AmmoFactory.create(Vector3(-6f * lng2, 0f, 0f), ammoModel, e)
+		Ammo(Vector3(+6f * lng2, 0f, 0f), ammoModel, e)
+		Ammo(Vector3(-6f * lng2, 0f, 0f), ammoModel, e)
 
 		// HEALTH  ------------------
 		val healthModel = CesDoom.instance.assets.getHealth()
-		HealthFactory.create(Vector3(+6f * lng2, 0f, +5f * lng2), healthModel, e)
-		HealthFactory.create(Vector3(-6f * lng2, 0f, -5f * lng2), healthModel, e)
+		Health(Vector3(+5f*lng2, 2f*WallFactory.HIGH, 0f), healthModel, e)
+		Health(Vector3(-5f*lng2, 2f*WallFactory.HIGH, 0f), healthModel, e)
 
 		// RAMPS ------------------
 		val rampFactory = RampFactory(CesDoom.instance.assets)

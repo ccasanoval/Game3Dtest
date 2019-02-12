@@ -524,7 +524,7 @@ class PlayerSystem(
 		PlayerComponent.ammo += value//AmmoComponent.MAGAZINE_CAPACITY
 	}
 	private fun healthPickup(value: Int) {
-		PlayerComponent.isReloadingHealth = true
+		//PlayerComponent.isReloadingHealth = true
 		heal(value)
 		//PlayerComponent.heal(value)//HealthComponent.DRUG_CAPACITY)
 	}

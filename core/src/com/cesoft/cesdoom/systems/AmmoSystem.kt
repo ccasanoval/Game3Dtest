@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.*
 import com.badlogic.ashley.signals.Signal
 import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.math.Vector3
-import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.AmmoComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.entities.Ammo
@@ -34,29 +33,27 @@ class AmmoSystem(gameEventSignal: Signal<GameEvent>) : EntitySystem(), EntityLis
     override fun addedToEngine(engine: Engine) {
         ammo = engine.getEntitiesFor(Family.all(AmmoComponent::class.java).get()) as ImmutableArray<Entity>
     }
-
-
-    //______________________________________________________________________________________________
     override fun update(delta: Float) {
         processEvents()
         for(entity in ammo) {
-            val obj = AmmoComponent.get(entity)
-            if(obj.isPickedUp) {
-                engine.removeEntity(entity)
-            }
-            else {
-                val model = ModelComponent.get(entity)
-                model.instance.transform.rotate(Vector3.Y, 5f)
-            }
+            (entity as Ammo).update(engine)
+//            val obj = AmmoComponent.get(entity)
+//            if(obj.isPickedUp) {
+//                engine.removeEntity(entity)
+//            }
+//            else {
+//                val model = ModelComponent.get(entity)
+//                model.instance.transform.rotate(Vector3.Y, 5f)
+//            }
         }
     }
-
     private fun processEvents() {
         for(event in eventQueue.events) {
             when(event.type) {
                 GameEvent.Type.AMMO_PICKUP -> {
-                    val ammo = AmmoComponent.get(event.entity!!)
-                    ammo.isPickedUp = true
+                    //val ammo = AmmoComponent.get(event.entity!!)
+                    //ammo.isPickedUp = true
+                    (event.entity!! as Ammo).pickup()
                 }
                 else -> Unit
             }

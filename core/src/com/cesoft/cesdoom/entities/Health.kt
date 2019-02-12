@@ -2,60 +2,70 @@ package com.cesoft.cesdoom.entities
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
+import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.physics.bullet.collision.Collision
+import com.badlogic.gdx.physics.bullet.collision.btBoxShape
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
+import com.cesoft.cesdoom.bullet.MotionState
+import com.cesoft.cesdoom.components.BulletComponent
+import com.cesoft.cesdoom.components.HealthComponent
 import com.cesoft.cesdoom.components.ModelComponent
+import com.cesoft.cesdoom.components.PlayerComponent
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class Health : Entity() {
+class Health(pos: Vector3, model: Model, engine: Engine) : Entity() {
 
     companion object {
-        val tag: String = Health::class.java.simpleName
+        private val dimCollision = Vector3(HealthComponent.SIZE, HealthComponent.SIZE, HealthComponent.SIZE)
     }
 
-    var isPickedUp = false
+    private val modelComponent: ModelComponent
+    init {
+        pos.y += PlayerComponent.TALL// + HealthComponent.SIZE/2f
+
+        /// Component
+        add(HealthComponent())
+
+        /// Model Component
+        modelComponent = ModelComponent(model, pos)
+        add(modelComponent)
+
+        /// Position and Shape
+        val transf = modelComponent.instance.transform
+        val shape = btBoxShape(dimCollision)
+        val motionState = MotionState(transf)
+
+        /// Collision
+        val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
+        val rigidBody = btRigidBody(bodyInfo)
+        rigidBody.userData = this
+        rigidBody.motionState = motionState
+        rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE
+        rigidBody.contactCallbackFilter = 0
+        rigidBody.contactCallbackFlag = BulletComponent.HEALTH_FLAG
+        rigidBody.userValue = BulletComponent.HEALTH_FLAG
+        rigidBody.activationState = Collision.DISABLE_DEACTIVATION
+        add(BulletComponent(rigidBody, bodyInfo))
+
+        engine.addEntity(this)
+    }
+
+    private var isPickedUp = false
+    fun pickup() {
+        isPickedUp = true
+    }
 
     fun update(engine: Engine) {
         if(isPickedUp) {
             engine.removeEntity(this)
         }
         else {
-            val model = ModelComponent.get(this)
-            model.instance.transform.rotate(Vector3.Y, 5f)
+            //val model = ModelComponent.get(this)
+            modelComponent.instance.transform.rotate(Vector3.Y, 5f)
         }
     }
-
-    //var isPickedUp = false
-    //    private set
-//    private lateinit var pos: Vector3
-//    lateinit var rigidBody: btRigidBody
-//    private lateinit var rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo
-//    private lateinit var model: ModelComponent
-
-    /*fun init(
-            model: ModelComponent,
-            pos: Vector3,
-            rigidBody: btRigidBody,
-            rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo) {
-        this.pos = pos
-        this.rigidBody = rigidBody
-        this.rigidBodyInfo = rigidBodyInfo
-        this.model = model
-    }*/
-
-//    fun update() {
-//        model.instance.transform.rotate(Vector3.Y, 5f)
-//    }
-
-    /*fun pickup() {
-        if(isPickedUp)return
-        isPickedUp = true
-
-        Sounds.play(Sounds.SoundType.HEALTH_RELOAD)
-		PlayerComponent.heal(cuantity)
-        //HealthComponent.add(cuantity)
-        HealthComponent.reloading = true
-    }*/
 }

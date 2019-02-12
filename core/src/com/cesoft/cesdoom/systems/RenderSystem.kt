@@ -35,7 +35,6 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 	companion object {
 	    private val tag: String = RenderSystem::class.java.simpleName
 		private val FOV = 67f
-		val CF_OCCLUDER_OBJECT: Int = 512//TODO: cuidar que no coincida con BulletComponent constants
 	}
 	private val renderQueue = RenderQueue()
 
@@ -70,8 +69,7 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 		gunCamera.far = 50f
 
 		/// Particulas
-		assets.iniParticleEffectPool(perspectiveCamera)//TODO: clean
-		Log.e(tag, "init ------------------------------------------------------------------ $perspectiveCamera")
+		assets.iniParticleEffectPool(perspectiveCamera)
 
 		/// Ambiente
 		environment.set(colorAmbiente)
@@ -86,7 +84,7 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 		oclBuffer = OcclusionBuffer(OCL_BUFFER_EXTENTS[0], OCL_BUFFER_EXTENTS[0])
 		occlusionCuller = object : OcclusionCuller() {
 			override fun isOccluder(obj: btCollisionObject): Boolean {
-				return obj.collisionFlags and CF_OCCLUDER_OBJECT != 0
+				return obj.collisionFlags and BulletComponent.CF_OCCLUDER_OBJECT != 0
 			}
 			override fun onObjectVisible(obj: btCollisionObject) {
 				val entity = obj.userData as Entity

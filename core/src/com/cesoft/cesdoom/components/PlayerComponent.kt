@@ -31,7 +31,7 @@ class PlayerComponent : Component {
         var tall = PlayerComponent.TALL
 
         var isReloading = false
-        var isReloadingHealth = false
+        //var isReloadingHealth = false
 
 
         /// Walk camera vibration -----------------

@@ -129,7 +129,7 @@ object WallFactory {
 		rigidBody.motionState = motionState
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 		rigidBody.contactCallbackFilter = 0//BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
-		rigidBody.contactCallbackFlag = RenderSystem.CF_OCCLUDER_OBJECT//BulletComponent.SCENE_FLAG or
+		rigidBody.contactCallbackFlag = BulletComponent.CF_OCCLUDER_OBJECT//BulletComponent.SCENE_FLAG or
 		rigidBody.userValue = BulletComponent.SCENE_FLAG
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f

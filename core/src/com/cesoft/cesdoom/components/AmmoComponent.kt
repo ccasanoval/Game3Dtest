@@ -14,5 +14,4 @@ class AmmoComponent : Component {
         const val MAGAZINE_CAPACITY = 30
     }
 
-    var isPickedUp = false
 }

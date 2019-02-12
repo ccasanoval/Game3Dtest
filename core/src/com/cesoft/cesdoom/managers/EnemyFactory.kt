@@ -180,7 +180,6 @@ class EnemyFactory(assets: Assets) {
 
         // Particle Effect
         enemy.particleEffect = particleEffect
-        Log.e(tag, "create----------------------------------------- $particleEffect")
 
         // Position and Shape
         val shape = btSphereShape(EnemyComponent.RADIO - 1)////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)

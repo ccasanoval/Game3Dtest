@@ -330,7 +330,6 @@ class EnemySystem(
 		val enemy = EnemyComponent.get(entity)
 		val model = ModelComponent.get(entity)
 		val effect = enemy.particleEffect!!
-Log.e(tag, "playDying--------------------------------------------------------- $effect")
 		val emitter = effect.controllers.first().emitter as RegularEmitter
 		emitter.emissionMode = RegularEmitter.EmissionMode.EnabledUntilCycleEnd
 		effect.setTransform(model.instance.transform)

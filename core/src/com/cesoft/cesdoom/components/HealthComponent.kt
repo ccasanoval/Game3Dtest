@@ -14,5 +14,4 @@ class HealthComponent: Component {
         const val DRUG_CAPACITY = 25
     }
 
-    //var isPickedUp = false
 }
