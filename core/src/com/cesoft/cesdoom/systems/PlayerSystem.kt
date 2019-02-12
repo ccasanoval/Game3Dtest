@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.*
 import com.badlogic.ashley.signals.Signal
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.controllers.Controllers.addListener
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
@@ -32,7 +31,6 @@ import com.cesoft.cesdoom.events.RenderEvent
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.managers.PlayerInput
 import com.cesoft.cesdoom.util.Log
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +68,8 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		engine!!.addEntityListener(Family.all(PlayerComponent::class.java).get(), this)
-		addListener(input)
+		if(CesDoom.isMobile)
+			addListener(input)
 	}
 
 	/// Implements EntityListener
@@ -82,25 +81,15 @@ class PlayerSystem(
 	}
 	override fun entityRemoved(entity: Entity) {}
 
-	/// Implements InputProcessor
-	//______________________________________________________________________________________________
-//	override fun keyDown(keycode: Int): Boolean = false
-//	override fun keyUp(keycode: Int): Boolean = false
-//	override fun keyTyped(character: Char): Boolean = false
-//	override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = false
-//	override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = false
-//	override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = false
-//	override fun mouseMoved(screenX: Int, screenY: Int): Boolean = false
-//	override fun scrolled(amount: Int): Boolean = false
-
-
 	//______________________________________________________________________________________________
 	private var justBorn = true//TODO: when changing levels?? maintain health and ammo?
 	override fun update(delta: Float) {
-		updateMovement(delta)
-		updateWeapon(delta)
 		checkGameOver(delta)
 		checkYouWin(delta)
+		updateMovement(delta)
+		if( ! PlayerComponent.isDead()) {
+			updateWeapon(delta)
+		}
 		updateCamera()
 		restoreAmbientColor()
 

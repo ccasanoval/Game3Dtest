@@ -25,7 +25,7 @@ class Ammo(pos: Vector3, model: Model, engine: Engine) : Entity() {
 
     private val modelComponent: ModelComponent
     init {
-        pos.y += PlayerComponent.TALL //+ AmmoComponent.SIZE/2f
+        pos.y += PlayerComponent.TALL + AmmoComponent.SIZE/2f
 
         /// Component
         add(AmmoComponent())

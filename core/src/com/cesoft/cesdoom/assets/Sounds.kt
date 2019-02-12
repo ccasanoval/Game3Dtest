@@ -27,7 +27,7 @@ object Sounds {
 	private const val SOUND_PLAYER_DYING = "sounds/playerDying.ogg"
     private const val SOUND_NO_AMMO = "sounds/noAmmo.ogg"
     private const val SOUND_AMMO_RELOAD = "sounds/reload.ogg"
-	private const val SOUND_HEALTH_RELOAD = "sounds/reload.ogg"//TODO
+	private const val SOUND_HEALTH_RELOAD = "sounds/reloadHealth.ogg"
     // Effects : https://archive.org/details/dsbossit ***
     // http://www.wolfensteingoodies.com/archives/olddoom/music.htm
     private const val MUSIC = "sounds/tnt_doom.ogg" // http://sycraft.org/content/audio/doom.shtml
