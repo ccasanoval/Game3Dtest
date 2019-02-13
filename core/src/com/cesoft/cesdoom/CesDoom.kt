@@ -57,7 +57,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		var isMobile = false
 			private set
 
-		lateinit var instance: CesDoom
+		//lateinit var instance: CesDoom
 	}
 	private var screen: Screen? = null
 	lateinit var gameUI: GameUI//TODO: Set private... que accedan por funciones de cesdoom
@@ -71,9 +71,9 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	override fun create() {
 		Log.e(tag, "CREATE--------------------------------------------------------------------------------")
 		isMobile = Gdx.app.type == Application.ApplicationType.Android
-		instance = this
+		//instance = this
 		assets = Assets()
-		gameUI = GameUI()
+		gameUI = GameUI(this, assets)
 
 		Gdx.input.isCatchBackKey = true
 		setScreen(MainMenuScreen(this))
@@ -112,11 +112,16 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	//______________________________________________________________________________________________
 	fun reset() {
 		delScreen()
-		setScreen(LoadingScreen(this))
+		setScreen(LoadingScreen(this, gameUI, assets))
 		Status.gameOver = false
 		Status.mainMenu = false
-		//TODO: Stop music....
-		//<android:hardwareAccelerated="false">
+	}
+	//______________________________________________________________________________________________
+	fun nextLevel() {//TODO:-------------------------------------
+		delScreen()
+		setScreen(LoadingScreen(this, gameUI, assets))
+		Status.gameOver = false
+		Status.mainMenu = false
 	}
 	//______________________________________________________________________________________________
 	fun reset2Menu() {

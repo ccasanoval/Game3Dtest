@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.ModelComponent
@@ -36,10 +37,10 @@ object SwitchFactory {
                     or VertexAttributes.Usage.TextureCoordinates).toLong()
 
     //______________________________________________________________________________________________
-    fun create(engine: Engine, pos: Vector3, angle: Float, id: String): Switch {
+    fun create(engine: Engine, pos: Vector3, angle: Float, id: String, assets: Assets): Switch {
 
         /// Entity
-        val entity = Switch(id)
+        val entity = Switch(id, assets)
         pos.y = PlayerComponent.TALL + SwitchComponent.SIZE +1  //1.05f * WallFactory.HIGH
 
         /// Component
@@ -53,7 +54,7 @@ object SwitchFactory {
         textureAttributeOn.scaleV = 1f
         materialOn.set(textureAttributeOn)*/
 
-        val textureOff = CesDoom.instance.assets.getSwitchOff()
+        val textureOff = assets.getSwitchOff()
         val materialOff = Material(ColorAttribute.createDiffuse(Color.WHITE))
         textureOff.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         val textureAttributeOff = TextureAttribute(TextureAttribute.Diffuse, textureOff)

@@ -7,6 +7,7 @@ class RenderEvent(val type: Type, val param: Any) : Comparable<RenderEvent> {
 
     enum class Type {
         SET_AMBIENT_COLOR,
+        ADD_PARTICLE_FX
     }
 
     /// Implements Comparable<GameEvent>

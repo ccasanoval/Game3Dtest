@@ -13,6 +13,7 @@ import com.cesoft.cesdoom.ui.GameUI
  */
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+/*
 class GameVrScreen(private var game: CesDoom): Screen {//, CardBoardAndroidApplication, CardBoardApplicationListener {
 	//private var gameUI: GameUI = GameUI(game, assets)
 	private var gameWorld: GameWorld = GameWorld(game)
@@ -42,4 +43,4 @@ class GameVrScreen(private var game: CesDoom): Screen {//, CardBoardAndroidAppli
 	override fun pause() {}
 	override fun resume() {}
 	override fun hide() {}
-}
+}*/

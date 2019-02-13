@@ -11,11 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.ui.GameUI
 
 /**
  * @author Mats Svensson, modified by CESoft
  */
-class LoadingScreen(private val game: CesDoom) : Screen {
+class LoadingScreen(private val game: CesDoom, private val gameUI: GameUI, private val assets: Assets) : Screen {
 
     companion object {
         private val tag = LoadingScreen::class.java.simpleName
@@ -57,8 +59,8 @@ class LoadingScreen(private val game: CesDoom) : Screen {
 
     override fun show() {
         stage = Stage()
-        CesDoom.instance.assets.iniLoading()
-        val atlas = CesDoom.instance.assets.getLoading()
+        assets.iniLoading()
+        val atlas = assets.getLoading()
         // Grab the regions from the atlas and create some images
         logo = Image(atlas.findRegion("libgdx-logo"))
         loadingFrame = Image(atlas.findRegion("loading-frame"))
@@ -127,11 +129,12 @@ class LoadingScreen(private val game: CesDoom) : Screen {
     override fun render(delta: Float) {
         // Clear the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        if (CesDoom.instance.assets.update()) { // Load some, will return true if done loading
-            game.setScreen(GameScreen())
-        } else {
+        if(assets.update()) { // Load some, will return true if done loading
+            game.setScreen(GameScreen(gameUI, assets))
+        }
+        else {
             // Interpolate the percentage to make it more smooth
-            percent = Interpolation.linear.apply(percent, game.assets.getProgress(), 0.8f)
+            percent = Interpolation.linear.apply(percent, assets.getProgress(), 0.8f)
             //Log.INSTANCE.e(tag, "LoadingScreen:render:------------------------------%: " + percent);
             // Update positions (and size) to match the percentage
             loadingBarHidden.x = startX + endX * percent
@@ -145,7 +148,7 @@ class LoadingScreen(private val game: CesDoom) : Screen {
     }
 
     override fun hide() {
-        game.assets.endLoading()
+        assets.endLoading()
     }
     override fun dispose() {}
     override fun pause() {}

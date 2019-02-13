@@ -34,6 +34,9 @@ class PlayerComponent : Component {
         //var isReloadingHealth = false
 
 
+        /// Level -----------------
+        var currentLevel: Int = 0
+
         /// Walk camera vibration -----------------
         var yFoot = 0f
         private var isFootUp = false

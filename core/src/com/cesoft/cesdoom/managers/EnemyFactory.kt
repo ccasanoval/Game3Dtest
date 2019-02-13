@@ -33,18 +33,13 @@ class EnemyFactory(assets: Assets) {
     lateinit var enemies: ImmutableArray<Entity>
     private val allEnemies = ArrayList<Enemy>()
     init {
-//        val models = arrayListOf<Model>()
-//        models.add(assets.getEnemy(EnemyComponent.TYPE.MONSTER0))
-//        models.add(assets.getEnemy(EnemyComponent.TYPE.MONSTER1))
         if(allEnemies.size < MAX_ENEMIES) {
             for(i in allEnemies.size until MAX_ENEMIES) {
-                //val enemy = createEnemy(i, models[random.nextInt(2)], assets.newParticleEffect())
                 val type = when(random.nextInt(2)) {
                     //1 -> EnemyComponent.TYPE.MONSTER1
-                    else -> EnemyComponent.TYPE.MONSTER1
+                    else -> EnemyComponent.TYPE.MONSTER0
                 }
                 val enemy = createEnemy(i, assets, type)
-                Log.e(tag, "ini -------------------------------------------------- $enemy : $i $type")
                 allEnemies.add(enemy)
             }
         }
@@ -52,7 +47,6 @@ class EnemyFactory(assets: Assets) {
 
     private fun getNextEnemy(id: Int): Enemy {
         val enemy = allEnemies[id]
-        Log.e(tag, "getNextEnemy $id -------------------------- $enemy")
         val pos = when(countSpawnPosition++ % 4) {//TODO:Random
             0 ->    Vector3(+250f, 150f, +250f)
             1 ->    Vector3(+250f, 150f, -250f)
@@ -148,8 +142,6 @@ class EnemyFactory(assets: Assets) {
     private fun createEnemy(
             id: Int,
             assets: Assets,
-            //model: Model,
-            //particleEffect: ParticleEffect,
             type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER1,
             mass: Float = EnemyComponent.MASS
             ): Enemy {
@@ -167,21 +159,14 @@ class EnemyFactory(assets: Assets) {
         /// Model
         val model = assets.getEnemy(type)
         val modelComponent: ModelComponent
+        modelComponent = ModelComponent(model, Vector3.Zero)
+        //modelComponent.frustumCullingData =FrustumCullingData.create(Vector3(0f,0f,0f), Vector3(RADIO,RADIO,RADIO), modelComponent.instance)
+        entity.add(modelComponent)
 
-//        Log.e(tag, "CREATE-------------- ANIMS:")
-//        for(anim in model.animations)
-//            Log.e(tag, "CREATE-------------- ${anim.id} / ${anim.duration}")
+        /// ANIMATION
+        entity.add(AnimationComponent(modelComponent.instance))
+//        for(anim in model.animations)Log.e(tag, "ANIMATION:-------------- ${anim.id} / ${anim.duration}")
 
-        //when (type) {
-        //    EnemyComponent.TYPE.MONSTER1 -> {
-                modelComponent = ModelComponent(model, Vector3.Zero)
-                //modelComponent.frustumCullingData =
-                //	FrustumCullingData.create(Vector3(0f,0f,0f), Vector3(RADIO,RADIO,RADIO), modelComponent.instance)
-                entity.add(modelComponent)
-                /// ANIMATION
-                entity.add(AnimationComponent(modelComponent.instance))
-        //    }
-        //}
 
         // Evanesce Effect
         if (modelComponent.instance.materials.size > 0) {

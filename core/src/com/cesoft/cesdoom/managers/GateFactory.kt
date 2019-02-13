@@ -53,13 +53,13 @@ object GateFactory {
 
 
     //______________________________________________________________________________________________
-    fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angle: Float, id: String): Gate {
+    fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angle: Float, id: String, assets: Assets): Gate {
 
         /// GraphMap
         //WallMapFactory.create(mapFactory, pos, angle, 0)
 
         /// Entity
-        val entity = Gate(id)
+        val entity = Gate(id, assets)
         pos.y += HIGH
 
         /// Component
@@ -68,7 +68,7 @@ object GateFactory {
 
         /// Material
         val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
-        val texture = CesDoom.instance.assets.getGate()
+        val texture = assets.getGate()
         texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture)
         textureAttribute1.scaleU = 1f

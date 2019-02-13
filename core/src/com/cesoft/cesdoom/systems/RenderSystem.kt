@@ -30,7 +30,7 @@ import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbiente: ColorAttribute): EntitySystem() {
+class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, private val assets: Assets): EntitySystem() {
 
 	companion object {
 	    private val tag: String = RenderSystem::class.java.simpleName
@@ -72,7 +72,7 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 		assets.iniParticleEffectPool(perspectiveCamera)
 
 		/// Ambiente
-		environment.set(colorAmbiente)
+		environment.set(color)
 		environment.add(DirectionalLight().set(0.7f, 0.3f, 0.1f, -1f, -0.8f, -0.4f))
 		//environment.set(ColorAttribute(ColorAttribute.Fog, 0.1f, 0.3f, 0.1f, 1f))
 		/// Sombras
@@ -158,7 +158,7 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 	//______________________________________________________________________________________________
 	private fun renderParticleEffects() {
 		batch.begin(perspectiveCamera)
-		CesDoom.instance.assets.getParticleSystem()?.let {
+		assets.getParticleSystem()?.let {
 			it.update()
 			it.begin()
 			it.draw()
@@ -233,24 +233,22 @@ class RenderSystem(assets: Assets, eventSignal: Signal<RenderEvent>, colorAmbien
 		isDisposed = true
 	}
 
-	fun addParticleEffect(effect: ParticleEffect) {
-		effect.init()
-		effect.start()
-		CesDoom.instance.assets.getParticleSystem()?.add(effect)
-	}
-
-
-
 	//______________________________________________________________________________________________
 	private fun processEvents() {
 		for(event in renderQueue.events) {
-			when (event.type) {
-				RenderEvent.Type.SET_AMBIENT_COLOR -> {
-					val colorAmbiente = event.param as ColorAttribute
-					environment.set(colorAmbiente)
-				}
+			when(event.type) {
+				RenderEvent.Type.SET_AMBIENT_COLOR -> setAbientColor(event.param as ColorAttribute)
+				RenderEvent.Type.ADD_PARTICLE_FX -> addParticleEffect(event.param as ParticleEffect)
 				//else -> Unit
 			}
 		}
+	}
+	private fun setAbientColor(color: ColorAttribute) {
+		environment.set(color)
+	}
+	private fun addParticleEffect(effect: ParticleEffect) {
+		effect.init()
+		effect.start()
+		assets.getParticleSystem()?.add(effect)
 	}
 }

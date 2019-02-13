@@ -17,8 +17,8 @@ import com.cesoft.cesdoom.Status
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: Usar game over modificado ???!!!
-class GameWinWidget(stage: Stage) : Actor() {
+//
+class GameWinWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Actor() {
 	private var image: Image = Image(Texture(Gdx.files.internal("data/gameWin.png")))
 	private var window: Window
 	private var btnRestart: TextButton
@@ -33,11 +33,11 @@ class GameWinWidget(stage: Stage) : Actor() {
 		ws.titleFontColor = Color.BLUE
 		window = Window("", ws)
 		//
-		btnRestart = TextButton(CesDoom.instance.assets.getString(Assets.RECARGAR), CesDoom.instance.assets.skin)
+		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
 		btnRestart.label.setFontScale(2f)
-		btnMenu = TextButton(CesDoom.instance.assets.getString(Assets.MENU), CesDoom.instance.assets.skin)
+		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
 		btnMenu.label.setFontScale(2f)
-		btnQuit = TextButton(Assets.SALIR, CesDoom.instance.assets.skin)
+		btnQuit = TextButton(Assets.SALIR, assets.skin)
 		btnQuit.label.setFontScale(2f)
 		//
 		configureWidgets()
@@ -65,14 +65,14 @@ class GameWinWidget(stage: Stage) : Actor() {
 	private fun setListeners() {
 		btnRestart.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				CesDoom.instance.reset()
+				game.reset()
 				reanudar()
 			}
 		})
 		btnMenu.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
 				reanudar()
-				CesDoom.instance.reset2Menu()
+				game.reset2Menu()
 			}
 		})
 		btnQuit.addListener(object : ClickListener() {

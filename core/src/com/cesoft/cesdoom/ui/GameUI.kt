@@ -5,24 +5,25 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.assets.Assets
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameUI {
+class GameUI(game: CesDoom, assets: Assets) {
 
 	var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
-	var healthWidget = HealthWidget()
+	var healthWidget = HealthWidget(assets)
 		private set
-	private var scoreWidget = ScoreWidget()
-	private var ammoWidget = AmmoWidget()
-	private var messageWidget = MessageWidget()
-	private var pauseWidget = PauseWidget(stage)
-	private var crosshairWidget = CrosshairWidget()
-	private var fpsLabel = Label("", CesDoom.instance.assets.skin)
-	var gameOverWidget = GameOverWidget(stage)
+	private var scoreWidget = ScoreWidget(assets)
+	private var ammoWidget = AmmoWidget(assets)
+	private var messageWidget = MessageWidget(assets)
+	private var pauseWidget = PauseWidget(game, stage, assets)
+	private var crossHairWidget = CrosshairWidget()
+	private var fpsLabel = Label("", assets.skin)
+	var gameOverWidget = GameOverWidget(game, stage, assets)
 		private set
-	var gameWinWidget = GameWinWidget(stage)
+	var gameWinWidget = GameWinWidget(game, stage, assets)
 		private set
 
 	init {
@@ -30,15 +31,13 @@ class GameUI {
 	}
 
 	private fun configureWidgets() {
-		//TODO: ammoWidget -> Muestra la municion disponible ¿recargar?
-
 		fpsLabel.setPosition(0f, 10f)
 
 		stage.addActor(healthWidget)
 		stage.addActor(scoreWidget)
 		stage.addActor(ammoWidget)
 		stage.addActor(messageWidget)
-		stage.addActor(crosshairWidget)
+		stage.addActor(crossHairWidget)
 		stage.keyboardFocus = pauseWidget
 		stage.addActor(fpsLabel)
 		if(CesDoom.isMobile)
@@ -46,7 +45,7 @@ class GameUI {
 	}
 
 	fun update(delta: Float) {
-		fpsLabel.setText("FPS: " + Gdx.graphics.framesPerSecond)
+		fpsLabel.setText("FPS: ${Gdx.graphics.framesPerSecond}")
 		stage.act(delta)
 	}
 

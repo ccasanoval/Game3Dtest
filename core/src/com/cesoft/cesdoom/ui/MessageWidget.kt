@@ -5,13 +5,14 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class MessageWidget : Actor() {
-	private var message: TextField = TextField("", CesDoom.instance.assets.skin)
+class MessageWidget(assets: Assets) : Actor() {
+	private var message: TextField = TextField("", assets.skin)
 
 	init {
 		message.setAlignment(Align.center)

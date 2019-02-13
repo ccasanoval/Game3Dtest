@@ -12,7 +12,7 @@ import com.cesoft.cesdoom.components.PlayerComponent
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class Gate(private val id: String) : Entity() {
+class Gate(private val id: String, private val assets: Assets) : Entity() {
 
     companion object {
         val tag: String = Gate::class.java.simpleName
@@ -72,13 +72,13 @@ class Gate(private val id: String) : Entity() {
         if(isLocked) {
             if(now > lockedOnce+2000) {
                 lockedOnce = now
-                PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_LOCKED, id)//TODO send signal
+                PlayerComponent.message = assets.formatString(Assets.GATE_LOCKED, id)//TODO send signal
                 Sounds.play(Sounds.SoundType.GATE_LOCKED)
             }
         }
         else if(!isOpening && !isOpen) {
             isOpening = true
-            PlayerComponent.message = CesDoom.instance.assets.formatString(Assets.GATE_OPENS, id)//TODO send signal
+            PlayerComponent.message = assets.formatString(Assets.GATE_OPENS, id)//TODO send signal
             Sounds.play(Sounds.SoundType.GATE_OPENS)
         }
     }

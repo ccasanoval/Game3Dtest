@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.DebugDrawer
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.GunComponent
 import com.cesoft.cesdoom.entities.Gun
 import com.cesoft.cesdoom.events.BulletEvent
@@ -16,11 +17,15 @@ import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.events.RenderEvent
 import com.cesoft.cesdoom.managers.*
 import com.cesoft.cesdoom.systems.*
+import com.cesoft.cesdoom.ui.GameOverWidget
+import com.cesoft.cesdoom.ui.GameWinWidget
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameWorld(private val game: CesDoom) {
+class GameWorld(private val gameWinWidget: GameWinWidget,
+				private val gameOverWidget: GameOverWidget,
+				private val assets: Assets) {
 
 	private val debugCollision = false
 	private var debugDrawer: DebugDrawer? = null
@@ -62,13 +67,16 @@ class GameWorld(private val game: CesDoom) {
 
 		///----
 		bulletSystem = BulletSystem(bulletEventSignal, gameEventSignal)
-		renderSystem = RenderSystem(game.assets, renderEventSignal, colorAmbiente)
+		renderSystem = RenderSystem(renderEventSignal, colorAmbiente, assets)
 		playerSystem = PlayerSystem(
 				gameEventSignal, enemyEventSignal, renderEventSignal,
 				colorAmbiente,
 				renderSystem.perspectiveCamera,//TODO: quitar referencias? usar eventos?
-				bulletSystem)//TODO: quitar referencias? usar eventos?
-		enemySystem = EnemySystem(enemyEventSignal, gameEventSignal, bulletEventSignal, game)
+				bulletSystem,
+				gameWinWidget,
+				gameOverWidget
+				)//TODO: quitar referencias? usar eventos?
+		enemySystem = EnemySystem(enemyEventSignal, gameEventSignal, bulletEventSignal, renderEventSignal, assets)
 		gateSystem = GateSystem()
 		ammoSystem = AmmoSystem(gameEventSignal)
 		healthSystem = HealthSystem(gameEventSignal)
@@ -91,13 +99,13 @@ class GameWorld(private val game: CesDoom) {
 
 		// TODO: Cargar desde constructor...
 		/// SCENE
-		engine.addEntity(SceneFactory.getDome(game.assets.getDome()))
-		engine.addEntity(SceneFactory.getSuelo(game.assets.getSuelo(), lonMundo))
-		SceneFactory.loadSkyline(game.assets.getSkyline(), engine, lonMundo/2f)
-		SceneFactory.loadJunk(game.assets.getJunk(), engine, lonMundo/4f)
+		engine.addEntity(SceneFactory.getDome(assets.getDome()))
+		engine.addEntity(SceneFactory.getSuelo(assets.getSuelo(), lonMundo))
+		SceneFactory.loadSkyline(assets.getSkyline(), engine, lonMundo/2f)
+		SceneFactory.loadJunk(assets.getJunk(), engine, lonMundo/4f)
 
 		/// MAZE
-		MazeFactory.create(engine)
+		MazeFactory.create(engine, assets)
 
 		/// PLAYER
 		createPlayer(Vector3(0f,150f,0f))
@@ -107,9 +115,9 @@ class GameWorld(private val game: CesDoom) {
 	private fun createPlayer(pos: Vector3) {
 		player = playerSystem.createPlayer(pos, engine)
 		gun = GunFactory.create(
-				game.assets.getRifle(),
+				assets.getRifle(),
 				GunComponent.TYPE.CZ805,
-				game.assets.getFireShot())
+				assets.getFireShot())
 		engine.addEntity(gun)
 		playerSystem.gun = gun
 		renderSystem.gun = gun
@@ -132,7 +140,6 @@ class GameWorld(private val game: CesDoom) {
 		bulletSystem.setProcessing( ! Status.paused)
 		enemySystem.setProcessing( ! Status.paused)
 		playerSystem.setProcessing( ! Status.paused)
-		//statusSystem.setProcessing( ! Status.paused)
 		gateSystem.setProcessing( ! Status.paused)
 	}
 

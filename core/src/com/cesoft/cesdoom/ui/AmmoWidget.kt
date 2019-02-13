@@ -10,13 +10,13 @@ import com.cesoft.cesdoom.components.PlayerComponent
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class AmmoWidget : Actor() {
+class AmmoWidget(private val assets: Assets) : Actor() {
 	companion object {
 		const val cx = CesDoom.VIRTUAL_WIDTH/5f
 		const val cy = CesDoom.VIRTUAL_HEIGHT/23f
 	}
 
-	private var text: TextField = TextField("", CesDoom.instance.assets.skin)
+	private var text: TextField = TextField("", assets.skin)
 
 	init {
 		setSize(cx, cy)
@@ -24,9 +24,8 @@ class AmmoWidget : Actor() {
 	}
 
 	override fun act(delta: Float) {
-		//Log.e("Ammowidget", "act-------------------------------- ${WidgetComponent.ammo}")
 		text.act(delta)
-		text.text = CesDoom.instance.assets.formatString(Assets.AMMO, PlayerComponent.ammo)
+		text.text = assets.formatString(Assets.AMMO, PlayerComponent.ammo)
 	}
 
 	override fun draw(batch: Batch?, parentAlpha: Float) {

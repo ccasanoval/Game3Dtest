@@ -13,13 +13,11 @@ import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.entities.Player
-import com.cesoft.cesdoom.events.BulletEvent
-import com.cesoft.cesdoom.events.EnemyEvent
-import com.cesoft.cesdoom.events.EnemyQueue
-import com.cesoft.cesdoom.events.GameEvent
+import com.cesoft.cesdoom.events.*
 import com.cesoft.cesdoom.managers.EnemyActions
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.managers.MazeFactory
@@ -32,7 +30,8 @@ class EnemySystem(
 		eventSignal: Signal<EnemyEvent>,
 		private val gameEventSignal: Signal<GameEvent>,
 		private val bulletEventSignal: Signal<BulletEvent>,
-		private val game: CesDoom
+		private val renderEventSignal: Signal<RenderEvent>,
+		assets: Assets
 ) : EntitySystem(), EntityListener {
 
 	companion object {
@@ -41,7 +40,7 @@ class EnemySystem(
 	}
 
 	private var player: Player? = null
-	private val enemyFactory = EnemyFactory(game.assets)
+	private val enemyFactory = EnemyFactory(assets)
 	private val enemyQueue = EnemyQueue()
 	init {
 		Log.e(tag, "INI ---------------------------------------------------------")
@@ -336,7 +335,8 @@ class EnemySystem(
 		effect.scale(5f, 8f, 5f)
 		effect.init()
 		effect.start()
-		game.render.addParticleEffect(effect)//TODO: remove this reference... Event!
+		renderEventSignal.dispatch(RenderEvent(RenderEvent.Type.ADD_PARTICLE_FX, effect))
+		//game.render.addParticleEffect(effect)//TODO: remove this reference... Event!
 	}
 
 

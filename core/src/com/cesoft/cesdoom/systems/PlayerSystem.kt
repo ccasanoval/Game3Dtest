@@ -30,6 +30,8 @@ import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.events.RenderEvent
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.managers.PlayerInput
+import com.cesoft.cesdoom.ui.GameOverWidget
+import com.cesoft.cesdoom.ui.GameWinWidget
 import com.cesoft.cesdoom.util.Log
 
 
@@ -41,7 +43,9 @@ class PlayerSystem(
 		private val renderEventSignal: Signal<RenderEvent>,
 		private val colorAmbientConst: ColorAttribute,
 		private val camera: Camera,
-		private val bulletSystem: BulletSystem
+		private val bulletSystem: BulletSystem,
+		private val gameWinWidget: GameWinWidget,
+		private val gameOverWidget: GameOverWidget
 	)
 	: EntitySystem(), EntityListener
 {
@@ -384,7 +388,7 @@ class PlayerSystem(
 			}
 			else if(delayDeath > 2.5f) {
 				Status.paused = true
-				CesDoom.instance.gameUI.gameOverWidget.show()
+				gameOverWidget.show()//TODO: clean
 				Sounds.play(Sounds.SoundType.GAME_OVER)
 			}
 			delayDeath += delta
@@ -398,12 +402,11 @@ class PlayerSystem(
 				Sounds.play(Sounds.SoundType.YOU_WIN)
 				//TODO: Why can we delay this with delayYouWin, it crashes
 				Status.paused = true
-				CesDoom.instance.gameUI.gameWinWidget.show()
+				gameWinWidget.show()
 			}
 			else if(delayYouWin >= 1f) {
 				Status.paused = true
-				CesDoom.instance.gameUI.gameWinWidget.show()
-				//GameUI.gameOverWidget.show()
+				gameWinWidget.show()
 			}
 			delayYouWin += delta
 		}

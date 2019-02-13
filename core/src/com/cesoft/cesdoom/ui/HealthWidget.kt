@@ -9,12 +9,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class HealthWidget : Actor() {
+class HealthWidget(assets: Assets) : Actor() {
 	private val healthBar: ProgressBar
 	private val progressBarStyle: ProgressBar.ProgressBarStyle
 	private val label: Label
@@ -22,8 +23,8 @@ class HealthWidget : Actor() {
 	//______________________________________________________________________________________________
 	init {
 		progressBarStyle = ProgressBar.ProgressBarStyle(
-				CesDoom.instance.assets.skin.newDrawable("progress-bar-back", Color.RED),
-				CesDoom.instance.assets.skin.newDrawable("white", Color.GREEN))
+				assets.skin.newDrawable("progress-bar-back", Color.RED),
+				assets.skin.newDrawable("white", Color.GREEN))
 		progressBarStyle.knobBefore = progressBarStyle.knob
 		healthBar = ProgressBar(0f, 100f, 1f, false, progressBarStyle)
 
