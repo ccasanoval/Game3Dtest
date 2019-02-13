@@ -34,7 +34,7 @@ import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: Joystick!!
+//
 class PlayerSystem(
 		gameEventSignal: Signal<GameEvent>,
 		private val enemyEventSignal: Signal<EnemyEvent>,
@@ -43,10 +43,12 @@ class PlayerSystem(
 		private val camera: Camera,
 		private val bulletSystem: BulletSystem
 	)
-	: EntitySystem(), EntityListener//, InputProcessor//, ControllerListener
+	: EntitySystem(), EntityListener
 {
 	companion object {
 	    val tag: String = PlayerSystem::class.java.simpleName
+		private const val COLOR_DELAY = 150
+		private const val COLOR_LOOP = 800
 	}
 
 	private val eventQueue = GameQueue()
@@ -61,7 +63,6 @@ class PlayerSystem(
 	lateinit var gun: Entity
 	private val posTemp = Vector3()
 	private val posTemp2 = Vector3()
-
 	private val input = PlayerInput()
 
 	/// Extends EntitySystem
@@ -454,8 +455,6 @@ class PlayerSystem(
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	private val COLOR_DELAY = 100
-	private val COLOR_LOOP = 800
 	private fun hurt(pain: Int) {
 		if(PlayerComponent.isGodModeOn)return
 		val now = System.currentTimeMillis()

@@ -19,28 +19,6 @@ import com.cesoft.cesdoom.systems.*
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//TODO:
-//
-//TODO: Joystick!!
-//TODO: Mejorar FPS (Enemy consume mucho, es todo por pathfinding?)
-//TODO: Levels+
-//
-//TODO: Constructor para laberinto & MapPathFinder
-//TODO: Columnas en maze
-
-//TODO: mandos de pantalla : Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir recarga (cargadores) y salto?
-
-//TODO: Dependecy Injection? https://github.com/denisk20/libgdx-dagger2
-//TODO: Shadows? Fog?
-
-//VR
-//TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
-//https://github.com/yangweigbh/Libgdx-CardBoard-Extension
-//https://github.com/Brummi/VRDemo
-//https://github.com/nooone/gdx-vr
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class GameWorld(private val game: CesDoom) {
 
@@ -55,7 +33,6 @@ class GameWorld(private val game: CesDoom) {
 	private var bulletSystem: BulletSystem
 	private var playerSystem: PlayerSystem
 	private var enemySystem: EnemySystem
-	//private var statusSystem: StatusSystem
 	private var gateSystem: GateSystem
 	private var ammoSystem: AmmoSystem
 	private var healthSystem: HealthSystem
@@ -92,7 +69,6 @@ class GameWorld(private val game: CesDoom) {
 				renderSystem.perspectiveCamera,//TODO: quitar referencias? usar eventos?
 				bulletSystem)//TODO: quitar referencias? usar eventos?
 		enemySystem = EnemySystem(enemyEventSignal, gameEventSignal, bulletEventSignal, game)
-		//statusSystem = StatusSystem(this)
 		gateSystem = GateSystem()
 		ammoSystem = AmmoSystem(gameEventSignal)
 		healthSystem = HealthSystem(gameEventSignal)
@@ -102,7 +78,6 @@ class GameWorld(private val game: CesDoom) {
 		engine.addSystem(bulletSystem)
 		engine.addSystem(playerSystem)
 		engine.addSystem(enemySystem)
-		//engine.addSystem(statusSystem)
 		engine.addSystem(gateSystem)
 		engine.addSystem(ammoSystem)
 		engine.addSystem(healthSystem)

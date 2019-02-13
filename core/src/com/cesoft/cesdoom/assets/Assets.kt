@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.I18NBundle
+import com.cesoft.cesdoom.components.EnemyComponent
 import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.util.Log
 
@@ -49,8 +50,8 @@ class Assets {
 
 		/// MODELS
 		private const val MODEL_DOME = "scene/dome/spacedome.g3db"
-		private const val MODEL_MONSTER1 = "foes/monster1/a.g3db"	//Thanks to https://www.turbosquid.com/FullPreview/Index.cfm/ID/312341
-		private const val MODEL_MONSTER2 = "foes/monster2/out.g3db"
+		private const val MODEL_MONSTER0 = "foes/monster0/a.g3db"	//Thanks to https://www.turbosquid.com/FullPreview/Index.cfm/ID/312341
+		private const val MODEL_MONSTER1 = "foes/monster1/out.g3db"
 		private const val MODEL_RIFLE = "weapons/cz805/a.g3db"
 		private const val MODEL_AMMO = "items/ammo/bullet.g3db"
 		private const val MODEL_HEALTH = "items/health/can.g3db"
@@ -125,8 +126,18 @@ class Assets {
 	fun iniDome() = assetManager.load(MODEL_DOME, Model::class.java)
 	fun getDome():Model = assetManager.get(MODEL_DOME, Model::class.java)
 	//______________________________________________________________________________________________
-	fun iniEnemy(type: Int=0) = assetManager.load(MODEL_MONSTER1, Model::class.java)
-	fun getEnemy(type: Int=0):Model = assetManager.get(MODEL_MONSTER1, Model::class.java)
+	fun iniEnemy(type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER0) {
+		when(type) {
+			EnemyComponent.TYPE.MONSTER0 -> assetManager.load(MODEL_MONSTER0, Model::class.java)
+			EnemyComponent.TYPE.MONSTER1 -> assetManager.load(MODEL_MONSTER1, Model::class.java)
+		}
+	}
+	fun getEnemy(type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER0): Model {
+		return when(type) {
+			EnemyComponent.TYPE.MONSTER0 -> assetManager.get(MODEL_MONSTER0, Model::class.java)
+			EnemyComponent.TYPE.MONSTER1 -> assetManager.get(MODEL_MONSTER1, Model::class.java)
+		}
+	}
 	//______________________________________________________________________________________________
 	fun iniAmmo() = assetManager.load(MODEL_AMMO, Model::class.java)
 	fun getAmmo():Model = assetManager.get(MODEL_AMMO, Model::class.java)

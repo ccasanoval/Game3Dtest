@@ -1,10 +1,10 @@
 android {
     signingConfigs {
         config {
-            keyAlias 'ces'
-            keyPassword 'xxx'
-            storeFile file('/home/cesar/usr/tests/ces.jks')
-            storePassword 'xxx'
+            keyAlias "ces"
+            storeFile file('/home/cesar/usr/tests/CesDoom2/cesks.jks')
+            keyPassword 'x'
+            storePassword 'x'
         }
     }
     buildToolsVersion "28.0.3"
@@ -28,17 +28,17 @@ android {
     }
     defaultConfig {
         applicationId "com.cesoft.cesdoom"
-        minSdkVersion 16//21
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
     buildTypes {
-		debug {
-			applicationIdSuffix ".debug"
-		}
+        debug {
+            applicationIdSuffix ".debug"
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }

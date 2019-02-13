@@ -4,9 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
-import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
@@ -29,15 +27,24 @@ class EnemyFactory(assets: Assets) {
         private val tag: String = EnemyFactory::class.java.simpleName
         private const val MAX_ENEMIES = 4
         private const val SPAWN_DELAY = 5*1000	//TODO: si pausa o background, debe actualizar time!!!
+        private val random = java.util.Random()
     }
 
     lateinit var enemies: ImmutableArray<Entity>
     private val allEnemies = ArrayList<Enemy>()
     init {
-        val model = assets.getEnemy()
+//        val models = arrayListOf<Model>()
+//        models.add(assets.getEnemy(EnemyComponent.TYPE.MONSTER0))
+//        models.add(assets.getEnemy(EnemyComponent.TYPE.MONSTER1))
         if(allEnemies.size < MAX_ENEMIES) {
             for(i in allEnemies.size until MAX_ENEMIES) {
-                val enemy = createEnemy(i, model, assets.newParticleEffect())
+                //val enemy = createEnemy(i, models[random.nextInt(2)], assets.newParticleEffect())
+                val type = when(random.nextInt(2)) {
+                    //1 -> EnemyComponent.TYPE.MONSTER1
+                    else -> EnemyComponent.TYPE.MONSTER1
+                }
+                val enemy = createEnemy(i, assets, type)
+                Log.e(tag, "ini -------------------------------------------------- $enemy : $i $type")
                 allEnemies.add(enemy)
             }
         }
@@ -45,6 +52,7 @@ class EnemyFactory(assets: Assets) {
 
     private fun getNextEnemy(id: Int): Enemy {
         val enemy = allEnemies[id]
+        Log.e(tag, "getNextEnemy $id -------------------------- $enemy")
         val pos = when(countSpawnPosition++ % 4) {//TODO:Random
             0 ->    Vector3(+250f, 150f, +250f)
             1 ->    Vector3(+250f, 150f, -250f)
@@ -104,7 +112,6 @@ class EnemyFactory(assets: Assets) {
     private fun resetEntity(entity: Entity, position: Vector3) {
         /// Components
         resetComponents(entity)
-
         /// Model
         val model = ModelComponent.get(entity)
         if (model.blendingAttribute != null)
@@ -118,7 +125,6 @@ class EnemyFactory(assets: Assets) {
         val transf = Matrix4()
         transf.setTranslation(position)
         bullet.rigidBody.worldTransform = transf
-
         /// Animation
         EnemyActions.setAnimation(entity, EnemyComponent.ACTION.WALKING)
     }
@@ -141,8 +147,9 @@ class EnemyFactory(assets: Assets) {
 
     private fun createEnemy(
             id: Int,
-            model: Model,
-            particleEffect: ParticleEffect,
+            assets: Assets,
+            //model: Model,
+            //particleEffect: ParticleEffect,
             type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER1,
             mass: Float = EnemyComponent.MASS
             ): Enemy {
@@ -158,17 +165,23 @@ class EnemyFactory(assets: Assets) {
         entity.add(stat)
 
         /// Model
+        val model = assets.getEnemy(type)
         val modelComponent: ModelComponent
-        when (type) {
-            EnemyComponent.TYPE.MONSTER1 -> {
+
+//        Log.e(tag, "CREATE-------------- ANIMS:")
+//        for(anim in model.animations)
+//            Log.e(tag, "CREATE-------------- ${anim.id} / ${anim.duration}")
+
+        //when (type) {
+        //    EnemyComponent.TYPE.MONSTER1 -> {
                 modelComponent = ModelComponent(model, Vector3.Zero)
                 //modelComponent.frustumCullingData =
                 //	FrustumCullingData.create(Vector3(0f,0f,0f), Vector3(RADIO,RADIO,RADIO), modelComponent.instance)
                 entity.add(modelComponent)
                 /// ANIMATION
                 entity.add(AnimationComponent(modelComponent.instance))
-            }
-        }
+        //    }
+        //}
 
         // Evanesce Effect
         if (modelComponent.instance.materials.size > 0) {
@@ -179,7 +192,7 @@ class EnemyFactory(assets: Assets) {
         }
 
         // Particle Effect
-        enemy.particleEffect = particleEffect
+        enemy.particleEffect = assets.newParticleEffect()//particleEffect
 
         // Position and Shape
         val shape = btSphereShape(EnemyComponent.RADIO - 1)////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)

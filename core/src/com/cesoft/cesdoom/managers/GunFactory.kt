@@ -69,7 +69,7 @@ object GunFactory {
 				return when(action) {
 					GunComponent.ACTION.IDLE -> AnimationParams("cz|idle")
 					GunComponent.ACTION.SHOOT -> AnimationParams("cz|shoot")
-					GunComponent.ACTION.RELOAD -> AnimationParams("cz|reload")
+					GunComponent.ACTION.RELOAD -> AnimationParams("cz|reload")//TODO:Cambiar velocidad para adecuar a audio...
 					GunComponent.ACTION.DRAW -> AnimationParams("cz|draw")
 				}
 		}

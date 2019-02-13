@@ -37,14 +37,6 @@ class AmmoSystem(gameEventSignal: Signal<GameEvent>) : EntitySystem(), EntityLis
         processEvents()
         for(entity in ammo) {
             (entity as Ammo).update(engine)
-//            val obj = AmmoComponent.get(entity)
-//            if(obj.isPickedUp) {
-//                engine.removeEntity(entity)
-//            }
-//            else {
-//                val model = ModelComponent.get(entity)
-//                model.instance.transform.rotate(Vector3.Y, 5f)
-//            }
         }
     }
     private fun processEvents() {

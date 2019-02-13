@@ -7,11 +7,12 @@ import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.systems.PlayerSystem
 import com.cesoft.cesdoom.util.Log
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//TODO: Joystick!!
 class PlayerInput : ControllerListener {
 
     //----------------------------------------------------------------------------------------------
-    ///// ControllerListener
-    // TODO: REFACTOR to class que agrupe todo input...
+    //
     enum class Direccion { NONE, ATRAS, ADELANTE, IZQUIERDA, DERECHA }
     var xPad: Direccion = Direccion.NONE
     var yPad: Direccion = Direccion.NONE
@@ -21,7 +22,10 @@ class PlayerInput : ControllerListener {
     var btnB: Boolean = false
     var btnC: Boolean = false
     var btnD: Boolean = false
-    /////-------------------------------------------------------------------------------------------
+
+    //-------------------------------------------------------------------------------------------
+    //
+    /// Implements ControllerListener
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
         //Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
         if(axisCode == com.badlogic.gdx.controllers.mappings.Ouya.AXIS_LEFT_X) {

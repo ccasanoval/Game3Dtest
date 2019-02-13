@@ -23,7 +23,7 @@ class EnemyComponent(val type: TYPE) : Component
 	}
 
 	enum class TYPE {
-		MONSTER1,
+		MONSTER0, MONSTER1,
 	}
 	enum class ACTION {
 		IDLE,

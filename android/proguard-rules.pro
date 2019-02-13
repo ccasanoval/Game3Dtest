@@ -27,6 +27,7 @@
 -dontwarn com.badlogic.gdx.physics.box2d.utils.Box2DBuild
 -dontwarn com.badlogic.gdx.jnigen.BuildTarget*
 -dontwarn com.badlogic.gdx.graphics.g2d.freetype.FreetypeBuild
+-dontwarn com.badlogic.gdx.physics.bullet.BulletBuild
 
 -keep class com.badlogic.gdx.controllers.android.AndroidControllers
 
@@ -42,4 +43,9 @@
    void    postSolve(long, long);
    boolean reportFixture(long);
    float   reportRayFixture(long, float, float, float, float, float);
+}
+
+-keep class com.badlogic.** {
+   **[] $VALUES;
+    *;
 }

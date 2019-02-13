@@ -8,7 +8,11 @@ import com.badlogic.gdx.graphics.g3d.utils.AnimationController
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-data class AnimationParams(var id: String, var loop: Int = 1, var speed: Float = 1f, var offset: Float = 0f, var duration: Float = -1f)
+data class AnimationParams(var id: String, var loop: Int = 1, var speed: Float = 1f, var offset: Float = 0f, var duration: Float = -1f) {
+	init {
+	    com.cesoft.cesdoom.util.Log.e("AnimationParams", "**********************-----id=$id, loop=$loop, speed=$speed, offset=$offset, duration=$duration")
+	}
+}
 class AnimationComponent(instance: ModelInstance) : Component {
 
 	companion object {

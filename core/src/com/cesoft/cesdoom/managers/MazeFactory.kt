@@ -34,13 +34,13 @@ object MazeFactory {
 
 
 		//----- TEST
-		mapFactory.print()
-		Log.e("AAA", "")
-		Log.e("AAA", "")
-		mapFactory.print2()
+//		mapFactory.print()
+//		Log.e("AAA", "")
+//		Log.e("AAA", "")
+//		mapFactory.print2()
 
-		Log.e("Maze", "--------------------------------------")
-		Log.e("Maze", "--------------------------------------")
+		Log.e("Maze", "----------------------------------------------------------------------------")
+		Log.e("Maze", "----------------------------------------------------------------------------")
 
 		/*
 		val path = mapFactory.map.findPath(Vector2(0f, -250f), Vector2(0f, 0f))

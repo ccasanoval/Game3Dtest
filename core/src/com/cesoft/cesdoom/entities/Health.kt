@@ -65,7 +65,7 @@ class Health(pos: Vector3, model: Model, engine: Engine) : Entity() {
         }
         else {
             //val model = ModelComponent.get(this)
-            modelComponent.instance.transform.rotate(Vector3.Y, 5f)
+            modelComponent.instance.transform.rotate(Vector3.Y, -5f)
         }
     }
 }

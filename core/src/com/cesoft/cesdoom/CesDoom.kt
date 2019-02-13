@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException
 import com.cesoft.cesdoom.ui.GameUI
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
+import com.cesoft.cesdoom.components.EnemyComponent
 import com.cesoft.cesdoom.screens.GameScreen
 import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen
@@ -19,8 +20,34 @@ import com.cesoft.cesdoom.util.Log
 // DESKTOP DEPLOY : gradlew desktop:dist --> cesgame2\desktop\build\libs
 // DESKTOP RUN    : desktop:run
 //
-//https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
-//class CesDoom(private val camera: Camera?) : ApplicationAdapter() {
+//
+//NOTE:
+//
+// si te dice que no exite el apk: https://stackoverflow.com/questions/34039834/the-apk-file-does-not-exist-on-disk
+// https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
+
+//TODO:
+//
+//TODO: FPS !!!  (Enemy consume mucho, es todo por pathfinding?)
+//TODO: Joystick!!
+//TODO: Levels+  /  Constructor
+//TODO: Pathfinding 3D (ramps, etc)
+//TODO: Monster2, Weapon2 ?
+//TODO: Radar de monster?
+//TODO: Textura en suelo donde nacen los bichos?
+//
+//TODO: Columnas en maze?
+//TODO: mandos de pantalla : Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir salto?
+
+//TODO: Dependecy Injection? https://github.com/denisk20/libgdx-dagger2
+//TODO: Shadows? Fog?
+
+//VR
+//TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
+//https://github.com/yangweigbh/Libgdx-CardBoard-Extension
+//https://github.com/Brummi/VRDemo
+//https://github.com/nooone/gdx-vr
+
 class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 
 	companion object {
@@ -129,8 +156,10 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		Sounds.load()
 
 		// Enemy
-		try {assets.getEnemy()}
-		catch(ignore: Exception) {assets.iniEnemy()}
+		try {assets.getEnemy(EnemyComponent.TYPE.MONSTER0)}
+		catch(ignore: Exception) {assets.iniEnemy(EnemyComponent.TYPE.MONSTER0)}
+		try {assets.getEnemy(EnemyComponent.TYPE.MONSTER1)}
+		catch(ignore: Exception) {assets.iniEnemy(EnemyComponent.TYPE.MONSTER1)}
 
 		// Weapons
 		try {assets.getRifle()}
