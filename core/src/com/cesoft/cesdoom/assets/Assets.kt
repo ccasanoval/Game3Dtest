@@ -33,6 +33,7 @@ class Assets {
 		const val JUGAR="JUGAR"
 		const val SALIR="SALIR"
 		const val RECARGAR="RECARGAR"
+		const val NEXT_LEVEL="NEXT_LEVEL"
 		const val PUNTUACIONES="PUNTUACIONES"
 		const val CREDITOS="CREDITOS"
 		const val AMMO="AMMO"

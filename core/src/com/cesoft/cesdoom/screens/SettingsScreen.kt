@@ -17,22 +17,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // https://www.gamedevelopment.blog/full-libgdx-game-tutorial-menu-control/
-class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
+class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : Screen, InputProcessor {
 
     private var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
     private var backgroundImage = Image(Texture(Gdx.files.internal("data/background.png")))
-    private var backButton = TextButton(game.assets.getString(Assets.ATRAS), game.assets.skin)
+    private var backButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
 
-    private val win = Window("SettingsScreen", game.assets.skin, "special")
-    private val titleLabel = Label(game.assets.getString(Assets.CONFIG), game.assets.skin)
+    private val win = Window("SettingsScreen", assets.skin, "special")
+    private val titleLabel = Label(assets.getString(Assets.CONFIG), assets.skin)
 
-    private val soundButton = TextButton(game.assets.getString(Assets.CONFIG_SOUND_EFFECTS_ONOF), game.assets.skin, "toggle")
-    private val soundVolumeLabel = Label(game.assets.getString(Assets.CONFIG_SOUND_EFFECTS_VOLUME), game.assets.skin)
-    private val soundVolumeSlider = Slider( 0f, 1f, 0.1f,false, game.assets.skin)
+    private val soundButton = TextButton(assets.getString(Assets.CONFIG_SOUND_EFFECTS_ONOF), assets.skin, "toggle")
+    private val soundVolumeLabel = Label(assets.getString(Assets.CONFIG_SOUND_EFFECTS_VOLUME), assets.skin)
+    private val soundVolumeSlider = Slider( 0f, 1f, 0.1f,false, assets.skin)
 
-    private val musicButton = TextButton(game.assets.getString(Assets.CONFIG_MUSIC_ONOF), game.assets.skin, "toggle")
-    private val musicVolumeLabel = Label(game.assets.getString(Assets.CONFIG_MUSIC_VOLUME), game.assets.skin)
-    private val musicVolumeSlider = Slider( 0f, 1f, 0.1f,false, game.assets.skin)
+    private val musicButton = TextButton(assets.getString(Assets.CONFIG_MUSIC_ONOF), assets.skin, "toggle")
+    private val musicVolumeLabel = Label(assets.getString(Assets.CONFIG_MUSIC_VOLUME), assets.skin)
+    private val musicVolumeSlider = Slider( 0f, 1f, 0.1f,false, assets.skin)
 
 
     init {
@@ -109,7 +109,7 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
     //______________________________________________________________________________________________
     private fun goBack() {
         Settings.savePrefs()
-        game.setScreen(MainMenuScreen(game))
+        game.setScreen(MainMenuScreen(game, assets))
     }
     //______________________________________________________________________________________________
     private fun setListeners() {
@@ -151,10 +151,10 @@ class SettingsScreen(internal val game: CesDoom) : Screen, InputProcessor {
         stage.dispose()
     }
 
-    override fun show() {}
-    override fun pause() {}
-    override fun resume() {}
-    override fun hide() {}
+    override fun show() = Unit
+    override fun pause() = Unit
+    override fun resume() = Unit
+    override fun hide() = Unit
 
     //______________________________________________________________________________________________
     /// Implements: InputProcessor

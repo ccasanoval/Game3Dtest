@@ -36,7 +36,7 @@ class EnemyComponent(val type: TYPE) : Component
 	}
 
 	var orientation: Double = 0.0
-	var posTemp = Vector3()
+	var position = Vector3()
 	var nextStep3D = Vector3()
 	var stepCalc2D = Vector2()
 	var currentPos2D = Vector2()

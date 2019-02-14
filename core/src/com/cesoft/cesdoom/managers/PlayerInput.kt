@@ -9,6 +9,7 @@ import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //TODO: Joystick!!
+//https://github.com/libgdx/libgdx/wiki/Controllers
 class PlayerInput : ControllerListener {
 
     //----------------------------------------------------------------------------------------------

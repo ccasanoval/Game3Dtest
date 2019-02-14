@@ -25,14 +25,16 @@ class EnemyFactory(assets: Assets) {
 
     companion object {
         private val tag: String = EnemyFactory::class.java.simpleName
-        private const val MAX_ENEMIES = 4
         private const val SPAWN_DELAY = 5*1000	//TODO: si pausa o background, debe actualizar time!!!
-        private val random = java.util.Random()
     }
+
+    private val MAX_ENEMIES = 4 * (PlayerComponent.currentLevel+1)
+    private val random = java.util.Random()
 
     lateinit var enemies: ImmutableArray<Entity>
     private val allEnemies = ArrayList<Enemy>()
     init {
+        Log.e(tag, "INIT---------------------------------------------------------------- MAX_ENEMIES=$MAX_ENEMIES")
         if(allEnemies.size < MAX_ENEMIES) {
             for(i in allEnemies.size until MAX_ENEMIES) {
                 val type = when(random.nextInt(2)) {
@@ -47,12 +49,25 @@ class EnemyFactory(assets: Assets) {
 
     private fun getNextEnemy(id: Int): Enemy {
         val enemy = allEnemies[id]
-        val pos = when(countSpawnPosition++ % 4) {//TODO:Random
+        val pos = when(countSpawnPosition++ % MAX_ENEMIES) {//TODO:Random
             0 ->    Vector3(+250f, 150f, +250f)
             1 ->    Vector3(+250f, 150f, -250f)
             2 ->    Vector3(-250f, 150f, +250f)
-            else -> Vector3(-250f, 150f, -250f)
+            3 ->    Vector3(-250f, 150f, -250f)
+
+            4 ->    Vector3(+150f, 150f, +150f)
+            5 ->    Vector3(+150f, 150f, -150f)
+            6 ->    Vector3(-150f, 150f, +150f)
+            7 ->    Vector3(-150f, 150f, -150f)
+
+            8 ->    Vector3(+150f, 150f, +150f)
+            9 ->    Vector3(+150f, 150f, -150f)
+            10 ->   Vector3(-150f, 150f, +150f)
+            11 ->   Vector3(-150f, 150f, -150f)
+
+            else -> Vector3(+250f, 150f, +250f)
         }
+        Log.e(tag, "getNextEnemy id=$id ------------------------------ pos=$pos")
         resetEntity(enemy, pos)
         return enemy
     }
@@ -119,6 +134,7 @@ class EnemyFactory(assets: Assets) {
         val transf = Matrix4()
         transf.setTranslation(position)
         bullet.rigidBody.worldTransform = transf
+
         /// Animation
         EnemyActions.setAnimation(entity, EnemyComponent.ACTION.WALKING)
     }
@@ -135,7 +151,7 @@ class EnemyFactory(assets: Assets) {
 
         val enemy = EnemyComponent.get(entity)
         enemy.currentAnimation = EnemyComponent.ACTION.WALKING
-        enemy.posTemp
+        //enemy.position
     }
 
 
@@ -165,7 +181,7 @@ class EnemyFactory(assets: Assets) {
 
         /// ANIMATION
         entity.add(AnimationComponent(modelComponent.instance))
-//        for(anim in model.animations)Log.e(tag, "ANIMATION:-------------- ${anim.id} / ${anim.duration}")
+        ///for(anim in model.animations)Log.e(tag, "ANIMATION:-------------- ${anim.id} / ${anim.duration}")
 
 
         // Evanesce Effect
@@ -181,10 +197,10 @@ class EnemyFactory(assets: Assets) {
 
         // Position and Shape
         val shape = btSphereShape(EnemyComponent.RADIO - 1)////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
-        shape.calculateLocalInertia(mass, enemy.posTemp)
+        shape.calculateLocalInertia(mass, enemy.position)
 
         /// Collision
-        val rigidBodyInfo = btRigidBody.btRigidBodyConstructionInfo(mass,null, shape, enemy.posTemp)
+        val rigidBodyInfo = btRigidBody.btRigidBodyConstructionInfo(mass,null, shape, enemy.position)
         val rigidBody = btRigidBody(rigidBodyInfo)
         rigidBody.userData = entity
         rigidBody.motionState = MotionState(modelComponent.instance.transform)

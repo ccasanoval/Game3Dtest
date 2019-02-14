@@ -6,6 +6,7 @@ import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
+import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.systems.RenderSystem
 import com.cesoft.cesdoom.ui.GameUI
 
@@ -40,9 +41,10 @@ class GameScreen(private val gameUI: GameUI, assets: Assets) : Screen {
 	}
 
 	override fun dispose() {
-		Sounds.stopMusic()
 		gameWorld.dispose()
-		//Log.e("GameScreen", "dispose------------------------------------------------")
+		if(PlayerComponent.currentLevel == 0)
+			Sounds.stopMusic()
+		com.cesoft.cesdoom.util.Log.e("GameScreen", "dispose------------------------------------------------ ${PlayerComponent.currentLevel}")
 	}
 
 	override fun show() = Unit

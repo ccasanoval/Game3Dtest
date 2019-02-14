@@ -13,19 +13,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
-import com.cesoft.cesdoom.util.Log
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class AboutScreen(internal val game: CesDoom) : Screen, InputProcessor {
+class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Screen, InputProcessor {
 
 	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/background.png")))
-	private var backButton: TextButton = TextButton(game.assets.getString(Assets.ATRAS), game.assets.skin)
+	private var backButton: TextButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
 
-	private val texto: Label = Label(game.assets.getString(Assets.SOBRE_TXT), game.assets.skin)
-	private val scrollPane = ScrollPane(texto, game.assets.skin)
-	private val win = Window("test", game.assets.skin, "special")
+	private val texto: Label = Label(assets.getString(Assets.SOBRE_TXT), assets.skin)
+	private val scrollPane = ScrollPane(texto, assets.skin)
+	private val win = Window("CesDooM", assets.skin, "special")
 
 	init {
 		configureWidgers()
@@ -61,7 +61,7 @@ class AboutScreen(internal val game: CesDoom) : Screen, InputProcessor {
 	}
 
 	//______________________________________________________________________________________________
-	private fun goBack() { game.setScreen(MainMenuScreen(game)) }
+	private fun goBack() { game.setScreen(MainMenuScreen(game, assets)) }
 	private fun setListeners() {
 		backButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
@@ -84,10 +84,10 @@ class AboutScreen(internal val game: CesDoom) : Screen, InputProcessor {
 		stage.dispose()
 	}
 
-	override fun show() {}
-	override fun pause() {}
-	override fun resume() {}
-	override fun hide() {}
+	override fun show() = Unit
+	override fun pause() = Unit
+	override fun resume() = Unit
+	override fun hide() = Unit
 
 
 	/// Implements: InputProcessor

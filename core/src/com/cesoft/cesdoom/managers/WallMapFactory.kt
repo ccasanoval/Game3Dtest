@@ -13,23 +13,24 @@ object WallMapFactory {
 
     fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, ignore: Int) {
 
+        val level = if(pos.y > WallFactory.HIGH) 1 else 0
         when(angle) {//TODO: change by sin + cos of angle...
             +00f -> //--- Vertical
                 for(x_ in -thick/2..thick/2)
                     for(z_ in -long/2..long/2)
-                        mapFactory.addCollider(pos.x + x_, pos.z + z_)
+                        mapFactory.addCollider(level, pos.x + x_, pos.z + z_)
             +90f -> //--- Horizontal
                 for(z_ in -thick/2..thick/2)
                     for(x_ in -long/2..long/2)
-                        mapFactory.addCollider(pos.x + x_, pos.z + z_)
+                        mapFactory.addCollider(level, pos.x + x_, pos.z + z_)
             +45f ->
                 for(z_ in 0..thick)
                     for(x_ in z_..z_+(long*0.7971f).toInt())
-                        mapFactory.addCollider(pos.x + z_, pos.z + z_)
+                        mapFactory.addCollider(level, pos.x + z_, pos.z + z_)
             -45f ->
                 for(z_ in 0..thick)
                     for(x_ in z_..z_+(long*0.7971f).toInt())
-                        mapFactory.addCollider(pos.x + x_, pos.z + x_)
+                        mapFactory.addCollider(level, pos.x + x_, pos.z + x_)
         }
      }
 }

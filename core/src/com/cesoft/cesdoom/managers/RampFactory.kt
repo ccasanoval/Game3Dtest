@@ -23,7 +23,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.map.MapGraphFactory
-import com.cesoft.cesdoom.systems.RenderSystem
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,6 +33,7 @@ class RampFactory(assets: Assets) {
 		const val HIGH = 20f
 		const val THICK = 1f
 	}
+	enum class Type { STEEL, GRID, }
 
 	private val dim0 = Vector3(THICK*2, HIGH*2, LONG*2)
 	private val dim90 = Vector3(LONG*2, THICK*2, HIGH*2)
@@ -53,14 +53,14 @@ class RampFactory(assets: Assets) {
 		val texture1 = assets.getWallMetal2()
 		val texture2 = assets.getWallMetal3()
 
-		/// MODELO1
+		/// MODEL 1 (CORRUGATED STEEL)
 		texture1.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture1)
 		textureAttribute1.scaleU = 3f
 		textureAttribute1.scaleV = 3f * LONG / HIGH
 		material1.set(textureAttribute1)
 
-		/// MODELO2
+		/// MODEL 2 (TRANSPARENT GRID)
 		texture2.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute2 = TextureAttribute(TextureAttribute.Diffuse, texture2)
 		textureAttribute2.scaleU = 2f
@@ -70,13 +70,14 @@ class RampFactory(assets: Assets) {
 	}
 
 	//______________________________________________________________________________________________
-	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angleX: Float = 0f, angleY: Float = 0f, angleZ: Float = 0f, type: Boolean = true): Entity {
+	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angleX: Float = 0f, angleY: Float = 0f, angleZ: Float = 0f, type:Type=Type.STEEL): Entity {
 		val entity = Entity()
 
-		/// MODELO
-		val material = if(type) material1 else material2
-		val modelo : Model = modelBuilder.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
-		val modelComponent = ModelComponent(modelo, pos)
+		/// MODEL
+		val material = if(type==Type.STEEL) material1 else material2
+		val model : Model = modelBuilder.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
+		val modelComponent = ModelComponent(model, pos)
+		entity.add(modelComponent)
 		//
 		if(angleX == 0f && angleY == 0f && angleZ == 0f) {
 			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dim0)
@@ -85,20 +86,19 @@ class RampFactory(assets: Assets) {
 			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dim90)
 		}
 		else {
-			//TODO: ? por que no funciona  con esferica ? Quiza eliminar esferica ?
+			//por que no funciona  con esferica ? Quiza eliminar esferica ?
 			/*val boundingBox = BoundingBox()
 			modelComponent.instance.calculateBoundingBox(boundingBox)
 			frustrumCullingData = FrustumCullingData.create(boundingBox)*/
 			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimMax)
 		}
 
-		//
+		// ROTATION
 		modelComponent.instance.transform.rotate(Vector3.X, angleX)
 		modelComponent.instance.transform.rotate(Vector3.Y, angleY)
 		modelComponent.instance.transform.rotate(Vector3.Z, angleZ)
-		entity.add(modelComponent)
 
-		/// COLISION
+		/// COLLISION
 		val shape = btBoxShape(dim)
 		val motionState = MotionState(modelComponent.instance.transform)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
@@ -107,8 +107,8 @@ class RampFactory(assets: Assets) {
 		rigidBody.motionState = motionState
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 		rigidBody.contactCallbackFilter = 0
-		rigidBody.contactCallbackFlag = BulletComponent.CF_OCCLUDER_OBJECT//BulletComponent.SCENE_FLAG or
-		rigidBody.userValue = 0//BulletComponent.SCENE_FLAG
+		rigidBody.contactCallbackFlag = BulletComponent.CF_OCCLUDER_OBJECT
+		rigidBody.userValue = 0
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f
 		rigidBody.rollingFriction = 1f

@@ -84,7 +84,7 @@ class PlayerSystem(
 		bulletComponent = BulletComponent.get(player)
 		resetPlayerComponent()
 	}
-	override fun entityRemoved(entity: Entity) {}
+	override fun entityRemoved(entity: Entity) { }
 
 	//______________________________________________________________________________________________
 	private var justBorn = true//TODO: when changing levels?? maintain health and ammo?
@@ -99,11 +99,11 @@ class PlayerSystem(
 		restoreAmbientColor()
 
 		processEvents()
-		if(justBorn) {
+		/*if(justBorn) {
 			justBorn = false
 			PlayerComponent.resetHealth()
 			ammoReset()
-		}
+		}*/
 	}
 
 	//______________________________________________________________________________________________
@@ -145,8 +145,8 @@ class PlayerSystem(
 		val deltaY: Float
 
 		if(CesDoom.isMobile) {
-			deltaX = -ControllerWidget.watchVector.x * 90f * delta
-			deltaY = ControllerWidget.watchVector.y * 60f * delta
+			deltaX = -ControllerWidget.watchVector.x * 90f * delta	// Velocidad angulo horizontal (GOOD: 90)
+			deltaY = ControllerWidget.watchVector.y * 50f * delta	// Velocidad angulo vertical (GOOD: 60)
 		}
 		else {
 			deltaX = -Gdx.input.deltaX * 5f * delta
@@ -159,16 +159,14 @@ class PlayerSystem(
 		// X Z
 		posTemp.set(dir).crs(camera.up).nor()
 		val v = dir.cpy()
-		val pitch = (Math.atan2(Math.sqrt((v.x * v.x + v.z * v.z).toDouble()), v.y.toDouble()) * MathUtils.radiansToDegrees).toFloat()
+		val pitch = (Math.atan2(Math.sqrt((v.x*v.x + v.z*v.z).toDouble()), v.y.toDouble()) * MathUtils.radiansToDegrees).toFloat()
 		var pr = deltaY
 		/// MOBILE
-		if(CesDoom.isMobile)
-		{
-			if(pitch - pr > 120)//Angulo mirando abajo //TODO:put back 120 , TEST=160
-				pr = pitch - 120
-			else if(pitch - pr < 40)//Angulo mirando arriba
-				pr = pitch - 40
-			//Log.e(tag, "-------------------------------- PITCH: "+pitch)
+		if(CesDoom.isMobile) {
+			if(pitch - pr > 140)		//Angulo mirando abajo (GOOD: 120)
+				pr = pitch - 140
+			else if(pitch - pr < 30)	//Angulo mirando arriba (GOOD: 40)
+				pr = pitch - 30
 		}
 		/// DESKTOP
 		else {
@@ -247,8 +245,7 @@ class PlayerSystem(
 	}
 	//______________________________________________________________________________________________
 	private fun updateJumping() {
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || input.btnA)
-		{
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || input.btnA) {
 			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+PlayerComponent.isJumping)
 			if( ! PlayerComponent.isJumping) {
 				PlayerComponent.isJumping = true
@@ -464,6 +461,7 @@ class PlayerSystem(
 		if(now > lastColorChange+COLOR_LOOP) {
 			PlayerComponent.hurt(pain)
 			changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.0f, 0.0f, 1f))
+			Gdx.input.vibrate(200)//Gdx.input.vibrate(new long[] { 0, 200, 200, 200}, -1) //Needs VIBRATE permission
 			if(PlayerComponent.health > 5)
 				Sounds.play(Sounds.SoundType.PLAYER_HURT)
 		}
@@ -499,12 +497,16 @@ class PlayerSystem(
 
 
 	private fun resetPlayerComponent() {
+		Log.e(tag, "resetPlayerComponent------------------------------------- ${PlayerComponent.currentLevel}")
 		PlayerComponent.isWinning = false
 		PlayerComponent.isJumping = false
 		PlayerComponent.isReloading = false
-		PlayerComponent.score = 0
 		PlayerComponent.tall = PlayerComponent.TALL
-		PlayerComponent.resetHealth()
+		if(PlayerComponent.currentLevel == 0) {
+			ammoReset()
+			PlayerComponent.score = 0
+			PlayerComponent.resetHealth()
+		}
 	}
 
 	private fun youWin() {
@@ -512,12 +514,10 @@ class PlayerSystem(
 	}
 	private fun ammoPickup(value: Int) {
 		PlayerComponent.isReloading = true
-		PlayerComponent.ammo += value//AmmoComponent.MAGAZINE_CAPACITY
+		PlayerComponent.ammo += value
 	}
 	private fun healthPickup(value: Int) {
-		//PlayerComponent.isReloadingHealth = true
 		heal(value)
-		//PlayerComponent.heal(value)//HealthComponent.DRUG_CAPACITY)
 	}
 
 	private fun ammoReset() {

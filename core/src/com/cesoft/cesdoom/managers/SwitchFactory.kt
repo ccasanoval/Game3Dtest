@@ -14,7 +14,6 @@ import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
-import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
@@ -41,19 +40,12 @@ object SwitchFactory {
 
         /// Entity
         val entity = Switch(id, assets)
-        pos.y = PlayerComponent.TALL + SwitchComponent.SIZE +1  //1.05f * WallFactory.HIGH
+        pos.y += PlayerComponent.TALL + SwitchComponent.SIZE +2
 
         /// Component
         entity.add(SwitchComponent)
 
         /// Material
-        /*val materialOn = Material(ColorAttribute.createDiffuse(Color.WHITE))
-        Switch.textureOn.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-        val textureAttributeOn = TextureAttribute(TextureAttribute.Diffuse, Switch.textureOn)
-        textureAttributeOn.scaleU = 1f
-        textureAttributeOn.scaleV = 1f
-        materialOn.set(textureAttributeOn)*/
-
         val textureOff = assets.getSwitchOff()
         val materialOff = Material(ColorAttribute.createDiffuse(Color.WHITE))
         textureOff.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)

@@ -23,8 +23,8 @@ import com.cesoft.cesdoom.ui.GameWinWidget
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameWorld(private val gameWinWidget: GameWinWidget,
-				private val gameOverWidget: GameOverWidget,
+class GameWorld(gameWinWidget: GameWinWidget,
+				gameOverWidget: GameOverWidget,
 				private val assets: Assets) {
 
 	private val debugCollision = false
@@ -108,7 +108,7 @@ class GameWorld(private val gameWinWidget: GameWinWidget,
 		MazeFactory.create(engine, assets)
 
 		/// PLAYER
-		createPlayer(Vector3(0f,150f,0f))
+		createPlayer(Vector3(0f,175f,0f))
 	}
 
 	//______________________________________________________________________________________________

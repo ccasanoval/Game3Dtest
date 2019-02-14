@@ -20,8 +20,9 @@ import java.util.ArrayList;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-public class Test2
-{
+public class Test2 {
+
+    private static String tag = Test2.class.getSimpleName();
     private static int cx = 10;
     private static int cy = 10;
     private static int[] mapData = {
@@ -52,24 +53,24 @@ public class Test2
     private static void test1(MapGraph map) {
         //var path = map.findPath(map.getNode(0,0), map.getNode(cx - 1, cy - 1))
         GraphPath<Node> path = map.findPath(new Point(0,0), new Point(cx - 1, cy - 1));
-        Log.INSTANCE.e("TEST", "--------- 0,0 to "+(cx-1)+","+(cy-1)+" ------------N=" + path.getCount() + " ");
+        Log.INSTANCE.e(tag, "--------- 0,0 to "+(cx-1)+","+(cy-1)+" ------------N=" + path.getCount() + " ");
         for(int i=0; i < path.getCount(); i++) {
             //Log.e("TEST", "$i---------------------")
-            Log.INSTANCE.e("TEST", i+"---------------------" + path.get(i).getPoint());
+            Log.INSTANCE.e(tag, i+"---------------------" + path.get(i).getPoint());
         }
 
         //path = map.findPath(map.getNode(1, 1), map.getNode(2, 1))
         path = map.findPath(new Point(0,0), new Point(2, 0));
-        Log.INSTANCE.e("TEST", "---------------------N=" + path.getCount() + " ");
+        Log.INSTANCE.e(tag, "---------------------N=" + path.getCount() + " ");
         for(int i=0; i < path.getCount(); i++) {
-            Log.INSTANCE.e("TEST", i+ "---------------------" + path.get(i).getPoint());
+            Log.INSTANCE.e(tag, i+ "---------------------" + path.get(i).getPoint());
         }
 
 
         path = map.findPath(new Point(0,0), new Point(6, 6));
-        Log.INSTANCE.e("TEST", "---------------------N=" + path.getCount() + " ");
+        Log.INSTANCE.e(tag, "---------------------N=" + path.getCount() + " ");
         for(int i=0; i < path.getCount(); i++) {
-            Log.INSTANCE.e("TEST", i+ "---------------------" + path.get(i).getPoint());
+            Log.INSTANCE.e(tag, i+ "---------------------" + path.get(i).getPoint());
         }
     }
 
@@ -184,27 +185,27 @@ public class Test2
 
         mapFactory.compile();
         mapFactory.print();
-        Log.INSTANCE.e("AAA", "");
-        Log.INSTANCE.e("AAA", "");
+        Log.INSTANCE.e(tag, "");
+        Log.INSTANCE.e(tag, "");
         mapFactory.print2();
 
-        MapGraph map = mapFactory.getMap();
+        MapGraph map = mapFactory.getMap().get(0);
         Vector2 ptIni = new Vector2(0f, -250f);
         Vector2 ptEnd = new Vector2(0f, 0f);
 
         //GraphPath<Node> path1 = map.findPath(map.toMapGraphCoord(ptIni), map.toMapGraphCoord(ptEnd));
         GraphPath<Node> path1 = map.findPath(map.toMapGraphCoord(ptIni), map.toMapGraphCoord(new Vector2(0f, -150f)));
-        Log.INSTANCE.e("TEST", "---------------------N=" + path1.getCount() + " ");
+        Log.INSTANCE.e(tag, "---------------------N=" + path1.getCount() + " ");
         for(int i=0; i < path1.getCount(); i++) {
-            Log.INSTANCE.e("TEST", i+ "---------------------" + path1.get(i).getPoint());
+            Log.INSTANCE.e(tag, i+ "---------------------" + path1.get(i).getPoint());
         }
 
-        Log.INSTANCE.e("AAA", "");
+        Log.INSTANCE.e(tag, "");
 
         ArrayList path2 = map.findPath(ptIni, ptEnd);
-        Log.INSTANCE.e("TEST", "---------------------N=" + path2.size() + " ");
+        Log.INSTANCE.e(tag, "---------------------N=" + path2.size() + " ");
         for(int i=0; i < path2.size(); i++) {
-            Log.INSTANCE.e("TEST", i+ "---------------------" + path2.get(i));
+            Log.INSTANCE.e(tag, i+ "---------------------" + path2.get(i));
         }
     }
     

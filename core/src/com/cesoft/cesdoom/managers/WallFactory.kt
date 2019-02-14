@@ -18,14 +18,12 @@ import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
-import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.map.MapGraphFactory
-import com.cesoft.cesdoom.systems.RenderSystem
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +95,7 @@ object WallFactory {
 			Type.GRILLE -> material3
 		}
 
-		/// MODELO
+		/// MODEL
 		val modelo : Model = mb.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
 		val modelComponent = ModelComponent(modelo, pos)
 
@@ -119,7 +117,7 @@ object WallFactory {
 		modelComponent.instance.transform.rotate(Vector3.Y, angle)
 		entity.add(modelComponent)
 
-		/// COLISION
+		/// COLLISION
 		val transf = modelComponent.instance.transform
 		val shape = btBoxShape(dimCollision)
 		val motionState = MotionState(transf)

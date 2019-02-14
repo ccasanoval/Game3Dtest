@@ -26,7 +26,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
     private val nodes = ArrayList<Node>()
     private val map = ObjectMap<Node, com.badlogic.gdx.utils.Array<Connection<Node>>>()
 
-    fun toWorldCoord(point: Point) = Vector2(((point.x-cx/2) * scale).toFloat(), ((point.y-cy/2) * scale).toFloat())
+    private fun toWorldCoord(point: Point) = Vector2(((point.x-cx/2) * scale).toFloat(), ((point.y-cy/2) * scale).toFloat())
     fun toMapGraphCoord(point: Vector2) = Point((point.x/scale + cx/2).toInt(), (point.y/scale + cy/2).toInt())//TODO:Usar width y height????
 
     fun calcIndex(x: Int, y: Int) = x + y*cx
@@ -97,6 +97,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
         vertexs.add(vertex)
     }
 
+    /// Find path in tests
     fun findPath(orig: Point, dest: Point): GraphPath<Node> {
         val path = MapGraphSmooth()
         val pathFinder = IndexedAStarPathFinder<Node>(this)
@@ -109,6 +110,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
         return path
     }
 
+    /// Find path in game
     fun findPath(orig: Vector2, dest: Vector2): ArrayList<Vector2> {
         val path = MapGraphSmooth()
         val nodeOrig = getNode(orig)
@@ -117,11 +119,11 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
         val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
 
         try {
-//            val t0 = System.currentTimeMillis()
+            val t0 = System.currentTimeMillis()
             pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
-//            val t1 = System.currentTimeMillis() - t0
+            val t1 = System.currentTimeMillis() - t0
             pathSmoother.smoothPath(path)
-//Log.e(tag, "smoothPath:----- $b2 ${path.count}  delay= ${System.currentTimeMillis() - t0 - t1} ms")
+//Log.e(tag, "smoothPath:----- ${path.count}  delay= ${System.currentTimeMillis() - t0 - t1} ms")
 
             val res = ArrayList<Vector2>()
             for(step in path) {

@@ -21,6 +21,7 @@ import com.cesoft.cesdoom.events.*
 import com.cesoft.cesdoom.managers.EnemyActions
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.managers.MazeFactory
+import com.cesoft.cesdoom.managers.WallFactory
 import com.cesoft.cesdoom.util.Log
 
 
@@ -121,9 +122,9 @@ class EnemySystem(
 		val enemy = EnemyComponent.get(entity)
 		val model = ModelComponent.get(entity)
 
-		model.instance.transform.getTranslation(enemy.posTemp)
-		enemy.currentPos2D = Vector2(enemy.posTemp.x, enemy.posTemp.z)
-		val distPlayer = enemy.posTemp.dst(playerPosition)
+		model.instance.transform.getTranslation(enemy.position)
+		enemy.currentPos2D = Vector2(enemy.position.x, enemy.position.z)
+		val distPlayer = enemy.position.dst(playerPosition)
 
 		val statusMov = statusMov(entity, distPlayer)
 		when(statusMov) {
@@ -168,19 +169,19 @@ class EnemySystem(
 		val rigidBody = BulletComponent.get(entity).rigidBody
 
 		val model = ModelComponent.get(entity)
-		model.instance.transform.getTranslation(enemy.posTemp)
-		var dX = playerPosition.x - enemy.posTemp.x
-		var dZ = playerPosition.z - enemy.posTemp.z
+		model.instance.transform.getTranslation(enemy.position)
+		var dX = playerPosition.x - enemy.position.x
+		var dZ = playerPosition.z - enemy.position.z
 
 		/// Set velocity
-		val dir = enemy.nextStep3D.add(enemy.posTemp.scl(-1f)).nor().scl(force * delta)
+		val dir = enemy.nextStep3D.add(enemy.position.scl(-1f)).nor().scl(force * delta)
 		dir.y = rigidBody.linearVelocity.y
 		rigidBody.linearVelocity = dir
 
 		/// Calc orientation
 		val transf = Matrix4()
 		rigidBody.getWorldTransform(transf)
-		transf.getTranslation(enemy.posTemp)
+		transf.getTranslation(enemy.position)
 		if(isWalking) {
 			dX = rigidBody.linearVelocity.x
 			dZ = rigidBody.linearVelocity.z
@@ -198,14 +199,16 @@ class EnemySystem(
 		val rot = Quaternion().setFromAxis(0f, 1f, 0f, Math.toDegrees(enemy.orientation).toFloat())
 
 		/// Set position and rotation
-		model.instance.transform.set(enemy.posTemp, rot)
+		model.instance.transform.set(enemy.position, rot)
 	}
 
 	private fun calcPath(entity: Entity, playerPosition: Vector3) {
 
 		val enemy = EnemyComponent.get(entity)
 		val player2D = Vector2(playerPosition.x, playerPosition.z)
-		val map = MazeFactory.mapFactory.map
+
+		val level = if(enemy.position.y > 2*WallFactory.HIGH) 1 else 0
+		val map = MazeFactory.mapFactory.map[level]
 
 		//TODO: Si player cambia mucho la posicion, obliga a recalcular
 		enemy.stepCounter++ //Obliga a recalcular pase lo que pase cada x ciclos
@@ -216,9 +219,9 @@ class EnemySystem(
 				if (path.size > 1) {
 					enemy.pathIndex = 2
 					enemy.stepCalc2D = path[1]
-					enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.posTemp.y, enemy.stepCalc2D.y)
+					enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
 				} else
-					enemy.nextStep3D = Vector3(player2D.x, enemy.posTemp.y, player2D.y)
+					enemy.nextStep3D = Vector3(player2D.x, enemy.position.y, player2D.y)
 			}
 		} else {
 			val next = enemy.path!![enemy.pathIndex]
@@ -230,7 +233,7 @@ class EnemySystem(
 				enemy.pathIndex = 0
 			} else {
 				enemy.stepCalc2D = next
-				enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.posTemp.y, enemy.stepCalc2D.y)
+				enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
 			}
 		}
 		//Log.e(tag, "$id PATH---------******************::: $stepCalc2D")
@@ -243,9 +246,11 @@ class EnemySystem(
 	private fun statusMov(entity: Entity, distPlayer: Float): StatusMov {
 		val enemy = EnemyComponent.get(entity)
 		val status = StatusComponent.get(entity)
-		/// No está en condiciones de atacar: herido, muerto o sobre el suelo
-		return if (status.isAching() || status.isDead() || enemy.posTemp.y > EnemyComponent.RADIO + 2)
+
+		/// No está en condiciones de atacar: herido, muerto o sobre el suelo	//TODO: sobre suelo: Raycast para ver distancia a suelo.... EnemyComponent.RADIO + 2)
+		return if(status.isAching() || status.isDead() || enemy.position.y > WallFactory.HIGH*2 + EnemyComponent.RADIO) {
 			StatusMov.QUIET
+		}
 		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
 		else if(distPlayer < ATTACK_RADIO)
 			StatusMov.ATTACK
@@ -272,7 +277,7 @@ class EnemySystem(
 					engine.removeEntity(entity)
 					gameEventSignal.dispatch(GameEvent(GameEvent.Type.ENEMY_DEAD, EnemyComponent.KILL_REWARD, entity))
 					//entity.remove(StatusComponent::class.java)
-					//TODO: val reward = EnemyComponent.get(entity).reward by type of enemy
+					//TODO: val reward = EnemyComponent.get(entity).reward by type of enemy and level
 				}
 			}
 		}
@@ -336,7 +341,6 @@ class EnemySystem(
 		effect.init()
 		effect.start()
 		renderEventSignal.dispatch(RenderEvent(RenderEvent.Type.ADD_PARTICLE_FX, effect))
-		//game.render.addParticleEffect(effect)//TODO: remove this reference... Event!
 	}
 
 

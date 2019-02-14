@@ -12,26 +12,27 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class MainMenuScreen(private val game: CesDoom) : Screen {
+class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Screen {
 	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image// = game.assets.getMainMenuBg()//Image(Texture(Gdx.files.internal("data/background.png")))
 	private var titleImage: Image// = game.assets.getMainMenuTitle()//Image(Texture(Gdx.files.internal("data/title.png")))
-	private var playButton: TextButton = TextButton(game.assets.getString(Assets.JUGAR), game.assets.skin)
-	private var quitButton: TextButton = TextButton(game.assets.getString(Assets.SALIR), game.assets.skin)
-	private var settingsButton: TextButton = TextButton(game.assets.getString(Assets.CONFIG), game.assets.skin)
-	private var aboutButton: TextButton = TextButton(game.assets.getString(Assets.SOBRE), game.assets.skin)
+	private var playButton: TextButton = TextButton(assets.getString(Assets.JUGAR), assets.skin)
+	private var quitButton: TextButton = TextButton(assets.getString(Assets.SALIR), assets.skin)
+	private var settingsButton: TextButton = TextButton(assets.getString(Assets.CONFIG), assets.skin)
+	private var aboutButton: TextButton = TextButton(assets.getString(Assets.SOBRE), assets.skin)
 
 	init {
 		PlayerComponent.isGodModeOn = false
-		game.assets.iniMainMenuBg()
-		game.assets.iniMainMenuTitle()
-		backgroundImage = game.assets.getMainMenuBg()
-		titleImage = game.assets.getMainMenuTitle()
+		assets.iniMainMenuBg()
+		assets.iniMainMenuTitle()
+		backgroundImage = assets.getMainMenuBg()
+		titleImage = assets.getMainMenuTitle()
 
 		configureWidgers()
 		setListeners()
@@ -121,12 +122,12 @@ class MainMenuScreen(private val game: CesDoom) : Screen {
 		})
         settingsButton.addListener(object : ClickListener() {
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                game.setScreen(SettingsScreen(game))
+                game.setScreen(SettingsScreen(game, assets))
             }
         })
 		aboutButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(AboutScreen(game))
+				game.setScreen(AboutScreen(game, assets))
 			}
 		})
 	}
@@ -144,8 +145,10 @@ class MainMenuScreen(private val game: CesDoom) : Screen {
 		stage.dispose()
 	}
 
-	override fun show() {}
-	override fun pause() {}
-	override fun resume() {}
-	override fun hide() {}
+	override fun show() = Unit
+	override fun hide() = Unit
+	override fun pause() = Unit
+	override fun resume() {
+		Sounds.stopMusic()
+	}
 }

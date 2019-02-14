@@ -10,6 +10,8 @@ import com.cesoft.cesdoom.ui.GameUI
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.EnemyComponent
+import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.screens.GameScreen
 import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen
@@ -30,8 +32,8 @@ import com.cesoft.cesdoom.util.Log
 //
 //TODO: FPS !!!  (Enemy consume mucho, es todo por pathfinding?)
 //TODO: Joystick!!
-//TODO: Levels+  /  Constructor
-//TODO: Pathfinding 3D (ramps, etc)
+//TODO: Level Constructor
+//TODO: Pathfinding 3D (enhancement)
 //TODO: Monster2, Weapon2 ?
 //TODO: Radar de monster?
 //TODO: Textura en suelo donde nacen los bichos?
@@ -45,6 +47,9 @@ import com.cesoft.cesdoom.util.Log
 //VR
 //TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
 //https://github.com/yangweigbh/Libgdx-CardBoard-Extension
+//https://github.com/badlogic/gdx-vr/tree/master/test/com/badlogic/gdx/vr
+//https://github.com/raphaelbruno/ZombieInvadersVR
+//https://github.com/yangweigbh/Libgdx-CardBoard-Extension
 //https://github.com/Brummi/VRDemo
 //https://github.com/nooone/gdx-vr
 
@@ -56,12 +61,10 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		const val VIRTUAL_HEIGHT = 576f
 		var isMobile = false
 			private set
-
-		//lateinit var instance: CesDoom
 	}
 	private var screen: Screen? = null
-	lateinit var gameUI: GameUI//TODO: Set private... que accedan por funciones de cesdoom
-	lateinit var assets: Assets//TODO: Set private... que accedan por funciones de cesdoom
+	private lateinit var gameUI: GameUI
+	private lateinit var assets: Assets
 
 	init {
 	    Log.debugMode = debugMode
@@ -71,12 +74,11 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	override fun create() {
 		Log.e(tag, "CREATE--------------------------------------------------------------------------------")
 		isMobile = Gdx.app.type == Application.ApplicationType.Android
-		//instance = this
 		assets = Assets()
 		gameUI = GameUI(this, assets)
 
 		Gdx.input.isCatchBackKey = true
-		setScreen(MainMenuScreen(this))
+		setScreen(MainMenuScreen(this, assets))
 		Settings.loadPrefs()
 	}
 
@@ -110,25 +112,28 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		(screen as GameScreen).pause()
 	}
 	//______________________________________________________________________________________________
-	fun reset() {
+	fun reset(forceLevelZero: Boolean = true) {
+		if(forceLevelZero)
+			PlayerComponent.currentLevel = 0
 		delScreen()
 		setScreen(LoadingScreen(this, gameUI, assets))
 		Status.gameOver = false
 		Status.mainMenu = false
 	}
-	//______________________________________________________________________________________________
-	fun nextLevel() {//TODO:-------------------------------------
-		delScreen()
-		setScreen(LoadingScreen(this, gameUI, assets))
-		Status.gameOver = false
-		Status.mainMenu = false
+	fun nextLevel() {
+		PlayerComponent.currentLevel++
+		if(PlayerComponent.currentLevel > MazeFactory.MAX_LEVEL)
+			PlayerComponent.currentLevel = 0
+	}
+	fun isNextOrReload():Boolean {
+		return PlayerComponent.currentLevel > 0
 	}
 	//______________________________________________________________________________________________
 	fun reset2Menu() {
 		Status.mainMenu = true
 		Status.gameOver = false
 		delScreen()
-		setScreen(MainMenuScreen(this))
+		setScreen(MainMenuScreen(this, assets))
 	}
 
 	//______________________________________________________________________________________________
@@ -141,6 +146,39 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	}
 
 	fun loadResources() {
+
+		// Sounds
+		Sounds.load()
+
+		try {assets.getGate()}
+		catch(ignore: GdxRuntimeException) {
+			// Gate
+			assets.iniGate()
+			// Switch
+			assets.iniSwitchOn()
+			assets.iniSwitchOff()
+			// Wall
+			assets.iniWallMetal1()
+			assets.iniWallMetal2()
+			assets.iniWallMetal3()
+			// Enemy
+			assets.iniEnemy(EnemyComponent.TYPE.MONSTER0)
+			assets.iniEnemy(EnemyComponent.TYPE.MONSTER1)
+
+			// Weapons
+			assets.iniRifle()
+			assets.iniFireShot()
+
+			// Scene
+			assets.iniAmmo()
+			assets.iniHealth()
+			assets.iniDome()
+			assets.iniSuelo()
+			assets.iniSkyline()
+			assets.iniJunk()
+		}
+
+		/*
 		// Gate
 		try {assets.getGate()}
 		catch(ignore: GdxRuntimeException) {assets.iniGate()}
@@ -156,9 +194,6 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		catch(ignore: GdxRuntimeException) {assets.iniWallMetal2()}
 		try {assets.getWallMetal3()}
 		catch(ignore: GdxRuntimeException) {assets.iniWallMetal3()}
-
-		// Sounds
-		Sounds.load()
 
 		// Enemy
 		try {assets.getEnemy(EnemyComponent.TYPE.MONSTER0)}
@@ -185,7 +220,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		catch(ignore: GdxRuntimeException) {assets.iniSkyline()}
 		try {assets.getJunk()}
 		catch(ignore: GdxRuntimeException) {assets.iniJunk()}
-
+		*/
 		//TODO: Also the rest of the object initialization?
 	}
 
