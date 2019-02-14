@@ -39,7 +39,7 @@ class EnemyFactory(assets: Assets) {
             for(i in allEnemies.size until MAX_ENEMIES) {
                 val type = when(random.nextInt(2)) {
                     //1 -> EnemyComponent.TYPE.MONSTER1
-                    else -> EnemyComponent.TYPE.MONSTER0
+                    else -> EnemyComponent.TYPE.MONSTER1
                 }
                 val enemy = createEnemy(i, assets, type)
                 allEnemies.add(enemy)
@@ -181,7 +181,7 @@ class EnemyFactory(assets: Assets) {
 
         /// ANIMATION
         entity.add(AnimationComponent(modelComponent.instance))
-        ///for(anim in model.animations)Log.e(tag, "ANIMATION:-------------- ${anim.id} / ${anim.duration}")
+        for(anim in model.animations)Log.e(tag, "ANIMATION:-------------- ${anim.id} / ${anim.duration}")
 
 
         // Evanesce Effect

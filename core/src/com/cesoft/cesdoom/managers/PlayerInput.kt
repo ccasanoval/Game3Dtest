@@ -11,6 +11,9 @@ import com.cesoft.cesdoom.util.Log
 //TODO: Joystick!!
 //https://github.com/libgdx/libgdx/wiki/Controllers
 class PlayerInput : ControllerListener {
+	companion object {
+		val tag: String = PlayerInput::class.java.simpleName
+	}
 
     //----------------------------------------------------------------------------------------------
     //
@@ -28,7 +31,7 @@ class PlayerInput : ControllerListener {
     //
     /// Implements ControllerListener
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
-        //Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
+Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
         if(axisCode == com.badlogic.gdx.controllers.mappings.Ouya.AXIS_LEFT_X) {
             xPad = when {
                 value > 0 -> Direccion.DERECHA

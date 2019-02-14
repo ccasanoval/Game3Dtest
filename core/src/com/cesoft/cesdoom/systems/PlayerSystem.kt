@@ -87,7 +87,6 @@ class PlayerSystem(
 	override fun entityRemoved(entity: Entity) { }
 
 	//______________________________________________________________________________________________
-	private var justBorn = true//TODO: when changing levels?? maintain health and ammo?
 	override fun update(delta: Float) {
 		checkGameOver(delta)
 		checkYouWin(delta)
@@ -99,11 +98,6 @@ class PlayerSystem(
 		restoreAmbientColor()
 
 		processEvents()
-		/*if(justBorn) {
-			justBorn = false
-			PlayerComponent.resetHealth()
-			ammoReset()
-		}*/
 	}
 
 	//______________________________________________________________________________________________

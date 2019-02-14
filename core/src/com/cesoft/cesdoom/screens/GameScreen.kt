@@ -22,7 +22,6 @@ class GameScreen(private val gameUI: GameUI, assets: Assets) : Screen {
 	init {
 		Status.paused = false
 		Gdx.input.inputProcessor = gameUI.stage
-		Gdx.input.isCursorCatched = true
 		Sounds.playMusic()
 	}
 
@@ -47,8 +46,12 @@ class GameScreen(private val gameUI: GameUI, assets: Assets) : Screen {
 		com.cesoft.cesdoom.util.Log.e("GameScreen", "dispose------------------------------------------------ ${PlayerComponent.currentLevel}")
 	}
 
-	override fun show() = Unit
-	override fun hide() = Unit
+	override fun show() {
+		Gdx.input.isCursorCatched = true
+	}
+	override fun hide() {
+		Gdx.input.isCursorCatched = false
+	}
 	override fun pause() {
 		//Log.e("GameScreen", "pause------------------------------------------------")
 		gameWorld.pause()

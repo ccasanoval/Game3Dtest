@@ -121,6 +121,7 @@ object EnemyActions {
                     }
                 }
             }
+			//TODO: Duracion de animacion...
             EnemyComponent.TYPE.MONSTER1 -> {
                 when(action) {
                     EnemyComponent.ACTION.WALKING ->        AnimationParams("02_Spinnen Armature|walk_ani_vor")
@@ -130,23 +131,17 @@ object EnemyActions {
                     EnemyComponent.ACTION.REINCARNATING ->  AnimationParams("02_Spinnen Armature|walk_ani_back")
                     EnemyComponent.ACTION.ACHING ->         AnimationParams("02_Spinnen Armature|die")
                     EnemyComponent.ACTION.DYING ->          AnimationParams("02_Spinnen Armature|die 2")
-
-//                    02_Spinnen Armature|Attack
-//                    02_Spinnen Armature|die
-//                    02_Spinnen Armature|die 2
-//                    02_Spinnen Armature|fall
-//                    02_Spinnen Armature|Jump
-//                    02_Spinnen Armature|run_ani_back
-//                    02_Spinnen Armature|run_ani_vor
-//                    02_Spinnen Armature|run_left
-//                    02_Spinnen Armature|run_right
-//                    02_Spinnen Armature|walk_ani_back
-//                    02_Spinnen Armature|walk_ani_vor
-//                    02_Spinnen Armature|walk_left
-//                    02_Spinnen Armature|walk_right
-//                    02_Spinnen Armature|warte_pose
                 }
             }
+			/*
+					EnemyComponent.ACTION.WALKING ->        AnimationParams("Spider_Armature|walk_ani_vor")
+                    EnemyComponent.ACTION.RUNNING ->        AnimationParams("Spider_Armature|run_ani_vor")
+                    EnemyComponent.ACTION.ATTACKING ->      AnimationParams("Spider_Armature|Attack")
+                    EnemyComponent.ACTION.IDLE ->           AnimationParams("Spider_Armature|warte_pose")
+                    EnemyComponent.ACTION.REINCARNATING ->  AnimationParams("Spider_Armature|walk_ani_back")
+                    EnemyComponent.ACTION.ACHING ->         AnimationParams("Spider_Armature|die")
+                    EnemyComponent.ACTION.DYING ->          AnimationParams("Spider_Armature|die 2")
+			* */
         }
     }
 
