@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g3d.utils.AnimationController
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-data class AnimationParams(var id: String, var loop: Int = 1, var speed: Float = 1f, var offset: Float = 0f, var duration: Float = -1f) {
+data class AnimationParams(var id: String, var loop: Int = 1, var speed: Float = 1f, var offset: Float = 0f, var duration: Float = -1f, var transitionTime: Float = 0.5f) {
 //	init {
 //	    com.cesoft.cesdoom.util.Log.e("AnimationParams", "**********************-----id=$id, loop=$loop, speed=$speed, offset=$offset, duration=$duration")
 //	}
@@ -27,7 +27,7 @@ class AnimationComponent(instance: ModelInstance) : Component {
 	}
 
 	fun animate(params: AnimationParams) {
-		animationController.animate(params.id, params.offset, params.duration, params.loop, params.speed, null, 0f)
+		animationController.animate(params.id, params.offset, params.duration, params.loop, params.speed, null, params.transitionTime)
 	}
 
 	fun update(delta: Float) {

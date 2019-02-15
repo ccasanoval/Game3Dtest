@@ -16,7 +16,7 @@ class StatusComponent: Component {
 
 	var alive = false
 
-	var isSaltando = true
+	//var isSaltando = true
 	var estado = EnemyComponent.ACTION.WALKING
 
 	var deadStateTime: Float = 0f

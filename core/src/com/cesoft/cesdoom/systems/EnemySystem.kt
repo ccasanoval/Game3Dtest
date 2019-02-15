@@ -295,7 +295,7 @@ class EnemySystem(
 			status.achingStateTime += delta
 			if (isAchingOver(entity)) {
 				status.achingStateTime = 0f
-				status.estado = EnemyComponent.ACTION.REINCARNATING
+				status.estado = EnemyComponent.ACTION.IDLE//REINCARNATING
 				playReincarnating(entity)
 			}
 		}
