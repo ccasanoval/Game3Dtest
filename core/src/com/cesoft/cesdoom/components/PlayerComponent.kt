@@ -19,7 +19,7 @@ class PlayerComponent : Component {
         private const val HEALTH_FULL = 100
         const val IMPULSE_MOBIL = 2200f
         const val IMPULSE_PC = 5000f
-        const val MASE = .65f
+        const val MASS = 65f
         const val RADIO = 16f
 
         ///TODO: most of this to GameStatus object...

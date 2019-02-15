@@ -195,8 +195,8 @@ object MazeFactory {
 				Health(Vector3(-4*lng2, high2, 0f), healthModel, e)
 			}
 			1,2 -> {
-				Health(Vector3(+4*lng2, 0f, 0f), healthModel, e)
-				Health(Vector3(-4*lng2, 0f, 0f), healthModel, e)
+				Health(Vector3(+3.5f*lng2, 0f, 0f), healthModel, e)
+				Health(Vector3(-3.5f*lng2, 0f, 0f), healthModel, e)
 				Health(Vector3(+4*lng2, high2, -3*lng2), healthModel, e)
 				Health(Vector3(-4*lng2, high2, +3*lng2), healthModel, e)
 			}
@@ -209,8 +209,6 @@ object MazeFactory {
 	private fun createLevel0(e: Engine, assets: Assets) {
 		createLevelX(0, e, assets)
 	}
-
-
 
 	//______________________________________________________________________________________________
 	private fun createLevel1(e: Engine, assets: Assets) {

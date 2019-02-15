@@ -132,19 +132,35 @@ class PlayerSystem(
 		updateJumping()
 	}
 	//______________________________________________________________________________________________
-	private fun updateRotation(delta: Float) {	//TODO: cuando no presione rotacion, centrar poco a poco...
+	private fun updateRotation(delta: Float) {	//TODO: cuando no presione rotacion, centrar poco a poco en Y=0
 		if(PlayerComponent.isDead())return
 
 		val deltaX: Float
 		val deltaY: Float
 
 		if(CesDoom.isMobile) {
-			deltaX = -ControllerWidget.watchVector.x * 90f * delta	// Velocidad angulo horizontal (GOOD: 90)
-			deltaY = ControllerWidget.watchVector.y * 50f * delta	// Velocidad angulo vertical (GOOD: 60)
+			val xWeight=90f
+			val yWeight=50f
+			if(input.mxPad != PlayerInput.Mirada.NONE || input.myPad != PlayerInput.Mirada.NONE) {
+				deltaX = when(input.mxPad) {
+					PlayerInput.Mirada.IZQUIERDA -> -xWeight*delta
+					PlayerInput.Mirada.DERECHA -> +xWeight*delta
+					else -> 0f
+				}
+				deltaY = when(input.myPad) {
+					PlayerInput.Mirada.ARRIBA -> +yWeight*delta
+					PlayerInput.Mirada.ABAJO -> -yWeight*delta
+					else -> 0f
+				}
+			}
+			else {
+				deltaX = -ControllerWidget.watchVector.x * xWeight*delta    // Velocidad angulo horizontal (GOOD: 90)
+				deltaY = ControllerWidget.watchVector.y * yWeight*delta    // Velocidad angulo vertical (GOOD: 60)
+			}
 		}
 		else {
-			deltaX = -Gdx.input.deltaX * 5f * delta
-			deltaY = -Gdx.input.deltaY * 2f * delta
+			deltaX = -Gdx.input.deltaX * 5*delta
+			deltaY = -Gdx.input.deltaY * 2*delta
 		}
 
 		// Y
@@ -198,20 +214,21 @@ class PlayerSystem(
 	}
 	//______________________________________________________________________________________________
 	private fun updateTranslationMobile(delta: Float) {
+		///if(ControllerWidget.movementVector.x > 0)Log.e(tag, "updateTranslationMobile------------------- ${ControllerWidget.movementVector.x}")
 		var hayMovimiento = false
-		if(ControllerWidget.movementVector.y > +0.20f || input.yPad == PlayerInput.Direccion.ADELANTE) {
+		if(ControllerWidget.movementVector.y > +0.20f || input.dyPad == PlayerInput.Direccion.ADELANTE) {
 			posTemp.add(camera.direction)
 			hayMovimiento = true
 		}
-		else if(ControllerWidget.movementVector.y < -0.20f || input.yPad == PlayerInput.Direccion.ATRAS) {
+		else if(ControllerWidget.movementVector.y < -0.20f || input.dyPad == PlayerInput.Direccion.ATRAS) {
 			posTemp.sub(camera.direction)
 			hayMovimiento = true
 		}
-		if(ControllerWidget.movementVector.x < -0.25f || input.xPad == PlayerInput.Direccion.IZQUIERDA) {
+		if(ControllerWidget.movementVector.x < -0.50f || input.dxPad == PlayerInput.Direccion.IZQUIERDA) {
 			posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			hayMovimiento = true
 		}
-		else if(ControllerWidget.movementVector.x > +0.25f || input.xPad == PlayerInput.Direccion.DERECHA) {
+		else if(ControllerWidget.movementVector.x > +0.50f || input.dxPad == PlayerInput.Direccion.DERECHA) {
 			posTemp2.set(camera.direction).crs(camera.up)
 			hayMovimiento = true
 		}
@@ -270,13 +287,14 @@ class PlayerSystem(
 			PlayerComponent.ammo--
 	}
 	//______________________________________________________________________________________________
-	//TODO: quiza depende de GunComponent?
 	private val DELAY_FIRE = 0.15f
-	private val DELAY_RELOAD = 0.35f
+	private val DELAY_RELOAD = 0.55f
 	private var deltaFire = 100f
 	private fun updateWeapon(delta: Float) {
 
-		val isFiring = (ControllerWidget.isFiring || Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || input.fire1)
+		val isFiring = (ControllerWidget.isFiring
+				|| Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
+				|| input.fire1 || input.btnA)
 		deltaFire += delta
 
 		if(PlayerComponent.isReloading) {
@@ -421,7 +439,7 @@ class PlayerSystem(
 		shape.calculateLocalInertia(PlayerComponent.TALL, posTemp)
 
 		/// Collision
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(PlayerComponent.MASE, null, shape, posTemp)
+		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(PlayerComponent.MASS, null, shape, posTemp)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity
 		rigidBody.motionState = MotionState(Matrix4().translate(pos))

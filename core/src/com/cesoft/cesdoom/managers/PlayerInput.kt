@@ -1,5 +1,6 @@
 package com.cesoft.cesdoom.managers
 
+import com.badlogic.gdx.controllers.mappings.Ouya;
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerListener
 import com.badlogic.gdx.controllers.PovDirection
@@ -18,8 +19,11 @@ class PlayerInput : ControllerListener {
     //----------------------------------------------------------------------------------------------
     //
     enum class Direccion { NONE, ATRAS, ADELANTE, IZQUIERDA, DERECHA }
-    var xPad: Direccion = Direccion.NONE
-    var yPad: Direccion = Direccion.NONE
+    enum class Mirada { NONE, ARRIBA, ABAJO, IZQUIERDA, DERECHA }
+    var dxPad: Direccion = Direccion.NONE
+    var dyPad: Direccion = Direccion.NONE
+    var mxPad: Mirada = Mirada.NONE
+    var myPad: Mirada = Mirada.NONE
     var fire1: Boolean = false
     var fire2: Boolean = false
     var btnA: Boolean = false
@@ -32,23 +36,44 @@ class PlayerInput : ControllerListener {
     /// Implements ControllerListener
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
 Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
-        if(axisCode == com.badlogic.gdx.controllers.mappings.Ouya.AXIS_LEFT_X) {
-            xPad = when {
-                value > 0 -> Direccion.DERECHA
-                value < 0 -> Direccion.IZQUIERDA
+
+        val dOffset = 5
+        val mOffset = 5
+
+        /// Direccion
+        if(axisCode == Ouya.AXIS_LEFT_X) {
+            dxPad = when {
+                value > dOffset -> Direccion.DERECHA
+                value < dOffset -> Direccion.IZQUIERDA
                 else -> Direccion.NONE
             }
         }
-        else if(axisCode == com.badlogic.gdx.controllers.mappings.Ouya.AXIS_LEFT_Y) {
-            yPad = when {
-                value > 0 -> Direccion.ATRAS
-                value < 0 -> Direccion.ADELANTE
+        if(axisCode == Ouya.AXIS_LEFT_Y) {
+            dyPad = when {
+                value > dOffset -> Direccion.ATRAS
+                value < dOffset -> Direccion.ADELANTE
                 else -> Direccion.NONE
+            }
+        }
+        /// Mirada
+        if(axisCode == Ouya.AXIS_RIGHT_X) {
+            mxPad = when {
+                value > mOffset -> Mirada.DERECHA
+                value < mOffset -> Mirada.IZQUIERDA
+                else -> Mirada.NONE
+            }
+        }
+        if(axisCode == Ouya.AXIS_RIGHT_Y) {
+            myPad = when {
+                value > mOffset -> Mirada.ARRIBA
+                value < mOffset -> Mirada.ABAJO
+                else -> Mirada.NONE
             }
         }
         return false
     }
     override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
+        Log.e(PlayerSystem.tag, "buttonUp:0----------------"+controller?.name+" : "+buttonCode)
         when(buttonCode) {
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = false
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = false
@@ -62,6 +87,7 @@ Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
         return false
     }
     override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
+        Log.e(PlayerSystem.tag, "buttonDown:0---------------"+controller?.name+" : "+buttonCode)
         when(buttonCode) {
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = true
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = true
