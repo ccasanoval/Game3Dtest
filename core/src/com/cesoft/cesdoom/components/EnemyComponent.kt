@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector3
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class EnemyComponent(val type: TYPE) : Component
+class EnemyComponent(val type: TYPE, var id: Int) : Component
 {
 	companion object {
 		private val mapper: ComponentMapper<EnemyComponent> = ComponentMapper.getFor(EnemyComponent::class.java)
@@ -41,7 +41,8 @@ class EnemyComponent(val type: TYPE) : Component
 	var stepCalc2D = Vector2()
 	var currentPos2D = Vector2()
 	//
-	var stepCounter = 0
+	var isAccessLevelPath = false
+	val player2D: Vector2 = Vector2.Zero//TODO: Make 3D?
 	var path: ArrayList<Vector2>? = null
 	var pathIndex = 0
 

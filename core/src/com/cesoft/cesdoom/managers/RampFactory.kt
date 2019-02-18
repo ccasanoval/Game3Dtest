@@ -20,6 +20,7 @@ import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
+import com.badlogic.gdx.math.Vector2
 import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.map.MapGraphFactory
@@ -70,8 +71,13 @@ class RampFactory(assets: Assets) {
 	}
 
 	//______________________________________________________________________________________________
-	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angleX: Float = 0f, angleY: Float = 0f, angleZ: Float = 0f, type:Type=Type.STEEL): Entity {
+	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3,
+			   angleX: Float=0f, angleY: Float=0f, angleZ: Float=0f,
+			   type:Type=Type.STEEL): Entity {
 		val entity = Entity()
+
+		/// MAP
+		createMap(mapFactory, pos, angleX, angleY, angleZ)
 
 		/// MODEL
 		val material = if(type==Type.STEEL) material1 else material2
@@ -117,5 +123,32 @@ class RampFactory(assets: Assets) {
 
 		engine.addEntity(entity)
 		return entity
+	}
+
+	private fun createMap(mapFactory: MapGraphFactory, pos: Vector3,
+						  angleX: Float=0f, angleY: Float=0f, angleZ: Float=0f) {
+		val level = if(pos.y > 2*WallFactory.HIGH) 1 else 0//TODO: Y si hago mas plantas? Refactor in MazeFactory...
+		// Sube hacia la derecha
+		if(angleX == 90f && angleY == -45f && angleZ == 0f) {
+			mapFactory.addLevelAccess(level, pos.x+LONG, pos.z)
+			for(x_ in -LONG.toInt()..+LONG.toInt()) {
+				mapFactory.addCollider(level, pos.x + x_, pos.z + HIGH)
+				mapFactory.addCollider(level, pos.x + x_, pos.z - HIGH)
+			}
+			for(z_ in -HIGH.toInt()..+HIGH.toInt()) {
+				mapFactory.addCollider(level, pos.x+LONG, pos.z + z_)
+			}
+		}
+		// Sube hacia la izquierda
+		else if(angleX == 90f && angleY == +45f && angleZ == 0f) {
+			for(x_ in -LONG.toInt()..+LONG.toInt()) {
+				mapFactory.addCollider(level, pos.x + x_, pos.z + HIGH)
+				mapFactory.addCollider(level, pos.x + x_, pos.z - HIGH)
+			}
+			for(z_ in -HIGH.toInt()..+HIGH.toInt()) {
+				mapFactory.addCollider(level, pos.x-LONG, pos.z + z_)
+			}
+		}
+		//TODO: else, otros angulos...
 	}
 }

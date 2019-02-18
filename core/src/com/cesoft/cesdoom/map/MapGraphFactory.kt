@@ -33,6 +33,9 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
         else
             Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($level, $x,$y) => ($point) ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     }
+    fun addLevelAccess(level: Int, x: Float, y: Float) {
+        map[level].levelAccess.add(Vector2(x,y))
+    }
 
     /*fun clear() {
         //map.clear()

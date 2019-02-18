@@ -83,20 +83,19 @@ class EnemySystem(
 	private fun updateEnemies(delta: Float) {
 		enemyFactory.enemies.let { enemies ->
 			for(entity in enemies) {
-				val posPlayer = player!!.getPosition().cpy()
-				updateEnemy(entity, delta, posPlayer)
+				updateEnemy(entity, delta)
 			}
 		}
 	}
 
 
 	//______________________________________________________________________________________________
-	private fun updateEnemy(entity: Entity, delta: Float, posPlayer: Vector3) {
+	private fun updateEnemy(entity: Entity, delta: Float) {
 
 		updateDeath(entity, delta)
 		if(isDeadOver(entity))return
 		///
-		updateMovement(entity, posPlayer, delta)
+		updateMovement(entity, delta)
 		///
 		AnimationComponent.get(entity).update(delta)
 	}
@@ -116,7 +115,9 @@ class EnemySystem(
 	}
 	//______________________________________________________________________________________________
 	private var lastAttack = 0L
-	private fun updateMovement(entity: Entity, playerPosition: Vector3, delta: Float) {
+	private fun updateMovement(entity: Entity, delta: Float) {
+
+		val playerPosition = player!!.getPosition().cpy()
 
 		val force: Float
 		val enemy = EnemyComponent.get(entity)
@@ -170,8 +171,6 @@ class EnemySystem(
 
 		val model = ModelComponent.get(entity)
 		model.instance.transform.getTranslation(enemy.position)
-		var dX = playerPosition.x - enemy.position.x
-		var dZ = playerPosition.z - enemy.position.z
 
 		/// Set velocity
 		val dir = enemy.nextStep3D.add(enemy.position.scl(-1f)).nor().scl(force * delta)
@@ -182,10 +181,18 @@ class EnemySystem(
 		val transf = Matrix4()
 		rigidBody.getWorldTransform(transf)
 		transf.getTranslation(enemy.position)
+
+		val dX: Float
+		val dZ: Float
 		if(isWalking) {
 			dX = rigidBody.linearVelocity.x
 			dZ = rigidBody.linearVelocity.z
 		}
+		else {
+			dX = playerPosition.x - enemy.position.x
+			dZ = playerPosition.z - enemy.position.z
+		}
+
 		if( ! isQuiet) {
 			val theta = Math.atan2(dX.toDouble(), dZ.toDouble())
 			if(theta * enemy.orientation < 0) {
@@ -202,45 +209,90 @@ class EnemySystem(
 		model.instance.transform.set(enemy.position, rot)
 	}
 
+	//----------------------------------------------------------------------------------------------
+	//TODO: Hacer que enemigo busque en ambas plantas...
 	private fun calcPath(entity: Entity, playerPosition: Vector3) {
 
 		val enemy = EnemyComponent.get(entity)
-		val player2D = Vector2(playerPosition.x, playerPosition.z)
 
-		val level = if(enemy.position.y > 2*WallFactory.HIGH) 1 else 0
-		val map = MazeFactory.mapFactory.map[level]
+		val levelEnemy = if(enemy.position.y > 2 * WallFactory.HIGH) 1 else 0
+		val levelPlayer = if(playerPosition.y > 2 * WallFactory.HIGH) 1 else 0
 
-		//TODO: Si player cambia mucho la posicion, obliga a recalcular
-		enemy.stepCounter++ //Obliga a recalcular pase lo que pase cada x ciclos
-		if (enemy.stepCounter % 20 == 0 || enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
-			//timePathfinding = System.currentTimeMillis()
-			enemy.path = map.findPath(enemy.currentPos2D, player2D)
-			enemy.path?.let { path ->
-				if (path.size > 1) {
-					enemy.pathIndex = 2
-					enemy.stepCalc2D = path[1]
-					enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
-				} else
-					enemy.nextStep3D = Vector3(player2D.x, enemy.position.y, player2D.y)
+		Log.e(tag, "LEVELS ----------------------------------------------- $levelEnemy  <>  $levelPlayer ")
+
+		//Distintas plantas: Buscar en mapa de accessos
+		if(levelEnemy != levelPlayer && !enemy.isAccessLevelPath) {
+			Log.e(tag, "Distintas plantas ----------------------------------------------- id=${enemy.id}   ")
+			enemy.isAccessLevelPath = true
+			val map = MazeFactory.mapFactory.map[levelEnemy]
+			enemy.player2D.set(map.getNearerLevelAccess(enemy.currentPos2D))
+		}
+		else if(levelEnemy == levelPlayer && enemy.isAccessLevelPath){
+			enemy.isAccessLevelPath = false
+			enemy.player2D.set(Vector2.Zero)
+		}
+		//Misma planta: Buscar en mapa de obstaculos correspondiente
+		if(true) {
+			var recalcular = false
+
+			val player2D = if(enemy.isAccessLevelPath) enemy.player2D
+							else Vector2(playerPosition.x, playerPosition.z)
+			if(enemy.isAccessLevelPath)
+				Log.e(tag, "--------------------------- enemy.isAccessLevelPath !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+			if(player2D.dst2(enemy.player2D) > WallFactory.LONG) {//TODO:otra medida max?
+				Log.e(tag, "--------------------------- RECALCULAR POR DISTANCIA  id=${enemy.id}    / $player2D ")
+				recalcular = true
 			}
-		} else {
-			val next = enemy.path!![enemy.pathIndex]
-
-			if (enemy.currentPos2D.dst(next) < 5) {
-				enemy.pathIndex++
+			//else if(player2D.dst2(enemy.player2D) != 0f) Log.e(tag, "---------------------------${player2D.dst2(enemy.player2D)}")
+			if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
+				//Si distancia < x ve a por ella -> rampa
+				//TODO: cuando los enemigos pasan por debajo de rampa y player sube rampa, enemigo se bloquea debajo de rampa:
+				//TODO   se cree que ya ha llegado a destino, deberia dar la vuelta y entrar por inicio de rampa!!!
+				Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  / $player2D  /  path size=${enemy.path?.size}  ")
+				recalcular = true
 			}
-			if (enemy.pathIndex >= enemy.path!!.size) {
-				enemy.pathIndex = 0
-			} else {
-				enemy.stepCalc2D = next
-				enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
+			//
+			if(recalcular) {
+				enemy.player2D.set(player2D)
+				recalcPath(enemy, levelEnemy)
+			}
+			else {
+				usePath(enemy)
 			}
 		}
-		//Log.e(tag, "$id PATH---------******************::: $stepCalc2D")
-		//Log.e(tag, "$id ENEMY--------- $currentPos2D")
-		//Log.e(tag, "$id PLAYER--------- $player2D")
 	}
 
+	private fun usePath(enemy: EnemyComponent) {
+		val next = enemy.path!![enemy.pathIndex]
+		Log.e(tag, "usePath----------------------------------------------- id=${enemy.id}  path index=${enemy.pathIndex}  /  $next")
+
+		if(enemy.currentPos2D.dst(next) < 5) {
+			enemy.pathIndex++
+		}
+		if(enemy.pathIndex >= enemy.path!!.size) {
+			enemy.pathIndex = 0
+		}
+		else {
+			enemy.stepCalc2D = next
+			enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
+		}
+	}
+	private fun recalcPath(enemy: EnemyComponent, levelEnemy: Int) {
+		val map = MazeFactory.mapFactory.map[levelEnemy]
+		enemy.path = map.findPath(enemy.currentPos2D, enemy.player2D)
+		Log.e(tag, "recalcPath----------------------------------------------- id=${enemy.id}  path size=${enemy.path?.size}")
+		enemy.path?.let { path ->
+			if (path.size > 1) {
+				enemy.pathIndex = 2
+				enemy.stepCalc2D = path[1]
+				enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
+			} else
+				enemy.nextStep3D = Vector3(enemy.player2D.x, enemy.position.y, enemy.player2D.y)
+		}
+	}
+
+
+	//----------------------------------------------------------------------------------------------
 	private enum class StatusMov { QUIET, ATTACK, RUN, WALK }
 
 	private fun statusMov(entity: Entity, distPlayer: Float): StatusMov {

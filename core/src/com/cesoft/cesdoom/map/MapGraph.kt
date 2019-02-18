@@ -38,7 +38,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
             return nodes[i]
         }
         else {
-            Log.e(tag, "getNode: coordinates out of boundaries: ($x, $y)  ${nodes.size} <> $i ")
+            Log.e(tag, "getNode: coordinates out of boundaries: ($x, $y)  ${nodes.size} <> $i ---------------")
             //return Node(9999999, Point(0, 0), false)
             return nodes[0] // Para que los pathFinders no cojan toda la cpu buscando un path imposible
             //throw IndexOutOfBoundsException()
@@ -51,8 +51,9 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
         val pos = toMapGraphCoord(point)
         var node = getNode(pos)
         while( ! node.isValido) {
-            for(y in 0..15) {
-                for(x in 0..15) {
+            Log.e(tag, "getNode: cuidado, esto podria retardar mucho la busqueda --------------------")
+            for(y in 0..10) {
+                for(x in 0..10) {
                     node = getNode(Point(pos.x + x, pos.y + y))
                     if(node.isValido)
                         break
@@ -70,6 +71,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
                     break
             }
         }
+//Log.e(tag, "getNode: fin - ------------------------------------------ ---------- $point / $node")
         return node
     }
 
@@ -111,19 +113,23 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
     }
 
     /// Find path in game
+    private val path = MapGraphSmooth()
+    private val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
     fun findPath(orig: Vector2, dest: Vector2): ArrayList<Vector2> {
-        val path = MapGraphSmooth()
+
+        path.clear()
+
         val nodeOrig = getNode(orig)
         val nodeDest = getNode(dest)
         val pathFinder = IndexedAStarPathFinder<Node>(this)
-        val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
 
         try {
             val t0 = System.currentTimeMillis()
             pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
-            val t1 = System.currentTimeMillis() - t0
+            val t1 = System.currentTimeMillis()
             pathSmoother.smoothPath(path)
-//Log.e(tag, "smoothPath:----- ${path.count}  delay= ${System.currentTimeMillis() - t0 - t1} ms")
+            val now = System.currentTimeMillis()
+//Log.e(tag, "smoothPath:----- ${path.count}   delay0= ${t1 - t0}  delay1=${now - t1}   delay2=${now - t0} ms")
 
             val res = ArrayList<Vector2>()
             for(step in path) {
@@ -136,6 +142,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
             e.printStackTrace()
         }
 
+//Log.e(tag, "smoothPath:----------------------------- fin")
         return ArrayList()
     }
 
@@ -150,6 +157,23 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
     override fun getConnections(origen: Node): com.badlogic.gdx.utils.Array<Connection<Node>> {
         return if(map.containsKey(origen)) map.get(origen)
             else com.badlogic.gdx.utils.Array(0)
+    }
+
+
+    /// Mapa de accesos entre niveles
+    var levelAccess = ArrayList<Vector2>()
+    fun getNearerLevelAccess(pos: Vector2): Vector2 {
+        var curDist = 9999f
+        var access = Vector2.Zero
+        for(i in 0 until levelAccess.size) {
+            val dist = levelAccess[i].dst2(pos)
+            if(dist < curDist) {
+                curDist = dist
+                access = levelAccess[i]
+            }
+        }
+//Log.e(tag, "getNearerLevelAccess:----------------------------- $access")
+        return access
     }
 
 }

@@ -41,10 +41,10 @@ object MazeFactory {
 		mapFactory.compile()
 
 		//----- TEST
-//		mapFactory.print()
-//		Log.e("AAA", "")
-//		Log.e("AAA", "")
-//		mapFactory.print2()
+		mapFactory.print()
+		Log.e("AAA", "")
+		Log.e("AAA", "")
+		mapFactory.print2()
 //		//
 //		Log.e("Maze", "----------------------------------------------------------------------------")
 //		Log.e("Maze", "--------------------------- ${PlayerComponent.currentLevel} ------------------------------------------")

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
@@ -152,6 +153,10 @@ class EnemyFactory(assets: Assets) {
     private fun resetComponents(entity: Entity) {
         val enemy = EnemyComponent.get(entity)
         enemy.currentAnimation = EnemyComponent.ACTION.WALKING
+        enemy.isAccessLevelPath = false
+        enemy.player2D.set(Vector2.Zero)
+        enemy.path = null
+        enemy.pathIndex = 0
 
         val status = StatusComponent.get(entity)
         status.alive = false
@@ -172,7 +177,7 @@ class EnemyFactory(assets: Assets) {
         val entity = Enemy(id)//enemyPool.obtain()
 
         /// Enemy Component
-        val enemy = EnemyComponent(type)
+        val enemy = EnemyComponent(type, id)
         entity.add(enemy)
 
         /// Status Component
