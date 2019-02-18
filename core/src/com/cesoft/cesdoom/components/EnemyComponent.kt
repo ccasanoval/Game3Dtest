@@ -41,6 +41,7 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 	var stepCalc2D = Vector2()
 	var currentPos2D = Vector2()
 	//
+    var stepCounter = 0
 	var isAccessLevelPath = false
 	val player2D: Vector2 = Vector2.Zero//TODO: Make 3D?
 	var path: ArrayList<Vector2>? = null

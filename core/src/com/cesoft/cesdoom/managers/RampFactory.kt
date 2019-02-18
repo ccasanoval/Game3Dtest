@@ -130,23 +130,30 @@ class RampFactory(assets: Assets) {
 		val level = if(pos.y > 2*WallFactory.HIGH) 1 else 0//TODO: Y si hago mas plantas? Refactor in MazeFactory...
 		// Sube hacia la derecha
 		if(angleX == 90f && angleY == -45f && angleZ == 0f) {
-			mapFactory.addLevelAccess(level, pos.x+LONG, pos.z)
+			mapFactory.addLevelAccess(level, pos.x+LONG-1, pos.z)
 			for(x_ in -LONG.toInt()..+LONG.toInt()) {
 				mapFactory.addCollider(level, pos.x + x_, pos.z + HIGH)
 				mapFactory.addCollider(level, pos.x + x_, pos.z - HIGH)
+                mapFactory.addCollider(level, pos.x + x_, pos.z + HIGH+1)
+                mapFactory.addCollider(level, pos.x + x_, pos.z - HIGH-1)
 			}
 			for(z_ in -HIGH.toInt()..+HIGH.toInt()) {
 				mapFactory.addCollider(level, pos.x+LONG, pos.z + z_)
+                mapFactory.addCollider(level, pos.x+LONG+1, pos.z + z_)
 			}
 		}
 		// Sube hacia la izquierda
 		else if(angleX == 90f && angleY == +45f && angleZ == 0f) {
+			mapFactory.addLevelAccess(level, pos.x-LONG+1, pos.z)
 			for(x_ in -LONG.toInt()..+LONG.toInt()) {
 				mapFactory.addCollider(level, pos.x + x_, pos.z + HIGH)
 				mapFactory.addCollider(level, pos.x + x_, pos.z - HIGH)
+                mapFactory.addCollider(level, pos.x + x_, pos.z + HIGH+1)
+                mapFactory.addCollider(level, pos.x + x_, pos.z - HIGH-1)
 			}
 			for(z_ in -HIGH.toInt()..+HIGH.toInt()) {
 				mapFactory.addCollider(level, pos.x-LONG, pos.z + z_)
+                mapFactory.addCollider(level, pos.x-LONG-1, pos.z + z_)
 			}
 		}
 		//TODO: else, otros angulos...

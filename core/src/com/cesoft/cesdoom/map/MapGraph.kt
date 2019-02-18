@@ -79,11 +79,12 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
         nodes.add(node)
     }
 
-    /*fun clear() {
-        nodes.clear()
-        nodes.clear()
-        map.clear()
-    }*/
+    fun clear() {
+        levelAccess.clear()
+//        nodes.clear()
+//        nodes.clear()
+//        map.clear()
+    }
 
     fun connectNodes(orig: Node, dest: Node) {
         connectNode(orig, dest)
@@ -161,7 +162,8 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
 
 
     /// Mapa de accesos entre niveles
-    var levelAccess = ArrayList<Vector2>()
+    val levelAccess = ArrayList<Vector2>()
+    fun addLevelAccess(access: Vector2) = levelAccess.add(access)
     fun getNearerLevelAccess(pos: Vector2): Vector2 {
         var curDist = 9999f
         var access = Vector2.Zero
@@ -173,7 +175,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
             }
         }
 //Log.e(tag, "getNearerLevelAccess:----------------------------- $access")
-        return access
+        return access.cpy()
     }
 
 }

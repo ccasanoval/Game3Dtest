@@ -18,8 +18,8 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
 
     init {
         for(level in 0 until mapData.size) {
+            map[0].clear()
             for(i in 0 until mapData[level].size) {
-                mapData[level][i] = 0
                 mapData[level][i] = 0
             }
         }
@@ -34,7 +34,7 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
             Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($level, $x,$y) => ($point) ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     }
     fun addLevelAccess(level: Int, x: Float, y: Float) {
-        map[level].levelAccess.add(Vector2(x,y))
+        map[level].addLevelAccess(Vector2(x,y))
     }
 
     /*fun clear() {

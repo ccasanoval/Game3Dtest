@@ -15,7 +15,7 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object MazeFactory {
-
+    val tag: String = MazeFactory::class.java.simpleName
 	const val MAX_LEVEL = 2
 
 	//480x1 == 240x2 == 160x3 == 120x4
@@ -42,13 +42,23 @@ object MazeFactory {
 
 		//----- TEST
 		mapFactory.print()
-		Log.e("AAA", "")
-		Log.e("AAA", "")
+		Log.e(tag, "")
+		Log.e(tag, "")
 		mapFactory.print2()
+        Log.e(tag, "----------------------------------------------------------------------------")
+        Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].levelAccess.size)
+        for(access in mapFactory.map[0].levelAccess) {
+            Log.e(tag, "access----------------------- $access")
+        }
+		Log.e(tag, "----------------------------------------------------------------------------")
+		Log.e(tag, " LEVEL ACCESSES:LEVEL(1) "+ mapFactory.map[1].levelAccess.size)
+		for(access in mapFactory.map[1].levelAccess) {
+			Log.e(tag, "access----------------------- $access")
+		}
 //		//
-//		Log.e("Maze", "----------------------------------------------------------------------------")
-//		Log.e("Maze", "--------------------------- ${PlayerComponent.currentLevel} ------------------------------------------")
-//		Log.e("Maze", "----------------------------------------------------------------------------")
+//		Log.e(tag, "----------------------------------------------------------------------------")
+//		Log.e(tag, "--------------------------- ${PlayerComponent.currentLevel} ------------------------------------------")
+//		Log.e(tag, "----------------------------------------------------------------------------")
 		//
 		/*
 		val path = mapFactory.map.findPath(Vector2(0f, -250f), Vector2(0f, 0f))
