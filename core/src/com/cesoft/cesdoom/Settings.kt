@@ -16,9 +16,11 @@ object Settings {
 	private const val PREF_MUSIC_VOLUME = "music_volume"
 	private const val PREF_SOUND_EFFECTS_ONOFF = "sound_onoff"
 	private const val PREF_SOUND_EFFECTS_VOLUME = "sound_volume"
+	private const val PREF_PAIN_VIBRATION_ONOFF = "pain_vibration"
 
-	var isMusicEnabled = false
-	var isSoundEnabled = false
+	var isMusicEnabled = true
+	var isSoundEnabled = true
+	var isVibrationEnabled = true
 	var soundVolume:Float = 1f
 		set(value) {
 			if(value in 0.0f..1.0f)
@@ -39,12 +41,14 @@ object Settings {
 		musicVolume = prefs.getFloat(PREF_MUSIC_VOLUME, musicVolume)
 		isSoundEnabled = prefs.getBoolean(PREF_SOUND_EFFECTS_ONOFF, true)
 		soundVolume = prefs.getFloat(PREF_SOUND_EFFECTS_VOLUME, soundVolume)
+		isVibrationEnabled = prefs.getBoolean(PREF_PAIN_VIBRATION_ONOFF, true)
 	}
 	fun savePrefs() {
 		prefs.putBoolean(PREF_MUSIC_ONOFF, isMusicEnabled)
 		prefs.putFloat(PREF_MUSIC_VOLUME, musicVolume)
 		prefs.putBoolean(PREF_SOUND_EFFECTS_ONOFF, isSoundEnabled)
 		prefs.putFloat(PREF_SOUND_EFFECTS_VOLUME, soundVolume)
+		prefs.putBoolean(PREF_PAIN_VIBRATION_ONOFF, isVibrationEnabled)
 		prefs.flush()
 	}
 

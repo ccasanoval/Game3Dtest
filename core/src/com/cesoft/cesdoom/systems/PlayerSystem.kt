@@ -473,7 +473,8 @@ class PlayerSystem(
 		if(now > lastColorChange+COLOR_LOOP) {
 			PlayerComponent.hurt(pain)
 			changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.0f, 0.0f, 1f))
-			Gdx.input.vibrate(200)//Gdx.input.vibrate(new long[] { 0, 200, 200, 200}, -1) //Needs VIBRATE permission
+			if(Settings.isVibrationEnabled)
+				Gdx.input.vibrate(200)//Gdx.input.vibrate(new long[] { 0, 200, 200, 200}, -1) //Needs VIBRATE permission
 			if(PlayerComponent.health > 5)
 				Sounds.play(Sounds.SoundType.PLAYER_HURT)
 		}

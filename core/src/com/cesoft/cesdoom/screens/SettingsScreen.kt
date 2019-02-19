@@ -13,18 +13,11 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.utils.Align.center
-import javax.swing.text.StyleConstants.setAlignment
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-
-
-
+import com.badlogic.gdx.utils.Align
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// https://www.gamedevelopment.blog/full-libgdx-game-tutorial-menu-control/
-//TODO: Scroll
-//TODO: Vibracion cuando te muerden SI/NO
+//
 class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : Screen, InputProcessor {
 
     private var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
@@ -44,12 +37,14 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
 
     private val painVibrationButton = TextButton(assets.getString(Assets.CONFIG_VIBRATION_ONOF), assets.skin, "toggle")
 
+    private val lblSeparator = Label("", assets.skin)
+
 
     init {
         configure()
         setListeners()
         //Gdx.input.inputProcessor = this
-        Gdx.input.inputProcessor = stage
+        Gdx.input.inputProcessor = stage    //Scroll
     }
 
     //______________________________________________________________________________________________
@@ -60,194 +55,74 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         backButton.setSize(175f, 85f)
         backButton.setPosition(CesDoom.VIRTUAL_WIDTH - backButton.width - 5, 5f)
 
-        // Inside Window
+        /// Inside Window
         val xWin = 50f
         val yWin = 100f
         win.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-100)
         win.setPosition(xWin, yWin)
 
-        // Title
-        var cy = 10f + yWin
+        /// Title
         titleLabel.setColor(.9f, .9f, .9f, 1f)
         titleLabel.setFontScale(2f)
         titleLabel.setSize(500f, 70f)
-        titleLabel.setPosition(xWin+10f, win.height - cy)
-        cy += titleLabel.height + 10f
 
-        // Sound On/Off
+        /// Sound On/Off
         soundButton.isChecked = Settings.isSoundEnabled
         soundButton.setSize(350f, 80f)
-        soundButton.setPosition(xWin, win.height - cy)
-        cy += soundButton.height + 0f -55f
-        //Sound Effects Volume
+
+        /// Sound Effects Volume
         soundVolumeLabel.setSize(500f, 30f)
-        soundVolumeLabel.setPosition(xWin+10f, win.height - cy)
-        cy += soundVolumeLabel.height + 0f
         soundVolumeSlider.value = Settings.soundVolume
         soundVolumeSlider.setSize(550f, 30f)
-        soundVolumeSlider.setPosition(xWin+10f, win.height - cy)
-        cy += soundVolumeSlider.height + 80f
 
-        // Music On/Off
+        /// Music On/Off
         musicButton.isChecked = Settings.isMusicEnabled
         musicButton.setSize(250f, 80f)
-        musicButton.setPosition(xWin, win.height - cy)
-        cy += musicButton.height + 0f -55f
-        //Music Volume
+
+        /// Music Volume
         musicVolumeLabel.setSize(500f, 30f)
-        musicVolumeLabel.setPosition(xWin+10f, win.height - cy)
-        cy += musicVolumeLabel.height + 0f
         musicVolumeSlider.value = Settings.musicVolume
         musicVolumeSlider.setSize(550f, 30f)
-        musicVolumeSlider.setPosition(xWin+10f, win.height - cy)
 
+        /// Pain Vibration On/Off
+        painVibrationButton.isChecked = Settings.isVibrationEnabled
+        painVibrationButton.setSize(600f, 80f)
 
 
         val scrollTable = Table()
-        scrollTable.add(titleLabel).width(500f).height(70f)
-        scrollTable.row()
-        scrollTable.add(soundButton).size(350f, 80f)
-        scrollTable.row()
-        scrollTable.add(soundVolumeLabel).size(500f, 30f)
-        scrollTable.row()
-        scrollTable.add(soundVolumeSlider).size(550f, 30f)
-        scrollTable.row()
-        scrollTable.add(musicButton).size(250f, 80f)
-        scrollTable.row()
-        scrollTable.add(musicVolumeLabel).size(500f, 30f)
-        scrollTable.row()
-        scrollTable.add(musicVolumeSlider).size(550f, 30f)
-        scrollTable.row()
-        scrollTable.add(painVibrationButton).size(650f, 80f)
+        scrollTable.width = win.width-5
+        scrollTable.add(titleLabel).width(500f).height(90f).align(Align.left)
         scrollTable.row()
         //
-        /*scrollTable.add(Label(assets.getString(Assets.CONFIG_SOUND_EFFECTS_VOLUME), assets.skin))
+        scrollTable.add(soundButton).size(370f, 80f)
         scrollTable.row()
-        scrollTable.add(Label(assets.getString(Assets.CONFIG_SOUND_EFFECTS_VOLUME), assets.skin))
+        scrollTable.add(soundVolumeLabel).size(500f, 30f).align(Align.topLeft)
         scrollTable.row()
-        scrollTable.add(Label(assets.getString(Assets.CONFIG_SOUND_EFFECTS_VOLUME), assets.skin))
+        scrollTable.add(soundVolumeSlider).size(550f, 30f).align(Align.topLeft)
         scrollTable.row()
-        scrollTable.add(Label(assets.getString(Assets.CONFIG_SOUND_EFFECTS_VOLUME), assets.skin))
+        scrollTable.add(lblSeparator).size(50f, 50f).row()
+        //
+        scrollTable.add(musicButton).size(250f, 80f)
         scrollTable.row()
-        scrollTable.add(Label("xxxxxxxxxx0xxxxxxxxxxxxxx", assets.skin))
+        scrollTable.add(musicVolumeLabel).size(500f, 30f).align(Align.topLeft)
         scrollTable.row()
-        scrollTable.add(Label("yyyyyyyyyyyyyyyyyyyyyyyyyy", assets.skin))
+        scrollTable.add(musicVolumeSlider).size(550f, 30f).align(Align.topLeft)
         scrollTable.row()
-        scrollTable.add(Label("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", assets.skin))
+        scrollTable.add(lblSeparator).size(50f, 50f).row()
+        //
+        scrollTable.add(painVibrationButton).size(390f, 80f)
         scrollTable.row()
-        scrollTable.add(Label("xxxxxxxxxxx1xxxxxxxxxxxxx", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("yyyyyyyyyyyyyyyyyyyyyyyyyy", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("xxxxxxxxxxx2xxxxxxxxxxxxx", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("yyyyyyyyyyyyyyyyyyyyyyyyyy", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("xxxxxxxxxxxx3xxxxxxxxxxxx", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("yyyyyyyyyyyyyyyyyyyyyyyyyy", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("xxxxxxxxxxxxx4xxxxxxxxxxx", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("yyyyyyyyyyyyyyyyyyyyyyyyyy", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("xxxxxxxxxxxxx5xxxxxxxxxxx", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("yyyyyyyyyyyyyyyyyyyyyyyyyy", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("xxxxxxxxxxxxx5xxxxxxxxxxx", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("yyyyyyyyyyyyyyyyyyyyyyyyyy", assets.skin))
-        scrollTable.row()
-        scrollTable.add(Label("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", assets.skin))
-        scrollTable.row()*/
+        scrollTable.add(lblSeparator).size(50f, 50f).row()
 
         val scroller = ScrollPane(scrollTable)
         val table = Table()
         table.setFillParent(true)
         table.add(scroller).fill().expand()
 
-
-
         stage.addActor(backgroundImage)
         stage.addActor(backButton)
         stage.addActor(win)
         win.addActor(table)
-        //stage.addActor(table)
-
-
-/*
-        backgroundImage.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
-
-        backButton.setSize(175f, 85f)
-        backButton.setPosition(CesDoom.VIRTUAL_WIDTH - backButton.width - 5, 5f)
-
-        // Inside Window
-        val xWin = 50f
-        val yWin = 100f
-        win.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-100)
-        win.setPosition(xWin, yWin)
-        win.zIndex = 10
-        //win.touchable = Touchable.disabled
-
-        // Title
-        var cy = 10f + yWin
-        titleLabel.setColor(.9f, .9f, .9f, 1f)
-        titleLabel.setFontScale(2f)
-        titleLabel.setSize(500f, 70f)
-        titleLabel.setPosition(xWin+10f, win.height - cy)
-        cy += titleLabel.height + 10f
-
-        // Sound On/Off
-        soundButton.isChecked = Settings.isSoundEnabled
-        soundButton.setSize(350f, 80f)
-        soundButton.setPosition(xWin, win.height - cy)
-        cy += soundButton.height + 0f -55f
-        //Sound Effects Volume
-        soundVolumeLabel.setSize(500f, 30f)
-        soundVolumeLabel.setPosition(xWin+10f, win.height - cy)
-        cy += soundVolumeLabel.height + 0f
-        soundVolumeSlider.value = Settings.soundVolume
-        soundVolumeSlider.setSize(550f, 30f)
-        soundVolumeSlider.setPosition(xWin+10f, win.height - cy)
-        cy += soundVolumeSlider.height + 80f
-
-        // Music On/Off
-        musicButton.isChecked = Settings.isMusicEnabled
-        musicButton.setSize(250f, 80f)
-        musicButton.setPosition(xWin, win.height - cy)
-        cy += musicButton.height + 0f -55f
-        //Music Volume
-        musicVolumeLabel.setSize(500f, 30f)
-        musicVolumeLabel.setPosition(xWin+10f, win.height - cy)
-        cy += musicVolumeLabel.height + 0f
-        musicVolumeSlider.value = Settings.musicVolume
-        musicVolumeSlider.setSize(550f, 30f)
-        musicVolumeSlider.setPosition(xWin+10f, win.height - cy)
-
-        win.addActor(titleLabel)
-        win.addActor(soundButton)
-        win.addActor(soundVolumeLabel)
-        win.addActor(soundVolumeSlider)
-        win.addActor(musicButton)
-        win.addActor(musicVolumeLabel)
-        win.addActor(musicVolumeSlider)
-
-		stage.addActor(backgroundImage)
-        stage.addActor(backButton)
-        stage.addActor(win)
-        //stage.isDebugAll = true
-        */
     }
 
     //______________________________________________________________________________________________
@@ -262,22 +137,43 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
             goBack()
             return@addListener false
         }
-
+        //
         soundVolumeSlider.addListener {
             Settings.soundVolume = soundVolumeSlider.value
+            if(soundVolumeSlider.value == 0f) {
+                soundButton.isChecked = false
+                Settings.isSoundEnabled = false
+            }
+            else {
+                soundButton.isChecked = true
+                Settings.isSoundEnabled = true
+            }
             return@addListener false
         }
         soundButton.addListener {
             Settings.isSoundEnabled = soundButton.isChecked
             return@addListener false
         }
-
+        //
         musicVolumeSlider.addListener {
             Settings.musicVolume = musicVolumeSlider.value
+            if(musicVolumeSlider.value == 0f) {
+                musicButton.isChecked = false
+                Settings.isMusicEnabled = false
+            }
+            else {
+                musicButton.isChecked = true
+                Settings.isMusicEnabled = true
+            }
             return@addListener false
         }
         musicButton.addListener {
             Settings.isMusicEnabled = musicButton.isChecked
+            return@addListener false
+        }
+        //
+        painVibrationButton.addListener {
+            Settings.isVibrationEnabled = painVibrationButton.isChecked
             return@addListener false
         }
     }
