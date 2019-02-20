@@ -36,12 +36,12 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		//
 		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
 		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
-		btnQuit = TextButton(Assets.SALIR, assets.skin)
+		btnQuit = TextButton(assets.getString(Assets.SALIR), assets.skin)
 		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
 		btnRestart.label.setFontScale(2f)
 		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
 		btnMenu.label.setFontScale(2f)
-		btnQuit = TextButton(Assets.SALIR, assets.skin)
+		btnQuit = TextButton(assets.getString(Assets.SALIR), assets.skin)
 		btnQuit.label.setFontScale(2f)
 		//
 		configureWidgets()

@@ -9,7 +9,7 @@ class Vertex(private val orig: Node, private val dest: Node) : Connection<Node> 
     private var coste: Float = 0f
 
     init {
-        if(dest.isValido)
+        if(dest.isValid)
             this.coste = orig.point.dist2(dest.point).toFloat()
         else
             this.coste = java.lang.Float.MAX_VALUE / 2

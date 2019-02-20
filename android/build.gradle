@@ -1,12 +1,12 @@
 android {
-    signingConfigs {
-        config {
-            keyAlias "ces"
-            storeFile file('/home/cesar/usr/tests/CesDoom2/cesks.jks')
-            keyPassword 'x'
-            storePassword 'x'
-        }
-    }
+//    signingConfigs {
+//        config {
+//            keyAlias "ces"
+//            storeFile file('/home/cesar/usr/tests/CesDoom2/cesks.jks')
+//            keyPassword 'x'
+//            storePassword 'x'
+//        }
+//    }
     buildToolsVersion "28.0.3"
     compileSdkVersion 28
     sourceSets {
@@ -32,6 +32,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         debug {
@@ -40,7 +41,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.config
         }
     }
 }
@@ -125,5 +126,9 @@ idea {
         }
     }
 }
+
 dependencies {
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.android.gms:play-services-games:16.0.0'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
 }

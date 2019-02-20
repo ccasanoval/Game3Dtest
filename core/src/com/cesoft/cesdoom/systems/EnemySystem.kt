@@ -214,11 +214,12 @@ class EnemySystem(
 	private fun calcPath(entity: Entity, playerPosition: Vector3) {
 
 		val enemy = EnemyComponent.get(entity)
+		var recalcular = false
 
 		val levelEnemy = if(enemy.position.y > 2 * WallFactory.HIGH) 1 else 0
 		val levelPlayer = if(playerPosition.y > 2 * WallFactory.HIGH) 1 else 0
 
-		Log.e(tag, "LEVELS ----------------------------------------------- $levelEnemy  <>  $levelPlayer      id=${enemy.id}  player2D=${enemy.player2D} ")
+		//Log.e(tag, "LEVELS ----------------------------------------------- $levelEnemy  <>  $levelPlayer      id=${enemy.id}  player2D=${enemy.player2D} ")
 
 		//Distintas plantas: Buscar en mapa de accessos
 		if(levelEnemy != levelPlayer && !enemy.isAccessLevelPath) {
@@ -227,28 +228,27 @@ class EnemySystem(
 			val access = map.getNearerLevelAccess(enemy.currentPos2D)
 			enemy.player2D.set(access)
             enemy.pathIndex = 0
-            Log.e(tag, "Distintas plantas ----------------------------------------------- id=${enemy.id}  /  access=${enemy.player2D}  / access=$access")
+			recalcular = true
+            //Log.e(tag, "Distintas plantas ----------------------------------------------- id=${enemy.id}  /  access=${enemy.player2D}  / access=$access")
 		}
 		else if(levelEnemy == levelPlayer && enemy.isAccessLevelPath){
 			enemy.isAccessLevelPath = false
 			enemy.player2D.set(Vector2(playerPosition.x, playerPosition.z))
             enemy.pathIndex = 0
-            Log.e(tag, "Restaurar misma planta ----------------------------------------------- id=${enemy.id}  /  access=${enemy.player2D} ")
+            //Log.e(tag, "Restaurar misma planta ----------------------------------------------- id=${enemy.id}  /  access=${enemy.player2D} ")
 		}
 		//Misma planta: Buscar en mapa de obstaculos correspondiente
 		if(true) {
-			var recalcular = false
 
 			val player2D = if(enemy.isAccessLevelPath) MazeFactory.mapFactory.map[levelEnemy].getNearerLevelAccess(enemy.currentPos2D) //enemy.player2D
 							else Vector2(playerPosition.x, playerPosition.z)
-			if(enemy.isAccessLevelPath)
-				Log.e(tag, "--------------------------- enemy.isAccessLevelPath !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $player2D ")
+			//if(enemy.isAccessLevelPath)Log.e(tag, "--------------------------- enemy.isAccessLevelPath !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $player2D ")
 			if(player2D.dst2(enemy.player2D) > WallFactory.LONG) {//TODO:otra medida max?
-				Log.e(tag, "--------------------------- RECALCULAR POR DISTANCIA  id=${enemy.id}    / $player2D ")
+				//Log.e(tag, "--------------------------- RECALCULAR POR DISTANCIA  id=${enemy.id}    / $player2D ")
 				recalcular = true
 			}
 			if(enemy.stepCounter++ > 30) {
-				Log.e(tag, "--------------------------- RECALCULAR LIMITE DE PASOS  id=${enemy.id}    / $player2D ")
+				//Log.e(tag, "--------------------------- RECALCULAR LIMITE DE PASOS  id=${enemy.id}    / $player2D ")
 				enemy.stepCounter = 0
 				recalcular = true
 			}
@@ -258,7 +258,7 @@ class EnemySystem(
 				//Si distancia < x ve a por ella -> rampa
 				//TODO: cuando los enemigos pasan por debajo de rampa y player sube rampa, enemigo se bloquea debajo de rampa:
 				//TODO   se cree que ya ha llegado a destino, deberia dar la vuelta y entrar por inicio de rampa!!!
-				Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  / $player2D  /  path size=${enemy.path?.size}  ")
+				//Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  / $player2D  /  path size=${enemy.path?.size}  ")
 				recalcular = true
 			}
 			//
@@ -274,7 +274,7 @@ class EnemySystem(
 
 	private fun usePath(enemy: EnemyComponent) {
 		val next = enemy.path!![enemy.pathIndex]
-		Log.e(tag, "usePath----------------------------------------------- id=${enemy.id}  path index=${enemy.pathIndex}  /  $next")
+		//Log.e(tag, "usePath----------------------------------------------- id=${enemy.id}  path index=${enemy.pathIndex}  /  $next")
 
 		if(enemy.currentPos2D.dst(next) < 5) {
 			enemy.pathIndex++
@@ -290,7 +290,7 @@ class EnemySystem(
 	private fun recalcPath(enemy: EnemyComponent, levelEnemy: Int) {
 		val map = MazeFactory.mapFactory.map[levelEnemy]
 		enemy.path = map.findPath(enemy.currentPos2D, enemy.player2D)
-		Log.e(tag, "recalcPath----------------------------------------------- id=${enemy.id}  path size=${enemy.path?.size}")
+		//Log.e(tag, "recalcPath----------------------------------------------- id=${enemy.id}  path size=${enemy.path?.size}")
 		enemy.path?.let { path ->
 			if (path.size > 1) {
 				enemy.pathIndex = 2

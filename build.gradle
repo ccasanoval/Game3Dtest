@@ -27,6 +27,7 @@ allprojects {
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
         kotlinCorroutinesVersion = '1.0.1'
+        gamesvcsVersion = '0.2.5'
     }
 
     repositories {
@@ -101,6 +102,9 @@ project(":android") {
         //implementation "com.google.vr:sdk-base:1.101.0"
         //implementation 'com.google.vr:sdk-controller:1.101.0'
         //implementation 'com.github.yangweigbh:Libgdx-CardBoard-Extension:0.4.0'
+
+        //Google Game Services
+        //implementation "de.golfgl.gdxgamesvcs:gdx-gamesvcs-core:$gamesvcsVersion"
     }
 }
 
@@ -118,5 +122,8 @@ project(":core") {
         implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCorroutinesVersion"
+
+        //Google Game Services
+        implementation "de.golfgl.gdxgamesvcs:gdx-gamesvcs-core:$gamesvcsVersion:sources"
     }
 }

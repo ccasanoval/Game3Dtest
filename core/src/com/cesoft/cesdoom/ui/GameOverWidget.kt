@@ -37,7 +37,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		btnRestart.label.setFontScale(2f)
 		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
 		btnMenu.label.setFontScale(2f)
-		btnQuit = TextButton(Assets.SALIR, assets.skin)
+		btnQuit = TextButton(assets.getString(Assets.SALIR), assets.skin)
 		btnQuit.label.setFontScale(2f)
 		//
 		configureWidgets()

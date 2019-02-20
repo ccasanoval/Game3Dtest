@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TODO: Replace this entire file with the ids.xml provided from the Google Play Console.
+         NOTE: You can find this file by clicking the `Get Resources` link in
+         the Events, Achievements, or Leaderboards menu of the Google Play Console. -->
+    <string name="app_id"  translatable="false">787915909370</string>
+
+    <!-- leaderboard Kill count -->
+    <string name="leaderboard_kill_count" translatable="false">CgkI-tHKm_cWEAIQAA</string>
+
+</resources>

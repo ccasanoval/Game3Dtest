@@ -14,6 +14,7 @@ import com.cesoft.cesdoom.Settings
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,14 +38,15 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
 
     private val painVibrationButton = TextButton(assets.getString(Assets.CONFIG_VIBRATION_ONOF), assets.skin, "toggle")
 
+    private val gpgsSignInButton = TextButton(assets.getString(Assets.CONFIG_GPGS_ONOF), assets.skin, "toggle")
+
     private val lblSeparator = Label("", assets.skin)
 
 
     init {
         configure()
         setListeners()
-        //Gdx.input.inputProcessor = this
-        Gdx.input.inputProcessor = stage    //Scroll
+        Gdx.input.inputProcessor = this
     }
 
     //______________________________________________________________________________________________
@@ -88,6 +90,9 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         painVibrationButton.isChecked = Settings.isVibrationEnabled
         painVibrationButton.setSize(600f, 80f)
 
+        gpgsSignInButton.isChecked = Settings.isGPGSEnabled
+        gpgsSignInButton.setSize(500f, 80f)
+
 
         val scrollTable = Table()
         scrollTable.width = win.width-5
@@ -112,17 +117,21 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         //
         scrollTable.add(painVibrationButton).size(390f, 80f)
         scrollTable.row()
+        //
+        scrollTable.add(gpgsSignInButton).size(390f, 80f)
+        scrollTable.row()
+        //
         scrollTable.add(lblSeparator).size(50f, 50f).row()
 
         val scroller = ScrollPane(scrollTable)
         val table = Table()
         table.setFillParent(true)
         table.add(scroller).fill().expand()
+        win.addActor(table)
 
         stage.addActor(backgroundImage)
         stage.addActor(backButton)
         stage.addActor(win)
-        win.addActor(table)
     }
 
     //______________________________________________________________________________________________
@@ -176,6 +185,12 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
             Settings.isVibrationEnabled = painVibrationButton.isChecked
             return@addListener false
         }
+        //
+        gpgsSignInButton.addListener {
+            Settings.isGPGSEnabled = gpgsSignInButton.isChecked
+            return@addListener false
+        }
+        //
     }
 
     //______________________________________________________________________________________________

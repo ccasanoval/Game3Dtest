@@ -17,6 +17,8 @@ import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen
 import com.cesoft.cesdoom.systems.RenderSystem
 import com.cesoft.cesdoom.util.Log
+import com.cesoft.cesdoom.util.PlayServices
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // DESKTOP DEPLOY : gradlew desktop:dist --> cesgame2\desktop\build\libs
@@ -34,7 +36,7 @@ import com.cesoft.cesdoom.util.Log
 //TODO: Joystick!!
 //TODO: Level Constructor
 //TODO: Pathfinding 3D (enhancement)
-//TODO: Monster2, Weapon2 ?
+//TODO: Monster3, Weapon2 ?
 //TODO: Radar de monster?
 //TODO: Textura en suelo donde nacen los bichos?
 //
@@ -43,6 +45,13 @@ import com.cesoft.cesdoom.util.Log
 
 //TODO: Dependecy Injection? https://github.com/denisk20/libgdx-dagger2
 //TODO: Shadows? Fog?
+
+//TODO: Multiplayer !!!!!
+//https://developers.google.com/games/services/common/concepts/realtimeMultiplayer
+//https://github.com/playgameservices/android-basic-samples
+//TODO: Google Game Services
+//Kill all the hideous monsters to get out of the labyrinth of death. CesDooM is just a proof of concept of a First Person Shooter game for Android, developed with Kotlin under Android Studio by Cesar Casanova
+//Mátalos a todos esos monstruos horribles para salir del laberinto de la muerte. CesDooM es solo una prueba de concepto de un juego de acción en primera persona para Android, desarrollado en Kotlin con Android Studio por Cesar Casanova
 
 //VR
 //TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
@@ -53,7 +62,7 @@ import com.cesoft.cesdoom.util.Log
 //https://github.com/Brummi/VRDemo
 //https://github.com/nooone/gdx-vr
 
-class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
+class CesDoom(debugMode: Boolean, val playServices: PlayServices?=null) : ApplicationAdapter() {
 
 	companion object {
 		private val tag: String = CesDoom::class.java.simpleName
@@ -65,6 +74,8 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 	private var screen: Screen? = null
 	private lateinit var gameUI: GameUI
 	private lateinit var assets: Assets
+
+	//var gsClient: IGameServiceClient? = null
 
 	init {
 	    Log.debugMode = debugMode
@@ -145,6 +156,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 		assets.dispose()
 	}
 
+	//______________________________________________________________________________________________
 	fun loadResources() {
 
 		// Sounds
@@ -178,53 +190,7 @@ class CesDoom(debugMode: Boolean) : ApplicationAdapter() {
 			assets.iniJunk()
 		}
 
-		/*
-		// Gate
-		try {assets.getGate()}
-		catch(ignore: GdxRuntimeException) {assets.iniGate()}
-		// Switch
-		try {assets.getSwitchOn()}
-		catch(ignore: GdxRuntimeException) {assets.iniSwitchOn()}
-		try {assets.getSwitchOff()}
-		catch(ignore: GdxRuntimeException) {assets.iniSwitchOff()}
-		// Wall
-		try {assets.getWallMetal1()}
-		catch(ignore: GdxRuntimeException) {assets.iniWallMetal1()}
-		try {assets.getWallMetal2()}
-		catch(ignore: GdxRuntimeException) {assets.iniWallMetal2()}
-		try {assets.getWallMetal3()}
-		catch(ignore: GdxRuntimeException) {assets.iniWallMetal3()}
-
-		// Enemy
-		try {assets.getEnemy(EnemyComponent.TYPE.MONSTER0)}
-		catch(ignore: Exception) {assets.iniEnemy(EnemyComponent.TYPE.MONSTER0)}
-		try {assets.getEnemy(EnemyComponent.TYPE.MONSTER1)}
-		catch(ignore: Exception) {assets.iniEnemy(EnemyComponent.TYPE.MONSTER1)}
-
-		// Weapons
-		try {assets.getRifle()}
-		catch(ignore: Exception) {assets.iniRifle()}
-		try {assets.getFireShot()}
-		catch(ignore: Exception) {assets.iniFireShot()}
-
-		// Scene
-		try {assets.getAmmo()}
-		catch(ignore: GdxRuntimeException) {assets.iniAmmo()}
-		try {assets.getHealth()}
-		catch(ignore: GdxRuntimeException) {assets.iniHealth()}
-		try {assets.getDome()}
-		catch(ignore: GdxRuntimeException) {assets.iniDome()}
-		try {assets.getSuelo()}
-		catch(ignore: GdxRuntimeException) {assets.iniSuelo()}
-		try {assets.getSkyline()}
-		catch(ignore: GdxRuntimeException) {assets.iniSkyline()}
-		try {assets.getJunk()}
-		catch(ignore: GdxRuntimeException) {assets.iniJunk()}
-		*/
 		//TODO: Also the rest of the object initialization?
 	}
-
-	val render: RenderSystem
-		get() = (screen as GameScreen).render
 
 }

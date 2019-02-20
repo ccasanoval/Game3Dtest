@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.util.Log
@@ -26,6 +27,8 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	private var quitButton: TextButton = TextButton(assets.getString(Assets.SALIR), assets.skin)
 	private var settingsButton: TextButton = TextButton(assets.getString(Assets.CONFIG), assets.skin)
 	private var aboutButton: TextButton = TextButton(assets.getString(Assets.SOBRE), assets.skin)
+	private var leaderBoardButton: TextButton = TextButton(assets.getString(Assets.PUNTUACIONES), assets.skin)
+	private var gpgsSignInButton: TextButton = TextButton(assets.getString(Assets.GPGS_SIGN_IN), assets.skin)
 
 	init {
 		PlayerComponent.isGodModeOn = false
@@ -34,15 +37,15 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		backgroundImage = assets.getMainMenuBg()
 		titleImage = assets.getMainMenuTitle()
 
-		configureWidgers()
+		configureWidgets()
 		setListeners()
 		Gdx.input.inputProcessor = stage
 	}
 
 	//______________________________________________________________________________________________
-	private fun configureWidgers() {
+	private fun configureWidgets() {
 		var y = 110f
-        val x = 200f
+        val x = 220f
 		var delay = 0.50f
 		val fadeIn = 0.60f
 		//
@@ -55,12 +58,12 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		titleImage.setPosition(
 				(CesDoom.VIRTUAL_WIDTH - titleImage.width) / 2,
 				(CesDoom.VIRTUAL_HEIGHT - titleImage.height) / 2 +y)
-		y -= 250f
+		y -= 190f
 		delay += 0.55f
 		//
 		playButton.setSize(280f, 90f)
 		playButton.label.setFontScale(2f)
-		playButton.setPosition(CesDoom.VIRTUAL_WIDTH / 2 - playButton.width / 2 - x, CesDoom.VIRTUAL_HEIGHT / 2 +y)
+		playButton.setPosition(CesDoom.VIRTUAL_WIDTH / 2 - playButton.width / 2 -x, CesDoom.VIRTUAL_HEIGHT / 2 +y)
 		playButton.setColor(1f, 1f, 1f, 0f)
 		playButton.addAction(SequenceAction(Actions.delay(delay), Actions.fadeIn(fadeIn)))
 		//
@@ -86,12 +89,33 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		delay += 0.30f
 		y -= 90f
 		//
+		leaderBoardButton.setSize(400f, 90f)
+		leaderBoardButton.label.setFontScale(1.5f)
+		leaderBoardButton.setPosition((CesDoom.VIRTUAL_WIDTH-leaderBoardButton.width) / 2, CesDoom.VIRTUAL_HEIGHT / 2 +y)
+		leaderBoardButton.setColor(1f, 1f, 1f, 0f)
+		leaderBoardButton.addAction(SequenceAction(Actions.delay(delay), Actions.fadeIn(fadeIn)))
+		gpgsSignInButton.setSize(450f, 90f)
+		gpgsSignInButton.label.setFontScale(1.5f)
+		gpgsSignInButton.setPosition((CesDoom.VIRTUAL_WIDTH-leaderBoardButton.width) / 2, CesDoom.VIRTUAL_HEIGHT / 2 +y)
+		gpgsSignInButton.setColor(1f, 1f, 1f, 0f)
+		gpgsSignInButton.addAction(SequenceAction(Actions.delay(delay), Actions.fadeIn(fadeIn)))
+		delay += 0.30f
+		y -= 90f
+		//
 		stage.addActor(backgroundImage)
 		stage.addActor(titleImage)
 		stage.addActor(playButton)
 		stage.addActor(settingsButton)
 		stage.addActor(aboutButton)
 		stage.addActor(quitButton)
+		if(Settings.isGPGSEnabled) {
+			game.playServices?.let {
+				if (it.isSignedIn())
+					stage.addActor(leaderBoardButton)
+				else
+					stage.addActor(gpgsSignInButton)
+			}
+		}
 	}
 
 	private fun setListeners() {
@@ -128,6 +152,16 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		aboutButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
 				game.setScreen(AboutScreen(game, assets))
+			}
+		})
+		leaderBoardButton.addListener(object : ClickListener() {
+			override fun clicked(event: InputEvent?, x: Float, y: Float) {
+				game.playServices?.showLeaderBoard()
+			}
+		})
+		gpgsSignInButton.addListener(object : ClickListener() {
+			override fun clicked(event: InputEvent?, x: Float, y: Float) {
+				game.playServices?.signIn()
 			}
 		})
 	}

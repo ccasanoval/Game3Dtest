@@ -53,7 +53,7 @@ public class NodeCollisionDetector implements RaycastCollisionDetector<Vector2> 
         int ystep = (y0 < y1 ? 1 : -1);
         for (int x = x0; x <= x1; x++) {
             Node tile = steep ? worldMap.getNode(y, x) : worldMap.getNode(x, y);
-            if ( ! tile.isValido()) return true; // We've hit a wall
+            if ( ! tile.isValid()) return true; // We've hit a wall
             error += deltay;
             if (error + error >= deltax) {
                 y += ystep;

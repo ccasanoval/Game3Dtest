@@ -30,6 +30,11 @@ class PlayerInput : ControllerListener {
     var btnB: Boolean = false
     var btnC: Boolean = false
     var btnD: Boolean = false
+    var btnMenu: Boolean = false
+    var btnUp: Boolean = false
+    var btnDown: Boolean = false
+    var btnLeft: Boolean = false
+    var btnRight: Boolean = false
 
     //-------------------------------------------------------------------------------------------
     //
@@ -37,36 +42,36 @@ class PlayerInput : ControllerListener {
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
 Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
 
-        val dOffset = 5
-        val mOffset = 5
+        val dOffset = 0.3f
+        val mOffset = 0.3f
 
         /// Direccion
         if(axisCode == Ouya.AXIS_LEFT_X) {
             dxPad = when {
-                value > dOffset -> Direccion.DERECHA
-                value < dOffset -> Direccion.IZQUIERDA
+                value > +dOffset -> Direccion.DERECHA
+                value < -dOffset -> Direccion.IZQUIERDA
                 else -> Direccion.NONE
             }
         }
         if(axisCode == Ouya.AXIS_LEFT_Y) {
             dyPad = when {
-                value > dOffset -> Direccion.ATRAS
-                value < dOffset -> Direccion.ADELANTE
+                value > +dOffset -> Direccion.ATRAS
+                value < -dOffset -> Direccion.ADELANTE
                 else -> Direccion.NONE
             }
         }
         /// Mirada
         if(axisCode == Ouya.AXIS_RIGHT_X) {
             mxPad = when {
-                value > mOffset -> Mirada.DERECHA
-                value < mOffset -> Mirada.IZQUIERDA
+                value > +mOffset -> Mirada.DERECHA
+                value < -mOffset -> Mirada.IZQUIERDA
                 else -> Mirada.NONE
             }
         }
         if(axisCode == Ouya.AXIS_RIGHT_Y) {
             myPad = when {
-                value > mOffset -> Mirada.ARRIBA
-                value < mOffset -> Mirada.ABAJO
+                value > +mOffset -> Mirada.ARRIBA
+                value < -mOffset -> Mirada.ABAJO
                 else -> Mirada.NONE
             }
         }
@@ -75,12 +80,26 @@ Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
     override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
         Log.e(PlayerSystem.tag, "buttonUp:0----------------"+controller?.name+" : "+buttonCode)
         when(buttonCode) {
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R1 -> fire1 = false
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = false
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R3 -> fire1 = false
+
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L1 -> fire2 = false
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = false
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L3 -> fire2 = false
+
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_RIGHT -> btnRight = false
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_LEFT -> btnLeft = false
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_UP -> btnUp = false
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_DOWN -> btnDown = false
+
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_MENU -> btnMenu = false
+
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_A -> btnA = false
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = false
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = false
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_Y -> btnD = false
+
             else -> Log.e(PlayerSystem.tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
         }
         //else if(buttonCode == com.badlogic.gdx.controllers.mappings.Xbox.A)
@@ -89,8 +108,21 @@ Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
     override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
         Log.e(PlayerSystem.tag, "buttonDown:0---------------"+controller?.name+" : "+buttonCode)
         when(buttonCode) {
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R1 -> fire1 = true
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = true
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R3 -> fire1 = true
+
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L1 -> fire2 = true
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = true
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L3 -> fire2 = true
+
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_RIGHT -> btnRight = true
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_LEFT -> btnLeft = true
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_UP -> btnUp = true
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_DOWN -> btnDown = true
+
+            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_MENU -> btnMenu = true
+
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_A -> btnA = true
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = true
             com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = true

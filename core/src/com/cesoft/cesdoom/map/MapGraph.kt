@@ -50,28 +50,28 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
     private fun getNode(point: Vector2) : Node {
         val pos = toMapGraphCoord(point)
         var node = getNode(pos)
-        while( ! node.isValido) {
-            Log.e(tag, "getNode: cuidado, esto podria retardar mucho la busqueda --------------------")
-            for(y in 0..10) {
-                for(x in 0..10) {
+        while( ! node.isValid) {
+            Log.e(tag, "getNode: cuidado, esto podria retardar mucho la busqueda -------------------- point=$point / node=$node / #nodes=${nodes.size}")
+            for(y in 0..7) {
+                for(x in 0..7) {
                     node = getNode(Point(pos.x + x, pos.y + y))
-                    if(node.isValido)
+                    if(node.isValid)
                         break
                     node = getNode(Point(pos.x - x, pos.y + y))
-                    if(node.isValido)
+                    if(node.isValid)
                         break
                     node = getNode(Point(pos.x + x, pos.y - y))
-                    if(node.isValido)
+                    if(node.isValid)
                         break
                     node = getNode(Point(pos.x - x, pos.y - y))
-                    if(node.isValido)
+                    if(node.isValid)
                         break
                 }
-                if(node.isValido)
+                if(node.isValid)
                     break
             }
         }
-//Log.e(tag, "getNode: fin - ------------------------------------------ ---------- $point / $node")
+Log.e(tag, "getNode: fin - ------------------------------------------ ---------- final node = $node")
         return node
     }
 

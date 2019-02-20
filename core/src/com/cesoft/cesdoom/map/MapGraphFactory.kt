@@ -74,7 +74,7 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
             for(y in 0 until map[level].cy) {
                 var row = "$y \t\t\t"
                 for(x in 0 until map[level].cx) {
-                    row += if (map[level].getNode(x, y).isValido) ". " else "1 "
+                    row += if (map[level].getNode(x, y).isValid) ". " else "1 "
                 }
                 Log.e("MAP", row)
             }

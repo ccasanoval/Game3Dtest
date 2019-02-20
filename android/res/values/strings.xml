@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">CesDoom</string>
+    <string name="app_name">CesDooM</string>
+    <!-- string name="app_id">787915909370</string  Ya lo tienes en res/values/ids.xml -->
 
 </resources>

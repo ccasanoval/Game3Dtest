@@ -22,23 +22,26 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/background.png")))
 	private var backButton: TextButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
+	private var rateButton: TextButton = TextButton(assets.getString(Assets.PUNTUA), assets.skin)
 
 	private val texto: Label = Label(assets.getString(Assets.SOBRE_TXT), assets.skin)
 	private val scrollPane = ScrollPane(texto, assets.skin)
-	private val win = Window("CesDooM", assets.skin, "special")
+	private val win = Window("About", assets.skin, "special")
 
 	init {
-		configureWidgers()
+		configureWidgets()
 		setListeners()
 		Gdx.input.inputProcessor = this
         stage.keyboardFocus
 	}
 
 	//______________________________________________________________________________________________
-	private fun configureWidgers() {
+	private fun configureWidgets() {
 		backgroundImage.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
 		backButton.setSize(175f, 85f)
 		backButton.setPosition(CesDoom.VIRTUAL_WIDTH - backButton.width - 5, 5f)
+		rateButton.setSize(350f, 85f)
+		rateButton.setPosition(backButton.x - rateButton.width -5, 5f)
 
 		texto.setWrap(true)
 		texto.setFontScale(1.5f)
@@ -56,6 +59,7 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 
 		stage.addActor(backgroundImage)
 		stage.addActor(backButton)
+		stage.addActor(rateButton)
 		stage.addActor(win)
 		stage.addActor(scrollPane)
 	}
@@ -66,6 +70,11 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 		backButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
 				goBack()
+			}
+		})
+		rateButton.addListener(object : ClickListener() {
+			override fun clicked(event: InputEvent?, x: Float, y: Float) {
+				game.playServices?.rateGame()
 			}
 		})
 	}

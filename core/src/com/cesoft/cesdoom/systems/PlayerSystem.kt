@@ -129,7 +129,7 @@ class PlayerSystem(
 	private fun updateMovement(delta: Float) {
 		updateRotation(delta)
 		updateTranslation(delta)
-		updateJumping()
+		updateJumping(delta)
 	}
 	//______________________________________________________________________________________________
 	private fun updateRotation(delta: Float) {	//TODO: cuando no presione rotacion, centrar poco a poco en Y=0
@@ -138,7 +138,7 @@ class PlayerSystem(
 		val deltaX: Float
 		val deltaY: Float
 
-		if(CesDoom.isMobile) {
+		//if(CesDoom.isMobile) {
 			val xWeight=90f
 			val yWeight=50f
 			if(input.mxPad != PlayerInput.Mirada.NONE || input.myPad != PlayerInput.Mirada.NONE) {
@@ -157,11 +157,11 @@ class PlayerSystem(
 				deltaX = -ControllerWidget.watchVector.x * xWeight*delta    // Velocidad angulo horizontal (GOOD: 90)
 				deltaY = ControllerWidget.watchVector.y * yWeight*delta    // Velocidad angulo vertical (GOOD: 60)
 			}
-		}
-		else {
-			deltaX = -Gdx.input.deltaX * 5*delta
-			deltaY = -Gdx.input.deltaY * 2*delta
-		}
+//		}
+//		else {
+//			deltaX = -Gdx.input.deltaX * 5*delta
+//			deltaY = -Gdx.input.deltaY * 2*delta
+//		}
 
 		// Y
 		val dir = camera.direction.cpy()
@@ -172,19 +172,19 @@ class PlayerSystem(
 		val pitch = (Math.atan2(Math.sqrt((v.x*v.x + v.z*v.z).toDouble()), v.y.toDouble()) * MathUtils.radiansToDegrees).toFloat()
 		var pr = deltaY
 		/// MOBILE
-		if(CesDoom.isMobile) {
+		//if(CesDoom.isMobile) {
 			if(pitch - pr > 140)		//Angulo mirando abajo (GOOD: 120)
 				pr = pitch - 140
 			else if(pitch - pr < 30)	//Angulo mirando arriba (GOOD: 40)
 				pr = pitch - 30
-		}
-		/// DESKTOP
-		else {
-			if(pitch - pr > 150)
-				pr = -(150 - pitch)
-			else if(pitch - pr < 30)
-				pr = pitch - 30
-		}
+//		}
+//		/// DESKTOP
+//		else {
+//			if(pitch - pr > 150)
+//				pr = -(150 - pitch)
+//			else if(pitch - pr < 30)
+//				pr = pitch - 30
+//		}
 		dir.rotate(posTemp, pr)
 		//
 		camera.direction.set(dir)
@@ -232,37 +232,54 @@ class PlayerSystem(
 			posTemp2.set(camera.direction).crs(camera.up)
 			hayMovimiento = true
 		}
-		if( ! hayMovimiento)
+		if( ! hayMovimiento) {
 			posTemp2.set(Vector3.Zero)
+		}
 		else {
 			PlayerComponent.animFootStep(delta)
-			if(Settings.isSoundEnabled)// && ! Assets.getSoundFootSteps().isPlaying)
-				Sounds.play(Sounds.SoundType.FOOT_STEPS)
+			Sounds.play(Sounds.SoundType.FOOT_STEPS)
 		}
 		posTemp.add(posTemp2)
 		posTemp.scl(PlayerComponent.IMPULSE_MOBIL * delta)
 	}
 	//______________________________________________________________________________________________
 	private fun updateTranslationDesktop(delta: Float) {
-		if(Gdx.input.isKeyPressed(Input.Keys.UP)) posTemp.add(camera.direction)
-		else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) posTemp.sub(camera.direction)
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
-		else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) posTemp2.set(camera.direction).crs(camera.up)
-		else posTemp2.set(Vector3.Zero)
-		if( ! posTemp2.isZero)
+		var hayMovimiento = false
+		if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
+			posTemp.add(camera.direction)
+			hayMovimiento = true
+		}
+		else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+			posTemp.sub(camera.direction)
+			hayMovimiento = true
+		}
+		when {
+			Gdx.input.isKeyPressed(Input.Keys.LEFT) -> {
+				posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
+				hayMovimiento = true
+			}
+			Gdx.input.isKeyPressed(Input.Keys.RIGHT) -> {
+				posTemp2.set(camera.direction).crs(camera.up)
+				hayMovimiento = true
+			}
+			else ->
+				posTemp2.set(Vector3.Zero)
+		}
+		if(hayMovimiento) {
 			Sounds.play(Sounds.SoundType.FOOT_STEPS)
-		posTemp.add(posTemp2)
+			posTemp.add(posTemp2)
+		}
 		posTemp.scl(PlayerComponent.IMPULSE_PC * delta)
 	}
 	//______________________________________________________________________________________________
-	private fun updateJumping() {
+	private fun updateJumping(delta: Float) {
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || input.btnA) {
 			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+PlayerComponent.isJumping)
 			if( ! PlayerComponent.isJumping) {
 				PlayerComponent.isJumping = true
-				val fuerza = 40f
+				val force = 40 * delta
 				val vel = bulletComponent.rigidBody.linearVelocity.cpy()
-				vel.y += fuerza
+				vel.y += force
 				bulletComponent.rigidBody.linearVelocity = vel
 				//bulletComponent.rigidBody.applyCentralImpulse(Vector3.Y.scl(fuerza))
 			}
@@ -294,7 +311,7 @@ class PlayerSystem(
 
 		val isFiring = (ControllerWidget.isFiring
 				|| Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
-				|| input.fire1 || input.btnA)
+				|| input.fire1 || input.fire2)
 		deltaFire += delta
 
 		if(PlayerComponent.isReloading) {
