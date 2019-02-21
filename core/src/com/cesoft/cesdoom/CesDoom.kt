@@ -15,7 +15,6 @@ import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.screens.GameScreen
 import com.cesoft.cesdoom.screens.LoadingScreen
 import com.cesoft.cesdoom.screens.MainMenuScreen
-import com.cesoft.cesdoom.systems.RenderSystem
 import com.cesoft.cesdoom.util.Log
 import com.cesoft.cesdoom.util.PlayServices
 
@@ -62,7 +61,12 @@ import com.cesoft.cesdoom.util.PlayServices
 //https://github.com/Brummi/VRDemo
 //https://github.com/nooone/gdx-vr
 
-class CesDoom(debugMode: Boolean, val playServices: PlayServices?=null) : ApplicationAdapter() {
+class CesDoom(
+		debugMode: Boolean,
+		val playServices: PlayServices?=null
+		//var controllerMappings: ControllerMappings?=null
+		)
+	: ApplicationAdapter() {
 
 	companion object {
 		private val tag: String = CesDoom::class.java.simpleName
@@ -74,8 +78,6 @@ class CesDoom(debugMode: Boolean, val playServices: PlayServices?=null) : Applic
 	private var screen: Screen? = null
 	private lateinit var gameUI: GameUI
 	private lateinit var assets: Assets
-
-	//var gsClient: IGameServiceClient? = null
 
 	init {
 	    Log.debugMode = debugMode

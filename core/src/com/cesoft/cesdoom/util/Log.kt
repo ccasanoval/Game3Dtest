@@ -13,7 +13,7 @@ object Log {
             ApplicationType.WebGL -> Unit
             ApplicationType.Applet -> Unit
         }*/
-        if(debugMode) {
+        if(debugMode || true) {//TODO:CES:  ---------------------------------------------------------------------------------
             //System.err.println("$tag: $msg")
             //System.err.flush()
             Gdx.app.error(tag, msg)

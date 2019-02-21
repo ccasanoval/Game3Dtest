@@ -16,13 +16,15 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.managers.PlayerInput
+import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.util.Log
+import de.golfgl.gdx.controllers.ControllerMenuStage
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Screen {
-	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
+	//private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image// = game.assets.getMainMenuBg()//Image(Texture(Gdx.files.internal("data/background.png")))
 	private var titleImage: Image// = game.assets.getMainMenuTitle()//Image(Texture(Gdx.files.internal("data/title.png")))
 	private var playButton: TextButton = TextButton(assets.getString(Assets.JUGAR), assets.skin)
@@ -32,7 +34,9 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	private var leaderBoardButton: TextButton = TextButton(assets.getString(Assets.PUNTUACIONES), assets.skin)
 	private var gpgsSignInButton: TextButton = TextButton(assets.getString(Assets.GPGS_SIGN_IN), assets.skin)
 
-	private val input = PlayerInput()
+	private val stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
+	private val input = PlayerInput(stage)
+
 
 	init {
 		PlayerComponent.isGodModeOn = false
@@ -108,19 +112,33 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		y -= 90f
 		//
 		stage.addActor(backgroundImage)
+		stage.addFocusableActor(backgroundImage)
 		stage.addActor(titleImage)
+		stage.addFocusableActor(titleImage)
 		stage.addActor(playButton)
+		stage.addFocusableActor(playButton)
 		stage.addActor(settingsButton)
+		stage.addFocusableActor(settingsButton)
 		stage.addActor(aboutButton)
+		stage.addFocusableActor(aboutButton)
 		stage.addActor(quitButton)
+		stage.addFocusableActor(quitButton)
+
 		if(Settings.isGPGSEnabled) {
 			game.playServices?.let {
-				if (it.isSignedIn())
+				if (it.isSignedIn()) {
 					stage.addActor(leaderBoardButton)
-				else
+					stage.addFocusableActor(leaderBoardButton)
+				}
+				else {
 					stage.addActor(gpgsSignInButton)
+					stage.addFocusableActor(gpgsSignInButton)
+				}
 			}
 		}
+
+		stage.focusedActor = playButton
+		stage.escapeActor = quitButton
 	}
 
 	private fun setListeners() {
@@ -172,53 +190,8 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	}
 
 	override fun render(delta: Float) {
-		procInput()
 		stage.act(delta)
 		stage.draw()
-	}
-	private enum class Button { PLAY, SETTINGS, QUIT, ABOUT }
-	private var currentButton = Button.PLAY
-	private fun procInput() {
-		if(input.btnStart) {
-			game.reset()
-		}
-
-		if(input.btnLeft) {
-			if(currentButton == Button.SETTINGS)
-				currentButton = Button.PLAY
-			else if(currentButton == Button.ABOUT)
-				currentButton = Button.QUIT
-		}
-		else if(input.btnRight) {
-			if(currentButton == Button.PLAY)
-				currentButton = Button.SETTINGS
-			else if(currentButton == Button.QUIT)
-				currentButton = Button.ABOUT
-		}
-		if(input.btnUp) {
-			if(currentButton == Button.QUIT)
-				currentButton = Button.PLAY
-			else if(currentButton == Button.ABOUT)
-				currentButton = Button.SETTINGS
-		}
-		else if(input.btnDown) {
-			if(currentButton == Button.PLAY)
-				currentButton = Button.QUIT
-			else if(currentButton == Button.SETTINGS)
-				currentButton = Button.ABOUT
-		}
-
-		playButton.isChecked = false
-		settingsButton.isChecked = false
-		aboutButton.isChecked = false
-		quitButton.isChecked = false
-		//Log.e("MAinMenu", "-----------------------------------------currentButton=$currentButton")
-		when(currentButton) {
-			Button.PLAY -> playButton.isChecked = true
-			Button.SETTINGS -> settingsButton.isChecked = true
-			Button.ABOUT -> aboutButton.isChecked = true
-			Button.QUIT -> quitButton.isChecked = true
-		}
 	}
 
 	override fun resize(width: Int, height: Int) {

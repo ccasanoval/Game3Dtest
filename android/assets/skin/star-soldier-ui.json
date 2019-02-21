@@ -42,6 +42,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: {
 		up: button
 		down: button-selected
+		over: button-selected
 	}
 	toggle: {
 		up: button
@@ -68,6 +69,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: {
 		up: button
 		down: button-selected
+		over: button-selected
 	}
 	toggle: {
 		up: button
@@ -88,6 +90,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		font: font
 		up: button
 		down: button-selected
+		over: button-selected
 	}
 	toggle: {
 		font: font
@@ -157,6 +160,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		font: font
 		up: button
 		down: button-selected
+		over: button-selected
 	}
 	toggle: {
 		font: font

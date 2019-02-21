@@ -28,11 +28,14 @@ import com.cesoft.cesdoom.events.EnemyEvent
 import com.cesoft.cesdoom.events.GameQueue
 import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.events.RenderEvent
+import com.cesoft.cesdoom.input.CtrMappings
 import com.cesoft.cesdoom.managers.GunFactory
-import com.cesoft.cesdoom.managers.PlayerInput
+import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.ui.GameOverWidget
 import com.cesoft.cesdoom.ui.GameWinWidget
 import com.cesoft.cesdoom.util.Log
+import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,14 +70,14 @@ class PlayerSystem(
 	lateinit var gun: Entity
 	private val posTemp = Vector3()
 	private val posTemp2 = Vector3()
-	private val input = PlayerInput()
+	private val input = PlayerInput(Gdx.input.inputProcessor)//.mappedController
+	private val inputMapCtr = input.mappedController
 
 	/// Extends EntitySystem
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		engine!!.addEntityListener(Family.all(PlayerComponent::class.java).get(), this)
-		//if(CesDoom.isMobile)
-			addListener(input)
+		addListener(input)
 	}
 
 	/// Implements EntityListener
@@ -88,6 +91,7 @@ class PlayerSystem(
 
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
+		checkCtrl()
 		checkGameOver(delta)
 		checkYouWin(delta)
 		updateMovement(delta)
@@ -98,6 +102,15 @@ class PlayerSystem(
 		restoreAmbientColor()
 
 		processEvents()
+	}
+
+	private fun checkCtrl() {
+		if(inputMapCtr?.isButtonPressed(CtrMappings.BTN_MENU) == true) {
+
+		}
+		else if(inputMapCtr?.isButtonPressed(CtrMappings.BTN_BACK) == true) {
+			Log.e(tag, "checkCtrl:BACK:---------------------------------------------------------")
+		}
 	}
 
 	//______________________________________________________________________________________________
@@ -135,28 +148,39 @@ class PlayerSystem(
 	private fun updateRotation(delta: Float) {	//TODO: cuando no presione rotacion, centrar poco a poco en Y=0
 		if(PlayerComponent.isDead())return
 
-		val deltaX: Float
-		val deltaY: Float
+		val xWeight=90f
+		val yWeight=50f
+		var deltaX: Float = -ControllerWidget.watchVector.x * xWeight*delta		// Velocidad angulo horizontal (GOOD: 90)
+		var deltaY: Float = +ControllerWidget.watchVector.y * yWeight*delta		// Velocidad angulo vertical (GOOD: 60)
 
 		//if(CesDoom.isMobile) {
-			val xWeight=90f
-			val yWeight=50f
-			if(input.mxPad != PlayerInput.Mirada.NONE || input.myPad != PlayerInput.Mirada.NONE) {
-				deltaX = when(input.mxPad) {
-					PlayerInput.Mirada.IZQUIERDA -> +xWeight*delta
-					PlayerInput.Mirada.DERECHA -> -xWeight*delta
-					else -> 0f
-				}
-				deltaY = when(input.myPad) {
-					PlayerInput.Mirada.ARRIBA -> -yWeight*delta
-					PlayerInput.Mirada.ABAJO -> +yWeight*delta
-					else -> 0f
-				}
+
+		inputMapCtr?.let {
+			val mxPad = it.getConfiguredAxisValue(CtrMappings.AXIS_HORIZONTAL_ORIENTATION)
+			val myPad = it.getConfiguredAxisValue(CtrMappings.AXIS_VERTICAL_ORIENTATION)
+			if(mxPad.absoluteValue > 0.3f) {
+				deltaX = mxPad.sign * xWeight * delta
 			}
-			else {
-				deltaX = -ControllerWidget.watchVector.x * xWeight*delta    // Velocidad angulo horizontal (GOOD: 90)
-				deltaY = ControllerWidget.watchVector.y * yWeight*delta    // Velocidad angulo vertical (GOOD: 60)
+			if(myPad.absoluteValue > 0.3) {
+				deltaY = mxPad.sign * yWeight * delta
 			}
+		} //?.run {}
+//			if(input.mxPad != PlayerInput.Mirada.NONE || input.myPad != PlayerInput.Mirada.NONE) {
+//				deltaX = when(input.mxPad) {
+//					PlayerInput.Mirada.IZQUIERDA -> +xWeight*delta
+//					PlayerInput.Mirada.DERECHA -> -xWeight*delta
+//					else -> 0f
+//				}
+//				deltaY = when(input.myPad) {
+//					PlayerInput.Mirada.ARRIBA -> -yWeight*delta
+//					PlayerInput.Mirada.ABAJO -> +yWeight*delta
+//					else -> 0f
+//				}
+//			}
+//			else {
+//				deltaX = -ControllerWidget.watchVector.x * xWeight * delta    // Velocidad angulo horizontal (GOOD: 90)
+//				deltaY = ControllerWidget.watchVector.y * yWeight * delta    // Velocidad angulo vertical (GOOD: 60)
+//			}
 //		}
 //		else {
 //			deltaX = -Gdx.input.deltaX * 5*delta
@@ -199,16 +223,17 @@ class PlayerSystem(
 			PlayerComponent.tall -= delta*12f
 			return
 		}
-
 		//TODO: no mover si esta saltando?
 		//if(playerComponent!!.isSaltando)return
-		if(CesDoom.isMobile) {
-			updateTranslationMobile(delta)
-		}
-		else {
-			//updateTranslationDesktop(delta)
-			updateTranslationMobile(delta)
-		}
+
+		updateTranslationMobile(delta)
+
+//		if(CesDoom.isMobile) {
+//			updateTranslationMobile(delta)
+//		}
+//		else {
+//			updateTranslationDesktop(delta)
+//		}
 		posTemp.y = 0f
 		posTemp.y = bulletComponent.rigidBody.linearVelocity.y
 		bulletComponent.rigidBody.linearVelocity = posTemp
@@ -217,19 +242,28 @@ class PlayerSystem(
 	private fun updateTranslationMobile(delta: Float) {
 		///if(ControllerWidget.movementVector.x > 0)Log.e(tag, "updateTranslationMobile------------------- ${ControllerWidget.movementVector.x}")
 		var hayMovimiento = false
-		if(ControllerWidget.movementVector.y > +0.20f || input.dyPad == PlayerInput.Direccion.ADELANTE) {
+		var axisHorizontal: Float = 0f
+		var axisVertical: Float = 0f
+		val offsetHorizontal = +0.60f
+		val offsetVertical = +0.20f
+		inputMapCtr?.let {
+			axisHorizontal = it.getConfiguredAxisValue(CtrMappings.AXIS_HORIZONTAL_DIRECTION)
+			axisVertical = it.getConfiguredAxisValue(CtrMappings.AXIS_VERTICAL_DIRECTION)
+		}
+
+		if(ControllerWidget.movementVector.y > +offsetVertical || axisVertical > +offsetVertical) {//input.dyPad == PlayerInput.Direccion.ADELANTE) {
 			posTemp.add(camera.direction)
 			hayMovimiento = true
 		}
-		else if(ControllerWidget.movementVector.y < -0.20f || input.dyPad == PlayerInput.Direccion.ATRAS) {
+		else if(ControllerWidget.movementVector.y < -offsetVertical || axisVertical < -offsetVertical) {
 			posTemp.sub(camera.direction)
 			hayMovimiento = true
 		}
-		if(ControllerWidget.movementVector.x < -0.50f || input.dxPad == PlayerInput.Direccion.IZQUIERDA) {
+		if(ControllerWidget.movementVector.x < -offsetHorizontal || axisHorizontal < -offsetHorizontal) {//input.dxPad == PlayerInput.Direccion.IZQUIERDA) {
 			posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			hayMovimiento = true
 		}
-		else if(ControllerWidget.movementVector.x > +0.50f || input.dxPad == PlayerInput.Direccion.DERECHA) {
+		else if(ControllerWidget.movementVector.x > +offsetHorizontal || axisHorizontal > +offsetHorizontal) {//input.dxPad == PlayerInput.Direccion.DERECHA) {
 			posTemp2.set(camera.direction).crs(camera.up)
 			hayMovimiento = true
 		}
@@ -244,7 +278,7 @@ class PlayerSystem(
 		posTemp.scl(PlayerComponent.IMPULSE_MOBIL * delta)
 	}
 	//______________________________________________________________________________________________
-	private fun updateTranslationDesktop(delta: Float) {
+	/*private fun updateTranslationDesktop(delta: Float) {
 		var hayMovimiento = false
 		if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
 			posTemp.add(camera.direction)
@@ -271,10 +305,14 @@ class PlayerSystem(
 			posTemp.add(posTemp2)
 		}
 		posTemp.scl(PlayerComponent.IMPULSE_PC * delta)
-	}
+	}*/
 	//______________________________________________________________________________________________
 	private fun updateJumping(delta: Float) {
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || input.btnA) {
+		var jump = false
+		inputMapCtr?.let {
+			jump = it.isButtonPressed(CtrMappings.BTN_JUMP)
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || jump) {
 			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+PlayerComponent.isJumping)
 			if( ! PlayerComponent.isJumping) {
 				PlayerComponent.isJumping = true
@@ -310,9 +348,16 @@ class PlayerSystem(
 	private var deltaFire = 100f
 	private fun updateWeapon(delta: Float) {
 
+		var isFiringPad = false
+		inputMapCtr?.let {
+			isFiringPad = it.isButtonPressed(CtrMappings.BTN_FIRE1)
+					|| it.isButtonPressed(CtrMappings.BTN_FIRE2)
+					|| it.isButtonPressed(CtrMappings.BTN_FIRE3)
+		}
+
 		val isFiring = (ControllerWidget.isFiring
 				|| Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
-				|| input.btnBumper)
+				|| isFiringPad)//input.btnBumper)
 		deltaFire += delta
 
 		if(PlayerComponent.isReloading) {

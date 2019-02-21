@@ -1,21 +1,69 @@
-package com.cesoft.cesdoom.managers
+package com.cesoft.cesdoom.input
 
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerListener
 import com.badlogic.gdx.controllers.PovDirection
-import com.badlogic.gdx.controllers.mappings.Xbox
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.systems.PlayerSystem
 import com.cesoft.cesdoom.util.Log
+import de.golfgl.gdx.controllers.mapping.MappedController
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //TODO: Joystick!!
 //https://github.com/libgdx/libgdx/wiki/Controllers
-class PlayerInput : ControllerListener {
+class PlayerInput(private val inputProcessor: InputProcessor) : ControllerListener {
 	companion object {
 		val tag: String = PlayerInput::class.java.simpleName
 	}
 
+    var controller: Controller? = null
+    var mappedController: MappedController? = null
+
+    //----------------------------------------------------------------------------------------------
+    override fun connected(controller: Controller?) {
+        this.controller = controller
+        this.mappedController = MappedController(controller, CtrMappings(inputProcessor))//TODO: make non null?
+        Log.e(PlayerSystem.tag, "connected:------------------------"+controller?.name)
+    }
+    override fun disconnected(controller: Controller?) {
+        this.controller = null
+        this.mappedController = null
+        Log.e(PlayerSystem.tag, "disconnected:------------------------"+controller?.name)
+    }
+    ///
+    override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
+        Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : ")
+        return false
+    }
+    ///
+    override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
+        Log.e(PlayerSystem.tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
+        return false
+    }
+    override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
+        Log.e(PlayerSystem.tag, "buttonDown:----------------"+controller?.name+" : "+buttonCode)
+        return false
+    }
+    ///
+    override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
+        Log.e(PlayerSystem.tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
+        return false
+    }
+    override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
+        Log.e(PlayerSystem.tag, "ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+        return false
+    }
+    override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
+        Log.e(PlayerSystem.tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+        return false
+    }
+    override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
+        Log.e(PlayerSystem.tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
+        return false
+    }
+
+/*
     //----------------------------------------------------------------------------------------------
     //
     enum class Direccion { NONE, ATRAS, ADELANTE, IZQUIERDA, DERECHA }
@@ -57,7 +105,7 @@ Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : "
         val dOffset = 0.3f
         val mOffset = 0.3f
 
-        /// Direccion TODO: factory dependiendo de nombre de controller: XBOX 360 For Windows /
+        /// Direccion TODO: https://github.com/MrStahlfelge/gdx-controllerutils
 		//XBOX 360 For Windows => Xbox.
 		//  => Ouya
         if(axisCode == 1) {//Xbox.R_STICK_HORIZONTAL_AXIS) {
@@ -124,13 +172,7 @@ Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : "
         }
         return false
     }
-    ////
-    override fun connected(controller: Controller?) {
-        Log.e(PlayerSystem.tag, "connected:------------"+controller?.name)
-    }
-    override fun disconnected(controller: Controller?) {
-        Log.e(PlayerSystem.tag, "disconnected:------------"+controller?.name)
-    }
+
     ////
     override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
         Log.e(PlayerSystem.tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
@@ -149,5 +191,5 @@ Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : "
         return false
     }
     //////////
-
+*/
 }
