@@ -1,9 +1,9 @@
 package com.cesoft.cesdoom.managers
 
-import com.badlogic.gdx.controllers.mappings.Ouya;
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerListener
 import com.badlogic.gdx.controllers.PovDirection
+import com.badlogic.gdx.controllers.mappings.Xbox
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.systems.PlayerSystem
 import com.cesoft.cesdoom.util.Log
@@ -24,36 +24,50 @@ class PlayerInput : ControllerListener {
     var dyPad: Direccion = Direccion.NONE
     var mxPad: Mirada = Mirada.NONE
     var myPad: Mirada = Mirada.NONE
-    var fire1: Boolean = false
-    var fire2: Boolean = false
+    //var fire1: Boolean = false
+    //var fire2: Boolean = false
     var btnA: Boolean = false
     var btnB: Boolean = false
-    var btnC: Boolean = false
-    var btnD: Boolean = false
-    var btnMenu: Boolean = false
+    var btnX: Boolean = false
+    var btnY: Boolean = false
+    var btnStart: Boolean = false
+	var btnBack: Boolean = false
+	var btnGuide: Boolean = false
     var btnUp: Boolean = false
     var btnDown: Boolean = false
     var btnLeft: Boolean = false
     var btnRight: Boolean = false
+	var btnBumper: Boolean = false
 
     //-------------------------------------------------------------------------------------------
     //
     /// Implements ControllerListener
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
-Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
+Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : "
+		+when(axisCode) {
+			Xbox.L_STICK_VERTICAL_AXIS -> "L_STICK_VERTICAL_AXIS"
+			Xbox.R_STICK_VERTICAL_AXIS -> "R_STICK_VERTICAL_AXIS"
+			Xbox.R_STICK_HORIZONTAL_AXIS -> "R_STICK_HORIZONTAL_AXIS"
+			Xbox.L_STICK_HORIZONTAL_AXIS -> "L_STICK_HORIZONTAL_AXIS"
+			else -> "?"
+		}
+		+" : "+value)
+		//+"  isXboxController="+Xbox.isXboxController(controller))
 
         val dOffset = 0.3f
         val mOffset = 0.3f
 
-        /// Direccion
-        if(axisCode == Ouya.AXIS_LEFT_X) {
+        /// Direccion TODO: factory dependiendo de nombre de controller: XBOX 360 For Windows /
+		//XBOX 360 For Windows => Xbox.
+		//  => Ouya
+        if(axisCode == 1) {//Xbox.R_STICK_HORIZONTAL_AXIS) {
             dxPad = when {
                 value > +dOffset -> Direccion.DERECHA
                 value < -dOffset -> Direccion.IZQUIERDA
                 else -> Direccion.NONE
             }
         }
-        if(axisCode == Ouya.AXIS_LEFT_Y) {
+        if(axisCode == 0) {//Xbox.R_STICK_VERTICAL_AXIS) {
             dyPad = when {
                 value > +dOffset -> Direccion.ATRAS
                 value < -dOffset -> Direccion.ADELANTE
@@ -61,45 +75,35 @@ Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
             }
         }
         /// Mirada
-        if(axisCode == Ouya.AXIS_RIGHT_X) {
+        if(axisCode == 3) {//Xbox.L_STICK_HORIZONTAL_AXIS) {
             mxPad = when {
                 value > +mOffset -> Mirada.DERECHA
                 value < -mOffset -> Mirada.IZQUIERDA
                 else -> Mirada.NONE
             }
         }
-        if(axisCode == Ouya.AXIS_RIGHT_Y) {
+        if(axisCode == 2) {//Xbox.L_STICK_VERTICAL_AXIS) {
             myPad = when {
                 value > +mOffset -> Mirada.ARRIBA
                 value < -mOffset -> Mirada.ABAJO
                 else -> Mirada.NONE
             }
         }
+		Log.e(tag, "axisMoved:------------myPad=$myPad  mxPad=$mxPad /  dyPad=$dyPad  dxPad=$dxPad")
+
         return false
     }
     override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
         Log.e(PlayerSystem.tag, "buttonUp:0----------------"+controller?.name+" : "+buttonCode)
         when(buttonCode) {
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R1 -> fire1 = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R3 -> fire1 = false
-
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L1 -> fire2 = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L3 -> fire2 = false
-
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_RIGHT -> btnRight = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_LEFT -> btnLeft = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_UP -> btnUp = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_DOWN -> btnDown = false
-
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_MENU -> btnMenu = false
-
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_A -> btnA = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = false
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_Y -> btnD = false
-
+            0 -> btnA = false
+			1 -> btnB = false
+			2 -> btnX = false
+			3 -> btnY = false
+			4 -> btnBumper=false//izquierda
+			5 -> btnBumper=false//derecha
+			6 -> btnGuide=false//select
+			7 -> btnStart=false//start
             else -> Log.e(PlayerSystem.tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
         }
         //else if(buttonCode == com.badlogic.gdx.controllers.mappings.Xbox.A)
@@ -108,25 +112,14 @@ Log.e(tag, "axisMoved:------------"+controller?.name+" : "+axisCode+" : "+value)
     override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
         Log.e(PlayerSystem.tag, "buttonDown:0---------------"+controller?.name+" : "+buttonCode)
         when(buttonCode) {
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R1 -> fire1 = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R2 -> fire1 = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_R3 -> fire1 = true
-
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L1 -> fire2 = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L2 -> fire2 = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_L3 -> fire2 = true
-
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_RIGHT -> btnRight = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_LEFT -> btnLeft = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_UP -> btnUp = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_DPAD_DOWN -> btnDown = true
-
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_MENU -> btnMenu = true
-
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_A -> btnA = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_U -> btnB = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_O -> btnC = true
-            com.badlogic.gdx.controllers.mappings.Ouya.BUTTON_Y -> btnD = true
+            0 -> btnA = true
+			1 -> btnB = true
+			2 -> btnX = true
+			3 -> btnY = true
+			4 -> btnBumper=true//izquierda
+			5 -> btnBumper=true//derecha
+			6 -> btnGuide=true//select
+			7 -> btnStart=true//start
             else -> Log.e(PlayerSystem.tag, "buttonDown:---------------"+controller?.name+" : "+buttonCode)
         }
         return false

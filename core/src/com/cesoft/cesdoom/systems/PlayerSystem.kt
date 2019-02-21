@@ -73,7 +73,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		engine!!.addEntityListener(Family.all(PlayerComponent::class.java).get(), this)
-		if(CesDoom.isMobile)
+		//if(CesDoom.isMobile)
 			addListener(input)
 	}
 
@@ -143,13 +143,13 @@ class PlayerSystem(
 			val yWeight=50f
 			if(input.mxPad != PlayerInput.Mirada.NONE || input.myPad != PlayerInput.Mirada.NONE) {
 				deltaX = when(input.mxPad) {
-					PlayerInput.Mirada.IZQUIERDA -> -xWeight*delta
-					PlayerInput.Mirada.DERECHA -> +xWeight*delta
+					PlayerInput.Mirada.IZQUIERDA -> +xWeight*delta
+					PlayerInput.Mirada.DERECHA -> -xWeight*delta
 					else -> 0f
 				}
 				deltaY = when(input.myPad) {
-					PlayerInput.Mirada.ARRIBA -> +yWeight*delta
-					PlayerInput.Mirada.ABAJO -> -yWeight*delta
+					PlayerInput.Mirada.ARRIBA -> -yWeight*delta
+					PlayerInput.Mirada.ABAJO -> +yWeight*delta
 					else -> 0f
 				}
 			}
@@ -206,7 +206,8 @@ class PlayerSystem(
 			updateTranslationMobile(delta)
 		}
 		else {
-			updateTranslationDesktop(delta)
+			//updateTranslationDesktop(delta)
+			updateTranslationMobile(delta)
 		}
 		posTemp.y = 0f
 		posTemp.y = bulletComponent.rigidBody.linearVelocity.y
@@ -311,7 +312,7 @@ class PlayerSystem(
 
 		val isFiring = (ControllerWidget.isFiring
 				|| Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
-				|| input.fire1 || input.fire2)
+				|| input.btnBumper)
 		deltaFire += delta
 
 		if(PlayerComponent.isReloading) {

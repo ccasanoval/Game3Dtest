@@ -12,7 +12,7 @@ import com.cesoft.cesdoom.components.PlayerComponent
 //
 class ScoreWidget(private val assets: Assets) : Actor() {
 	companion object {
-		const val cx = CesDoom.VIRTUAL_WIDTH/5f
+		const val cx = CesDoom.VIRTUAL_WIDTH/4.5f
 		const val cy = CesDoom.VIRTUAL_HEIGHT/23f
 	}
 

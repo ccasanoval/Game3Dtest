@@ -22,7 +22,6 @@ import com.cesoft.cesdoom.managers.EnemyActions
 import com.cesoft.cesdoom.managers.EnemyFactory
 import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.managers.WallFactory
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +43,7 @@ class EnemySystem(
 	private val enemyFactory = EnemyFactory(assets)
 	private val enemyQueue = EnemyQueue()
 	init {
-		Log.e(tag, "INI ---------------------------------------------------------")
+		//Log.e(tag, "INI ---------------------------------------------------------")
 		eventSignal.add(enemyQueue)
 	}
 

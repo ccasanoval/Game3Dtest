@@ -2,6 +2,7 @@ package com.cesoft.cesdoom.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -15,6 +16,7 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.managers.PlayerInput
 import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +32,8 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	private var leaderBoardButton: TextButton = TextButton(assets.getString(Assets.PUNTUACIONES), assets.skin)
 	private var gpgsSignInButton: TextButton = TextButton(assets.getString(Assets.GPGS_SIGN_IN), assets.skin)
 
+	private val input = PlayerInput()
+
 	init {
 		PlayerComponent.isGodModeOn = false
 		assets.iniMainMenuBg()
@@ -40,6 +44,7 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		configureWidgets()
 		setListeners()
 		Gdx.input.inputProcessor = stage
+		Controllers.addListener(input)
 	}
 
 	//______________________________________________________________________________________________
@@ -167,8 +172,53 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	}
 
 	override fun render(delta: Float) {
+		procInput()
 		stage.act(delta)
 		stage.draw()
+	}
+	private enum class Button { PLAY, SETTINGS, QUIT, ABOUT }
+	private var currentButton = Button.PLAY
+	private fun procInput() {
+		if(input.btnStart) {
+			game.reset()
+		}
+
+		if(input.btnLeft) {
+			if(currentButton == Button.SETTINGS)
+				currentButton = Button.PLAY
+			else if(currentButton == Button.ABOUT)
+				currentButton = Button.QUIT
+		}
+		else if(input.btnRight) {
+			if(currentButton == Button.PLAY)
+				currentButton = Button.SETTINGS
+			else if(currentButton == Button.QUIT)
+				currentButton = Button.ABOUT
+		}
+		if(input.btnUp) {
+			if(currentButton == Button.QUIT)
+				currentButton = Button.PLAY
+			else if(currentButton == Button.ABOUT)
+				currentButton = Button.SETTINGS
+		}
+		else if(input.btnDown) {
+			if(currentButton == Button.PLAY)
+				currentButton = Button.QUIT
+			else if(currentButton == Button.SETTINGS)
+				currentButton = Button.ABOUT
+		}
+
+		playButton.isChecked = false
+		settingsButton.isChecked = false
+		aboutButton.isChecked = false
+		quitButton.isChecked = false
+		//Log.e("MAinMenu", "-----------------------------------------currentButton=$currentButton")
+		when(currentButton) {
+			Button.PLAY -> playButton.isChecked = true
+			Button.SETTINGS -> settingsButton.isChecked = true
+			Button.ABOUT -> aboutButton.isChecked = true
+			Button.QUIT -> quitButton.isChecked = true
+		}
 	}
 
 	override fun resize(width: Int, height: Int) {

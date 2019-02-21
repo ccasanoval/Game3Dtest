@@ -41,20 +41,20 @@ object MazeFactory {
 		mapFactory.compile()
 
 		//----- TEST
-		mapFactory.print()
-		Log.e(tag, "")
-		Log.e(tag, "")
-		mapFactory.print2()
-        Log.e(tag, "----------------------------------------------------------------------------")
-        Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].levelAccess.size)
-        for(access in mapFactory.map[0].levelAccess) {
-            Log.e(tag, "access----------------------- $access")
-        }
-		Log.e(tag, "----------------------------------------------------------------------------")
-		Log.e(tag, " LEVEL ACCESSES:LEVEL(1) "+ mapFactory.map[1].levelAccess.size)
-		for(access in mapFactory.map[1].levelAccess) {
-			Log.e(tag, "access----------------------- $access")
-		}
+//		mapFactory.print()
+//		Log.e(tag, "")
+//		Log.e(tag, "")
+//		mapFactory.print2()
+//        Log.e(tag, "----------------------------------------------------------------------------")
+//        Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].levelAccess.size)
+//        for(access in mapFactory.map[0].levelAccess) {
+//            Log.e(tag, "access----------------------- $access")
+//        }
+//		Log.e(tag, "----------------------------------------------------------------------------")
+//		Log.e(tag, " LEVEL ACCESSES:LEVEL(1) "+ mapFactory.map[1].levelAccess.size)
+//		for(access in mapFactory.map[1].levelAccess) {
+//			Log.e(tag, "access----------------------- $access")
+//		}
 //		//
 //		Log.e(tag, "----------------------------------------------------------------------------")
 //		Log.e(tag, "--------------------------- ${PlayerComponent.currentLevel} ------------------------------------------")

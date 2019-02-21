@@ -71,7 +71,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
                     break
             }
         }
-Log.e(tag, "getNode: fin - ------------------------------------------ ---------- final node = $node")
+//Log.e(tag, "getNode: fin - ------------------------------------------ ---------- final node = $node")
         return node
     }
 
