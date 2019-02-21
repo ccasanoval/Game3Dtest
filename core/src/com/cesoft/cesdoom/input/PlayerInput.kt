@@ -18,22 +18,24 @@ class PlayerInput(private val inputProcessor: InputProcessor) : ControllerListen
 	}
 
     var controller: Controller? = null
+	var ctrlMappings: CtrMappings? = null
     var mappedController: MappedController? = null
 
     //----------------------------------------------------------------------------------------------
     override fun connected(controller: Controller?) {
         this.controller = controller
-        this.mappedController = MappedController(controller, CtrMappings(inputProcessor))//TODO: make non null?
-        Log.e(PlayerSystem.tag, "connected:------------------------"+controller?.name)
+		this.ctrlMappings = CtrMappings(inputProcessor)
+        this.mappedController = MappedController(controller, ctrlMappings)//TODO: make non null?
+        Log.e(PlayerSystem.tag, "connected:----------*****************************--------------"+controller?.name)
     }
     override fun disconnected(controller: Controller?) {
         this.controller = null
         this.mappedController = null
-        Log.e(PlayerSystem.tag, "disconnected:------------------------"+controller?.name)
+        Log.e(PlayerSystem.tag, "disconnected:---------*************************---------------"+controller?.name)
     }
     ///
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
-        Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : ")
+        Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : $value")
         return false
     }
     ///

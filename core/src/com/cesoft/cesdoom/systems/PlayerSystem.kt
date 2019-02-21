@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.*
 import com.badlogic.ashley.signals.Signal
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.controllers.Controllers.addListener
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
@@ -34,6 +35,7 @@ import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.ui.GameOverWidget
 import com.cesoft.cesdoom.ui.GameWinWidget
 import com.cesoft.cesdoom.util.Log
+import de.golfgl.gdx.controllers.mapping.MappedControllerAdapter
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
@@ -58,9 +60,13 @@ class PlayerSystem(
 		private const val COLOR_LOOP = 800
 	}
 
+	private val input = PlayerInput(Gdx.input.inputProcessor)
+	private val inputMapCtr = input.mappedController
 	private val eventQueue = GameQueue()
 	init {
 		gameEventSignal.add(eventQueue)
+
+		//Controllers.addListener(object : MappedControllerAdapter(input.ctrlMappings) {})
 	}
 
 
@@ -70,8 +76,7 @@ class PlayerSystem(
 	lateinit var gun: Entity
 	private val posTemp = Vector3()
 	private val posTemp2 = Vector3()
-	private val input = PlayerInput(Gdx.input.inputProcessor)//.mappedController
-	private val inputMapCtr = input.mappedController
+
 
 	/// Extends EntitySystem
 	//______________________________________________________________________________________________
