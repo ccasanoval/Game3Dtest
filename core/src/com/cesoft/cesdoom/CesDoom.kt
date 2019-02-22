@@ -63,9 +63,7 @@ import com.cesoft.cesdoom.util.PlayServices
 
 class CesDoom(
 		debugMode: Boolean,
-		val playServices: PlayServices?=null
-		//var controllerMappings: ControllerMappings?=null
-		)
+		val playServices: PlayServices?=null)
 	: ApplicationAdapter() {
 
 	companion object {
@@ -86,13 +84,14 @@ class CesDoom(
 	//______________________________________________________________________________________________
 	override fun create() {
 		Log.e(tag, "CREATE--------------------------------------------------------------------------------")
+		Settings.loadPrefs()
+
 		isMobile = Gdx.app.type == Application.ApplicationType.Android
 		assets = Assets()
 		gameUI = GameUI(this, assets)
 
 		Gdx.input.isCatchBackKey = true
 		setScreen(MainMenuScreen(this, assets))
-		Settings.loadPrefs()
 	}
 
 	//______________________________________________________________________________________________

@@ -22,7 +22,7 @@ object Settings {
 	var isMusicEnabled = true
 	var isSoundEnabled = true
 	var isVibrationEnabled = true
-	var isGPGSEnabled = true
+	var isGPGSEnabled = false
 	var soundVolume:Float = 1f
 		set(value) {
 			if(value in 0.0f..1.0f)
@@ -39,12 +39,12 @@ object Settings {
 	//
 	private val prefs: Preferences = Gdx.app.getPreferences(PREF_NAME)
 	fun loadPrefs() {
-		isMusicEnabled = prefs.getBoolean(PREF_MUSIC_ONOFF, true)
+		isMusicEnabled = prefs.getBoolean(PREF_MUSIC_ONOFF, isMusicEnabled)
 		musicVolume = prefs.getFloat(PREF_MUSIC_VOLUME, musicVolume)
-		isSoundEnabled = prefs.getBoolean(PREF_SOUND_EFFECTS_ONOFF, true)
+		isSoundEnabled = prefs.getBoolean(PREF_SOUND_EFFECTS_ONOFF, isSoundEnabled)
 		soundVolume = prefs.getFloat(PREF_SOUND_EFFECTS_VOLUME, soundVolume)
-		isVibrationEnabled = prefs.getBoolean(PREF_PAIN_VIBRATION_ONOFF, true)
-		isGPGSEnabled = prefs.getBoolean(PREF_GPGS_ONOFF, true)
+		isVibrationEnabled = prefs.getBoolean(PREF_PAIN_VIBRATION_ONOFF, isVibrationEnabled)
+		isGPGSEnabled = prefs.getBoolean(PREF_GPGS_ONOFF, isGPGSEnabled)
 	}
 	fun savePrefs() {
 		prefs.putBoolean(PREF_MUSIC_ONOFF, isMusicEnabled)

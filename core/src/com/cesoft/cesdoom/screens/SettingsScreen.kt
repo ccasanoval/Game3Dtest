@@ -37,8 +37,8 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
     private val musicVolumeSlider = Slider( 0f, 1f, 0.1f,false, assets.skin)
 
     private val painVibrationButton = TextButton(assets.getString(Assets.CONFIG_VIBRATION_ONOF), assets.skin, "toggle")
-
     private val gpgsSignInButton = TextButton(assets.getString(Assets.CONFIG_GPGS_ONOF), assets.skin, "toggle")
+    private val gamepadButton = TextButton("GAME PAD", assets.skin)
 
     private val lblSeparator = Label("", assets.skin)
 
@@ -90,8 +90,12 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         painVibrationButton.isChecked = Settings.isVibrationEnabled
         painVibrationButton.setSize(600f, 80f)
 
+        /// Google Play Game Services On/Off
         gpgsSignInButton.isChecked = Settings.isGPGSEnabled
         gpgsSignInButton.setSize(500f, 80f)
+
+        /// Gamepad settings
+        gamepadButton.setSize(300f, 80f)
 
 
         val scrollTable = Table()
@@ -119,6 +123,9 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         scrollTable.row()
         //
         scrollTable.add(gpgsSignInButton).size(390f, 80f)
+        scrollTable.row()
+        //
+        scrollTable.add(gamepadButton).size(300f, 80f)
         scrollTable.row()
         //
         scrollTable.add(lblSeparator).size(50f, 50f).row()
@@ -191,6 +198,11 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
             return@addListener false
         }
         //
+        gamepadButton.addListener {
+            game.setScreen(SettingsGamepadSceen(game, assets))
+            return@addListener false
+        }
+        //
     }
 
     //______________________________________________________________________________________________
@@ -205,7 +217,6 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
     override fun dispose() {
         stage.dispose()
     }
-
     override fun show() = Unit
     override fun pause() = Unit
     override fun resume() = Unit

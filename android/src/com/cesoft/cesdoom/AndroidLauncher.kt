@@ -33,6 +33,8 @@ import com.google.android.gms.auth.api.Auth
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+// TODO: Player Info to use in game messages: Hey Mr X, now you are dead! Hey Mr X, you Win!!
+////https://developers.google.com/games/services/android/signin#retrieving_player_information
 class AndroidLauncher: AndroidApplication(), PlayServices {
 
 	companion object {
@@ -45,12 +47,10 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 		super.onCreate(savedInstanceState)
 		val config = AndroidApplicationConfiguration()
 		initialize(CesDoom(BuildConfig.DEBUG, this), config)
+		Settings.loadPrefs()
 	}
 
-
 	// Implements PlayServices ---------------------------------------------------------------------
-//TODO: Player Info to use in game messages: Hey Mr X, now you are dead! Hey Mr X, you Win!!
-//https://developers.google.com/games/services/android/signin#retrieving_player_information
 
 	override fun rateGame() {
 		val str = "https://play.google.com/store/apps/details?id=com.cesoft.cesdoom"
@@ -99,8 +99,8 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 	}
 	override fun onResume() {
 		super.onResume()
-		signInSilently()
-		Log.e(tag, "onResume-------------------------")
+		if(Settings.isGPGSEnabled)
+			signInSilently()
 	}
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)

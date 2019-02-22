@@ -16,15 +16,16 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.input.InputMapperFactory
+import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.util.Log
-import de.golfgl.gdx.controllers.ControllerMenuStage
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Screen {
-	//private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
+	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image// = game.assets.getMainMenuBg()//Image(Texture(Gdx.files.internal("data/background.png")))
 	private var titleImage: Image// = game.assets.getMainMenuTitle()//Image(Texture(Gdx.files.internal("data/title.png")))
 	private var playButton: TextButton = TextButton(assets.getString(Assets.JUGAR), assets.skin)
@@ -34,8 +35,7 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	private var leaderBoardButton: TextButton = TextButton(assets.getString(Assets.PUNTUACIONES), assets.skin)
 	private var gpgsSignInButton: TextButton = TextButton(assets.getString(Assets.GPGS_SIGN_IN), assets.skin)
 
-	private val stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
-	private val input = PlayerInput(stage)
+	private val input = PlayerInput(InputMapperFactory.getCes(), stage)
 
 
 	init {
@@ -112,33 +112,33 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		y -= 90f
 		//
 		stage.addActor(backgroundImage)
-		stage.addFocusableActor(backgroundImage)
 		stage.addActor(titleImage)
-		stage.addFocusableActor(titleImage)
 		stage.addActor(playButton)
-		stage.addFocusableActor(playButton)
 		stage.addActor(settingsButton)
-		stage.addFocusableActor(settingsButton)
 		stage.addActor(aboutButton)
-		stage.addFocusableActor(aboutButton)
 		stage.addActor(quitButton)
-		stage.addFocusableActor(quitButton)
+//		stage.addFocusableActor(backgroundImage)//TODO: in inputMapper change focus...
+//		stage.addFocusableActor(titleImage)
+//		stage.addFocusableActor(playButton)
+//		stage.addFocusableActor(settingsButton)
+//		stage.addFocusableActor(aboutButton)
+//		stage.addFocusableActor(quitButton)
 
 		if(Settings.isGPGSEnabled) {
 			game.playServices?.let {
 				if (it.isSignedIn()) {
 					stage.addActor(leaderBoardButton)
-					stage.addFocusableActor(leaderBoardButton)
+					//stage.addFocusableActor(leaderBoardButton)
 				}
 				else {
 					stage.addActor(gpgsSignInButton)
-					stage.addFocusableActor(gpgsSignInButton)
+					//stage.addFocusableActor(gpgsSignInButton)
 				}
 			}
 		}
 
-		stage.focusedActor = playButton
-		stage.escapeActor = quitButton
+		//stage.focusedActor = playButton
+		//stage.escapeActor = quitButton
 	}
 
 	private fun setListeners() {
@@ -190,8 +190,51 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	}
 
 	override fun render(delta: Float) {
+		processInput()
 		stage.act(delta)
 		stage.draw()
+	}
+	private var currentFocus = 0
+	private fun processInput() {
+		val forward = input.inputMapper.isAxisValuePositive(Inputs.MOVE_X) || input.inputMapper.isAxisValuePositive(Inputs.MOVE_Y)
+				|| input.inputMapper.isAxisValuePositive(Inputs.LOOK_X) || input.inputMapper.isAxisValuePositive(Inputs.LOOK_Y)
+		val backward = input.inputMapper.isAxisValueNegative(Inputs.MOVE_X) || input.inputMapper.isAxisValueNegative(Inputs.MOVE_Y)
+				|| input.inputMapper.isAxisValueNegative(Inputs.LOOK_X) || input.inputMapper.isAxisValueNegative(Inputs.LOOK_Y)
+		if(input.inputMapper.isButtonPressed(Inputs.START)) {
+			currentFocus = 0
+			game.reset()
+		}
+		else if(input.inputMapper.isButtonPressed(Inputs.BACK)) {
+			currentFocus = 1
+			Gdx.app.exit()
+		}
+		else if(forward) {
+			currentFocus++
+			if(currentFocus > 3)currentFocus=3
+		}
+		else if(backward) {
+			currentFocus--
+			if(currentFocus < 0)currentFocus=0
+		}
+		updateFocus()
+	}
+	private fun updateFocus() {
+		playButton.background = playButton.style.up
+		quitButton.background = playButton.style.up
+		settingsButton.background = playButton.style.up
+		aboutButton.background = playButton.style.up
+		when(currentFocus) {
+			0 -> playButton.background = playButton.style.over
+			1 -> quitButton.background = playButton.style.over
+			2 -> settingsButton.background = playButton.style.over
+			3 -> aboutButton.background = playButton.style.over
+		}
+		/*when(currentFocus) {
+			0 -> playButton.background = playButton.style.focused
+			1 -> quitButton.background = playButton.style.focused
+			2 -> settingsButton.background = playButton.style.focused
+			3 -> aboutButton.background = playButton.style.focused
+		}*/
 	}
 
 	override fun resize(width: Int, height: Int) {

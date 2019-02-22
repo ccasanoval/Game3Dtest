@@ -7,44 +7,46 @@ import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.systems.PlayerSystem
 import com.cesoft.cesdoom.util.Log
-import de.golfgl.gdx.controllers.mapping.MappedController
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//TODO: Joystick!!
-//https://github.com/libgdx/libgdx/wiki/Controllers
-class PlayerInput(private val inputProcessor: InputProcessor) : ControllerListener {
+//
+class PlayerInput(val inputMapper: InputMapper, private val inputProcessor: InputProcessor) : ControllerListener {
 	companion object {
 		val tag: String = PlayerInput::class.java.simpleName
 	}
 
     var controller: Controller? = null
-	var ctrlMappings: CtrMappings? = null
-    var mappedController: MappedController? = null
+	//var ctrlMappings: CtrMappings? = null
+    //var mappedController: MappedController? = null
 
     //----------------------------------------------------------------------------------------------
     override fun connected(controller: Controller?) {
         this.controller = controller
-		this.ctrlMappings = CtrMappings(inputProcessor)
-        this.mappedController = MappedController(controller, ctrlMappings)//TODO: make non null?
+		//this.ctrlMappings = CtrMappings(inputProcessor)
+        //this.mappedController = MappedController(controller, ctrlMappings)//TODO: make non null?
         Log.e(PlayerSystem.tag, "connected:----------*****************************--------------"+controller?.name)
     }
     override fun disconnected(controller: Controller?) {
         this.controller = null
-        this.mappedController = null
+        //this.mappedController = null
         Log.e(PlayerSystem.tag, "disconnected:---------*************************---------------"+controller?.name)
     }
     ///
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
         Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : $value")
+        inputMapper.axisMoved(axisCode, value)
         return false
     }
     ///
     override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
         Log.e(PlayerSystem.tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
+        inputMapper.buttonUp(buttonCode)
         return false
     }
     override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
         Log.e(PlayerSystem.tag, "buttonDown:----------------"+controller?.name+" : "+buttonCode)
+        inputMapper.buttonDown(buttonCode)
         return false
     }
     ///
