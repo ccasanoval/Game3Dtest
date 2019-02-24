@@ -70,7 +70,7 @@ class PlayerSystem(
 	private val posTemp = Vector3()
 	private val posTemp2 = Vector3()
 
-    private val inputMap = InputMapperFactory.getCes()
+    private val inputMap = InputMapperFactory.getCes()//TODO: Global
 
 	/// Extends EntitySystem
 	//______________________________________________________________________________________________
@@ -255,11 +255,11 @@ class PlayerSystem(
 			posTemp.sub(camera.direction)
 			isMoving = true
 		}
-		if(ControllerWidget.movementVector.x < -offsetHorizontal || inputMap.isAxisValueNegative(Inputs.MOVE_X)) {
+		if(ControllerWidget.movementVector.x < -offsetHorizontal || inputMap.isAxisValuePositive(Inputs.MOVE_X)) {
 			posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			isMoving = true
 		}
-		else if(ControllerWidget.movementVector.x > +offsetHorizontal || inputMap.isAxisValuePositive(Inputs.MOVE_X)) {
+		else if(ControllerWidget.movementVector.x > +offsetHorizontal || inputMap.isAxisValueNegative(Inputs.MOVE_X)) {
 			posTemp2.set(camera.direction).crs(camera.up)
 			isMoving = true
 		}

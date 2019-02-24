@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.controllers.PovDirection
 import kotlin.math.absoluteValue
 import com.cesoft.cesdoom.input.Inputs.Value
+import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -25,7 +26,7 @@ class InputMapper {
 
     fun addMap(event: Int, button: Int, offset: Float=0f) {
         mapper[event] = button
-        axisOffset[event] = offset
+        axisOffset[button] = offset
     }
     fun addMapKey(event: Int, button: Int, positive: Boolean=true) {
         mapperKey[AxisKey(button, positive)] = event
@@ -34,11 +35,13 @@ class InputMapper {
 
     fun axisMoved(axisCode: Int, value: Float) {
         mapper[axisCode]?.let { axis ->
-            if(value.absoluteValue > axisOffset[axis]?:999f) {
-                values[axis] = if(value > 0) Value.POSITIVE else Value.NEGATIVE
+            if(value.absoluteValue > axisOffset[axis]?:0.1f) {
+                values[axis] = if(value < 0) Value.POSITIVE else Value.NEGATIVE
+				Log.e("inputmap", "axisMoved---1----- $axis ------- ${axisOffset[axis]} ------------------- "+values[axis])
             }
             else {
                 values[axis] = Value.ZERO
+				Log.e("inputmap", "axisMoved---2----- $axis ------- ${axisOffset[axis]} ------------------- "+values[axis])
             }
         }
     }

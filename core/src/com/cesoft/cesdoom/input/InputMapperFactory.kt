@@ -27,7 +27,7 @@ object InputMapperFactory {
     //______________________________________________________________________________________________
     fun getCes(offsetX: Float=.6f, offsetY: Float=.6f) : InputMapper {
         val CES_START = 108
-        val CES_SELECT = 4
+        val CES_SELECT = 999999
         val CES_R_STICK = 107
         val CES_L_STICK = 106
         val CES_R_FIRE = 103

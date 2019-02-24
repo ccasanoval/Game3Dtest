@@ -118,4 +118,9 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	fun show() {
 		pausar()
 	}
+
+	//______________________________________________________________________________________________
+	override fun act(delta: Float) {
+		//if()
+	}
 }

@@ -32,6 +32,8 @@ import com.cesoft.cesdoom.util.PlayServices
 //TODO:
 //
 //TODO: FPS !!!  (Enemy consume mucho, es todo por pathfinding?)
+//TODO: Monstruo 2 (spider) cambiar sonido aracnido..
+//TODO: You win the game widget que muestre puntuacion etc...
 //TODO: Joystick!!
 //TODO: Level Constructor
 //TODO: Pathfinding 3D (enhancement)
