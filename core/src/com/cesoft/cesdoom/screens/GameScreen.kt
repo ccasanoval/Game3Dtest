@@ -2,17 +2,20 @@ package com.cesoft.cesdoom.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.controllers.Controllers
 import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.input.Inputs
+import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.ui.GameUI
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameScreen(private val gameUI: GameUI, assets: Assets) : Screen {
+class GameScreen(private val playerInput: PlayerInput, private val gameUI: GameUI, assets: Assets) : Screen {
 	private var gameWorld = GameWorld(gameUI.gameWinWidget, gameUI.gameOverWidget, assets)
 
 	companion object {
@@ -21,10 +24,15 @@ class GameScreen(private val gameUI: GameUI, assets: Assets) : Screen {
 	init {
 		Status.paused = false
 		Gdx.input.inputProcessor = gameUI.stage
+		Controllers.addListener(playerInput)
 		Sounds.playMusic()
 	}
 
 	override fun render(delta: Float) {
+
+		when {
+			playerInput.inputMapper.isButtonPressed(Inputs.BACK) -> pause()
+		}
 		gameUI.update(delta)
 		gameWorld.render(delta)
 		gameUI.render()

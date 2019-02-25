@@ -70,13 +70,13 @@ class PlayerSystem(
 	private val posTemp = Vector3()
 	private val posTemp2 = Vector3()
 
-    private val inputMap = InputMapperFactory.getCes()//TODO: Global
+    private val inputMap = InputMapperFactory.getCes()
 
 	/// Extends EntitySystem
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		engine!!.addEntityListener(Family.all(PlayerComponent::class.java).get(), this)
-		addListener(PlayerInput(inputMap, Gdx.input.inputProcessor))
+		//addListener(PlayerInput(inputMap))//TODO: Global
 	}
 
 	/// Implements EntityListener

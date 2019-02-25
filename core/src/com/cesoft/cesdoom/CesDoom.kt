@@ -11,6 +11,8 @@ import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.EnemyComponent
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.input.InputMapperFactory
+import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.screens.GameScreen
 import com.cesoft.cesdoom.screens.LoadingScreen
@@ -78,6 +80,8 @@ class CesDoom(
 	private var screen: Screen? = null
 	private lateinit var gameUI: GameUI
 	private lateinit var assets: Assets
+
+	var playerInput = PlayerInput(InputMapperFactory.getCes())
 
 	init {
 	    Log.debugMode = debugMode

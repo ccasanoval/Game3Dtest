@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.input.Inputs
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +65,6 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	private fun setListeners() {
 		super.addListener(object : InputListener() {
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
-				if(Status.gameOver || Status.gameWin)return false
 				if(keycode == Input.Keys.ESCAPE || keycode == Input.Keys.BACK) {
 					handleUpdates()
 					return true
@@ -75,38 +75,58 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 
 		btnRestart.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				game.reset()
-				reanudar()
+				restart()
 			}
 		})
 		btnMenu.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				reanudar()
-				game.reset2Menu()
+				toMenu()
 			}
 		})
 		btnQuit.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				Gdx.app.exit()
+				exitApp()
 			}
 		})
+	}
+	//______________________________________________________________________________________________
+	override fun act(delta: Float) {
+		super.act(delta)
+		when {
+			game.playerInput.inputMapper.isButtonPressed(Inputs.BACK) -> goOut()
+			game.playerInput.inputMapper.isButtonPressed(Inputs.START) -> restart()
+			game.playerInput.inputMapper.isButtonPressed(Inputs.EXIT) -> exitApp()
+		}
+	}
+	private fun restart() {
+		goOut()
+		game.reset()
+	}
+	private fun toMenu() {
+		goOut()
+		game.reset2Menu()
+	}
+	private fun exitApp() {
+		Gdx.app.exit()
 	}
 
 	//______________________________________________________________________________________________
 	private fun handleUpdates() {
+		if(Status.gameOver || Status.gameWin)
+			return
 		if(window.stage == null)
-			pausar()
+			goIn()
 		else
-			reanudar()
+			goOut()
 	}
-	private fun pausar() {
+	private fun goIn() {
 		//TODO: pausar enemy system de creaer mas bichos
 		game.pauseGame()
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
 		Status.paused = true
 	}
-	private fun reanudar() {
+	private fun goOut() {
 		window.remove()
 		Gdx.input.isCursorCatched = true
 		Status.paused = false
@@ -125,4 +145,5 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		super.setSize(width, height)
 		window.setSize(width, height)
 	}
+
 }

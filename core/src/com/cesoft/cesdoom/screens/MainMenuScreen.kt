@@ -16,8 +16,8 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.input.InputMapperFactory
 import com.cesoft.cesdoom.input.Inputs
+import com.cesoft.cesdoom.input.InputMapperFactory
 import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.util.Log
 
@@ -26,8 +26,8 @@ import com.cesoft.cesdoom.util.Log
 //
 class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Screen {
 	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
-	private var backgroundImage: Image// = game.assets.getMainMenuBg()//Image(Texture(Gdx.files.internal("data/background.png")))
-	private var titleImage: Image// = game.assets.getMainMenuTitle()//Image(Texture(Gdx.files.internal("data/title.png")))
+	private var backgroundImage: Image
+	private var titleImage: Image
 	private var playButton: TextButton = TextButton(assets.getString(Assets.JUGAR), assets.skin)
 	private var quitButton: TextButton = TextButton(assets.getString(Assets.SALIR), assets.skin)
 	private var settingsButton: TextButton = TextButton(assets.getString(Assets.CONFIG), assets.skin)
@@ -35,7 +35,7 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	private var leaderBoardButton: TextButton = TextButton(assets.getString(Assets.PUNTUACIONES), assets.skin)
 	private var gpgsSignInButton: TextButton = TextButton(assets.getString(Assets.GPGS_SIGN_IN), assets.skin)
 
-	private val input = PlayerInput(InputMapperFactory.getCes(), stage)
+	private val input = game.playerInput//PlayerInput(InputMapperFactory.getCes())
 
 
 	init {
@@ -117,18 +117,12 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		stage.addActor(settingsButton)
 		stage.addActor(aboutButton)
 		stage.addActor(quitButton)
-//		stage.addFocusableActor(backgroundImage)//TODO: in inputMapper change focus...
-//		stage.addFocusableActor(titleImage)
-//		stage.addFocusableActor(playButton)
-//		stage.addFocusableActor(settingsButton)
-//		stage.addFocusableActor(aboutButton)
-//		stage.addFocusableActor(quitButton)
 
 		if(Settings.isGPGSEnabled) {
 			game.playServices?.let {
 				if (it.isSignedIn()) {
 					stage.addActor(leaderBoardButton)
-					//stage.addFocusableActor(leaderBoardButton)
+					//stage.addFocusableActor(leaderBoardButton)//TODO
 				}
 				else {
 					stage.addActor(gpgsSignInButton)
@@ -136,13 +130,10 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 				}
 			}
 		}
-
-		//stage.focusedActor = playButton
-		//stage.escapeActor = quitButton
 	}
 
+	//______________________________________________________________________________________________
 	private fun setListeners() {
-
 		var counter = 0L
 		var lastClick = 0L
 		titleImage.addListener {
@@ -189,6 +180,7 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		})
 	}
 
+	//______________________________________________________________________________________________
 	override fun render(delta: Float) {
 		processInput()
 		stage.act(delta)
@@ -219,10 +211,10 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		updateFocus()
 	}
 	private fun updateFocus() {
-		playButton.background = playButton.style.up
-		quitButton.background = playButton.style.up
-		settingsButton.background = playButton.style.up
-		aboutButton.background = playButton.style.up
+//		playButton.background = playButton.style.up
+//		quitButton.background = playButton.style.up
+//		settingsButton.background = playButton.style.up
+//		aboutButton.background = playButton.style.up
 		when(currentFocus) {
 			0 -> playButton.background = playButton.style.over
 			1 -> quitButton.background = playButton.style.over
@@ -237,14 +229,15 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		}*/
 	}
 
+	//______________________________________________________________________________________________
 	override fun resize(width: Int, height: Int) {
 		stage.viewport.update(width, height)
 	}
-
+	//______________________________________________________________________________________________
 	override fun dispose() {
 		stage.dispose()
 	}
-
+	//______________________________________________________________________________________________
 	override fun show() = Unit
 	override fun hide() = Unit
 	override fun pause() = Unit

@@ -2,10 +2,7 @@ package com.cesoft.cesdoom
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
-import com.badlogic.gdx.audio.Music
-import com.badlogic.gdx.audio.Sound
-import com.cesoft.cesdoom.assets.Assets
-import com.cesoft.cesdoom.util.Log
+import com.cesoft.cesdoom.input.Inputs
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,6 +15,8 @@ object Settings {
 	private const val PREF_SOUND_EFFECTS_VOLUME = "sound_volume"
 	private const val PREF_PAIN_VIBRATION_ONOFF = "pain_vibration"
 	private const val PREF_GPGS_ONOFF = "google_game_services"
+	private const val PREF_INPUT_MAPPING0 = "input_mapping0_"
+	private const val PREF_INPUT_MAPPING1 = "input_mapping1_"
 
 	var isMusicEnabled = true
 	var isSoundEnabled = true
@@ -33,7 +32,8 @@ object Settings {
 			if(value in 0.0f..1.0f)
 				field = value
 		}
-
+	var inputMapping0: MutableList<Int> = arrayListOf()
+	var inputMapping1: MutableList<Int> = arrayListOf()
 
 	/// Preferencias
 	//
@@ -45,6 +45,15 @@ object Settings {
 		soundVolume = prefs.getFloat(PREF_SOUND_EFFECTS_VOLUME, soundVolume)
 		isVibrationEnabled = prefs.getBoolean(PREF_PAIN_VIBRATION_ONOFF, isVibrationEnabled)
 		isGPGSEnabled = prefs.getBoolean(PREF_GPGS_ONOFF, isGPGSEnabled)
+
+		val values0 = intArrayOf(108,  97,  99, 103, 100,   4,   5,   0,   1)
+		val values1 = intArrayOf( 96,   6, 999, 102, 999, 999, 999, 999, 999)
+		inputMapping0.clear()
+		inputMapping1.clear()
+		for(i in 0 until Inputs.MAX) {
+			inputMapping0.add(i, prefs.getInteger(PREF_INPUT_MAPPING0+i, values0[i]))
+			inputMapping1.add(i, prefs.getInteger(PREF_INPUT_MAPPING1+i, values1[i]))
+		}
 	}
 	fun savePrefs() {
 		prefs.putBoolean(PREF_MUSIC_ONOFF, isMusicEnabled)
@@ -53,8 +62,16 @@ object Settings {
 		prefs.putFloat(PREF_SOUND_EFFECTS_VOLUME, soundVolume)
 		prefs.putBoolean(PREF_PAIN_VIBRATION_ONOFF, isVibrationEnabled)
 		prefs.putBoolean(PREF_GPGS_ONOFF, isGPGSEnabled)
+
+		for(i in 0 until Inputs.MAX) {
+			prefs.putInteger(PREF_INPUT_MAPPING0+i, inputMapping0[i])
+			prefs.putInteger(PREF_INPUT_MAPPING1+i, inputMapping1[i])
+		}
+
 		prefs.flush()
 	}
+
+
 
 	//var highscores = intArrayOf(1000, 800, 500, 300, 100)
 	//val file = ".spaceglad"
