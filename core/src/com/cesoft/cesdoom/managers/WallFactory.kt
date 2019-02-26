@@ -20,7 +20,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
-import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
+import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.map.MapGraphFactory
@@ -126,8 +126,7 @@ object WallFactory {
 		rigidBody.userData = entity
 		rigidBody.motionState = motionState
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-		rigidBody.contactCallbackFilter = 0//BulletComponent.GROUND_FLAG or BulletComponent.PLAYER_FLAG
-		rigidBody.contactCallbackFlag = BulletComponent.CF_OCCLUDER_OBJECT//BulletComponent.SCENE_FLAG or
+		rigidBody.contactCallbackFilter = 0
 		rigidBody.userValue = BulletComponent.SCENE_FLAG
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f

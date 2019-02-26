@@ -18,8 +18,7 @@ import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.*
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
-import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
-import com.cesoft.cesdoom.util.Log
+import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

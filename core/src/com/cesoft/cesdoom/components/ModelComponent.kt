@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
-import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
+import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

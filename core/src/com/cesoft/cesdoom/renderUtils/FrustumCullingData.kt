@@ -1,4 +1,4 @@
-package com.cesoft.cesdoom.RenderUtils
+package com.cesoft.cesdoom.renderUtils
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.ModelInstance
@@ -19,13 +19,12 @@ class FrustumCullingData
 	//______________________________________________________________________________________________
 	private fun getCenter(): Vector3//TODO convertir en propiedad?
 	{
-		if(instance != null)
-		{
+		return if(instance != null) {
 			instance!!.transform.getTranslation(posTemp)
-			return posTemp.add(_center)
+			posTemp.add(_center)
 		}
 		else
-			return _center.cpy()
+			_center.cpy()
 	}
 
 	//______________________________________________________________________________________________

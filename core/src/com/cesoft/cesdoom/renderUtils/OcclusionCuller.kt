@@ -1,4 +1,4 @@
-package com.cesoft.cesdoom.RenderUtils
+package com.cesoft.cesdoom.renderUtils
 
 
 import com.badlogic.gdx.graphics.Camera

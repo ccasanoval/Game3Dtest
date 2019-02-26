@@ -72,7 +72,7 @@ object InputMapperFactory {
         val WIN_BTN_Y = 3
         val WIN_BTN_FIRE1 = 4
         val WIN_BTN_FIRE2 = 5
-        val WIN_BTN_SELECT = 6
+        //val WIN_BTN_SELECT = 6
         val WIN_BTN_START = 7
         val WIN_AXIS_L_H = 1
         val WIN_AXIS_L_V = 0

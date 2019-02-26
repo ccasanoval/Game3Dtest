@@ -20,10 +20,10 @@ import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
-import com.badlogic.gdx.math.Vector2
-import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
+import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.map.MapGraphFactory
+import kotlin.math.absoluteValue
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,12 +32,16 @@ class RampFactory(assets: Assets) {
 	companion object {
 		const val LONG = 30f
 		const val HIGH = 20f
-		const val THICK = 1f
+		const val THICK = 2f
 	}
 	enum class Type { STEEL, GRID, }
 
-	private val dim0 = Vector3(THICK*2, HIGH*2, LONG*2)
-	private val dim90 = Vector3(LONG*2, THICK*2, HIGH*2)
+	private val dimX00Y90Z90 = Vector3(LONG*2, THICK*2, HIGH*2)
+	private val dimX90Y45Z00 = Vector3(0.707f*LONG*2, 0.707f*LONG*2, HIGH*2)
+	private val dimX00Y00Z00 = Vector3(THICK*2, HIGH*2, LONG*2)
+	private val dimX00Y90Z00 = Vector3(LONG*2, HIGH*2, THICK*2)
+	//private val dimX00Y00Z90 = Vector3(HIGH*2, THICK*2, LONG*2)
+	//private val dimX90Y00Z00 = Vector3(LONG*2, HIGH*2, THICK*2)
 	private val dimMax = Vector3(LONG*2, LONG*2, LONG*2)
 	private val dim = Vector3(THICK, HIGH, LONG)
 
@@ -84,13 +88,16 @@ class RampFactory(assets: Assets) {
 		val model : Model = modelBuilder.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
 		val modelComponent = ModelComponent(model, pos)
 		entity.add(modelComponent)
-		//
-		if(angleX == 0f && angleY == 0f && angleZ == 0f) {
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dim0)
-		}
-		else if(angleX == 0f && angleY == 90f && angleZ == 90f) {
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dim90)
-		}
+
+		/// Frustum Culling (Should not depend on it material is solid or not?)
+		if(angleX == 0f && angleY == 0f && angleZ == 0f)
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y00Z00)
+		else if(angleX == 0f && angleY == 90f && angleZ == 0f)
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y90Z00)
+		else if(angleX == 0f && angleY == 90f && angleZ == 90f)
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y90Z90)
+		else if(angleX == 90f && angleY.absoluteValue == 45f && angleZ == 0f)
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX90Y45Z00)
 		else {
 			//por que no funciona  con esferica ? Quiza eliminar esferica ?
 			/*val boundingBox = BoundingBox()
@@ -113,8 +120,7 @@ class RampFactory(assets: Assets) {
 		rigidBody.motionState = motionState
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 		rigidBody.contactCallbackFilter = 0
-		rigidBody.contactCallbackFlag = BulletComponent.CF_OCCLUDER_OBJECT
-		rigidBody.userValue = 0
+		rigidBody.userValue = if(type==Type.STEEL) BulletComponent.SCENE_FLAG else 0	// La regilla no para las balas
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f
 		rigidBody.rollingFriction = 1f

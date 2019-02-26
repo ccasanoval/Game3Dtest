@@ -17,9 +17,6 @@ import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.components.*
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
-import com.cesoft.cesdoom.RenderUtils.OcclusionCuller
-import com.cesoft.cesdoom.RenderUtils.OcclusionBuffer
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.entities.Gun
@@ -34,7 +31,7 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 
 	companion object {
 	    private val tag: String = RenderSystem::class.java.simpleName
-		private val FOV = 67f
+		private const val FOV = 67f
 	}
 	private val renderQueue = RenderQueue()
 
@@ -46,13 +43,6 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 	lateinit var gun: Gun
 	private var isDisposed = false
 	//private val shadowLight: DirectionalShadowLight
-
-	// For occlusion culling
-	private var oclBuffer: OcclusionBuffer
-	private var occlusionCuller: OcclusionCuller
-	//private var frustumCam: PerspectiveCamera
-	private val OCL_BUFFER_EXTENTS = intArrayOf(128, 256, 512, 32, 64)
-	val visibleEntities = arrayListOf<Entity?>()
 
 
 	//______________________________________________________________________________________________
@@ -81,16 +71,6 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 //		environment.add(shadowLight)
 //		environment.shadowMap = shadowLight
 
-		oclBuffer = OcclusionBuffer(OCL_BUFFER_EXTENTS[0], OCL_BUFFER_EXTENTS[0])
-		occlusionCuller = object : OcclusionCuller() {
-			override fun isOccluder(obj: btCollisionObject): Boolean {
-				return obj.collisionFlags and BulletComponent.CF_OCCLUDER_OBJECT != 0
-			}
-			override fun onObjectVisible(obj: btCollisionObject) {
-				val entity = obj.userData as Entity
-				visibleEntities.add(entity)
-			}
-		}
 	}
 
 	//______________________________________________________________________________________________
@@ -106,45 +86,20 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 
 		processEvents()
 
-		/*val OCCLUSION = false
-		if(OCCLUSION) {
-			/// Occlusion Culling
-			visibleEntities.clear()
-			oclBuffer.clear()
-			occlusionCuller.performOcclusionCulling(broadphase2, oclBuffer, perspectiveCamera)
-
-			batch.begin(perspectiveCamera)
-			//Log.e(tag, "RenderSystem:update:NUM-----------" + entities.size() + "-------------" + visibleEntities.size)
-			//for(it in entities)
-			for(it in visibleEntities) {
-				//if(it == null)continue
-				if(it!!.getComponent(GunComponent::class.java) == null) {
-					val model = it.getComponent(ModelComponent::class.java) ?: continue
-						if(model.frustumCullingData.isVisible(perspectiveCamera)) {
-							batch.render(model.instance, environment)
-							countDrawn++
-						}
+		batch.begin(perspectiveCamera)
+		for(entity in entities) {
+			if(entity is Gun)continue
+			val model = ModelComponent.get(entity)
+			try {
+				if(model.frustumCullingData.isVisible(perspectiveCamera)) {
+					batch.render(model.instance, environment)
+					//countDrawn++
 				}
+			}
+			catch(e: Exception) {
+				Log.e(tag, "RenderSystem:update:e:$model:$e")
 			}
 		}
-		else {*/
-			batch.begin(perspectiveCamera)
-			for(entity in entities) {
-				if(entity is Gun)continue
-				val model = ModelComponent.get(entity)
-				try {
-					if(model.frustumCullingData.isVisible(perspectiveCamera)) {
-						batch.render(model.instance, environment)
-						countDrawn++
-					}
-				}
-				catch(e: Exception) {
-					Log.e(tag, "RenderSystem:update:e:$model:$e")
-				}
-			}
-		//}
-
-		if(countDrawn > countMax)countMax = countDrawn
 		batch.end()
 
 		if( ! Status.paused) {
@@ -153,6 +108,9 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 		}
 
 		drawGun(delta)
+
+		//if(countDrawn > countMax)countMax = countDrawn
+		//Log.e(tag, "RenderSystem:update:NUM----countDrawn=$countDrawn  countMax=$countMax  entities="+entities.size()+"-------------FPS="+Gdx.graphics.framesPerSecond)
 	}
 
 	//______________________________________________________________________________________________
@@ -175,15 +133,15 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 		if(PlayerComponent.isDead())return
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT)
 		batch.begin(gunCamera)
-		val modelo = ModelComponent.get(gun)
-		animGunRespiracion(modelo, delta)
-		batch.render(modelo.instance)
+		val model = ModelComponent.get(gun)
+		animGunBreathing(model, delta)
+		batch.render(model.instance)
 		batch.end()
 	}
 	//______________________________________________________________________________________________
 	private val posTemp = Vector3()
-	private fun animGunRespiracion(modelo: ModelComponent, delta: Float) {
-		modelo.instance.transform.getTranslation(posTemp)
+	private fun animGunBreathing(model: ModelComponent, delta: Float) {
+		model.instance.transform.getTranslation(posTemp)
 		if(yDrawGunOrg == -999f)yDrawGunOrg=posTemp.y
 		if(isDrawGunUp) {
 			posTemp.y += delta*2
@@ -195,7 +153,7 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 			if(posTemp.y < yDrawGunOrg-2.5f)
 				isDrawGunUp = true
 		}
-		modelo.instance.transform.setTranslation(posTemp)
+		model.instance.transform.setTranslation(posTemp)
 	}
 
 	//______________________________________________________________________________________________
@@ -229,7 +187,6 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 	fun dispose() {
 		gun.dispose()
 		batch.dispose()
-		visibleEntities.clear()
 		isDisposed = true
 	}
 
@@ -237,13 +194,13 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 	private fun processEvents() {
 		for(event in renderQueue.events) {
 			when(event.type) {
-				RenderEvent.Type.SET_AMBIENT_COLOR -> setAbientColor(event.param as ColorAttribute)
+				RenderEvent.Type.SET_AMBIENT_COLOR -> setAmbientColor(event.param as ColorAttribute)
 				RenderEvent.Type.ADD_PARTICLE_FX -> addParticleEffect(event.param as ParticleEffect)
 				//else -> Unit
 			}
 		}
 	}
-	private fun setAbientColor(color: ColorAttribute) {
+	private fun setAmbientColor(color: ColorAttribute) {
 		environment.set(color)
 	}
 	private fun addParticleEffect(effect: ParticleEffect) {

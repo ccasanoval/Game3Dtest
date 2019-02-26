@@ -15,8 +15,7 @@ import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
-import com.cesoft.cesdoom.CesDoom
-import com.cesoft.cesdoom.RenderUtils.FrustumCullingData
+import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
@@ -34,7 +33,7 @@ object GateFactory {
     private const val THICK = GateComponent.THICK
 
     // dimension en X grados para frustum culling
-    private val dim0 = Vector3(THICK*2, HIGH*2, LONG*5)//5*LONG porque la puerta se mueve
+    private val dim0 = Vector3(THICK*2, HIGH*2, LONG*5)//5*LONG porque la puerta se mueve en ese eje
     private val dim90= Vector3(LONG*5, HIGH*2, THICK*2)
     //private val dim45= Vector3(LONG*2, HIGH*2, LONG*2)
 
@@ -80,17 +79,14 @@ object GateFactory {
         val modelComponent = ModelComponent(model, pos)
 
         // Frustum culling
-        val frustumCullingData : FrustumCullingData
-        if(angle == 0f)//angle > -5f && angle < 5f)
-            frustumCullingData = FrustumCullingData.create(pos, dim0)
-        else if(angle == 90f)
-            frustumCullingData = FrustumCullingData.create(pos, dim90)
-        //else if(angle == 45f || angle == -45f)
-        //    frustumCullingData = FrustumCullingData.create(pos, dim45)
-        else {
-            val boundingBox = BoundingBox()
-            modelComponent.instance.calculateBoundingBox(boundingBox)
-            frustumCullingData = FrustumCullingData.create(boundingBox)
+        val frustumCullingData = when(angle) {
+            0f -> FrustumCullingData.create(pos, dim0)
+            90f -> FrustumCullingData.create(pos, dim90)
+            else -> {
+                val boundingBox = BoundingBox()
+                modelComponent.instance.calculateBoundingBox(boundingBox)
+                FrustumCullingData.create(boundingBox)
+            }
         }
         modelComponent.frustumCullingData = frustumCullingData
 
