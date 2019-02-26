@@ -2,6 +2,7 @@ package com.cesoft.cesdoom
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
+import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
 
 
@@ -34,6 +35,21 @@ object Settings {
 		}
 	var inputMapping0: MutableList<Int> = arrayListOf()
 	var inputMapping1: MutableList<Int> = arrayListOf()
+	fun getInputMapper(): InputMapper {
+		val im = InputMapper()
+		for(action in Inputs.Action.values()) {
+			val offset = when(action) {
+				Inputs.Action.MOVE_X -> .6f
+				Inputs.Action.MOVE_Y -> .4f
+				Inputs.Action.LOOK_X -> .4f
+				Inputs.Action.LOOK_Y -> .6f
+				else -> 0f
+			}
+			im.addMap(inputMapping0[action.value], action, offset)
+			im.addMap(inputMapping1[action.value], action, offset)
+		}
+        return im
+	}
 
 	/// Preferencias
 	//
@@ -47,12 +63,12 @@ object Settings {
 		isGPGSEnabled = prefs.getBoolean(PREF_GPGS_ONOFF, isGPGSEnabled)
 
 		val values0 = intArrayOf(108,  97,  99, 103, 100,   4,   5,   0,   1)
-		val values1 = intArrayOf( 96,   6, 999, 102, 999, 999, 999, 999, 999)
+		val values1 = intArrayOf( 96,   6,  -1, 102,  -1,  -1,  -1,  -1,  -1)
 		inputMapping0.clear()
 		inputMapping1.clear()
-		for(i in 0 until Inputs.MAX) {
-			inputMapping0.add(i, prefs.getInteger(PREF_INPUT_MAPPING0+i, values0[i]))
-			inputMapping1.add(i, prefs.getInteger(PREF_INPUT_MAPPING1+i, values1[i]))
+		for(i in Inputs.Action.values()) {
+			inputMapping0.add(i.value, prefs.getInteger(PREF_INPUT_MAPPING0+i, values0[i.value]))
+			inputMapping1.add(i.value, prefs.getInteger(PREF_INPUT_MAPPING1+i, values1[i.value]))
 		}
 	}
 	fun savePrefs() {
@@ -63,9 +79,9 @@ object Settings {
 		prefs.putBoolean(PREF_PAIN_VIBRATION_ONOFF, isVibrationEnabled)
 		prefs.putBoolean(PREF_GPGS_ONOFF, isGPGSEnabled)
 
-		for(i in 0 until Inputs.MAX) {
-			prefs.putInteger(PREF_INPUT_MAPPING0+i, inputMapping0[i])
-			prefs.putInteger(PREF_INPUT_MAPPING1+i, inputMapping1[i])
+		for(i in Inputs.Action.values()) {
+			prefs.putInteger(PREF_INPUT_MAPPING0+i, inputMapping0[i.value])
+			prefs.putInteger(PREF_INPUT_MAPPING1+i, inputMapping1[i.value])
 		}
 
 		prefs.flush()

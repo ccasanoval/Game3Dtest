@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.input.Inputs
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +50,6 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	}
 
 	private fun configureWidgets() {
-		//window.add<Image>(image).width(319f).height(125f)
 		val ratio = 125f / 319f
 		val width = CesDoom.VIRTUAL_WIDTH*2f/4f
 		window.add<Image>(image).width(width).height(ratio * width)
@@ -66,13 +66,13 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	private fun setListeners() {
 		btnRestart.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
+				exit()
                 game.reset()
-				reanudar()
 			}
 		})
 		btnMenu.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				reanudar()
+				exit()
                 game.reset2Menu()
 			}
 		})
@@ -84,15 +84,13 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	}
 
 	//______________________________________________________________________________________________
-	private fun pausar()
-	{
+	fun show() {
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false
 		Status.paused = true
 		Status.gameOver = true
 	}
-	private fun reanudar()
-	{
+	private fun exit() {
 		window.remove()
 		Gdx.input.isCursorCatched = true
 		Status.paused = false
@@ -115,12 +113,22 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	}
 
 	//______________________________________________________________________________________________
-	fun show() {
-		pausar()
-	}
-
-	//______________________________________________________________________________________________
 	override fun act(delta: Float) {
-		//if()
+		when {
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.START) -> restart()
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.BACK) -> toMenu()
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
+		}
+	}
+	private fun restart() {
+		exit()
+		game.reset()
+	}
+	private fun toMenu() {
+		exit()
+		game.reset2Menu()
+	}
+	private fun exitApp() {
+		Gdx.app.exit()
 	}
 }

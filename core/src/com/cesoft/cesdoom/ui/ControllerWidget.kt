@@ -37,7 +37,7 @@ class ControllerWidget {
 		watchPad.style = touchpadStyle
 		firePad.style = fireStyle
 		firePad2.style = fireStyle
-		val alpha = 0.65f
+		val alpha = 0.55f
 		movementPad.setColor(1f, 1f, 1f, alpha)
 		watchPad.setColor(1f, 1f, 1f, alpha)
 		firePad.setColor(1f, .7f, .7f, alpha)

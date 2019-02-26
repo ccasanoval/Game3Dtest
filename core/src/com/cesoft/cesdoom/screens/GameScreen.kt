@@ -16,7 +16,7 @@ import com.cesoft.cesdoom.ui.GameUI
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class GameScreen(private val playerInput: PlayerInput, private val gameUI: GameUI, assets: Assets) : Screen {
-	private var gameWorld = GameWorld(gameUI.gameWinWidget, gameUI.gameOverWidget, assets)
+	private var gameWorld = GameWorld(gameUI.gameWinWidget, gameUI.gameOverWidget, playerInput.mapper, assets)
 
 	companion object {
 		val tag: String = GameScreen::class.java.simpleName
@@ -29,13 +29,16 @@ class GameScreen(private val playerInput: PlayerInput, private val gameUI: GameU
 	}
 
 	override fun render(delta: Float) {
-
-		when {
-			playerInput.inputMapper.isButtonPressed(Inputs.BACK) -> pause()
-		}
+		processInput()
 		gameUI.update(delta)
 		gameWorld.render(delta)
 		gameUI.render()
+	}
+	private fun processInput() {
+		/*when {
+			playerInput.mapper.isButtonPressed(Inputs.Action.BACK) -> pause()
+			playerInput.mapper.isButtonPressed(Inputs.Action.EXIT) -> pause()
+		}*/
 	}
 
 	override fun resize(width: Int, height: Int) {

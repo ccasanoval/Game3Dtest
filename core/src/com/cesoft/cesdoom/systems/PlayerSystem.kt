@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.*
 import com.badlogic.ashley.signals.Signal
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.controllers.Controllers.addListener
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.math.Vector3
@@ -28,10 +27,9 @@ import com.cesoft.cesdoom.events.EnemyEvent
 import com.cesoft.cesdoom.events.GameQueue
 import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.events.RenderEvent
-import com.cesoft.cesdoom.input.InputMapperFactory
+import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.managers.GunFactory
-import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.ui.GameOverWidget
 import com.cesoft.cesdoom.ui.GameWinWidget
 import com.cesoft.cesdoom.util.Log
@@ -47,7 +45,8 @@ class PlayerSystem(
 		private val camera: Camera,
 		private val bulletSystem: BulletSystem,
 		private val gameWinWidget: GameWinWidget,
-		private val gameOverWidget: GameOverWidget
+		private val gameOverWidget: GameOverWidget,
+		private val inputMap: InputMapper
 	)
 	: EntitySystem(), EntityListener
 {
@@ -62,15 +61,13 @@ class PlayerSystem(
 		gameEventSignal.add(eventQueue)
 	}
 
-
 	private lateinit var player: Player
 	private lateinit var bulletComponent: BulletComponent
 	private val rayTestAll = AllHitsRayResultCallback(Vector3.Zero, Vector3.Z)
 	lateinit var gun: Entity
 	private val posTemp = Vector3()
 	private val posTemp2 = Vector3()
-
-    private val inputMap = InputMapperFactory.getCes()
+    //private val inputMap = //Settings.getInputMapper()//InputMapperFactory.getCes()
 
 	/// Extends EntitySystem
 	//______________________________________________________________________________________________
@@ -92,16 +89,21 @@ class PlayerSystem(
 	override fun update(delta: Float) {
 		checkGameOver(delta)
 		checkYouWin(delta)
+		processInputs()
 		updateMovement(delta)
 		if( ! PlayerComponent.isDead()) {
 			updateWeapon(delta)
 		}
 		updateCamera()
 		restoreAmbientColor()
-
 		processEvents()
 	}
-
+	private fun processInputs() {
+		when {
+			inputMap.isButtonPressed(Inputs.Action.BACK) -> Log.e(tag, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+			inputMap.isButtonPressed(Inputs.Action.EXIT) -> Log.e(tag, "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+		}
+	}
 
 	//______________________________________________________________________________________________
 	private fun processEvents() {
@@ -157,20 +159,11 @@ class PlayerSystem(
 		}
 
 		// Limitar pitch
-		/// MOBILE
-		//if(CesDoom.isMobile) {
-			if(pitch - pr > 140)		//Angulo mirando abajo (GOOD: 120)
-				pr = pitch - 140
-			else if(pitch - pr < 30)	//Angulo mirando arriba (GOOD: 40)
-				pr = pitch - 30
-//		}
-//		/// DESKTOP
-//		else {
-//			if(pitch - pr > 150)
-//				pr = -(150 - pitch)
-//			else if(pitch - pr < 30)
-//				pr = pitch - 30
-//		}
+		if(pitch - pr > 140)		//Angulo mirando abajo (GOOD: 120)
+			pr = pitch - 140
+		else if(pitch - pr < 30)	//Angulo mirando arriba (GOOD: 40)
+			pr = pitch - 30
+
 		dir.rotate(posTemp, pr)
 		//
 		camera.direction.set(dir)
@@ -187,8 +180,8 @@ class PlayerSystem(
         deltaY += +ControllerWidget.watchVector.y * yWeight*delta		// Velocidad angulo vertical (GOOD: 60)
 
         /// GAME PAD
-        val mxPad = inputMap.getAxisValue(Inputs.LOOK_X)
-        val myPad = inputMap.getAxisValue(Inputs.LOOK_Y)
+        val mxPad = inputMap.getAxisValue(Inputs.Action.LOOK_X)
+        val myPad = inputMap.getAxisValue(Inputs.Action.LOOK_Y)
         if(mxPad != Inputs.Value.ZERO)
             deltaX += mxPad.value * xWeight * delta
         if(myPad != Inputs.Value.ZERO)
@@ -216,12 +209,6 @@ class PlayerSystem(
 
 		updateTranslationMobile(delta)
 
-//		if(CesDoom.isMobile) {
-//			updateTranslationMobile(delta)
-//		}
-//		else {
-//			updateTranslationDesktop(delta)
-//		}
 		posTemp.y = bulletComponent.rigidBody.linearVelocity.y
 		bulletComponent.rigidBody.linearVelocity = posTemp
 	}
@@ -231,21 +218,21 @@ class PlayerSystem(
 		val offsetHorizontal = +0.60f
 		val offsetVertical = +0.20f
 
-		Log.e(tag, "updateTranslationMobile-------- ${inputMap.isAxisValuePositive(Inputs.MOVE_Y)}")
+		//Log.e(tag, "updateTranslationMobile-------- ${inputMap.isAxisValuePositive(Inputs.MOVE_Y)}")
 
-		if(ControllerWidget.movementVector.y > +offsetVertical || inputMap.isAxisValuePositive(Inputs.MOVE_Y)) {
+		if(ControllerWidget.movementVector.y > +offsetVertical || inputMap.isAxisValuePositive(Inputs.Action.MOVE_Y)) {
 			posTemp.add(camera.direction)
 			isMoving = true
 		}
-		else if(ControllerWidget.movementVector.y < -offsetVertical || inputMap.isAxisValueNegative(Inputs.MOVE_Y)) {
+		else if(ControllerWidget.movementVector.y < -offsetVertical || inputMap.isAxisValueNegative(Inputs.Action.MOVE_Y)) {
 			posTemp.sub(camera.direction)
 			isMoving = true
 		}
-		if(ControllerWidget.movementVector.x < -offsetHorizontal || inputMap.isAxisValuePositive(Inputs.MOVE_X)) {
+		if(ControllerWidget.movementVector.x < -offsetHorizontal || inputMap.isAxisValuePositive(Inputs.Action.MOVE_X)) {
 			posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			isMoving = true
 		}
-		else if(ControllerWidget.movementVector.x > +offsetHorizontal || inputMap.isAxisValueNegative(Inputs.MOVE_X)) {
+		else if(ControllerWidget.movementVector.x > +offsetHorizontal || inputMap.isAxisValueNegative(Inputs.Action.MOVE_X)) {
 			posTemp2.set(camera.direction).crs(camera.up)
 			isMoving = true
 		}
@@ -259,38 +246,10 @@ class PlayerSystem(
 		posTemp.add(posTemp2)
 		posTemp.scl(PlayerComponent.IMPULSE_MOBIL * delta)
 	}
-	//______________________________________________________________________________________________
-	/*private fun updateTranslationDesktop(delta: Float) {
-		var hayMovimiento = false
-		if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			posTemp.add(camera.direction)
-			hayMovimiento = true
-		}
-		else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			posTemp.sub(camera.direction)
-			hayMovimiento = true
-		}
-		when {
-			Gdx.input.isKeyPressed(Input.Keys.LEFT) -> {
-				posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
-				hayMovimiento = true
-			}
-			Gdx.input.isKeyPressed(Input.Keys.RIGHT) -> {
-				posTemp2.set(camera.direction).crs(camera.up)
-				hayMovimiento = true
-			}
-			else ->
-				posTemp2.set(Vector3.Zero)
-		}
-		if(hayMovimiento) {
-			Sounds.play(Sounds.SoundType.FOOT_STEPS)
-			posTemp.add(posTemp2)
-		}
-		posTemp.scl(PlayerComponent.IMPULSE_PC * delta)
-	}*/
+
 	//______________________________________________________________________________________________
 	private fun updateJumping(delta: Float) {
-		val jumpPad = inputMap.isButtonPressed(Inputs.JUMP)
+		val jumpPad = inputMap.isButtonPressed(Inputs.Action.JUMP)
 
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || jumpPad) {
 			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+PlayerComponent.isJumping)
@@ -336,7 +295,7 @@ class PlayerSystem(
 
 		val isFiring = (ControllerWidget.isFiring
 				|| Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
-				|| inputMap.isButtonPressed(Inputs.FIRE))
+				|| inputMap.isButtonPressed(Inputs.Action.FIRE))
 		deltaFire += delta
 
 		if(PlayerComponent.isReloading) {

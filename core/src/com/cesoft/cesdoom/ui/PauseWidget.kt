@@ -62,6 +62,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	}
 
 	//______________________________________________________________________________________________
+	//TODO: hacer que inputmapper conecte con esto
 	private fun setListeners() {
 		super.addListener(object : InputListener() {
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
@@ -93,17 +94,17 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	override fun act(delta: Float) {
 		super.act(delta)
 		when {
-			game.playerInput.inputMapper.isButtonPressed(Inputs.BACK) -> goOut()
-			game.playerInput.inputMapper.isButtonPressed(Inputs.START) -> restart()
-			game.playerInput.inputMapper.isButtonPressed(Inputs.EXIT) -> exitApp()
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.BACK) -> exit()
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.START) -> restart()
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
 		}
 	}
 	private fun restart() {
-		goOut()
+		exit()
 		game.reset()
 	}
 	private fun toMenu() {
-		goOut()
+		exit()
 		game.reset2Menu()
 	}
 	private fun exitApp() {
@@ -117,7 +118,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		if(window.stage == null)
 			goIn()
 		else
-			goOut()
+			exit()
 	}
 	private fun goIn() {
 		//TODO: pausar enemy system de creaer mas bichos
@@ -126,7 +127,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		Gdx.input.isCursorCatched = false
 		Status.paused = true
 	}
-	private fun goOut() {
+	private fun exit() {
 		window.remove()
 		Gdx.input.isCursorCatched = true
 		Status.paused = false

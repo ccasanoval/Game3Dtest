@@ -20,6 +20,7 @@ import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.systems.PlayerSystem
 import com.cesoft.cesdoom.util.Log
+import kotlin.math.absoluteValue
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -41,18 +42,6 @@ class SettingsGamepadSceen(internal val game: CesDoom, private val assets: Asset
 
     private val txt0 = arrayListOf<TextField>()
     private val txt1 = arrayListOf<TextField>()
-    /*private val txtStart = TextField("", assets.skin)
-    private val txtBack = TextField("", assets.skin)
-    private val txtFire = TextField("", assets.skin)
-    private val txtJump = TextField("", assets.skin)
-    private val txtMoveLeft = TextField("", assets.skin)
-    private val txtMoveRight = TextField("", assets.skin)
-    private val txtMoveUp = TextField("", assets.skin)
-    private val txtMoveDown = TextField("", assets.skin)
-    private val txtLookLeft = TextField("", assets.skin)
-    private val txtLookRight = TextField("", assets.skin)
-    private val txtLookUp = TextField("", assets.skin)
-    private val txtLookDown = TextField("", assets.skin)*/
 
     private var currentTxt: TextField? = null
 
@@ -68,40 +57,25 @@ class SettingsGamepadSceen(internal val game: CesDoom, private val assets: Asset
     //______________________________________________________________________________________________
     private fun initFromSettings() {
         txt0.clear()
-        for(i in 0 until Inputs.MAX) {
-            txt0.add(i, TextField(Settings.inputMapping0[i].toString(), assets.skin))
-            txt0[i].setOnscreenKeyboard {
-                txt0[i].selectAll()
-                currentTxt = txt0[i]
+		txt1.clear()
+        for(i in Inputs.Action.values()) {
+            txt0.add(i.value, TextField(Settings.inputMapping0[i.value].toString(), assets.skin))
+            txt0[i.value].setOnscreenKeyboard {
+                txt0[i.value].selectAll()
+                currentTxt = txt0[i.value]
+            }
+			txt1.add(i.value, TextField(Settings.inputMapping1[i.value].toString(), assets.skin))
+            txt1[i.value].setOnscreenKeyboard {
+                txt1[i.value].selectAll()
+                currentTxt = txt1[i.value]
             }
         }
-        txt1.clear()
-        for(i in 0 until Inputs.MAX) {
-            txt1.add(i, TextField(Settings.inputMapping1[i].toString(), assets.skin))
-            txt1[i].setOnscreenKeyboard {
-                txt1[i].selectAll()
-                currentTxt = txt1[i]
-            }
-        }
-
-        /*txtStart.text = Settings.inputMapping[0].toString()//TODO: Parametrizar todo
-        txtBack.text = Settings.inputMapping[1].toString()
-        txtFire.text = Settings.inputMapping[2].toString()
-        txtJump.text = Settings.inputMapping[3].toString()
-        txtMoveLeft.text = Settings.inputMapping[4].toString()
-        txtMoveRight.text = Settings.inputMapping[4].toString()
-        txtMoveUp.text = Settings.inputMapping[5].toString()
-        txtMoveDown.text = Settings.inputMapping[5].toString()
-        txtLookLeft.text = Settings.inputMapping[6].toString()
-        txtLookRight.text = Settings.inputMapping[6].toString()
-        txtLookUp.text = Settings.inputMapping[7].toString()
-        txtLookDown.text = Settings.inputMapping[7].toString()*/
     }
     //______________________________________________________________________________________________
     private fun saveToSettings() {
-        for(i in 0 until Inputs.MAX) {
-            Settings.inputMapping0[i] = txt0[i].text.toInt()
-            Settings.inputMapping1[i] = txt1[i].text.toInt()
+        for(i in Inputs.Action.values()) {
+            Settings.inputMapping0[i.value] = txt0[i.value].text.toInt()
+            Settings.inputMapping1[i.value] = txt1[i.value].text.toInt()
         }
         Settings.savePrefs()
     }
@@ -134,72 +108,12 @@ class SettingsGamepadSceen(internal val game: CesDoom, private val assets: Asset
         scrollTable.add(titleLabel).size(2*cx,2*cy).align(alignLabel)
         scrollTable.row()
 
-        for(i in 0 until Inputs.MAX) {
-            scrollTable.add(Label(Inputs.Names[i], assets.skin)).size(cx,cy).align(alignLabel)
-            scrollTable.add(txt0[i]).size(cx,cy).align(alignField)
-            scrollTable.add(txt1[i]).size(cx,cy).align(alignField)
+        for(i in Inputs.Action.values()) {
+            scrollTable.add(Label(Inputs.Names[i.value], assets.skin)).size(cx,cy).align(alignLabel)
+            scrollTable.add(txt0[i.value]).size(cx,cy).align(alignField)
+            scrollTable.add(txt1[i.value]).size(cx,cy).align(alignField)
             scrollTable.row()
         }
-/*
-        txtStart.setOnscreenKeyboard { currentTxt = txtStart; Log.e(tag, "txtStart: Keyboard -------------------------") }
-        scrollTable.add(Label("Start:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtStart).size(cx,cy).align(alignField)
-        scrollTable.row()
-        //
-        txtBack.setOnscreenKeyboard { currentTxt = txtBack; Log.e(tag, "txtBack: Keyboard -------------------------") }
-        scrollTable.add(Label("Back:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtBack).size(cx,cy).align(alignField)
-        scrollTable.row()
-        //
-        txtFire.setOnscreenKeyboard { currentTxt = txtFire; Log.e(tag, "txtFire: Keyboard -------------------------") }
-        scrollTable.add(Label("Fire:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtFire).size(cx,cy).align(alignField)
-        scrollTable.row()
-        //
-        txtJump.setOnscreenKeyboard { currentTxt = txtJump }
-        scrollTable.add(Label("Jump:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtJump).size(cx,cy).align(Align.center)
-        scrollTable.row()
-        //
-        txtMoveLeft.setOnscreenKeyboard { currentTxt = txtMoveLeft }
-        scrollTable.add(Label("Move Left:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtMoveLeft).size(cx,cy).align(Align.center)
-        scrollTable.row()
-        //
-        txtMoveRight.setOnscreenKeyboard { currentTxt = txtMoveRight }
-        scrollTable.add(Label("Move Right:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtMoveRight).size(cx,cy).align(Align.center)
-        scrollTable.row()
-        //
-        txtMoveUp.setOnscreenKeyboard { currentTxt = txtMoveUp }
-        scrollTable.add(Label("Move Up:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtMoveUp).size(cx,cy).align(Align.center)
-        scrollTable.row()
-        //
-        txtMoveDown.setOnscreenKeyboard { currentTxt = txtMoveDown }
-        scrollTable.add(Label("Move Down:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtMoveDown).size(cx,cy).align(Align.center)
-        scrollTable.row()
-        //
-        txtLookLeft.setOnscreenKeyboard { currentTxt = txtLookLeft }
-        scrollTable.add(Label("Look Left:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtLookLeft).size(cx,cy).align(Align.center)
-        scrollTable.row()
-        //
-        txtLookRight.setOnscreenKeyboard { currentTxt = txtLookRight }
-        scrollTable.add(Label("Look Right:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtLookRight).size(cx,cy).align(Align.center)
-        scrollTable.row()
-        //
-        txtLookUp.setOnscreenKeyboard { currentTxt = txtLookUp }
-        scrollTable.add(Label("Look Up:", assets.skin)).size(cx,cy).align(alignLabel)
-        scrollTable.add(txtLookUp).size(cx,cy).align(Align.center)
-        scrollTable.row()
-        //
-        txtLookDown.setOnscreenKeyboard { currentTxt = txtLookDown }
-        scrollTable.add(Label("Look Down:", assets.skin)).size(cx,cy).align(Align.left)
-        scrollTable.add(txtLookDown).size(cx,cy).align(Align.center)
-        scrollTable.row()*/
         //
         scrollTable.add(lblSeparator).size(50f, 50f).row()
 
@@ -279,7 +193,8 @@ class SettingsGamepadSceen(internal val game: CesDoom, private val assets: Asset
     }
     ///
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
-        Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : $value")
+		val v = if(value.absoluteValue < 0.1) 0f else value
+        Log.e(tag, "axisMoved:------------"+controller?.name+"--------------axis=$axisCode  value=$v")
         currentTxt?.let {
             it.text = axisCode.toString()
         }

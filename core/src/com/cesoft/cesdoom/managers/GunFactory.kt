@@ -38,7 +38,7 @@ object GunFactory {
 					for(i in 0 until model.nodes.size - 1)
 						model.nodes[i].scale.scl(0.03f)
 				}
-				val modelComponent = ModelComponent(model, Vector3(25f, -9f, -15f))
+				val modelComponent = ModelComponent(model, Vector3(25f, -15f, -15f))
 				modelComponent.instance.transform.rotate(0f, 1f, 0f, 185f)
 				modelComponent.instance.transform.rotate(1f, 0f, 0f, -7f)
 				entity.add(modelComponent).add(AnimationComponent(modelComponent.instance))

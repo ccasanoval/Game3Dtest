@@ -1,6 +1,5 @@
 package com.cesoft.cesdoom.input
 
-import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerListener
 import com.badlogic.gdx.controllers.PovDirection
@@ -11,7 +10,7 @@ import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class PlayerInput(val inputMapper: InputMapper) : ControllerListener {
+class PlayerInput(val mapper: InputMapper) : ControllerListener {
 	companion object {
 		val tag: String = PlayerInput::class.java.simpleName
 	}
@@ -30,18 +29,18 @@ class PlayerInput(val inputMapper: InputMapper) : ControllerListener {
     ///
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
         Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : $value")
-        inputMapper.axisMoved(axisCode, value)
+        mapper.axisMoved(axisCode, value)
         return false
     }
     ///
     override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
         Log.e(PlayerSystem.tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
-        inputMapper.buttonUp(buttonCode)
+        mapper.buttonUp(buttonCode)
         return false
     }
     override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
         Log.e(PlayerSystem.tag, "buttonDown:----------------"+controller?.name+" : "+buttonCode)
-        inputMapper.buttonDown(buttonCode)
+        mapper.buttonDown(buttonCode)
         return false
     }
     ///

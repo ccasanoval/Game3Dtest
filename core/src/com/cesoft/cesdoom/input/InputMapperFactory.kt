@@ -6,7 +6,7 @@ import com.badlogic.gdx.Input
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Screen to enter config and save to settings
 object InputMapperFactory {
-
+/*
     private fun addKeyboard(im: InputMapper) {
         im.addMapKey(Input.Keys.ENTER, Inputs.START)
         im.addMapKey(Input.Keys.DEL, Inputs.BACK)
@@ -140,6 +140,6 @@ object InputMapperFactory {
         addKeyboard(im)
         return im
     }
-
+*/
 
 }

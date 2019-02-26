@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.input.Inputs
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,4 +121,23 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 		window.setSize(width, height)
 	}
 
+	//______________________________________________________________________________________________
+	override fun act(delta: Float) {
+		when {
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.START) -> restart()
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.BACK) -> toMenu()
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
+		}
+	}
+	private fun restart() {
+		exit()
+		game.reset()
+	}
+	private fun toMenu() {
+		exit()
+		game.reset2Menu()
+	}
+	private fun exitApp() {
+		Gdx.app.exit()
+	}
 }

@@ -15,6 +15,7 @@ import com.cesoft.cesdoom.events.BulletEvent
 import com.cesoft.cesdoom.events.EnemyEvent
 import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.events.RenderEvent
+import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.managers.*
 import com.cesoft.cesdoom.systems.*
 import com.cesoft.cesdoom.ui.GameOverWidget
@@ -25,6 +26,7 @@ import com.cesoft.cesdoom.ui.GameWinWidget
 //
 class GameWorld(gameWinWidget: GameWinWidget,
 				gameOverWidget: GameOverWidget,
+				private val mapper: InputMapper,
 				private val assets: Assets) {
 
 	private val debugCollision = false
@@ -74,7 +76,8 @@ class GameWorld(gameWinWidget: GameWinWidget,
 				renderSystem.perspectiveCamera,//TODO: quitar referencias? usar eventos?
 				bulletSystem,
 				gameWinWidget,
-				gameOverWidget
+				gameOverWidget,
+				mapper
 				)//TODO: quitar referencias? usar eventos?
 		enemySystem = EnemySystem(enemyEventSignal, gameEventSignal, bulletEventSignal, renderEventSignal, assets)
 		gateSystem = GateSystem()

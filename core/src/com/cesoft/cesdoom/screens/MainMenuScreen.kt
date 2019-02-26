@@ -17,8 +17,6 @@ import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.Inputs
-import com.cesoft.cesdoom.input.InputMapperFactory
-import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.util.Log
 
 
@@ -188,15 +186,19 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	}
 	private var currentFocus = 0
 	private fun processInput() {
-		val forward = input.inputMapper.isAxisValuePositive(Inputs.MOVE_X) || input.inputMapper.isAxisValuePositive(Inputs.MOVE_Y)
-				|| input.inputMapper.isAxisValuePositive(Inputs.LOOK_X) || input.inputMapper.isAxisValuePositive(Inputs.LOOK_Y)
-		val backward = input.inputMapper.isAxisValueNegative(Inputs.MOVE_X) || input.inputMapper.isAxisValueNegative(Inputs.MOVE_Y)
-				|| input.inputMapper.isAxisValueNegative(Inputs.LOOK_X) || input.inputMapper.isAxisValueNegative(Inputs.LOOK_Y)
-		if(input.inputMapper.isButtonPressed(Inputs.START)) {
+		val forward = input.mapper.isAxisValuePositive(Inputs.Action.MOVE_X)
+				|| input.mapper.isAxisValuePositive(Inputs.Action.MOVE_Y)
+				|| input.mapper.isAxisValuePositive(Inputs.Action.LOOK_X)
+				|| input.mapper.isAxisValuePositive(Inputs.Action.LOOK_Y)
+		val backward = input.mapper.isAxisValueNegative(Inputs.Action.MOVE_X)
+				|| input.mapper.isAxisValueNegative(Inputs.Action.MOVE_Y)
+				|| input.mapper.isAxisValueNegative(Inputs.Action.LOOK_X)
+				|| input.mapper.isAxisValueNegative(Inputs.Action.LOOK_Y)
+		if(game.playerInput.mapper.isButtonPressed(Inputs.Action.START)) {
 			currentFocus = 0
 			game.reset()
 		}
-		else if(input.inputMapper.isButtonPressed(Inputs.BACK)) {
+		else if(input.mapper.isButtonPressed(Inputs.Action.EXIT)) {
 			currentFocus = 1
 			Gdx.app.exit()
 		}

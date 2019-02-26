@@ -11,7 +11,6 @@ import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.EnemyComponent
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.input.InputMapperFactory
 import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.screens.GameScreen
@@ -80,9 +79,7 @@ class CesDoom(
 	private var screen: Screen? = null
 	private lateinit var gameUI: GameUI
 	private lateinit var assets: Assets
-
-	var playerInput = PlayerInput(InputMapperFactory.getCes())
-
+	lateinit var playerInput: PlayerInput
 	init {
 	    Log.debugMode = debugMode
 	}
@@ -91,11 +88,10 @@ class CesDoom(
 	override fun create() {
 		Log.e(tag, "CREATE--------------------------------------------------------------------------------")
 		Settings.loadPrefs()
-
+		playerInput = PlayerInput(Settings.getInputMapper())
 		isMobile = Gdx.app.type == Application.ApplicationType.Android
 		assets = Assets()
 		gameUI = GameUI(this, assets)
-
 		Gdx.input.isCatchBackKey = true
 		setScreen(MainMenuScreen(this, assets))
 	}
