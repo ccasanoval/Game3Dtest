@@ -9,7 +9,6 @@ import com.cesoft.cesdoom.components.SwitchComponent
 import com.cesoft.cesdoom.entities.Ammo
 import com.cesoft.cesdoom.entities.Health
 import com.cesoft.cesdoom.map.MapGraphFactory
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +32,7 @@ object MazeFactory {
 	fun create(engine: Engine, assets: Assets) {
 		WallFactory.iniMaterials(assets)
 
-		when (PlayerComponent.currentLevel) {
+		when(PlayerComponent.currentLevel) {
 			0 -> createLevel0(engine, assets)
 			1 -> createLevel1(engine, assets)
 			2 -> createLevel2(engine, assets)
@@ -41,20 +40,20 @@ object MazeFactory {
 		mapFactory.compile()
 
 		//----- TEST
-//		mapFactory.print()
-//		Log.e(tag, "")
-//		Log.e(tag, "")
-//		mapFactory.print2()
-//        Log.e(tag, "----------------------------------------------------------------------------")
-//        Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].levelAccess.size)
-//        for(access in mapFactory.map[0].levelAccess) {
-//            Log.e(tag, "access----------------------- $access")
-//        }
-//		Log.e(tag, "----------------------------------------------------------------------------")
-//		Log.e(tag, " LEVEL ACCESSES:LEVEL(1) "+ mapFactory.map[1].levelAccess.size)
-//		for(access in mapFactory.map[1].levelAccess) {
-//			Log.e(tag, "access----------------------- $access")
-//		}
+		mapFactory.print()
+		com.cesoft.cesdoom.util.Log.e(tag, "")
+		com.cesoft.cesdoom.util.Log.e(tag, "")
+		mapFactory.print2()
+		com.cesoft.cesdoom.util.Log.e(tag, "----------------------------------------------------------------------------")
+		com.cesoft.cesdoom.util.Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].levelAccess.size)
+        for(access in mapFactory.map[0].levelAccess) {
+			com.cesoft.cesdoom.util.Log.e(tag, "access----------------------- $access")
+        }
+		com.cesoft.cesdoom.util.Log.e(tag, "----------------------------------------------------------------------------")
+		com.cesoft.cesdoom.util.Log.e(tag, " LEVEL ACCESSES:LEVEL(1) "+ mapFactory.map[1].levelAccess.size)
+		for(access in mapFactory.map[1].levelAccess) {
+			com.cesoft.cesdoom.util.Log.e(tag, "access----------------------- $access")
+		}
 //		//
 //		Log.e(tag, "----------------------------------------------------------------------------")
 //		Log.e(tag, "--------------------------- ${PlayerComponent.currentLevel} ------------------------------------------")
@@ -236,6 +235,12 @@ object MazeFactory {
 				rampFactory.create(mapFactory, e, Vector3(x*cx, high2, z*cz), angleX=0f, angleY=90f, angleZ=90f, type=type)
 			}
 		}
+		/// Extra Gates
+		GateFactory.create(mapFactory, e, Vector3(+GateComponent.LONG + .2f, high2, 0f), 0f, " E ", assets).unlock()
+		GateFactory.create(mapFactory, e, Vector3(-GateComponent.LONG - .2f, high2, 0f), 0f, " F ", assets).unlock()
+		/// Extra Ramps
+		rampFactory.create(mapFactory, e, Vector3(-2*lng2, high+2f, +4.7f*lng2), angleX = +45f, angleZ = 90f)
+		rampFactory.create(mapFactory, e, Vector3(+2*lng2, high+2f, -4.7f*lng2), angleX = -45f, angleZ = 90f)
 	}
 
 
@@ -256,5 +261,11 @@ object MazeFactory {
 				rampFactory.create(mapFactory, e, Vector3(x*cx, high2, z*cz), angleX=0f, angleY=90f, angleZ=90f, type=type)
 			}
 		}
+		/// Extra Gates
+		GateFactory.create(mapFactory, e, Vector3(+GateComponent.LONG + .2f, high2, 0f), 0f, " E ", assets).unlock()
+		GateFactory.create(mapFactory, e, Vector3(-GateComponent.LONG - .2f, high2, 0f), 0f, " F ", assets).unlock()
+		/// Extra Ramps
+		rampFactory.create(mapFactory, e, Vector3(-2*lng2, high+2f, +4.7f*lng2), angleX = +45f, angleZ = 90f)
+		rampFactory.create(mapFactory, e, Vector3(+2*lng2, high+2f, -4.7f*lng2), angleX = -45f, angleZ = 90f)
 	}
 }

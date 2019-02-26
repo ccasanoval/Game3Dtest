@@ -7,7 +7,7 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //TODO: si monstruo en planta distinta que player, monstruo ha de buscar en mapa de cambios de nivel para encontrar la entrada al otro mapa? (saltos or rampas)
-class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
+class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
 
     val map = arrayListOf(
             MapGraph(width, height, scale),
@@ -66,15 +66,26 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
 
     fun print() {
         for(level in 0 until map.size) {
+            val map0 = map[level]
             Log.e("MAP", "\n------------------------------------------------ LEVEL $level ------------------------------------------------\n")
             var col = " \t\t\t"
-            for(x in 0 until map[level].cx)
+            for(x in 0 until map0.cx)
                 col += " " + (x % 10)
             Log.e("MAP", col)
-            for(y in 0 until map[level].cy) {
-                var row = "$y \t\t\t"
-                for(x in 0 until map[level].cx) {
-                    row += if (map[level].getNode(x, y).isValid) ". " else "1 "
+            for(y in 0 until map0.cy) {
+                var row = "$y    ".substring(0,5)
+                for(x in 0 until map0.cx) {
+                    var isAccess = false
+                    for(la in map0.levelAccess) {
+                        val c = map0.toMapGraphCoord(la)
+                        if(c.x == x && c.y == y) {
+                            row += "A "
+                            isAccess = true
+                            break
+                        }
+                    }
+                    if(!isAccess)
+                        row += if(map0.getNode(x, y).isValid) ". " else "1 "
                 }
                 Log.e("MAP", row)
             }
@@ -82,15 +93,26 @@ class MapGraphFactory(val width: Float, val height: Float, scale: Int) {
     }
     fun print2() {
         for (level in 0 until map.size) {
+            val map0 = map[level]
             Log.e("MAP", "\n------------------------------------------------ LEVEL $level ------------------------------------------------\n")
             var col = "  \t\t\t"
-            for(x in 0 until map[level].cx)
+            for(x in 0 until map0.cx)
                 col += " " + (x % 10)
             Log.e("MAP", col)
-            for(y in 0 until map[level].cy) {
-                var row = "$y \t\t\t"
-                for(x in 0 until map[level].cx) {
-                    row += mapData[level][map[level].calcIndex(x, y)]
+            for(y in 0 until map0.cy) {
+                var row = "$y    ".substring(0,5)
+                for(x in 0 until map0.cx) {
+                    var isAccess = false
+                    for(la in map0.levelAccess) {
+                        val c = map0.toMapGraphCoord(la)
+                        if(c.x == x && c.y == y) {
+                            row += "A"
+                            isAccess = true
+                            break
+                        }
+                    }
+                    if(!isAccess)
+                        row += mapData[level][map0.calcIndex(x, y)]
                 }
                 Log.e("MAP", row)
             }

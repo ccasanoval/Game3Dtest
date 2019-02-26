@@ -15,8 +15,11 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 		private val mapper: ComponentMapper<EnemyComponent> = ComponentMapper.getFor(EnemyComponent::class.java)
 		fun get(entity: Entity):EnemyComponent = mapper.get(entity)
 
-		const val MASS = 100f
-		const val RADIO = 18f
+		private const val MASS0 = 100f
+		private const val MASS1 = 33f
+		private const val RADIO0 = 18f
+		private const val RADIO1 = 9f
+		//
 		const val DELAY_ATTACK = 500
 		const val BITE_PAIN = 10
 		const val KILL_REWARD = 20
@@ -35,6 +38,17 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 		REINCARNATING,
 	}
 
+	val mass: Float
+		get() = when(type) {
+			TYPE.MONSTER0 -> MASS0
+			TYPE.MONSTER1 -> MASS1
+		}
+	val radio: Float
+		get() = when(type) {
+			TYPE.MONSTER0 -> RADIO0
+			TYPE.MONSTER1 -> RADIO1
+		}
+
 	var orientation: Double = 0.0
 	var position = Vector3()
 	var nextStep3D = Vector3()
@@ -46,7 +60,6 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 	val player2D: Vector2 = Vector2.Zero//TODO: Make 3D?
 	var path: ArrayList<Vector2>? = null
 	var pathIndex = 0
-
 
 	var currentAnimation = EnemyComponent.ACTION.IDLE
 	var particleEffect: ParticleEffect? = null

@@ -90,7 +90,6 @@ class PlayerSystem(
 
 	//______________________________________________________________________________________________
 	override fun update(delta: Float) {
-		checkCtrl()
 		checkGameOver(delta)
 		checkYouWin(delta)
 		updateMovement(delta)
@@ -103,20 +102,6 @@ class PlayerSystem(
 		processEvents()
 	}
 
-	private fun checkCtrl() {
-        /*
-		if(inputMapCtr?.isButtonPressed(CtrMappings.BTN_MENU) == true) {
-
-		}
-		else if(inputMapCtr?.isButtonPressed(CtrMappings.BTN_BACK) == true) {
-			Log.e(tag, "checkCtrl:BACK:---------------------------------------------------------")
-		}*/
-        if(inputMap.isButtonPressed(Inputs.BACK)) {
-            Log.e(tag, "checkCtrl:BACK:---------------------------------------------------------")
-            //TODO: Send signal?
-            //gameUi.pauseWidget.handleUpdates()
-        }
-	}
 
 	//______________________________________________________________________________________________
 	private fun processEvents() {
@@ -237,7 +222,6 @@ class PlayerSystem(
 //		else {
 //			updateTranslationDesktop(delta)
 //		}
-		posTemp.y = 0f
 		posTemp.y = bulletComponent.rigidBody.linearVelocity.y
 		bulletComponent.rigidBody.linearVelocity = posTemp
 	}
@@ -246,6 +230,8 @@ class PlayerSystem(
 		var isMoving = false
 		val offsetHorizontal = +0.60f
 		val offsetVertical = +0.20f
+
+		Log.e(tag, "updateTranslationMobile-------- ${inputMap.isAxisValuePositive(Inputs.MOVE_Y)}")
 
 		if(ControllerWidget.movementVector.y > +offsetVertical || inputMap.isAxisValuePositive(Inputs.MOVE_Y)) {
 			posTemp.add(camera.direction)

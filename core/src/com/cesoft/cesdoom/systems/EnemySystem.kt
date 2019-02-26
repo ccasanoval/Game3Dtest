@@ -18,10 +18,7 @@ import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.events.*
-import com.cesoft.cesdoom.managers.EnemyActions
-import com.cesoft.cesdoom.managers.EnemyFactory
-import com.cesoft.cesdoom.managers.MazeFactory
-import com.cesoft.cesdoom.managers.WallFactory
+import com.cesoft.cesdoom.managers.*
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +33,7 @@ class EnemySystem(
 
 	companion object {
 		private val tag: String = EnemySystem::class.java.simpleName
-		private const val ATTACK_RADIO = EnemyComponent.RADIO + PlayerComponent.RADIO + 4
+		private fun attackRadio(enemy: EnemyComponent) = PlayerComponent.RADIO + 4 + enemy.radio
 	}
 
 	private var player: Player? = null
@@ -142,11 +139,11 @@ class EnemySystem(
 				force = 0f
 			}
 			StatusMov.RUN -> {
-				force = if (CesDoom.isMobile) 1600f else 2200f
+				force = forceRun(enemy)
 				setRunning(entity)
 			}
 			StatusMov.WALK -> {
-				force = if (CesDoom.isMobile) 800f else 900f
+				force = forceWalk(enemy)
 				setWalking(entity)
 			}
 		}
@@ -158,10 +155,22 @@ class EnemySystem(
 		}
 
 		/// Mueve
-		val isWalking = distPlayer > 2*ATTACK_RADIO && (statusMov == StatusMov.WALK || statusMov == StatusMov.RUN)
+		val isWalking = distPlayer > 2*attackRadio(enemy) && (statusMov == StatusMov.WALK || statusMov == StatusMov.RUN)
 		val isQuiet = statusMov == StatusMov.QUIET
 		moveEnemy(entity, playerPosition, isWalking, isQuiet, force, delta)
 	}
+	private fun forceRun(enemy: EnemyComponent): Float {
+		return if(CesDoom.isMobile) {
+			if(enemy.type == EnemyComponent.TYPE.MONSTER0)
+				1600f
+			else
+				1000f
+		}
+		else {
+			2200f
+		}
+	}
+	private fun forceWalk(enemy: EnemyComponent) = if(CesDoom.isMobile) 800f else 900f
 	//______________________________________________________________________________________________
 	private fun moveEnemy(entity: Entity, playerPosition: Vector3, isWalking: Boolean, isQuiet: Boolean, force: Float, delta: Float) {
 
@@ -237,37 +246,34 @@ class EnemySystem(
             //Log.e(tag, "Restaurar misma planta ----------------------------------------------- id=${enemy.id}  /  access=${enemy.player2D} ")
 		}
 		//Misma planta: Buscar en mapa de obstaculos correspondiente
-		if(true) {
+		val player2D = if(enemy.isAccessLevelPath) MazeFactory.mapFactory.map[levelEnemy].getNearerLevelAccess(enemy.currentPos2D) //enemy.player2D
+						else Vector2(playerPosition.x, playerPosition.z)
+		//if(enemy.isAccessLevelPath)Log.e(tag, "--------------------------- enemy.isAccessLevelPath !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $player2D ")
+		if(player2D.dst2(enemy.player2D) > WallFactory.LONG) {//TODO:otra medida max?
+			//Log.e(tag, "--------------------------- RECALCULAR POR DISTANCIA  id=${enemy.id}    / $player2D ")
+			recalcular = true
+		}
+		if(enemy.stepCounter++ > 30) {
+			//Log.e(tag, "--------------------------- RECALCULAR LIMITE DE PASOS  id=${enemy.id}    / $player2D ")
+			enemy.stepCounter = 0
+			recalcular = true
+		}
 
-			val player2D = if(enemy.isAccessLevelPath) MazeFactory.mapFactory.map[levelEnemy].getNearerLevelAccess(enemy.currentPos2D) //enemy.player2D
-							else Vector2(playerPosition.x, playerPosition.z)
-			//if(enemy.isAccessLevelPath)Log.e(tag, "--------------------------- enemy.isAccessLevelPath !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $player2D ")
-			if(player2D.dst2(enemy.player2D) > WallFactory.LONG) {//TODO:otra medida max?
-				//Log.e(tag, "--------------------------- RECALCULAR POR DISTANCIA  id=${enemy.id}    / $player2D ")
-				recalcular = true
-			}
-			if(enemy.stepCounter++ > 30) {
-				//Log.e(tag, "--------------------------- RECALCULAR LIMITE DE PASOS  id=${enemy.id}    / $player2D ")
-				enemy.stepCounter = 0
-				recalcular = true
-			}
-
-			//else if(player2D.dst2(enemy.player2D) != 0f) Log.e(tag, "---------------------------${player2D.dst2(enemy.player2D)}")
-			if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
-				//Si distancia < x ve a por ella -> rampa
-				//TODO: cuando los enemigos pasan por debajo de rampa y player sube rampa, enemigo se bloquea debajo de rampa:
-				//TODO   se cree que ya ha llegado a destino, deberia dar la vuelta y entrar por inicio de rampa!!!
-				//Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  / $player2D  /  path size=${enemy.path?.size}  ")
-				recalcular = true
-			}
-			//
-			if(recalcular) {
-				enemy.player2D.set(player2D)
-				recalcPath(enemy, levelEnemy)
-			}
-			else {
-				usePath(enemy)
-			}
+		//else if(player2D.dst2(enemy.player2D) != 0f) Log.e(tag, "---------------------------${player2D.dst2(enemy.player2D)}")
+		if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
+			//Si distancia < x ve a por ella -> rampa
+			//TODO: cuando los enemigos pasan por debajo de rampa y player sube rampa, enemigo se bloquea debajo de rampa:
+			//TODO   se cree que ya ha llegado a destino, deberia dar la vuelta y entrar por inicio de rampa!!!
+			//Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  / $player2D  /  path size=${enemy.path?.size}  ")
+			recalcular = true
+		}
+		//
+		if(recalcular) {
+			enemy.player2D.set(player2D)
+			recalcPath(enemy, levelEnemy)
+		}
+		else {
+			usePath(enemy)
 		}
 	}
 
@@ -309,11 +315,11 @@ class EnemySystem(
 		val status = StatusComponent.get(entity)
 
 		/// No está en condiciones de atacar: herido, muerto o sobre el suelo	//TODO: sobre suelo: Raycast para ver distancia a suelo.... EnemyComponent.RADIO + 2)
-		return if(status.isAching() || status.isDead() || enemy.position.y > WallFactory.HIGH*2 + EnemyComponent.RADIO) {
+		return if(status.isAching() || status.isDead() || enemy.position.y > 2*WallFactory.HIGH + 2*RampFactory.THICK + enemy.radio) {
 			StatusMov.QUIET
 		}
 		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
-		else if(distPlayer < ATTACK_RADIO)
+		else if(distPlayer < attackRadio(enemy))
 			StatusMov.ATTACK
 		/// Esta cerca, corre a por el
 		else if (distPlayer < 180f)

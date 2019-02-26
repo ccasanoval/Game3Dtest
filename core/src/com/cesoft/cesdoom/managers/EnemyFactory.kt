@@ -51,7 +51,6 @@ class EnemyFactory(assets: Assets) {
         }
     }
 
-    //private var countSpawnPosition = 0
     private fun getNextEnemy(id: Int): Enemy {
         val enemy = allEnemies[id]
         //val pos = when(countSpawnPosition++ % MAX_ENEMIES) {
@@ -78,7 +77,6 @@ class EnemyFactory(assets: Assets) {
 
             else -> Vector3(+250f, 150f, +250f)
         }
-        Log.e(tag, "getNextEnemy id=$id ------------------------------ pos=$pos")
         resetEntity(enemy, pos)
         return enemy
     }
@@ -98,7 +96,6 @@ class EnemyFactory(assets: Assets) {
         if(Status.paused) lastSpawn = System.currentTimeMillis()
         if(System.currentTimeMillis() < lastSpawn + SPAWN_DELAY) return
         lastSpawn = System.currentTimeMillis()
-
         if(enemies.size() < MAX_ENEMIES) {
             val id = getNextEnemyId()
             if(id >= allEnemies.size) return//Max enemy number reached
@@ -131,6 +128,7 @@ class EnemyFactory(assets: Assets) {
     private fun resetEntity(entity: Entity, position: Vector3) {
         /// Components
         resetComponents(entity)
+
         /// Model
         val model = ModelComponent.get(entity)
         if (model.blendingAttribute != null)
@@ -157,7 +155,7 @@ class EnemyFactory(assets: Assets) {
         enemy.player2D.set(Vector2.Zero)
         enemy.path = null
         enemy.pathIndex = 0
-
+        //
         val status = StatusComponent.get(entity)
         status.alive = false
         //status.isSaltando = true
@@ -208,15 +206,14 @@ class EnemyFactory(assets: Assets) {
         enemy.particleEffect = assets.newParticleEffect()//particleEffect
 
         /// Collision
-        val mass: Float = if(type == EnemyComponent.TYPE.MONSTER0) EnemyComponent.MASS else EnemyComponent.MASS/3
-        val shape = btSphereShape(EnemyComponent.RADIO - 1)////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
-        shape.calculateLocalInertia(mass, enemy.position)
-        val rigidBodyInfo = btRigidBody.btRigidBodyConstructionInfo(mass,null, shape, enemy.position)
+        val shape = btSphereShape(enemy.radio)  ////btCylinderShape(Vector3(RADIO/2f,12f,14f))//btBoxShape(Vector3(diametro, diametro, diametro))//btCylinderShape(Vector3(14f,5f,14f))// btCapsuleShape(3f, 6f)
+        shape.calculateLocalInertia(enemy.mass, enemy.position)
+        val rigidBodyInfo = btRigidBody.btRigidBodyConstructionInfo(enemy.mass,null, shape, enemy.position)
         val rigidBody = btRigidBody(rigidBodyInfo)
         rigidBody.userData = entity
         rigidBody.motionState = MotionState(modelComponent.instance.transform)
-        rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT//CF_CUSTOM_MATERIAL_CALLBACK
-        rigidBody.contactCallbackFilter = 0//BulletComponent.PLAYER_FLAG //BulletComponent.SHOT_FLAG or
+        rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT
+        rigidBody.contactCallbackFilter = 0
         rigidBody.contactCallbackFlag = BulletComponent.ENEMY_FLAG
         rigidBody.userValue = BulletComponent.ENEMY_FLAG
         rigidBody.friction = 0f

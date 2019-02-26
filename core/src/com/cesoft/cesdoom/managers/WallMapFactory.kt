@@ -32,5 +32,5 @@ object WallMapFactory {
                     for(x_ in z_..z_+(long*0.7971f).toInt())
                         mapFactory.addCollider(level, pos.x + x_, pos.z + x_)
         }
-     }
+    }
 }
