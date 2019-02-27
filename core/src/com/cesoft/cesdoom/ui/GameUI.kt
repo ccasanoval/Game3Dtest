@@ -55,7 +55,6 @@ class GameUI(game: CesDoom, assets: Assets) {
 		fpsLabel.setText("FPS: ${Gdx.graphics.framesPerSecond}")
 		if(previousLevel != PlayerComponent.currentLevel) {
 			previousLevel = PlayerComponent.currentLevel
-			com.cesoft.cesdoom.util.Log.e("GameUI", "-------UPDATE--------")
 			levelLabel.setText("LEVEL: ${PlayerComponent.currentLevel}")
 		}
 		stage.act(delta)
@@ -71,5 +70,9 @@ class GameUI(game: CesDoom, assets: Assets) {
 
 	fun dispose() {
 		stage.dispose()
+	}
+
+	fun pause() {
+		pauseWidget.pauseOnOf()
 	}
 }

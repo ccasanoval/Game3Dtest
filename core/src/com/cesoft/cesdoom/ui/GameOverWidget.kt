@@ -20,6 +20,7 @@ import com.cesoft.cesdoom.input.Inputs
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Actor() {
+	private val mapper = game.playerInput.mapper
 	private var image: Image = Image(Texture(Gdx.files.internal("data/gameOver.png")))
 	private var window: Window
 	private var btnRestart: TextButton
@@ -115,9 +116,9 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	//______________________________________________________________________________________________
 	override fun act(delta: Float) {
 		when {
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.START) -> restart()
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.BACK) -> toMenu()
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
+			mapper.isButtonPressed(Inputs.Action.START) -> restart()
+			mapper.isButtonPressed(Inputs.Action.BACK) -> toMenu()
+			mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
 		}
 	}
 	private fun restart() {

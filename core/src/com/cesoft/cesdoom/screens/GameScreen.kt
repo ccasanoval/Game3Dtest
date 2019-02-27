@@ -3,20 +3,21 @@ package com.cesoft.cesdoom.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.controllers.Controllers
+import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.Inputs
-import com.cesoft.cesdoom.input.PlayerInput
 import com.cesoft.cesdoom.ui.GameUI
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameScreen(private val playerInput: PlayerInput, private val gameUI: GameUI, assets: Assets) : Screen {
-	private var gameWorld = GameWorld(gameUI.gameWinWidget, gameUI.gameOverWidget, playerInput.mapper, assets)
+class GameScreen(private val game: CesDoom, private val gameUI: GameUI, assets: Assets) : Screen {
+	private val input = game.playerInput
+	private var gameWorld = GameWorld(gameUI.gameWinWidget, gameUI.gameOverWidget, input.mapper, assets)
 
 	companion object {
 		val tag: String = GameScreen::class.java.simpleName
@@ -24,7 +25,7 @@ class GameScreen(private val playerInput: PlayerInput, private val gameUI: GameU
 	init {
 		Status.paused = false
 		Gdx.input.inputProcessor = gameUI.stage
-		Controllers.addListener(playerInput)
+		Controllers.addListener(input)
 		Sounds.playMusic()
 	}
 
@@ -35,10 +36,18 @@ class GameScreen(private val playerInput: PlayerInput, private val gameUI: GameU
 		gameUI.render()
 	}
 	private fun processInput() {
-		/*when {
-			playerInput.mapper.isButtonPressed(Inputs.Action.BACK) -> pause()
-			playerInput.mapper.isButtonPressed(Inputs.Action.EXIT) -> pause()
-		}*/
+		when {
+			input.mapper.isButtonPressed(Inputs.Action.BACK) -> {
+				//TODO: Send message to go to pause widget
+				gameUI.pause()
+				com.cesoft.cesdoom.util.Log.e(tag, "cccccccccccccccccccccccccccccccccccccccccccccccccc")
+			}
+			input.mapper.isButtonPressed(Inputs.Action.EXIT) -> {
+				//TODO: Send message to go to menu
+				com.cesoft.cesdoom.util.Log.e(tag, "dddddddddddddddddddddddddddddddddddddddddddddddddd")
+				game.reset2Menu()
+			}
+		}
 	}
 
 	override fun resize(width: Int, height: Int) {

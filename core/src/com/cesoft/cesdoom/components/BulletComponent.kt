@@ -27,6 +27,7 @@ class BulletComponent(
 		const val AMMO_FLAG = 1 shl 6		// 64
 		const val HEALTH_FLAG = 1 shl 7		// 128
 		const val GROUND_FLAG = 1 shl 8		// 256
+		const val STEEL_RAMP_FLAG = 1 shl 9	// 512
 		//const val CF_OCCLUDER_OBJECT = 1 shl 9//512
 
 		private const val INDEX_MASK = 0x7FFF0000

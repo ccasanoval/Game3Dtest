@@ -20,6 +20,7 @@ import com.cesoft.cesdoom.input.Inputs
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: MVP !!
 class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets: Assets) : Actor() {
+	private val mapper = game.playerInput.mapper
 	private val image: Image = Image(Texture(Gdx.files.internal("data/gameWin.png")))
 	private val window: Window
 	private var btnRestart: TextButton
@@ -115,6 +116,7 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 				(CesDoom.VIRTUAL_WIDTH - window.width) / 2,
 				(CesDoom.VIRTUAL_HEIGHT - window.height) / 2)
 	}
+
 	//______________________________________________________________________________________________
 	override fun setSize(width: Float, height: Float) {
 		super.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
@@ -124,9 +126,9 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 	//______________________________________________________________________________________________
 	override fun act(delta: Float) {
 		when {
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.START) -> restart()
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.BACK) -> toMenu()
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
+			mapper.isButtonPressed(Inputs.Action.START) -> restart()
+			mapper.isButtonPressed(Inputs.Action.BACK) -> toMenu()
+			mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
 		}
 	}
 	private fun restart() {

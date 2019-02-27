@@ -26,7 +26,7 @@ class BulletSystem(
 
 	companion object {
 		private val tag : String = BulletSystem::class.java.simpleName
-		private const val GRAVITY = -200f
+		private const val GRAVITY = -300f
 	}
 
 	private val eventQueue = BulletQueue()

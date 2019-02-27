@@ -99,10 +99,17 @@ class PlayerSystem(
 		processEvents()
 	}
 	private fun processInputs() {
+		/* ya lo hago en GameScreen ????
 		when {
-			inputMap.isButtonPressed(Inputs.Action.BACK) -> Log.e(tag, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-			inputMap.isButtonPressed(Inputs.Action.EXIT) -> Log.e(tag, "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
-		}
+			inputMap.isButtonPressed(Inputs.Action.BACK) -> {
+				//TODO: Send message to go to pause widget
+				Log.e(tag, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+			}
+			inputMap.isButtonPressed(Inputs.Action.EXIT) -> {
+				//TODO: Send message to go to menu
+				Log.e(tag, "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+			}
+		}*/
 	}
 
 	//______________________________________________________________________________________________
@@ -287,12 +294,6 @@ class PlayerSystem(
 	private var deltaFire = 100f
 	private fun updateWeapon(delta: Float) {
 
-		/*inputMapCtr?.let {
-			isFiringPad = it.isButtonPressed(CtrMappings.BTN_FIRE1)
-					|| it.isButtonPressed(CtrMappings.BTN_FIRE2)
-					|| it.isButtonPressed(CtrMappings.BTN_FIRE3)
-		}*/
-
 		val isFiring = (ControllerWidget.isFiring
 				|| Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
 				|| inputMap.isButtonPressed(Inputs.Action.FIRE))
@@ -318,24 +319,6 @@ class PlayerSystem(
 			}
 		}
 
-		/*else if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) || btnB) {
-			if(deltaReload > 5f) {
-				deltaReload = 0f
-				GunFactory.animate(gun, GunComponent.ACTION.RELOAD)
-			}
-		}
-		else if(Gdx.input.isKeyPressed(Input.Keys.ALT_RIGHT)) {
-			if(deltaReload > 5f) {
-				deltaReload = 0f
-				GunFactory.animate(gun, GunComponent.ACTION.IDLE)
-			}
-		}
-		else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)) {
-			if(deltaReload > 5f) {
-				deltaReload = 0f
-				GunFactory.animate(gun, GunComponent.ACTION.DRAW)
-			}
-		}*/
 		AnimationComponent.get(gun).update(delta)
 	}
 	//______________________________________________________________________________________________
@@ -364,10 +347,17 @@ class PlayerSystem(
 			for(i in rayTestAll.collisionObjects.size()-1 downTo 0 ) {
 				val collider = rayTestAll.collisionObjects.atConst(i)
 				if(collider is btRigidBody) {
+
+					//Por que si mira hacia abajo golpea antes al suelo ??
+//					if(collider.userValue == BulletComponent.STEEL_RAMP_FLAG
+//							|| collider.userValue == BulletComponent.SCENE_FLAG) {
+//						Log.e(tag, "checkBulletKillEnemy : $i : Bullet : suelo o rampa-acero -----------------")
+//					}
 					if(collider.userValue == BulletComponent.SCENE_FLAG
+							//|| collider.userValue == BulletComponent.GROUND_FLAG		//???
+							//|| collider.userValue == BulletComponent.STEEL_RAMP_FLAG	//???
 							|| collider.userValue == BulletComponent.GATE_FLAG
 							|| collider.userValue == BulletComponent.SWITCH_FLAG
-							//|| collider.userValue == BulletComponent.GROUND_FLAG
 							|| collider.userValue == BulletComponent.AMMO_FLAG
 							|| collider.userValue == BulletComponent.HEALTH_FLAG) {
 						// Dio primero con una pared, bala muerta

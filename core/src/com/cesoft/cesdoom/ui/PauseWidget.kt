@@ -62,12 +62,11 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	}
 
 	//______________________________________________________________________________________________
-	//TODO: hacer que inputmapper conecte con esto
 	private fun setListeners() {
 		super.addListener(object : InputListener() {
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
 				if(keycode == Input.Keys.ESCAPE || keycode == Input.Keys.BACK) {
-					handleUpdates()
+					pauseOnOf()
 					return true
 				}
 				return false
@@ -112,7 +111,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	}
 
 	//______________________________________________________________________________________________
-	private fun handleUpdates() {
+	fun pauseOnOf() {
 		if(Status.gameOver || Status.gameWin)
 			return
 		if(window.stage == null)
@@ -121,7 +120,6 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 			exit()
 	}
 	private fun goIn() {
-		//TODO: pausar enemy system de creaer mas bichos
 		game.pauseGame()
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false

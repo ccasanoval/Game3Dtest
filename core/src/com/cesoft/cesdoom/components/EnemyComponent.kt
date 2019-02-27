@@ -15,14 +15,15 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 		private val mapper: ComponentMapper<EnemyComponent> = ComponentMapper.getFor(EnemyComponent::class.java)
 		fun get(entity: Entity):EnemyComponent = mapper.get(entity)
 
-		private const val MASS0 = 100f
-		private const val MASS1 = 33f
-		private const val RADIO0 = 18f
+		private const val MASS0 = 110f
+		private const val MASS1 = 35f
+		private const val RADIO0 = 16f
 		private const val RADIO1 = 10f
+		private const val KILL_REWARD0 = 20
+		private const val KILL_REWARD1 = 10
 		//
 		const val DELAY_ATTACK = 500
 		const val BITE_PAIN = 10
-		const val KILL_REWARD = 20
 	}
 
 	enum class TYPE {
@@ -38,6 +39,11 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 		REINCARNATING,
 	}
 
+	val reward: Int
+		get() = when(type) {
+			TYPE.MONSTER0 -> KILL_REWARD0
+			TYPE.MONSTER1 -> KILL_REWARD1
+		}
 	val mass: Float
 		get() = when(type) {
 			TYPE.MONSTER0 -> MASS0

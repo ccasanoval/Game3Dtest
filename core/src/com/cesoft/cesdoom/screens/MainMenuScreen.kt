@@ -23,6 +23,7 @@ import com.cesoft.cesdoom.util.Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Screen {
+	private val input = game.playerInput
 	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image
 	private var titleImage: Image
@@ -32,9 +33,6 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	private var aboutButton: TextButton = TextButton(assets.getString(Assets.SOBRE), assets.skin)
 	private var leaderBoardButton: TextButton = TextButton(assets.getString(Assets.PUNTUACIONES), assets.skin)
 	private var gpgsSignInButton: TextButton = TextButton(assets.getString(Assets.GPGS_SIGN_IN), assets.skin)
-
-	private val input = game.playerInput//PlayerInput(InputMapperFactory.getCes())
-
 
 	init {
 		PlayerComponent.isGodModeOn = false

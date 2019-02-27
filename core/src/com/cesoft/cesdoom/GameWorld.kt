@@ -26,7 +26,7 @@ import com.cesoft.cesdoom.ui.GameWinWidget
 //
 class GameWorld(gameWinWidget: GameWinWidget,
 				gameOverWidget: GameOverWidget,
-				private val mapper: InputMapper,
+				mapper: InputMapper,
 				private val assets: Assets) {
 
 	private val debugCollision = false
@@ -43,7 +43,7 @@ class GameWorld(gameWinWidget: GameWinWidget,
 	private var gateSystem: GateSystem
 	private var ammoSystem: AmmoSystem
 	private var healthSystem: HealthSystem
-	var renderSystem: RenderSystem
+	private var renderSystem: RenderSystem
 
 	private var engine: Engine = Engine()
 	private lateinit var player: Entity
@@ -78,7 +78,7 @@ class GameWorld(gameWinWidget: GameWinWidget,
 				gameWinWidget,
 				gameOverWidget,
 				mapper
-				)//TODO: quitar referencias? usar eventos?
+				)
 		enemySystem = EnemySystem(enemyEventSignal, gameEventSignal, bulletEventSignal, renderEventSignal, assets)
 		gateSystem = GateSystem()
 		ammoSystem = AmmoSystem(gameEventSignal)

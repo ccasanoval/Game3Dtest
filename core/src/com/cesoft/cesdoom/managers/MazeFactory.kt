@@ -12,7 +12,7 @@ import com.cesoft.cesdoom.map.MapGraphFactory
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+// TODO: Usar paredes diagonales para maze mas chulo !!!!!!!1
 object MazeFactory {
     val tag: String = MazeFactory::class.java.simpleName
 	const val MAX_LEVEL = 2
@@ -40,9 +40,9 @@ object MazeFactory {
 		mapFactory.compile()
 
 		//----- TEST
-		mapFactory.print()
-		com.cesoft.cesdoom.util.Log.e(tag, "")
-		com.cesoft.cesdoom.util.Log.e(tag, "")
+//		mapFactory.print()
+//		com.cesoft.cesdoom.util.Log.e(tag, "")
+//		com.cesoft.cesdoom.util.Log.e(tag, "")
 		mapFactory.print2()
 		com.cesoft.cesdoom.util.Log.e(tag, "----------------------------------------------------------------------------")
 		com.cesoft.cesdoom.util.Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].levelAccess.size)
@@ -239,8 +239,8 @@ object MazeFactory {
 		GateFactory.create(mapFactory, e, Vector3(+GateComponent.LONG + .2f, high2, 0f), 0f, " E ", assets).unlock()
 		GateFactory.create(mapFactory, e, Vector3(-GateComponent.LONG - .2f, high2, 0f), 0f, " F ", assets).unlock()
 		/// Extra Ramps
-		rampFactory.create(mapFactory, e, Vector3(-2*lng2, high+2f, +4.7f*lng2), angleX = +45f, angleZ = 90f)
-		rampFactory.create(mapFactory, e, Vector3(+2*lng2, high+2f, -4.7f*lng2), angleX = -45f, angleZ = 90f)
+		rampFactory.create(mapFactory, e, Vector3(-2*lng2, high+2f, +4.8f*lng2), angleX = +45f, angleZ = 90f)
+		rampFactory.create(mapFactory, e, Vector3(+2*lng2, high+2f, -4.8f*lng2), angleX = -45f, angleZ = 90f)
 	}
 
 

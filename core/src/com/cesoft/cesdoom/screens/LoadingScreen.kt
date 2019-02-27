@@ -130,7 +130,7 @@ class LoadingScreen(private val game: CesDoom, private val gameUI: GameUI, priva
         // Clear the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         if(assets.update()) { // Load some, will return true if done loading
-            game.setScreen(GameScreen(game.playerInput, gameUI, assets))
+            game.setScreen(GameScreen(game, gameUI, assets))
         }
         else {
             // Interpolate the percentage to make it more smooth
@@ -150,7 +150,7 @@ class LoadingScreen(private val game: CesDoom, private val gameUI: GameUI, priva
     override fun hide() {
         assets.endLoading()
     }
-    override fun dispose() {}
-    override fun pause() {}
-    override fun resume() {}
+    override fun dispose() = Unit
+    override fun pause() = Unit
+    override fun resume() = Unit
 }

@@ -10,8 +10,8 @@ import com.cesoft.cesdoom.util.Log
 class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
 
     val map = arrayListOf(
-            MapGraph(width, height, scale),
-            MapGraph(width, height, scale))
+            MapGraph(0, width, height, scale),
+            MapGraph(1, width, height, scale))
     private val mapData = arrayListOf(
             IntArray(map[0].cx * map[0].cy),
             IntArray(map[1].cx * map[1].cy))
@@ -25,17 +25,35 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
         }
     }
 
-    fun addCollider(level: Int, x: Float, y: Float) {
+    /*fun addCollider(level: Int, x: Float, y: Float) {
         val point = map[level].toMapGraphCoord(Vector2(x, y))
         val index = map[level].calcIndex(point.x, point.y)
         if(index > 0 && index < mapData[level].size)
             mapData[level][index] = 1
         else
             Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($level, $x,$y) => ($point) ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    }
+    }*/
     fun addLevelAccess(level: Int, x: Float, y: Float) {
+        //DEL or enhance
+//        val point = map[level].toMapGraphCoord(Vector2(x, y))
+//        val index = map[level].calcIndex(point.x, point.y)
+//        mapData[level][index] = 0
+        //
         map[level].addLevelAccess(Vector2(x,y))
     }
+    //
+    fun toMapGraphCoord(level: Int, pos: Vector2) : Point = map[level].toMapGraphCoord(pos)
+    fun addCollider(level: Int, point: Point) {
+        val index = map[level].calcIndex(point.x, point.y)
+        if(index > 0 && index < mapData[level].size)
+            mapData[level][index] = 1
+        else
+            Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($level, $point) => ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    }
+    /*fun addLevelAccess(level: Int, point: Point) {
+        map[level].addLevelAccess(Vector2(x,y))
+    }*/
+
 
     /*fun clear() {
         //map.clear()
@@ -51,11 +69,11 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
                     val node = Node(index, Point(x, y), mapData[level][index] == 0)
                     map[level].addNode(node)
                     //if(mapData[level][x + y*cx] == 0) {
-                    if (x - 1 >= 0 && y - 1 >= 0)
+                    if(x - 1 >= 0 && y - 1 >= 0)
                         map[level].connectNodes(node, map[level].getNode(x - 1, y - 1))
-                    if (x - 1 >= 0)
+                    if(x - 1 >= 0)
                         map[level].connectNodes(node, map[level].getNode(x - 1, y))
-                    if (y - 1 >= 0)
+                    if(y - 1 >= 0)
                         map[level].connectNodes(node, map[level].getNode(x, y - 1))
                     //}
                 }
@@ -95,10 +113,17 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
         for (level in 0 until map.size) {
             val map0 = map[level]
             Log.e("MAP", "\n------------------------------------------------ LEVEL $level ------------------------------------------------\n")
-            var col = "  \t\t\t"
-            for(x in 0 until map0.cx)
-                col += " " + (x % 10)
+
+            var col = "$     ".substring(0,5)
+            for(x in 0 until map0.cx / 10)
+                col += "${(x % 10)}         "
             Log.e("MAP", col)
+
+            col = "$     ".substring(0,5)
+            for(x in 0 until map0.cx)
+                col += (x % 10)
+            Log.e("MAP", col)
+
             for(y in 0 until map0.cy) {
                 var row = "$y    ".substring(0,5)
                 for(x in 0 until map0.cx) {

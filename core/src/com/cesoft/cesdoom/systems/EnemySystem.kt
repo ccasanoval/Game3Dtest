@@ -341,10 +341,9 @@ class EnemySystem(
 				}
 				deathProgress(entity) >= 1f -> {
 					status.alive = false
+					gameEventSignal.dispatch(GameEvent(GameEvent.Type.ENEMY_DEAD, EnemyComponent.get(entity).reward, entity))
 					engine.removeEntity(entity)
-					gameEventSignal.dispatch(GameEvent(GameEvent.Type.ENEMY_DEAD, EnemyComponent.KILL_REWARD, entity))
 					//entity.remove(StatusComponent::class.java)
-					//TODO: val reward = EnemyComponent.get(entity).reward by type of enemy and level
 				}
 			}
 		}

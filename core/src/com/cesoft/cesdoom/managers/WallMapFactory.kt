@@ -1,36 +1,34 @@
 package com.cesoft.cesdoom.managers
 
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.map.MapGraphFactory
+import com.cesoft.cesdoom.map.Point
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 object WallMapFactory {
-
-    private const val thick = (WallFactory.THICK.toInt() * 3.0).toInt()	// Debe ser mayor para que no haga colision con enemigo, que no es un punto sino un objeto 3D / o cambiar scale
-    private const val long =  (WallFactory.LONG.toInt()  * 3.0).toInt() //TODO: Check, 3 works, 2.7 too
+    private val tag: String = WallMapFactory::class.java.simpleName
 
     fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, ignore: Int) {
+        val t = (WallFactory.THICK / mapFactory.scale).toInt()+1
+        val l = (WallFactory.LONG  / mapFactory.scale).toInt()+1
+        val level = if(pos.y > 2*WallFactory.HIGH-1) 1 else 0//TODO: more levels ?
+        val posMap = mapFactory.toMapGraphCoord(level, Vector2(pos.x, pos.z))
 
-        val level = if(pos.y > WallFactory.HIGH) 1 else 0
-        when(angle) {//TODO: change by sin + cos of angle...
-            +00f -> //--- Vertical
-                for(x_ in -thick/2..thick/2)
-                    for(z_ in -long/2..long/2)
-                        mapFactory.addCollider(level, pos.x + x_, pos.z + z_)
-            +90f -> //--- Horizontal
-                for(z_ in -thick/2..thick/2)
-                    for(x_ in -long/2..long/2)
-                        mapFactory.addCollider(level, pos.x + x_, pos.z + z_)
-            +45f ->
-                for(z_ in 0..thick)
-                    for(x_ in z_..z_+(long*0.7971f).toInt())
-                        mapFactory.addCollider(level, pos.x + z_, pos.z + z_)
-            -45f ->
-                for(z_ in 0..thick)
-                    for(x_ in z_..z_+(long*0.7971f).toInt())
-                        mapFactory.addCollider(level, pos.x + x_, pos.z + x_)
+        when(angle) {
+            +00f -> { //--- Vertical
+                for(x_ in -t..t)
+                    for(y_ in -l..l)
+                        mapFactory.addCollider(level, Point(posMap.x + x_, posMap.y + y_))
+            }
+            +90f -> {//--- Horizontal
+                for(y_ in -t..t)
+                    for(x_ in -l..l)
+                        mapFactory.addCollider(level, Point(posMap.x + x_, posMap.y + y_))
+            }
         }
     }
 }

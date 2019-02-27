@@ -70,7 +70,6 @@ class InputMapper {
 
 
     fun isButtonPressed(button: Inputs.Action):Boolean {
-Log.e(tag, "isButtonPressed-------------------------------$button=${values[button]}")
 		return values[button] == Value.POSITIVE
             || (!CesDoom.isMobile && Gdx.input.isKeyPressed(mapperKey[AxisKey(button.value, true)]?:-1))
 	}

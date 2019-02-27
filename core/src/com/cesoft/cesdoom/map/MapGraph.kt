@@ -12,7 +12,7 @@ import com.badlogic.gdx.ai.pfa.PathSmoother
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class MapGraph(val width: Float, val height: Float, private val scale: Int)
+class MapGraph(val id: Int, val width: Float, val height: Float, private val scale: Int)
     : IndexedGraph<Node> {
 
     companion object {
@@ -38,7 +38,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
             return nodes[i]
         }
         else {
-            Log.e(tag, "getNode: coordinates out of boundaries: ($x, $y)  ${nodes.size} <> $i ---------------")
+            Log.e(tag, "id=$id:getNode: coordinates out of boundaries: ($x, $y)  ${nodes.size} <> $i ---------------")
             //return Node(9999999, Point(0, 0), false)
             return nodes[0] // Para que los pathFinders no cojan toda la cpu buscando un path imposible
             //throw IndexOutOfBoundsException()
@@ -51,9 +51,9 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
         val pos = toMapGraphCoord(point)
         var node = getNode(pos)
         while( ! node.isValid) {
-            Log.e(tag, "getNode: cuidado, esto podria retardar mucho la busqueda -------------------- point=$point / node=$node / #nodes=${nodes.size}")
-            for(y in 0..7) {
-                for(x in 0..7) {
+            val nodeOld = node
+            for(y in 0..5) {
+                for(x in 0..5) {
                     node = getNode(Point(pos.x + x, pos.y + y))
                     if(node.isValid)
                         break
@@ -70,8 +70,9 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
                 if(node.isValid)
                     break
             }
+            //Log.e(tag, "id=$id:getNode: cuidado, esto podria retardar mucho la busqueda -------------------- point=$point / nodeIni=$nodeOld <> nodeFin=$node / #nodes=${nodes.size}")
+            Log.e(tag, "id=$id:getNode: cuidado, esto podria retardar mucho la busqueda -------------------- nodeIni=${nodeOld.point} <> nodeFin=${node.point}")
         }
-//Log.e(tag, "getNode: fin - ------------------------------------------ ---------- final node = $node")
         return node
     }
 
@@ -139,7 +140,7 @@ class MapGraph(val width: Float, val height: Float, private val scale: Int)
             return res
         }
         catch(e: Exception) {
-            Log.e(tag, "findPath:e:-------------------- $e ")
+            Log.e(tag, "id=$id:findPath:e:-------------------- $e")
             e.printStackTrace()
         }
 

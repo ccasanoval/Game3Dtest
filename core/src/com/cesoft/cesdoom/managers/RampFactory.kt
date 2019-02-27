@@ -23,8 +23,8 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.map.MapGraphFactory
-import com.cesoft.cesdoom.util.Log
 import kotlin.math.absoluteValue
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ import kotlin.math.absoluteValue
 class RampFactory(assets: Assets) {
 	companion object {
 		const val LONG = 30f
-		const val HIGH = 20f
-		const val THICK = 2f
+		const val HIGH = 20f//TODO: Cambiar para hacer cuadrado... mas facil construir...
+		const val THICK = 1f
 	}
 	enum class Type { STEEL, GRID, }
 
@@ -83,7 +83,7 @@ class RampFactory(assets: Assets) {
 		val entity = Entity()
 
 		/// MAP
-		createMap(mapFactory, pos, angleX, angleY, angleZ)
+		RampMapFactory.createMap(mapFactory, pos, angleX, angleY, angleZ)
 
 		/// MODEL
 		val material = if(type==Type.STEEL) material1 else material2
@@ -122,7 +122,8 @@ class RampFactory(assets: Assets) {
 		rigidBody.motionState = motionState
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 		rigidBody.contactCallbackFilter = 0
-		rigidBody.userValue = if(type==Type.STEEL) BulletComponent.SCENE_FLAG else 0	// La regilla no para las balas
+		rigidBody.userValue = if(type==Type.STEEL) BulletComponent.STEEL_RAMP_FLAG else 0	// La regilla no para las balas
+		//TODO: algun tipo de error cuando disparo a monstruo0 encipa de rampa no parece darle ??? check PlayerSystem.checkBulletKillEnemy
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f
 		rigidBody.rollingFriction = 1f
@@ -133,72 +134,4 @@ class RampFactory(assets: Assets) {
 		return entity
 	}
 
-	//______________________________________________________________________________________________
-	private fun createMap(mapFactory: MapGraphFactory, pos: Vector3,
-						  angleX: Float=0f, angleY: Float=0f, angleZ: Float=0f) {
-		val level = if(pos.y > 2*WallFactory.HIGH) 1 else 0//TODO: Y si hago mas plantas? Refactor in MazeFactory...
-		//Log.e("RampFactory", "createMap----------------------level=$level------ angleX=$angleX && angleY=$angleY && angleZ=$angleZ")
-
-		// Sube hacia la derecha  (+X)
-		if(angleX == 90f && angleY == -45f && angleZ == 0f) {
-			mapFactory.addLevelAccess(level, pos.x+LONG, pos.z)
-			for(x_ in -LONG.toInt()..+LONG.toInt()+1) {
-				for(z_ in 0..mapFactory.scale) {
-					mapFactory.addCollider(level, pos.x + x_, pos.z + HIGH+z_)
-					mapFactory.addCollider(level, pos.x + x_, pos.z - HIGH-z_)
-				}
-			}
-			for(z_ in -HIGH.toInt()..+HIGH.toInt()) {
-				for(x_ in 0..mapFactory.scale) {
-					mapFactory.addCollider(level, pos.x + LONG+x_, pos.z + z_)
-				}
-			}
-		}
-		// Sube hacia la izquierda (-X)
-		else if(angleX == 90f && angleY == +45f && angleZ == 0f) {
-			mapFactory.addLevelAccess(level, pos.x-LONG, pos.z)
-			for(x_ in -LONG.toInt()..+LONG.toInt()) {
-				for(z_ in 0..mapFactory.scale) {
-					mapFactory.addCollider(level, pos.x + x_, pos.z + HIGH+z_)
-					mapFactory.addCollider(level, pos.x + x_, pos.z - HIGH-z_)
-				}
-			}
-			for(z_ in -HIGH.toInt()..+HIGH.toInt()) {
-				for(x_ in 0..mapFactory.scale) {
-					mapFactory.addCollider(level, pos.x - LONG-x_, pos.z + z_)
-				}
-			}
-		}
-		// Sube hacia la adelante (-Z)
-		else if(angleX == +45f && angleY == 0f && angleZ == 90f) {
-			mapFactory.addLevelAccess(level, pos.x, pos.z-LONG)
-			for(z_ in -LONG.toInt()..+LONG.toInt()) {
-				for(x_ in 0..mapFactory.scale) {
-					mapFactory.addCollider(level, pos.x+HIGH+x_, pos.z + z_)
-					mapFactory.addCollider(level, pos.x-HIGH-x_,  pos.z+z_)
-				}
-			}
-			for(x_ in -HIGH.toInt()..+HIGH.toInt()) {
-				for(z_ in 0..mapFactory.scale) {
-					mapFactory.addCollider(level, pos.x + x_, pos.z - LONG-z_)
-				}
-			}
-		}
-		// Sube hacia la atras (+Z)
-		else if(angleX == -45f && angleY == 0f && angleZ == 90f) {
-			mapFactory.addLevelAccess(level, pos.x, pos.z+LONG)
-			for(z_ in -LONG.toInt()..+LONG.toInt()) {
-				for(x_ in 0..mapFactory.scale) {
-					mapFactory.addCollider(level, pos.x + HIGH+x_, pos.z + z_)
-					mapFactory.addCollider(level, pos.x - HIGH-x_, pos.z + z_)
-				}
-			}
-			for(x_ in -HIGH.toInt()..+HIGH.toInt()) {
-				for(z_ in 0..mapFactory.scale) {
-					mapFactory.addCollider(level, pos.x + x_, pos.z + LONG+z_)
-				}
-			}
-		}
-		//TODO: else, otros angulos...
-	}
 }
