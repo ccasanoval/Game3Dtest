@@ -69,4 +69,7 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 
 	var currentAnimation = EnemyComponent.ACTION.IDLE
 	var particleEffect: ParticleEffect? = null
+
+	enum class StatusMov { QUIET, ATTACK, RUN, WALK }
+	var statusMov: StatusMov = StatusMov.QUIET
 }

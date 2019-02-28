@@ -16,6 +16,9 @@ object Sounds {
     private const val SOUND_ENEMY_ATTACK = "sounds/enemyAttack.ogg"
     private const val SOUND_ENEMY_HURT = "sounds/enemyHurt.ogg"
 	private const val SOUND_ENEMY_DIE = "sounds/enemyDie.ogg"
+	private const val SOUND_ENEMY_NEAR = "sounds/enemyNear.ogg"
+	private const val SOUND_ENEMY1 = "sounds/enemy1.ogg"
+	private const val SOUND_ENEMY1_DIE = "sounds/enemyDie1.ogg"
     private const val SOUND_FOOT_STEPS = "sounds/footsteps.ogg"
     //TODO:Monstruo: solo suena si esta a menos de xx metros!!
     private const val SOUND_GATE_OPENS = "sounds/gate.ogg"
@@ -33,7 +36,8 @@ object Sounds {
     private const val MUSIC = "sounds/tnt_doom.ogg" // http://sycraft.org/content/audio/doom.shtml
 
     enum class SoundType {
-		RIFLE, ENEMY_ATTACK, ENEMY_DIE, ENEMY_HURT, FOOT_STEPS, GATE_OPENS, GATE_LOCKED, SWITCH,
+		RIFLE, ENEMY_ATTACK, ENEMY_DIE, ENEMY_HURT, ENEMY_NEAR, ENEMY1, ENEMY1_DIE,
+		FOOT_STEPS, GATE_OPENS, GATE_LOCKED, SWITCH,
 		GAME_OVER, YOU_WIN, PLAYER_HURT, PLAYER_DYING, NO_AMMO, AMMO_RELOAD, HEALTH_RELOAD
 	}
 
@@ -44,6 +48,9 @@ object Sounds {
             SoundType.ENEMY_ATTACK -> SOUND_ENEMY_ATTACK
             SoundType.ENEMY_DIE -> SOUND_ENEMY_DIE
 			SoundType.ENEMY_HURT -> SOUND_ENEMY_HURT
+			SoundType.ENEMY_NEAR -> SOUND_ENEMY_NEAR
+			SoundType.ENEMY1 -> SOUND_ENEMY1
+			SoundType.ENEMY1_DIE -> SOUND_ENEMY1_DIE
             SoundType.FOOT_STEPS -> SOUND_FOOT_STEPS
             SoundType.GATE_OPENS -> SOUND_GATE_OPENS
             SoundType.GATE_LOCKED -> SOUND_GATE_LOCKED
@@ -65,6 +72,8 @@ object Sounds {
 			SoundType.FOOT_STEPS -> 700
 			SoundType.ENEMY_DIE -> 3600
 			SoundType.ENEMY_ATTACK -> 1500
+			Sounds.SoundType.ENEMY1 -> 1500
+			Sounds.SoundType.ENEMY1_DIE -> 1500
 			Sounds.SoundType.GATE_OPENS -> 3000
 			else-> 300
 		}

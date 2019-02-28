@@ -102,7 +102,10 @@ class EnemySystem(
 		updateStatusSys(entity, delta)
 		if(status.isDead()) {
 			if(deathProgress(entity) == 0f)
-				Sounds.play(Sounds.SoundType.ENEMY_DIE)
+				when(EnemyComponent.get(entity).type) {
+					EnemyComponent.TYPE.MONSTER0 -> Sounds.play(Sounds.SoundType.ENEMY_DIE)
+					EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1_DIE)
+				}
 
 			val model = ModelComponent.get(entity)
 			if(model.blendingAttribute != null)
@@ -125,24 +128,27 @@ class EnemySystem(
 
 		val statusMov = statusMov(entity, distPlayer)
 		when(statusMov) {
-			StatusMov.QUIET -> {
+			EnemyComponent.StatusMov.QUIET -> {
 				force = 0f
 			}
-			StatusMov.ATTACK -> {
+			EnemyComponent.StatusMov.ATTACK -> {
 				setAttacking(entity)
 				val now = System.currentTimeMillis()
 				if(now > lastAttack + EnemyComponent.DELAY_ATTACK) {
 					lastAttack = now
 					gameEventSignal.dispatch(GameEvent(GameEvent.Type.PLAYER_HURT, EnemyComponent.BITE_PAIN))
-					Sounds.play(Sounds.SoundType.ENEMY_ATTACK)
+					when(enemy.type) {
+						EnemyComponent.TYPE.MONSTER0 -> Sounds.play(Sounds.SoundType.ENEMY_ATTACK)
+						EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1)
+					}
 				}
 				force = 0f
 			}
-			StatusMov.RUN -> {
+			EnemyComponent.StatusMov.RUN -> {
 				force = runForce(enemy)
 				setRunning(entity)
 			}
-			StatusMov.WALK -> {
+			EnemyComponent.StatusMov.WALK -> {
 				force = walkForce(enemy)
 				setWalking(entity)
 			}
@@ -150,13 +156,14 @@ class EnemySystem(
 
 		/// Si hay movimiento, calcula el camino
 		//if( ! status.isAttacking() && force != 0f)
-		if (statusMov == StatusMov.WALK || statusMov == StatusMov.RUN) {
+		if (statusMov == EnemyComponent.StatusMov.WALK || statusMov == EnemyComponent.StatusMov.RUN) {
 			calcPath(entity, playerPosition)
 		}
 
 		/// Mueve
-		val isMoving = distPlayer > 2*attackRadio(enemy) && (statusMov == StatusMov.WALK || statusMov == StatusMov.RUN)
-		val isQuiet = statusMov == StatusMov.QUIET
+		val isMoving = distPlayer > 2*attackRadio(enemy)
+				&& (statusMov == EnemyComponent.StatusMov.WALK || statusMov == EnemyComponent.StatusMov.RUN)
+		val isQuiet = statusMov == EnemyComponent.StatusMov.QUIET
 		moveEnemy(entity, playerPosition, isMoving, isQuiet, force, delta)
 	}
 	private fun walkForce(enemy: EnemyComponent) = if(CesDoom.isMobile) 800f else 900f
@@ -341,25 +348,36 @@ com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : recalcPath--------------------
 
 
 	//----------------------------------------------------------------------------------------------
-	private enum class StatusMov { QUIET, ATTACK, RUN, WALK }
-
-	private fun statusMov(entity: Entity, distPlayer: Float): StatusMov {
+	private fun statusMov(entity: Entity, distPlayer: Float): EnemyComponent.StatusMov {
 		val enemy = EnemyComponent.get(entity)
 		val status = StatusComponent.get(entity)
 
 		/// No está en condiciones de atacar: herido, muerto o sobre el suelo	//TODO: sobre suelo: Raycast para ver distancia a suelo.... EnemyComponent.RADIO + 2)
 		return if(status.isAching() || status.isDead() || enemy.position.y > 2*WallFactory.HIGH + 2*RampFactory.THICK + enemy.radio) {
-			StatusMov.QUIET
+			enemy.statusMov = EnemyComponent.StatusMov.QUIET
+			EnemyComponent.StatusMov.QUIET
 		}
 		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
-		else if(distPlayer < attackRadio(enemy))
-			StatusMov.ATTACK
+		else if(distPlayer < attackRadio(enemy)) {
+			enemy.statusMov = EnemyComponent.StatusMov.ATTACK
+			EnemyComponent.StatusMov.ATTACK
+		}
 		/// Esta cerca, corre a por el
-		else if (distPlayer < 180f)
-			StatusMov.RUN
+		else if(distPlayer < 180f) {
+			if(enemy.statusMov != EnemyComponent.StatusMov.RUN) {
+				enemy.statusMov = EnemyComponent.StatusMov.RUN
+				when(EnemyComponent.get(entity).type) {
+					EnemyComponent.TYPE.MONSTER0 -> Sounds.play(Sounds.SoundType.ENEMY_NEAR)
+					EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1)
+				}
+			}
+			EnemyComponent.StatusMov.RUN
+		}
 		/// Esta lejos, camina buscando
-		else
-			StatusMov.WALK
+		else {
+			enemy.statusMov = EnemyComponent.StatusMov.WALK
+			EnemyComponent.StatusMov.WALK	//TODO: una vez que empieza a correr, que no pare?
+		}
 	}
 
 
@@ -482,7 +500,10 @@ com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : recalcPath--------------------
 			status.achingStateTime = 0f
 			status.setAchingState()
 			playAching(entity)
-			Sounds.play(Sounds.SoundType.ENEMY_HURT)
+			when(EnemyComponent.get(entity).type) {
+				EnemyComponent.TYPE.MONSTER0 -> Sounds.play(Sounds.SoundType.ENEMY_HURT)
+				EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1)
+			}
 		} else {
 			status.health -= pain/4f
 		}
