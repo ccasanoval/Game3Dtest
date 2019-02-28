@@ -81,7 +81,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
     }
 
     fun clear() {
-        levelAccess.clear()
+        floorAccess.clear()
 //        nodes.clear()
 //        nodes.clear()
 //        map.clear()
@@ -162,20 +162,20 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
     }
 
 
-    /// Mapa de accesos entre niveles
-    val levelAccess = ArrayList<Vector2>()
-    fun addLevelAccess(access: Vector2) = levelAccess.add(access)
-    fun getNearerLevelAccess(pos: Vector2): Vector2 {
+    /// Mapa de accesos entre plantas
+    val floorAccess = ArrayList<Vector2>()
+    fun addFloorAccess(access: Vector2) = floorAccess.add(access)
+    fun getNearerFloorAccess(pos: Vector2): Vector2 {
         var curDist = 9999f
         var access = Vector2.Zero
-        for(i in 0 until levelAccess.size) {
-            val dist = levelAccess[i].dst2(pos)
+        for(i in 0 until floorAccess.size) {
+            val dist = floorAccess[i].dst2(pos)
             if(dist < curDist) {
                 curDist = dist
-                access = levelAccess[i]
+                access = floorAccess[i]
             }
         }
-//Log.e(tag, "getNearerLevelAccess:----------------------------- $access")
+//Log.e(tag, "getNearerFloorFloorAccess:----------------------------- $access")
         return access.cpy()
     }
 

@@ -24,7 +24,7 @@ object RampMapFactory {
 
         // Sube hacia la derecha  (+X)
         if(angleX == 90f && angleY == -45f && angleZ == 0f) {
-            mapFactory.addLevelAccess(level, pos.x+RampFactory.LONG-mapFactory.scale, pos.z)
+            mapFactory.addFloorAccess(level, pos.x+RampFactory.LONG-mapFactory.scale, pos.z)
             for(x_ in -l..+l) {
                 for(y_ in 0..1) {
                     mapFactory.addCollider(level, Point(posMap.x + x_, posMap.y + h-y_))
@@ -37,7 +37,7 @@ object RampMapFactory {
         }
         // Sube hacia la izquierda (-X)
         else if(angleX == 90f && angleY == +45f && angleZ == 0f) {
-            mapFactory.addLevelAccess(level, pos.x-RampFactory.LONG+mapFactory.scale, pos.z)
+            mapFactory.addFloorAccess(level, pos.x-RampFactory.LONG+mapFactory.scale, pos.z)
             for(x_ in -l..+l) {
                 for(y_ in 0..1) {
                     mapFactory.addCollider(level, Point(posMap.x + x_, posMap.y + h-y_))
@@ -50,7 +50,7 @@ object RampMapFactory {
         }
         // Sube hacia la adelante (-Z)
         else if(angleX == +45f && angleY == 0f && angleZ == 90f) {
-            mapFactory.addLevelAccess(level, pos.x, pos.z-RampFactory.LONG+mapFactory.scale+2)
+            mapFactory.addFloorAccess(level, pos.x, pos.z-RampFactory.LONG+mapFactory.scale+2)
             for(y_ in -l..+l) {
                 for(x_ in 0..1) {
                     mapFactory.addCollider(level, Point(posMap.x + h-x_, posMap.y + y_))
@@ -63,7 +63,7 @@ object RampMapFactory {
         }
         // Sube hacia la atras (+Z)
         else if(angleX == -45f && angleY == 0f && angleZ == 90f) {
-            mapFactory.addLevelAccess(level, pos.x, pos.z+RampFactory.LONG-mapFactory.scale)
+            mapFactory.addFloorAccess(level, pos.x, pos.z+RampFactory.LONG-mapFactory.scale)
             for(y_ in -l..+l) {
                 for(x_ in 0..1) {
                     mapFactory.addCollider(level, Point(posMap.x + h-x_, posMap.y + y_))

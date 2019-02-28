@@ -62,7 +62,7 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 	var currentPos2D = Vector2()
 	//
     var stepCounter = 0
-	var isAccessLevelPath = false
+	var isAccessFloorPath = false
 	val player2D: Vector2 = Vector2.Zero//TODO: Make 3D?
 	var path: ArrayList<Vector2>? = null
 	var pathIndex = 0

@@ -41,6 +41,7 @@ import com.cesoft.cesdoom.util.PlayServices
 //TODO: Monster3, Weapon2 ?
 //TODO: Radar de monster?
 //TODO: Textura en suelo donde nacen los bichos?
+//TODO: Ascensores y escaleras!!!
 //
 //TODO: Columnas en maze?
 //TODO: mandos de pantalla : Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir salto?
@@ -136,7 +137,7 @@ class CesDoom(
 	}
 	fun nextLevel() {
 		PlayerComponent.currentLevel++
-		if(PlayerComponent.currentLevel > MazeFactory.MAX_LEVEL)
+		if(PlayerComponent.currentLevel > MazeFactory.MAX_LEVEL)//TODO: show final congrats screen
 			PlayerComponent.currentLevel = 0
 	}
 	fun isNextOrReload():Boolean {

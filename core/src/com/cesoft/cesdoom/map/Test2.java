@@ -5,6 +5,7 @@ import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.cesoft.cesdoom.managers.MazeFactory;
+import com.cesoft.cesdoom.managers.WallFactory;
 import com.cesoft.cesdoom.managers.WallMapFactory;
 import com.cesoft.cesdoom.util.Log;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 public class Test2 {
-
+/*
     private static String tag = Test2.class.getSimpleName();
     private static int cx = 10;
     private static int cy = 10;
@@ -76,8 +77,8 @@ public class Test2 {
 
 
     private static void createTest() {
-        float lng = MazeFactory.lng;
-        float lng2 = MazeFactory.lng2;
+        float lng = WallFactory.LONG;//MazeFactory.lng;
+        float lng2 = 2*WallFactory.LONG;//MazeFactory.lng2;
         //float mapWidth = MazeFactory.mapWidth;
         //float mapHeight = MazeFactory.mapHeight;
         //int scale = MazeFactory.scale;
@@ -210,5 +211,5 @@ public class Test2 {
     }
     
     
-
+*/
 }

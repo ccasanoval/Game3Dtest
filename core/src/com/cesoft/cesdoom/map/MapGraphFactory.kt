@@ -33,25 +33,25 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
         else
             Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($level, $x,$y) => ($point) ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     }*/
-    fun addLevelAccess(level: Int, x: Float, y: Float) {
+    fun addFloorAccess(floor: Int, x: Float, y: Float) {
         //DEL or enhance
 //        val point = map[level].toMapGraphCoord(Vector2(x, y))
 //        val index = map[level].calcIndex(point.x, point.y)
 //        mapData[level][index] = 0
         //
-        map[level].addLevelAccess(Vector2(x,y))
+        map[floor].addFloorAccess(Vector2(x,y))
     }
     //
-    fun toMapGraphCoord(level: Int, pos: Vector2) : Point = map[level].toMapGraphCoord(pos)
-    fun addCollider(level: Int, point: Point) {
-        val index = map[level].calcIndex(point.x, point.y)
-        if(index > 0 && index < mapData[level].size)
-            mapData[level][index] = 1
+    fun toMapGraphCoord(floor: Int, pos: Vector2) : Point = map[floor].toMapGraphCoord(pos)
+    fun addCollider(floor: Int, point: Point) {
+        val index = map[floor].calcIndex(point.x, point.y)
+        if(index > 0 && index < mapData[floor].size)
+            mapData[floor][index] = 1
         else
-            Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($level, $point) => ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($floor, $point) => ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     }
-    /*fun addLevelAccess(level: Int, point: Point) {
-        map[level].addLevelAccess(Vector2(x,y))
+    /*fun addFloorAccess(level: Int, point: Point) {
+        map[level].addFloorAccess(Vector2(x,y))
     }*/
 
 
@@ -62,19 +62,19 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
     }*/
 
     fun compile() {
-        for(level in 0 until map.size) {
-            for(y in 0 until map[level].cy) {
-                for(x in 0 until map[level].cx) {
-                    val index = map[level].calcIndex(x, y)
-                    val node = Node(index, Point(x, y), mapData[level][index] == 0)
-                    map[level].addNode(node)
+        for(floor in 0 until map.size) {
+            for(y in 0 until map[floor].cy) {
+                for(x in 0 until map[floor].cx) {
+                    val index = map[floor].calcIndex(x, y)
+                    val node = Node(index, Point(x, y), mapData[floor][index] == 0)
+                    map[floor].addNode(node)
                     //if(mapData[level][x + y*cx] == 0) {
                     if(x - 1 >= 0 && y - 1 >= 0)
-                        map[level].connectNodes(node, map[level].getNode(x - 1, y - 1))
+                        map[floor].connectNodes(node, map[floor].getNode(x - 1, y - 1))
                     if(x - 1 >= 0)
-                        map[level].connectNodes(node, map[level].getNode(x - 1, y))
+                        map[floor].connectNodes(node, map[floor].getNode(x - 1, y))
                     if(y - 1 >= 0)
-                        map[level].connectNodes(node, map[level].getNode(x, y - 1))
+                        map[floor].connectNodes(node, map[floor].getNode(x, y - 1))
                     //}
                 }
             }
@@ -94,7 +94,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
                 var row = "$y    ".substring(0,5)
                 for(x in 0 until map0.cx) {
                     var isAccess = false
-                    for(la in map0.levelAccess) {
+                    for(la in map0.floorAccess) {
                         val c = map0.toMapGraphCoord(la)
                         if(c.x == x && c.y == y) {
                             row += "A "
@@ -110,9 +110,9 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
         }
     }
     fun print2() {
-        for (level in 0 until map.size) {
-            val map0 = map[level]
-            Log.e("MAP", "\n------------------------------------------------ LEVEL $level ------------------------------------------------\n")
+        for (floor in 0 until map.size) {
+            val map0 = map[floor]
+            Log.e("MAP", "\n------------------------------------------------ FLOOR $floor ------------------------------------------------\n")
 
             var col = "$     ".substring(0,5)
             for(x in 0 until map0.cx / 10)
@@ -128,7 +128,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
                 var row = "$y    ".substring(0,5)
                 for(x in 0 until map0.cx) {
                     var isAccess = false
-                    for(la in map0.levelAccess) {
+                    for(la in map0.floorAccess) {
                         val c = map0.toMapGraphCoord(la)
                         if(c.x == x && c.y == y) {
                             row += "A"
@@ -137,7 +137,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
                         }
                     }
                     if(!isAccess)
-                        row += mapData[level][map0.calcIndex(x, y)]
+                        row += mapData[floor][map0.calcIndex(x, y)]
                 }
                 Log.e("MAP", row)
             }

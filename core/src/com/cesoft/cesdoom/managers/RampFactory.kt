@@ -31,20 +31,31 @@ import com.cesoft.cesdoom.util.Log
 //
 class RampFactory(assets: Assets) {
 	companion object {
-		const val LONG = 30f
+		private val tag: String = RampFactory::class.java.simpleName
+
+		const val LONG = 32f
 		const val HIGH = 20f//TODO: Cambiar para hacer cuadrado... mas facil construir...
 		const val THICK = 1f
-	}
-	enum class Type { STEEL, GRID, }
 
-	private val dimX00Y90Z90 = Vector3(LONG*2, THICK*2, HIGH*2)
-	private val dimX90Y45Z00 = Vector3(0.707f*LONG*2, 0.707f*LONG*2, HIGH*2)
-	private val dimX00Y00Z00 = Vector3(THICK*2, HIGH*2, LONG*2)
-	private val dimX00Y90Z00 = Vector3(LONG*2, HIGH*2, THICK*2)
-	//private val dimX00Y00Z90 = Vector3(HIGH*2, THICK*2, LONG*2)
-	//private val dimX90Y00Z00 = Vector3(LONG*2, HIGH*2, THICK*2)
-	private val dimMax = Vector3(LONG*2, LONG*2, LONG*2)
-	private val dim = Vector3(THICK, HIGH, LONG)
+		const val LONG_GROUND = 25f
+		private const val THICK_GROUND = 2f
+
+		private val dim = Vector3(THICK+5, HIGH, LONG)//Aumenta espesor colision para que player no tenga rayos X !!
+		private val dimFCX90Y45Z00 = Vector3(2*.707f*LONG, 2*.707f*LONG, HIGH*2)	///Izquierda y Derecha
+		private val dimFCX45Y00Z90 = Vector3(HIGH*2, 2*.707f*LONG, 2*.707f*LONG)	///Adelante y Atras
+
+		private val dimGround = Vector3(LONG_GROUND, THICK_GROUND, LONG_GROUND)
+		private val dimFCGround = Vector3(2*LONG_GROUND, 2*THICK_GROUND, 2*LONG_GROUND)
+		//
+//		private val dimX00Y90Z90 = Vector3(2*LONG, 2*THICK, 2*HIGH)
+//		private val dimX00Y00Z00 = Vector3(THICK*2, HIGH*2, LONG*2)
+//		private val dimX00Y90Z00 = Vector3(LONG*2, HIGH*2, THICK*2)
+		//private val dimX00Y00Z90 = Vector3(HIGH*2, THICK*2, LONG*2)
+		//private val dimX90Y00Z00 = Vector3(LONG*2, HIGH*2, THICK*2)
+		//private val dimMax = Vector3(LONG*2, LONG*2, LONG*2)
+
+	}
+	enum class Type { STEEL, GRILLE, }
 
 	private val material1 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
 	private val material2 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
@@ -67,7 +78,7 @@ class RampFactory(assets: Assets) {
 		textureAttribute1.scaleV = 3f * LONG / HIGH
 		material1.set(textureAttribute1)
 
-		/// MODEL 2 (TRANSPARENT GRID)
+		/// MODEL 2 (TRANSPARENT GRILLE)
 		texture2.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute2 = TextureAttribute(TextureAttribute.Diffuse, texture2)
 		textureAttribute2.scaleU = 2f
@@ -80,7 +91,9 @@ class RampFactory(assets: Assets) {
 	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3,
 			   angleX: Float=0f, angleY: Float=0f, angleZ: Float=0f,
 			   type:Type=Type.STEEL): Entity {
+
 		val entity = Entity()
+		//pos.y -= 2f
 
 		/// MAP
 		RampMapFactory.createMap(mapFactory, pos, angleX, angleY, angleZ)
@@ -92,21 +105,18 @@ class RampFactory(assets: Assets) {
 		entity.add(modelComponent)
 
 		/// Frustum Culling (Should not depend on it material is solid or not?)
-		if(angleX == 0f && angleY == 0f && angleZ == 0f)
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y00Z00)
-		else if(angleX == 0f && angleY == 90f && angleZ == 0f)
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y90Z00)
-		else if(angleX == 0f && angleY == 90f && angleZ == 90f)
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y90Z90)
-		else if(angleX == 90f && angleY.absoluteValue == 45f && angleZ == 0f)
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX90Y45Z00)
-		else {
-			//por que no funciona  con esferica ? Quiza eliminar esferica ?
-			/*val boundingBox = BoundingBox()
-			modelComponent.instance.calculateBoundingBox(boundingBox)
-			frustrumCullingData = FrustumCullingData.create(boundingBox)*/
-			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimMax)
-		}
+		if(angleX == 90f && angleY.absoluteValue == 45f && angleZ == 0f)
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimFCX90Y45Z00)
+		else if(angleX.absoluteValue == 45f && angleY == 0f && angleZ == 90f)
+			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimFCX45Y00Z90)
+		else
+			Log.e(tag, "create:--------------------------angleX=$angleX / angleY=$angleY / angleZ=$angleZ")
+//		if(angleX == 0f && angleY == 0f && angleZ == 0f)
+//			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y00Z00)
+//		else if(angleX == 0f && angleY == 90f && angleZ == 0f)
+//			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y90Z00)
+//		else if(angleX == 0f && angleY == 90f && angleZ == 90f)
+//			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y90Z90)
 
 		// ROTATION
 		modelComponent.instance.transform.rotate(Vector3.X, angleX)
@@ -123,7 +133,43 @@ class RampFactory(assets: Assets) {
 		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 		rigidBody.contactCallbackFilter = 0
 		rigidBody.userValue = if(type==Type.STEEL) BulletComponent.STEEL_RAMP_FLAG else 0	// La regilla no para las balas
-		//TODO: algun tipo de error cuando disparo a monstruo0 encipa de rampa no parece darle ??? check PlayerSystem.checkBulletKillEnemy
+		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
+		rigidBody.friction = 1f
+		rigidBody.rollingFriction = 1f
+		rigidBody.spinningFriction = 1f
+		entity.add(BulletComponent(rigidBody, bodyInfo))
+
+		engine.addEntity(entity)
+		return entity
+	}
+
+	//______________________________________________________________________________________________
+	fun createGround(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3,
+			   type:Type=Type.STEEL): Entity {
+		val entity = Entity()
+
+		/// MAP
+		//RampMapFactory.createGroundMap(mapFactory, pos)
+
+		/// MODEL
+		val material = if(type==Type.STEEL) material1 else material2
+		val model : Model = modelBuilder.createBox(dimFCGround.x, dimFCGround.y, dimFCGround.z, material, POSITION_NORMAL)
+		val modelComponent = ModelComponent(model, pos)
+		entity.add(modelComponent)
+
+		/// Frustum Culling (Should not depend on it material is solid or not?)
+		modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimFCGround)
+
+		/// COLLISION
+		val shape = btBoxShape(dimGround)
+		val motionState = MotionState(modelComponent.instance.transform)
+		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
+		val rigidBody = btRigidBody(bodyInfo)
+		rigidBody.userData = entity
+		rigidBody.motionState = motionState
+		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
+		rigidBody.contactCallbackFilter = 0
+		rigidBody.userValue = if(type==Type.STEEL) BulletComponent.STEEL_RAMP_FLAG else 0	// La regilla no para las balas
 		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
 		rigidBody.friction = 1f
 		rigidBody.rollingFriction = 1f
