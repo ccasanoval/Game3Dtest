@@ -33,7 +33,7 @@ class RampFactory(assets: Assets) {
 	companion object {
 		private val tag: String = RampFactory::class.java.simpleName
 
-		const val LONG = 32f
+		const val LONG = 35f
 		const val HIGH = 20f//TODO: Cambiar para hacer cuadrado... mas facil construir...
 		const val THICK = 1f
 

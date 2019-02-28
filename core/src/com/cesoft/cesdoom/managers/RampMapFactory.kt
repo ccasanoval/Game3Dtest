@@ -50,7 +50,7 @@ object RampMapFactory {
         }
         // Sube hacia la adelante (-Z)
         else if(angleX == +45f && angleY == 0f && angleZ == 90f) {
-            mapFactory.addFloorAccess(level, pos.x, pos.z-RampFactory.LONG+mapFactory.scale+2)
+            mapFactory.addFloorAccess(level, pos.x, pos.z-RampFactory.LONG+3*mapFactory.scale)
             for(y_ in -l..+l) {
                 for(x_ in 0..1) {
                     mapFactory.addCollider(level, Point(posMap.x + h-x_, posMap.y + y_))
@@ -63,7 +63,7 @@ object RampMapFactory {
         }
         // Sube hacia la atras (+Z)
         else if(angleX == -45f && angleY == 0f && angleZ == 90f) {
-            mapFactory.addFloorAccess(level, pos.x, pos.z+RampFactory.LONG-mapFactory.scale)
+            mapFactory.addFloorAccess(level, pos.x, pos.z+RampFactory.LONG-3*mapFactory.scale)
             for(y_ in -l..+l) {
                 for(x_ in 0..1) {
                     mapFactory.addCollider(level, Point(posMap.x + h-x_, posMap.y + y_))

@@ -217,71 +217,96 @@ class EnemySystem(
 		model.instance.transform.set(enemy.position, rot)
 	}
 
+	private fun getTarget(floorPlayer: Int, playerPosition: Vector3, floorEnemy: Int, enemyPosition: Vector2): Vector2 {
+		if(floorEnemy < floorPlayer)
+			return MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)//TODO: mejorar para buscar accesos desde niveles superiores hacia inferiores...Añadir al mapa
+		else
+			return Vector2(playerPosition.x, playerPosition.z)
+	}
+
 	//----------------------------------------------------------------------------------------------
-	//TODO: Hacer que enemigo busque en ambas plantas...
 	private fun calcPath(entity: Entity, playerPosition: Vector3) {
 
 		val enemy = EnemyComponent.get(entity)
 		var recalcular = false
 
-		val levelEnemy = if(enemy.position.y > 2*WallFactory.HIGH) 1 else 0
-		val levelPlayer = if(playerPosition.y > 2*WallFactory.HIGH) 1 else 0
-//com.cesoft.cesdoom.util.Log.e(tag, "LEVELS ----------------(isAccessFloorPath=${enemy.isAccessFloorPath})---------------------------- $levelEnemy  <>  $levelPlayer      id=${enemy.id}  player2D=${enemy.player2D} ")
+		val floorEnemy = if(enemy.position.y > 2*WallFactory.HIGH+4) 1 else 0
+		val floorPlayer = if(playerPosition.y > 2*WallFactory.HIGH) 1 else 0
+//com.cesoft.cesdoom.util.Log.e(tag, "id=${enemy.id} : LEVELS ----------------(isAccessFloorPath=${enemy.isAccessFloorPath})-------------------- $levelEnemy  <>  $levelPlayer  / player2D=${enemy.player2D} ")
 
 		//Distintas plantas: Buscar en mapa de accessos
-		if(levelEnemy != levelPlayer && !enemy.isAccessFloorPath) {
+		if(floorEnemy != floorPlayer && !enemy.isAccessFloorPath) {
 			enemy.isAccessFloorPath = true
-//			val map = MazeFactory.mapFactory.map[levelEnemy]
-//			val access = map.getNearerLevelAccess(enemy.currentPos2D)
-			val access = MazeFactory.getNearerLevelAccess(levelEnemy, enemy.currentPos2D)
-			enemy.player2D.set(access)
-            enemy.pathIndex = 0
-			recalcular = true
-//com.cesoft.cesdoom.util.Log.e(tag, "Distintas plantas ----------------------------------------------- id=${enemy.id}  /  access=${enemy.player2D}  / access=$access")
+			recalcPath(enemy, playerPosition)
+com.cesoft.cesdoom.util.Log.e(tag, "enemy=${enemy.id} : Distintas plantas --------------------------levelPlayer=$floorPlayer--------levelEnemy=$floorEnemy------------- enemy.player2D=${enemy.player2D} ")
+			return
+            //enemy.pathIndex = 0
+			//recalcular = true
 		}
-		else if(levelEnemy == levelPlayer && enemy.isAccessFloorPath){
+		//Misma planta: Buscar a jundador en mapa
+		else if(floorEnemy == floorPlayer && enemy.isAccessFloorPath) {
 			enemy.isAccessFloorPath = false
-			enemy.player2D.set(Vector2(playerPosition.x, playerPosition.z))
-            enemy.pathIndex = 0
-//com.cesoft.cesdoom.util.Log.e(tag, "Restaurar misma planta ----------------------------------------------- id=${enemy.id}  /  access=${enemy.player2D} ")
+			val accessPoint = getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D)
+			enemy.player2D.set(accessPoint)
+			recalcPath(enemy, playerPosition)
+            //enemy.pathIndex = 0
+com.cesoft.cesdoom.util.Log.e(tag, "Restaurar misma planta ----------------------------------------------- id=${enemy.id}  /  access=${enemy.player2D} ")
+			return
 		}
+		else if(enemy.stepCounter++ > 100) {
+			val accessPoint = getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D)
+			enemy.player2D.set(accessPoint)
+			recalcPath(enemy, playerPosition)
+			com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR LIMITE DE PASOS  id=${enemy.id}")
+			return
+		}
+		else if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
+			val accessPoint = getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D)
+			enemy.player2D.set(accessPoint)
+			recalcPath(enemy, playerPosition)
+			com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
+			return
+		}
+		else
+			usePath(enemy)
+
 		//Misma planta: Buscar en mapa de obstaculos correspondiente
-		val player2D = if(enemy.isAccessFloorPath) MazeFactory.getNearerLevelAccess(levelEnemy, enemy.currentPos2D)//.mapFactory.map[levelEnemy].getNearerLevelAccess(enemy.currentPos2D) //enemy.player2D
+		/*val player2D = if(enemy.isAccessFloorPath) MazeFactory.getNearerFloorAccess(floorEnemy, enemy.currentPos2D)
 						else Vector2(playerPosition.x, playerPosition.z)
 //if(enemy.isAccessFloorPath)com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- enemy.isAccessFloorPath !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $player2D ")
 		if(player2D.dst2(enemy.player2D) > WallFactory.LONG) {//TODO:otra medida max?
-//com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR POR DISTANCIA  id=${enemy.id}    / $player2D ")
+com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR POR DISTANCIA  id=${enemy.id}    / $player2D ")
 			recalcular = true
 		}
-		if(enemy.stepCounter++ > 30) {
-//com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR LIMITE DE PASOS  id=${enemy.id}    / $player2D ")
+		if(enemy.stepCounter++ > 60) {
+com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR LIMITE DE PASOS  id=${enemy.id}    / $player2D ")
 			enemy.stepCounter = 0
 			recalcular = true
-		}
+		}*/
 
 		//else if(player2D.dst2(enemy.player2D) != 0f) Log.e(tag, "---------------------------${player2D.dst2(enemy.player2D)}")
-		if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
+		/*if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
 			//Si distancia < x ve a por ella -> rampa
 			//TODO: cuando los enemigos pasan por debajo de rampa y player sube rampa, enemigo se bloquea debajo de rampa:
 			//TODO   se cree que ya ha llegado a destino, deberia dar la vuelta y entrar por inicio de rampa!!!
-//com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  / $player2D  /  path size=${enemy.path?.size}  ")
+com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  / $player2D  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
 			recalcular = true
 		}
 		//
 		if(recalcular) {
 			enemy.player2D.set(player2D)
-			recalcPath(enemy, levelEnemy)
+			recalcPath(enemy, floorEnemy)
 		}
 		else {
 			usePath(enemy)
-		}
+		}*/
 	}
 
 	private fun usePath(enemy: EnemyComponent) {
 		val next = enemy.path!![enemy.pathIndex]
-//com.cesoft.cesdoom.util.Log.e(tag, "usePath----------------------------------------------- id=${enemy.id}  path index=${enemy.pathIndex}  /  $next")
+com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : usePath--------------------pos=${enemy.currentPos2D}---------------------------  path index=${enemy.pathIndex}  /  $next")
 
-		if(enemy.currentPos2D.dst(next) < 5) {
+		if(enemy.currentPos2D.dst(next) < MazeFactory.scale) {
 			enemy.pathIndex++
 		}
 		if(enemy.pathIndex >= enemy.path!!.size) {
@@ -292,16 +317,24 @@ class EnemySystem(
 			enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
 		}
 	}
-	private fun recalcPath(enemy: EnemyComponent, levelEnemy: Int) {
-		//val map = MazeFactory.mapFactory.map[levelEnemy]
-		enemy.path = MazeFactory.findPath(levelEnemy, enemy.currentPos2D, enemy.player2D)//map.findPath(enemy.currentPos2D, enemy.player2D)
-//com.cesoft.cesdoom.util.Log.e(tag, "recalcPath----------------------------------------------- id=${enemy.id}  path size=${enemy.path?.size}")
+
+	private fun recalcPath(enemy: EnemyComponent, playerPosition: Vector3) {
+		val floorEnemy = if(enemy.position.y > 2*WallFactory.HIGH) 1 else 0
+		val floorPlayer = if(playerPosition.y > 2*WallFactory.HIGH) 1 else 0
+		val accessPoint = getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D)
+		enemy.player2D.set(accessPoint)
+		enemy.stepCounter = 0
+
+		enemy.path = MazeFactory.findPath(floorEnemy, enemy.currentPos2D, enemy.player2D)
+com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : recalcPath---------pos=${enemy.currentPos2D}---target=${enemy.player2D}----------------------------------- path size=${enemy.path?.size}")
 		enemy.path?.let { path ->
-			if (path.size > 1) {
-				enemy.pathIndex = 2
+			if(path.size > 1) {
+				enemy.pathIndex = 1
 				enemy.stepCalc2D = path[1]
+com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : recalcPath----------------------------------------------- step=${enemy.stepCalc2D}")
 				enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
-			} else
+			}
+			else
 				enemy.nextStep3D = Vector3(enemy.player2D.x, enemy.position.y, enemy.player2D.y)
 		}
 	}

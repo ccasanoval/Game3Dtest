@@ -24,7 +24,7 @@ object MazeFactory {
 	private const val high2 = WallFactory.HIGH*2
 	private const val mapWidth = 3*(5*lng2)
 	private const val mapHeight = 3*(5*lng2)
-	private const val scale = 5
+	const val scale = 5
 	private val mapFactory = MapGraphFactory(mapWidth, mapHeight, scale)
 	private lateinit var rampFactory: RampFactory
 
@@ -32,7 +32,7 @@ object MazeFactory {
 		val map = MazeFactory.mapFactory.map[floorEnemy]
 		return map.findPath(enemyPos2D, playerPos2D)
 	}
-	fun getNearerLevelAccess(floorEnemy: Int, enemyPos2D: Vector2): Vector2 {
+	fun getNearerFloorAccess(floorEnemy: Int, enemyPos2D: Vector2): Vector2 {
 		val map = MazeFactory.mapFactory.map[floorEnemy]
 		return map.getNearerFloorAccess(enemyPos2D)
 	}
@@ -266,8 +266,8 @@ object MazeFactory {
 		GateFactory.create(mapFactory, e, Vector3(+GateComponent.LONG + .2f, high2, 0f), 0f, " E ", assets).unlock()
 		GateFactory.create(mapFactory, e, Vector3(-GateComponent.LONG - .2f, high2, 0f), 0f, " F ", assets).unlock()
 		/// Extra Ramps
-		rampFactory.create(mapFactory, e, Vector3(-2*lng2, high, +4.9f*lng2), angleX = +45f, angleZ = 90f)
-		rampFactory.create(mapFactory, e, Vector3(+2*lng2, high, -4.9f*lng2), angleX = -45f, angleZ = 90f)
+		rampFactory.create(mapFactory, e, Vector3(-2*lng2, high, +5f*lng2), angleX = +45f, angleZ = 90f)
+		rampFactory.create(mapFactory, e, Vector3(+2*lng2, high, -5f*lng2), angleX = -45f, angleZ = 90f)
 		/// Extra Walls
 		if(level == 3) {
 			val wf = WallFactory

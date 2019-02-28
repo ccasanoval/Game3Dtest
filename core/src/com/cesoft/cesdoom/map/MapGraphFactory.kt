@@ -25,20 +25,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
         }
     }
 
-    /*fun addCollider(level: Int, x: Float, y: Float) {
-        val point = map[level].toMapGraphCoord(Vector2(x, y))
-        val index = map[level].calcIndex(point.x, point.y)
-        if(index > 0 && index < mapData[level].size)
-            mapData[level][index] = 1
-        else
-            Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($level, $x,$y) => ($point) ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    }*/
     fun addFloorAccess(floor: Int, x: Float, y: Float) {
-        //DEL or enhance
-//        val point = map[level].toMapGraphCoord(Vector2(x, y))
-//        val index = map[level].calcIndex(point.x, point.y)
-//        mapData[level][index] = 0
-        //
         map[floor].addFloorAccess(Vector2(x,y))
     }
     //
