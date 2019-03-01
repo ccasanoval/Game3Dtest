@@ -96,7 +96,7 @@ class RampFactory(assets: Assets) {
 		//pos.y -= 2f
 
 		/// MAP
-		RampMapFactory.createMap(mapFactory, pos, angleX, angleY, angleZ)
+		RampMapFactory.create(mapFactory, pos, angleX, angleY, angleZ)
 
 		/// MODEL
 		val material = if(type==Type.STEEL) material1 else material2

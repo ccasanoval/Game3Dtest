@@ -19,6 +19,7 @@ import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.events.*
 import com.cesoft.cesdoom.managers.*
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,9 +127,10 @@ class EnemySystem(
 		enemy.currentPos2D = Vector2(enemy.position.x, enemy.position.z)
 		val distPlayer = enemy.position.dst(playerPosition)
 
-		val statusMov = statusMov(entity, distPlayer)
-		when(statusMov) {
-			EnemyComponent.StatusMov.QUIET -> {
+		//val statusMov =
+		calcStatusMov(entity, distPlayer)
+		when(enemy.statusMov) {
+			EnemyComponent.StatusMov.QUIET, EnemyComponent.StatusMov.FALL -> {
 				force = 0f
 			}
 			EnemyComponent.StatusMov.ATTACK -> {
@@ -156,14 +158,14 @@ class EnemySystem(
 
 		/// Si hay movimiento, calcula el camino
 		//if( ! status.isAttacking() && force != 0f)
-		if (statusMov == EnemyComponent.StatusMov.WALK || statusMov == EnemyComponent.StatusMov.RUN) {
+		if (enemy.statusMov == EnemyComponent.StatusMov.WALK || enemy.statusMov == EnemyComponent.StatusMov.RUN) {
 			calcPath(entity, playerPosition)
 		}
 
 		/// Mueve
 		val isMoving = distPlayer > 2*attackRadio(enemy)
-				&& (statusMov == EnemyComponent.StatusMov.WALK || statusMov == EnemyComponent.StatusMov.RUN)
-		val isQuiet = statusMov == EnemyComponent.StatusMov.QUIET
+				&& (enemy.statusMov == EnemyComponent.StatusMov.WALK || enemy.statusMov == EnemyComponent.StatusMov.RUN)
+		val isQuiet = enemy.statusMov == EnemyComponent.StatusMov.QUIET
 		moveEnemy(entity, playerPosition, isMoving, isQuiet, force, delta)
 	}
 	private fun walkForce(enemy: EnemyComponent) = if(CesDoom.isMobile) 800f else 900f
@@ -184,8 +186,10 @@ class EnemySystem(
 		val enemy = EnemyComponent.get(entity)
 		val rigidBody = BulletComponent.get(entity).rigidBody
 
+		enemy.positionOld.set(enemy.position)
 		val model = ModelComponent.get(entity)
 		model.instance.transform.getTranslation(enemy.position)
+		//Log.e(tag, "moveEnemy:------------------------------------- pos1=${enemy.position} / ${enemy.positionOld} ---------- yVel=${rigidBody.linearVelocity.y}")
 
 		/// Set velocity
 		val dir = enemy.nextStep3D.add(enemy.position.scl(-1f)).nor().scl(force * delta)
@@ -196,6 +200,7 @@ class EnemySystem(
 		val transf = Matrix4()
 		rigidBody.getWorldTransform(transf)
 		transf.getTranslation(enemy.position)
+		//Log.e(tag, "moveEnemy:------------------------------------- pos2=${enemy.position} / ${enemy.positionOld} ---------- yVel=${rigidBody.linearVelocity.y}")
 
 		val dX: Float
 		val dZ: Float
@@ -225,18 +230,19 @@ class EnemySystem(
 	}
 
 	private fun getTarget(floorPlayer: Int, playerPosition: Vector3, floorEnemy: Int, enemyPosition: Vector2): Vector2 {
-		if(floorEnemy < floorPlayer)
-			return MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)//TODO: mejorar para buscar accesos desde niveles superiores hacia inferiores...Añadir al mapa
-		else
+		if(floorEnemy < floorPlayer) {
+			val target = MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)
+			Log.e(tag, "getTarget(floorEnemy < floorPlayer): ----- target=$target")
+			return target//TODO: mejorar para buscar accesos desde niveles superiores hacia inferiores...Añadir al mapa
+		}
+		else {
 			return Vector2(playerPosition.x, playerPosition.z)
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------
 	private fun calcPath(entity: Entity, playerPosition: Vector3) {
-
 		val enemy = EnemyComponent.get(entity)
-		var recalcular = false
-
 		val floorEnemy = if(enemy.position.y > 2*WallFactory.HIGH+4) 1 else 0
 		val floorPlayer = if(playerPosition.y > 2*WallFactory.HIGH) 1 else 0
 //com.cesoft.cesdoom.util.Log.e(tag, "id=${enemy.id} : LEVELS ----------------(isAccessFloorPath=${enemy.isAccessFloorPath})-------------------- $levelEnemy  <>  $levelPlayer  / player2D=${enemy.player2D} ")
@@ -244,74 +250,34 @@ class EnemySystem(
 		//Distintas plantas: Buscar en mapa de accessos
 		if(floorEnemy != floorPlayer && !enemy.isAccessFloorPath) {
 			enemy.isAccessFloorPath = true
+			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
+Log.e(tag, "${enemy.id} : Distintas plantas -----------------floor: player=$floorPlayer / enemy=$floorEnemy------------- target=${enemy.player2D} ")
 			recalcPath(enemy, playerPosition)
-com.cesoft.cesdoom.util.Log.e(tag, "enemy=${enemy.id} : Distintas plantas --------------------------levelPlayer=$floorPlayer--------levelEnemy=$floorEnemy------------- enemy.player2D=${enemy.player2D} ")
-			return
-            //enemy.pathIndex = 0
-			//recalcular = true
 		}
 		//Misma planta: Buscar a jundador en mapa
 		else if(floorEnemy == floorPlayer && enemy.isAccessFloorPath) {
 			enemy.isAccessFloorPath = false
-			val accessPoint = getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D)
-			enemy.player2D.set(accessPoint)
+			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
+Log.e(tag, "${enemy.id}----- Restaurar misma planta -------------------------------- target=${enemy.player2D} ")
 			recalcPath(enemy, playerPosition)
-            //enemy.pathIndex = 0
-com.cesoft.cesdoom.util.Log.e(tag, "Restaurar misma planta ----------------------------------------------- id=${enemy.id}  /  access=${enemy.player2D} ")
-			return
 		}
 		else if(enemy.stepCounter++ > 100) {
-			val accessPoint = getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D)
-			enemy.player2D.set(accessPoint)
+			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
+Log.e(tag, "${enemy.id}--------------------------- RECALCULAR LIMITE DE PASOS : target=${enemy.player2D}")
 			recalcPath(enemy, playerPosition)
-			com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR LIMITE DE PASOS  id=${enemy.id}")
-			return
 		}
 		else if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
-			val accessPoint = getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D)
-			enemy.player2D.set(accessPoint)
+			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
+Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH : target=${enemy.player2D}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
 			recalcPath(enemy, playerPosition)
-			com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
-			return
 		}
 		else
 			usePath(enemy)
-
-		//Misma planta: Buscar en mapa de obstaculos correspondiente
-		/*val player2D = if(enemy.isAccessFloorPath) MazeFactory.getNearerFloorAccess(floorEnemy, enemy.currentPos2D)
-						else Vector2(playerPosition.x, playerPosition.z)
-//if(enemy.isAccessFloorPath)com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- enemy.isAccessFloorPath !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $player2D ")
-		if(player2D.dst2(enemy.player2D) > WallFactory.LONG) {//TODO:otra medida max?
-com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR POR DISTANCIA  id=${enemy.id}    / $player2D ")
-			recalcular = true
-		}
-		if(enemy.stepCounter++ > 60) {
-com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR LIMITE DE PASOS  id=${enemy.id}    / $player2D ")
-			enemy.stepCounter = 0
-			recalcular = true
-		}*/
-
-		//else if(player2D.dst2(enemy.player2D) != 0f) Log.e(tag, "---------------------------${player2D.dst2(enemy.player2D)}")
-		/*if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
-			//Si distancia < x ve a por ella -> rampa
-			//TODO: cuando los enemigos pasan por debajo de rampa y player sube rampa, enemigo se bloquea debajo de rampa:
-			//TODO   se cree que ya ha llegado a destino, deberia dar la vuelta y entrar por inicio de rampa!!!
-com.cesoft.cesdoom.util.Log.e(tag, "--------------------------- RECALCULAR POR FALTA DE PATH  id=${enemy.id}  / $player2D  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
-			recalcular = true
-		}
-		//
-		if(recalcular) {
-			enemy.player2D.set(player2D)
-			recalcPath(enemy, floorEnemy)
-		}
-		else {
-			usePath(enemy)
-		}*/
 	}
 
 	private fun usePath(enemy: EnemyComponent) {
 		val next = enemy.path!![enemy.pathIndex]
-com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : usePath--------------------pos=${enemy.currentPos2D}---------------------------  path index=${enemy.pathIndex}  /  $next")
+Log.e(tag, "${enemy.id} : usePath--------------------pos=${enemy.currentPos2D}---------------------------  path index=${enemy.pathIndex}  /  $next")
 
 		if(enemy.currentPos2D.dst(next) < MazeFactory.scale) {
 			enemy.pathIndex++
@@ -332,13 +298,17 @@ com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : usePath--------------------pos
 		enemy.player2D.set(accessPoint)
 		enemy.stepCounter = 0
 
-		enemy.path = MazeFactory.findPath(floorEnemy, enemy.currentPos2D, enemy.player2D)
-com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : recalcPath---------pos=${enemy.currentPos2D}---target=${enemy.player2D}----------------------------------- path size=${enemy.path?.size}")
+		enemy.path = MazeFactory.findPath(floorEnemy, enemy.currentPos2D, enemy.player2D, !enemy.isAccessFloorPath)
+Log.e(tag, "${enemy.id} : recalcPath---------pos=${enemy.currentPos2D}/floor=$floorEnemy-------target=${enemy.player2D}------------- path size=${enemy.path?.size}")
 		enemy.path?.let { path ->
 			if(path.size > 1) {
+				for(step in path) {
+Log.e(tag, " recalcPath---------step=$step")
+				}
+
 				enemy.pathIndex = 1
 				enemy.stepCalc2D = path[1]
-com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : recalcPath----------------------------------------------- step=${enemy.stepCalc2D}")
+Log.e(tag, "${enemy.id} : recalcPath----------------------------------------------- step=${enemy.stepCalc2D}")
 				enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
 			}
 			else
@@ -348,19 +318,24 @@ com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : recalcPath--------------------
 
 
 	//----------------------------------------------------------------------------------------------
-	private fun statusMov(entity: Entity, distPlayer: Float): EnemyComponent.StatusMov {
+	private fun calcStatusMov(entity: Entity, distPlayer: Float) {//: EnemyComponent.StatusMov {
 		val enemy = EnemyComponent.get(entity)
 		val status = StatusComponent.get(entity)
+		val yVel = BulletComponent.get(entity).rigidBody.linearVelocity.y
 
-		/// No está en condiciones de atacar: herido, muerto o sobre el suelo	//TODO: sobre suelo: Raycast para ver distancia a suelo.... EnemyComponent.RADIO + 2)
-		return if(status.isAching() || status.isDead() || enemy.position.y > 2*WallFactory.HIGH + 2*RampFactory.THICK + enemy.radio) {
+		/// No está en condiciones de moverse: herido, muerto
+		if(status.isAching() || status.isDead() ){//|| enemy.position.y > 2*WallFactory.HIGH + 2*RampFactory.THICK + enemy.radio) {
 			enemy.statusMov = EnemyComponent.StatusMov.QUIET
-			EnemyComponent.StatusMov.QUIET
+			//EnemyComponent.StatusMov.QUIET
 		}
 		/// Esta al lado, atacale (Las colisiones no valen, porque aqui ignoro el estado)
 		else if(distPlayer < attackRadio(enemy)) {
 			enemy.statusMov = EnemyComponent.StatusMov.ATTACK
-			EnemyComponent.StatusMov.ATTACK
+			///EnemyComponent.StatusMov.ATTACK
+		}
+		/// Esta cayendo //TODO: Raycast para ver distancia a suelo.... EnemyComponent.RADIO + 2)
+		else if(enemy.position.y > 6*WallFactory.HIGH || yVel < -10) {//enemy.positionOld.y - enemy.position.y > 1) {//TODO: or BulletComponent.get(entity).rigidBody.linearVelocity.y > x
+			enemy.statusMov = EnemyComponent.StatusMov.FALL
 		}
 		/// Esta cerca, corre a por el
 		else if(distPlayer < 180f) {
@@ -371,13 +346,14 @@ com.cesoft.cesdoom.util.Log.e(tag, "${enemy.id} : recalcPath--------------------
 					EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1)
 				}
 			}
-			EnemyComponent.StatusMov.RUN
+			//EnemyComponent.StatusMov.RUN
 		}
 		/// Esta lejos, camina buscando
 		else {
 			enemy.statusMov = EnemyComponent.StatusMov.WALK
-			EnemyComponent.StatusMov.WALK	//TODO: una vez que empieza a correr, que no pare?
+			//EnemyComponent.StatusMov.WALK	//TODO: una vez que empieza a correr, que no pare?
 		}
+		Log.e(tag, "enemy.statusMov-------------------------------------- ${enemy.statusMov}")
 	}
 
 

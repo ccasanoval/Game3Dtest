@@ -16,9 +16,10 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
             IntArray(map[0].cx * map[0].cy),
             IntArray(map[1].cx * map[1].cy))
 
-    init {
+    fun clear() {
+        Log.e("MapGraphFactory", "clear---------------------------------------------------------------")
         for(level in 0 until mapData.size) {
-            map[0].clear()
+            map[level].clear()
             for(i in 0 until mapData[level].size) {
                 mapData[level][i] = 0
             }
@@ -49,6 +50,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
     }*/
 
     fun compile() {
+        Log.e("MAP", "\n------------------------------------------------ compile ------------------------------------------------\n")
         for(floor in 0 until map.size) {
             for(y in 0 until map[floor].cy) {
                 for(x in 0 until map[floor].cx) {
@@ -133,7 +135,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
 
 
     /// TEST ---------------------------------------------------------------------------------------
-
+/*
     constructor(cx: Int, cy: Int) : this(cx.toFloat(), cy.toFloat(), 1)
 
     fun compile(mapData: IntArray) : MapGraph {
@@ -154,6 +156,6 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
             }
         }
         return map[0]
-    }
+    }*/
 
 }

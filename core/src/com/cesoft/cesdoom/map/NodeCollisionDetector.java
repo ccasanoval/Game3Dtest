@@ -16,8 +16,9 @@ public class NodeCollisionDetector implements RaycastCollisionDetector<Vector2> 
     }
 
     // See http://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+    //TODO: No funciona cuando sube rampa, el camino lo hace demasiado relajado, saltandose muros!!!!!!!!!!
     @Override
-    public boolean collides (Ray<Vector2> ray) {
+    public boolean collides(Ray<Vector2> ray) {
         int x0 = (int)ray.start.x;
         int y0 = (int)ray.start.y;
         int x1 = (int)ray.end.x;
@@ -25,7 +26,7 @@ public class NodeCollisionDetector implements RaycastCollisionDetector<Vector2> 
 
         int tmp;
         boolean steep = Math.abs(y1 - y0) > Math.abs(x1 - x0);
-        if (steep) {
+        if(steep) {
             // Swap x0 and y0
             tmp = x0;
             x0 = y0;
@@ -35,7 +36,7 @@ public class NodeCollisionDetector implements RaycastCollisionDetector<Vector2> 
             x1 = y1;
             y1 = tmp;
         }
-        if (x0 > x1) {
+        if(x0 > x1) {
             // Swap x0 and x1
             tmp = x0;
             x0 = x1;
@@ -51,11 +52,11 @@ public class NodeCollisionDetector implements RaycastCollisionDetector<Vector2> 
         int error = 0;
         int y = y0;
         int ystep = (y0 < y1 ? 1 : -1);
-        for (int x = x0; x <= x1; x++) {
+        for(int x = x0; x <= x1; x++) {
             Node tile = steep ? worldMap.getNode(y, x) : worldMap.getNode(x, y);
             if ( ! tile.isValid()) return true; // We've hit a wall
             error += deltay;
-            if (error + error >= deltax) {
+            if(error + error >= deltax) {
                 y += ystep;
                 error -= deltax;
             }
@@ -65,7 +66,7 @@ public class NodeCollisionDetector implements RaycastCollisionDetector<Vector2> 
     }
 
     @Override
-    public boolean findCollision (Collision<Vector2> outputCollision, Ray<Vector2> inputRay) {
+    public boolean findCollision(Collision<Vector2> outputCollision, Ray<Vector2> inputRay) {
         throw new UnsupportedOperationException();
     }
 }

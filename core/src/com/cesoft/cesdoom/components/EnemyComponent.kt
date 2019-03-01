@@ -57,6 +57,7 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 
 	var orientation: Double = 0.0
 	var position = Vector3()
+	var positionOld = Vector3()
 	var nextStep3D = Vector3()
 	var stepCalc2D = Vector2()
 	var currentPos2D = Vector2()
@@ -70,6 +71,6 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 	var currentAnimation = EnemyComponent.ACTION.IDLE
 	var particleEffect: ParticleEffect? = null
 
-	enum class StatusMov { QUIET, ATTACK, RUN, WALK }
+	enum class StatusMov { QUIET, ATTACK, RUN, WALK, FALL }
 	var statusMov: StatusMov = StatusMov.QUIET
 }

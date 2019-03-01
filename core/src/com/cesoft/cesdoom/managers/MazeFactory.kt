@@ -28,9 +28,9 @@ object MazeFactory {
 	private val mapFactory = MapGraphFactory(mapWidth, mapHeight, scale)
 	private lateinit var rampFactory: RampFactory
 
-	fun findPath(floorEnemy: Int, enemyPos2D: Vector2, playerPos2D: Vector2): ArrayList<Vector2> {
+	fun findPath(floorEnemy: Int, pos: Vector2, target: Vector2, smooth: Boolean): ArrayList<Vector2> {
 		val map = MazeFactory.mapFactory.map[floorEnemy]
-		return map.findPath(enemyPos2D, playerPos2D)
+		return map.findPath(pos, target, smooth)
 	}
 	fun getNearerFloorAccess(floorEnemy: Int, enemyPos2D: Vector2): Vector2 {
 		val map = MazeFactory.mapFactory.map[floorEnemy]
@@ -132,8 +132,8 @@ object MazeFactory {
 		GateFactory.create(mapFactory, e, Vector3(-GateComponent.LONG - .2f, 0f, 0f), 0f, " D ", assets).unlock()
 
 		// RAMPS ------------------
-		rampFactory.create(mapFactory, e, Vector3(+3.1f*lng2, high, 0f), angleX = 90f, angleY = -45f)
-		rampFactory.create(mapFactory, e, Vector3(-3.1f*lng2, high, 0f), angleX = 90f, angleY = +45f)
+		rampFactory.create(mapFactory, e, Vector3(+3f*lng2, high, 0f), angleX = 90f, angleY = -45f)
+		rampFactory.create(mapFactory, e, Vector3(-3f*lng2, high, 0f), angleX = 90f, angleY = +45f)
 		// GANG WAYS ------------------
 		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
 		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
@@ -245,6 +245,7 @@ object MazeFactory {
 
 	//______________________________________________________________________________________________
 	private fun createFirstFloor(level: Int, e: Engine, assets: Assets) {
+com.cesoft.cesdoom.util.Log.e(tag, "createFirstFloor:------------- level=$level")
 		val cx = RampFactory.LONG_GROUND
 		val cz = RampFactory.LONG_GROUND
 		for(z in -8..+8 step 2) {
@@ -307,6 +308,7 @@ object MazeFactory {
 	//______________________________________________________________________________________________
 	const val MAX_LEVEL = 3
 	private fun createLevel(engine: Engine, assets: Assets) {
+		mapFactory.clear()
 		when(PlayerComponent.currentLevel) {
 			0 -> createLevel0(engine, assets)
 			1 -> createLevel1(engine, assets)
@@ -316,7 +318,8 @@ object MazeFactory {
 	}
 	//______________________________________________________________________________________________
 	private fun createLevel0(e: Engine, assets: Assets) {
-		createLevelX(0, e, assets)
+		val level = 0
+		createLevelX(level, e, assets)
 	}
 
 	//______________________________________________________________________________________________

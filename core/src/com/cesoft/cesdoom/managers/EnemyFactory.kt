@@ -21,13 +21,13 @@ import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+// TODO: la primera vez que genera un enemigo bloquea un poco !! generar los enemigos antes o tardar menos!!!!
 class EnemyFactory(assets: Assets) {
 
     companion object {
         private val tag: String = EnemyFactory::class.java.simpleName
         private const val SPAWN_DELAY = 5*1000	//TODO: si pausa o background, debe actualizar time!!!
-        private val MAX_ENEMIES = 5+(PlayerComponent.currentLevel)*3
+        private val MAX_ENEMIES = 1//5+(PlayerComponent.currentLevel)*3
         private val random = java.util.Random()
     }
 
@@ -52,29 +52,30 @@ class EnemyFactory(assets: Assets) {
 
     private fun getNextEnemy(id: Int): Enemy {
         val enemy = allEnemies[id]
+        val height = 200f
         //val pos = when(countSpawnPosition++ % MAX_ENEMIES) {
         val pos = when(random.nextInt(MAX_ENEMIES)) {
-            0 ->    Vector3(+250f, 150f, +250f)
-            1 ->    Vector3(+250f, 150f, -250f)
-            2 ->    Vector3(-250f, 150f, +250f)
-            3 ->    Vector3(-250f, 150f, -250f)
+//            0 ->    Vector3(+250f, height, +250f)
+//            1 ->    Vector3(+250f, height, -250f)
+//            2 ->    Vector3(-250f, height, +250f)
+//            3 ->    Vector3(-250f, height, -250f)
+//
+//            4 ->    Vector3(+150f, height, +150f)
+//            5 ->    Vector3(+150f, height, -150f)
+//            6 ->    Vector3(-150f, height, +150f)
+//            7 ->    Vector3(-150f, height, -150f)
+//
+//            8 ->    Vector3(+150f, height, +150f)
+//            9 ->    Vector3(+150f, height, -150f)
+//            10 ->   Vector3(-150f, height, +150f)
+//            11 ->   Vector3(-150f, height, -150f)
+//
+//            12 ->   Vector3(+250f, height, +250f)
+//            13 ->   Vector3(+150f, height, +150f)
+//            14 ->   Vector3(+150f, height, +150f)
+//            15 ->   Vector3(-250f, height, -250f)
 
-            4 ->    Vector3(+150f, 150f, +150f)
-            5 ->    Vector3(+150f, 150f, -150f)
-            6 ->    Vector3(-150f, 150f, +150f)
-            7 ->    Vector3(-150f, 150f, -150f)
-
-            8 ->    Vector3(+150f, 150f, +150f)
-            9 ->    Vector3(+150f, 150f, -150f)
-            10 ->   Vector3(-150f, 150f, +150f)
-            11 ->   Vector3(-150f, 150f, -150f)
-
-            12 ->   Vector3(+250f, 150f, +250f)
-            13 ->   Vector3(+150f, 150f, +150f)
-            14 ->   Vector3(+150f, 150f, +150f)
-            15 ->   Vector3(-250f, 150f, -250f)
-
-            else -> Vector3(-250f, 150f, +250f)
+            else -> Vector3(-250f, height, +250f)
         }
         resetEntity(enemy, pos)
         return enemy

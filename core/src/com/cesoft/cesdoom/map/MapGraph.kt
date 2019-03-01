@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ObjectMap
 import com.cesoft.cesdoom.util.Log
 import com.badlogic.gdx.ai.pfa.PathSmoother
+import com.cesoft.cesdoom.managers.MazeFactory
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17,6 +18,10 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
 
     companion object {
         val tag: String = MapGraph::class.java.simpleName
+    }
+
+    init {
+        Log.e(tag, "$id------------------------------------------------ INIT ------------------------------------------------\n")
     }
 
     val cx: Int = (width / scale).toInt()
@@ -81,6 +86,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
     }
 
     fun clear() {
+        Log.e(tag, "$id------------------------------------------------ clear ------------------------------------------------\n")
         floorAccess.clear()
 //        nodes.clear()
 //        nodes.clear()
@@ -102,7 +108,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
     }
 
     /// Find path in tests
-    fun findPath(orig: Point, dest: Point): GraphPath<Node> {
+    /*fun findPath(orig: Point, dest: Point): GraphPath<Node> {
         val path = MapGraphSmooth()
         val pathFinder = IndexedAStarPathFinder<Node>(this)
         val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
@@ -112,12 +118,12 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
         pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
         pathSmoother.smoothPath(path)
         return path
-    }
+    }*/
 
     /// Find path in game
     private val path = MapGraphSmooth()
     private val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
-    fun findPath(orig: Vector2, dest: Vector2): ArrayList<Vector2> {
+    fun findPath(orig: Vector2, dest: Vector2, smooth: Boolean): ArrayList<Vector2> {
 
         path.clear()
 
@@ -125,16 +131,44 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
         val nodeDest = getNode(dest)
         val pathFinder = IndexedAStarPathFinder<Node>(this)
 
+
+        val map0 = this
+        Log.e("MAP", "\n------------------------------------------------ $id ------------------------------------------------\n")
+        var col = " \t\t\t"
+        for(x in 0 until map0.cx)
+            col += " " + (x % 10)
+        Log.e("MAP", col)
+        for(y in 0 until map0.cy) {
+            var row = "$y    ".substring(0, 5)
+            for (x in 0 until map0.cx) {
+                var isAccess = false
+                for (la in map0.floorAccess) {
+                    val c = map0.toMapGraphCoord(la)
+                    if (c.x == x && c.y == y) {
+                        row += "A"
+                        isAccess = true
+                        break
+                    }
+                }
+                if (!isAccess)
+                    row += if (map0.getNode(x, y).isValid) "O" else "1"
+            }
+            Log.e("MAP", row)
+        }
+        Log.e(tag, "$id path----------------from $nodeOrig to $nodeDest")
+
+
         try {
             val t0 = System.currentTimeMillis()
             pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
             val t1 = System.currentTimeMillis()
-            pathSmoother.smoothPath(path)
+            if(smooth) pathSmoother.smoothPath(path)
             val now = System.currentTimeMillis()
 //Log.e(tag, "smoothPath:----- ${path.count}   delay0= ${t1 - t0}  delay1=${now - t1}   delay2=${now - t0} ms")
 
             val res = ArrayList<Vector2>()
             for(step in path) {
+                Log.e(tag, "$id path----------------$step")
                 res.add(toWorldCoord(step.point))
             }
             return res
@@ -164,9 +198,9 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
 
     /// Mapa de accesos entre plantas
     val floorAccess = ArrayList<Vector2>()
-    fun addFloorAccess(access: Vector2) = floorAccess.add(access)
+    fun addFloorAccess(access: Vector2) = floorAccess.add(access.cpy())
     fun getNearerFloorAccess(pos: Vector2): Vector2 {
-        var curDist = 9999f
+        var curDist = Float.MAX_VALUE
         var access = Vector2.Zero
         for(i in 0 until floorAccess.size) {
             val dist = floorAccess[i].dst2(pos)
@@ -175,7 +209,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
                 access = floorAccess[i]
             }
         }
-//Log.e(tag, "getNearerFloorFloorAccess:----------------------------- $access")
+Log.e(tag, "getNearerFloorFloorAccess:----------------------------- $access")
         return access.cpy()
     }
 
