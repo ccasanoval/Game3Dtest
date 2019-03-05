@@ -7,6 +7,14 @@ interface PlayServices {
     fun signIn()
     fun showLeaderBoard()
     fun submitScore(highScore: Long)
+    fun showAchievements()
+    fun unlockAchievement(level: Int)
+
+    interface Listener {
+        fun onSignedIn()
+        fun onSignedOut()
+    }
+    fun addOnSignedIn(listener: Listener)
 
 /*
     fun signOut()

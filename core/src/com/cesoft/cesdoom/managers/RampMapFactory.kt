@@ -17,7 +17,7 @@ object RampMapFactory {
                           angleX: Float=0f, angleY: Float=0f, angleZ: Float=0f) {
     //fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, ignore: Int) {
         //val t = (RampFactory.THICK / mapFactory.scale).toInt()
-        val l = (RampFactory.LONG  / mapFactory.scale).toInt() -1
+        val l = (RampFactory.LONG  / mapFactory.scale).toInt()
         val h = (RampFactory.HIGH  / mapFactory.scale).toInt() +1
         val level = if(pos.y > 2*WallFactory.HIGH) 1 else 0//TODO: more levels ?
         val posMap = mapFactory.toMapGraphCoord(level, Vector2(pos.x, pos.z))

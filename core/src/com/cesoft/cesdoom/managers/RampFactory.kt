@@ -20,6 +20,7 @@ import com.cesoft.cesdoom.bullet.MotionState
 import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
+import com.badlogic.gdx.math.Vector2
 import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.map.MapGraphFactory
@@ -145,10 +146,30 @@ class RampFactory(assets: Assets) {
 
 	//______________________________________________________________________________________________
 	fun createGround(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3,
-			   type:Type=Type.STEEL): Entity {
+			   type:Type=Type.STEEL, xWay: Boolean=false, zWay: Boolean=false): Entity {
 		val entity = Entity()
 
 		/// MAP
+		if(xWay) {
+			val floor = (pos.y / (2*WallFactory.HIGH)).toInt()
+			val l = RampFactory.LONG_GROUND.toInt()
+			for(x in -l..+l) {
+				val point1 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+x, pos.z+l))
+				val point2 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+x, pos.z-l))
+				mapFactory.addCollider(floor, point1)
+				mapFactory.addCollider(floor, point2)
+			}
+		}
+		if(zWay) {
+			val floor = (pos.y / (2*WallFactory.HIGH)).toInt()
+			val l = RampFactory.LONG_GROUND.toInt()
+			for(z in -l..+l) {
+				val point1 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+l, pos.z+z))
+				val point2 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x-l, pos.z+z))
+				mapFactory.addCollider(floor, point1)
+				mapFactory.addCollider(floor, point2)
+			}
+		}
 		//RampMapFactory.createGroundMap(mapFactory, pos)
 
 		/// MODEL

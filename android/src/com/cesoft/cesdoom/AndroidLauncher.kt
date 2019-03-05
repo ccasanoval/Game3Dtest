@@ -14,7 +14,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.app.AlertDialog
 import android.net.Uri
 import com.google.android.gms.auth.api.Auth
-
+import com.google.android.gms.games.GamesActivityResultCodes
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 
 
 //import com.badlogic.gdx.Gdx
@@ -34,12 +36,26 @@ import com.google.android.gms.auth.api.Auth
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TODO: Player Info to use in game messages: Hey Mr X, now you are dead! Hey Mr X, you Win!!
-////https://developers.google.com/games/services/android/signin#retrieving_player_information
+//
+// Para que GPGS te deje pasar:
+// Google Play Console -> Gestion de versiones (release management) -> Firma de aplicaciones () -> Certificado de firma de aplicaciones -> SHA-1
+// Ahora vas a https://console.developers.google.com/apis/credentials?project=cesdoom -> IDs de cliente de OAuth 2.0
+// y cambias el SHA-1 al que cogiste antes
+//
+// Para pruebas:
+// Ve a Google Play Game Services y linka con otra app, auqnue en realidad selecciona la misma, pero con otro nombre (Debug)
+// Eso generara otro OAuth 2.0 en console.developers.google.com
+// keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+// y añade ese SHA en el nuevo OAuth 2.0 de console.developers.google.com
+//
+//cesoftw@gmail.com
 class AndroidLauncher: AndroidApplication(), PlayServices {
 
 	companion object {
 		private val tag: String = AndroidLauncher::class.java.simpleName
 		private const val RC_SIGN_IN: Int = 69691
+		private const val RC_LEADER_BOARD: Int = 69692
+		private const val RC_ACHIEVEMENTS: Int = 69693
 	}
 
 	//______________________________________________________________________________________________
@@ -71,21 +87,23 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 		if(isSignedIn())return
 		val signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
 		signInClient.silentSignIn().addOnCompleteListener(this) { task ->
-			if (task.isSuccessful) {
+			if(task.isSuccessful) {
 				// The signed in account is stored in the task's result.
 				val signedInAccount = task.result
 				Log.e(tag, "signInSilently:isSuccess!!!!!!!!!!!!!!!!------------------------- $signedInAccount")
-			} else {
+			}
+			else {
 				// Player will need to sign-in explicitly using via UI
 				try {
 					Log.e(tag, "signInSilently: NOT isSuccess1------------------------- ${task.exception?.printStackTrace()}")
 					Log.e(tag, "signInSilently: NOT isSuccess2------------------------- ${task.exception?.message}")
 					//Log.e(tag, "signInSilently: NOT isSuccess3------------------------- ${task.result}")
-				}catch (e: Exception) {}
+				} catch(e: Exception) {}
 				startSignInIntent()
 			}
 		}
 	}
+
 	private var hasTriedToSignIn = false
 	private fun startSignInIntent() {
 		Log.e(tag, "startSignInIntent 0-------------------------")
@@ -105,21 +123,34 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		when(requestCode) {
+			RC_ACHIEVEMENTS -> {
+				Log.e(tag, "RC_ACHIEVEMENTS---------------------------------------- $resultCode")
+				if(resultCode == GamesActivityResultCodes.RESULT_RECONNECT_REQUIRED) {
+					gpgsListener?.onSignedOut()
+				}
+			}
+			RC_LEADER_BOARD -> {
+				Log.e(tag, "RC_LEADER_BOARD---------------------------------------- $resultCode")
+				if(resultCode == GamesActivityResultCodes.RESULT_RECONNECT_REQUIRED) {
+					gpgsListener?.onSignedOut()
+				}
+			}
 			RC_SIGN_IN -> {
 				val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
 				if(result.isSuccess) {
 					// The signed in account is stored in the result.
 					val signedInAccount = result.signInAccount
-					Log.e(tag, "onActivityResult:RC_SIGN_IN:isSuccess------------------------- $signedInAccount")
+					gpgsListener?.onSignedIn()
+					Log.e(tag, "onActivityResult:RC_SIGN_IN:isSuccess-----------($gpgsListener)-------------- $signedInAccount")
 				}
 				else {
-					Log.e(tag, "onActivityResult:RC_SIGN_IN: NOT isSuccess------------------------- $resultCode ")
 					var message = result.status.statusMessage
+					Log.e(tag, "onActivityResult:RC_SIGN_IN: NOT isSuccess---------------- $message --------- $resultCode ")
 					if(message == null || message.isEmpty()) {
 						message = "Error ?"//getString(R.string.signin_other_error)
 					}
 					else
-					AlertDialog.Builder(this)
+						AlertDialog.Builder(this)
 							.setMessage(message)
 							.setNeutralButton(android.R.string.ok, null)
 							.show()
@@ -128,170 +159,53 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 			}
 		}
 	}
+	var gpgsListener: PlayServices.Listener? = null
+	override fun addOnSignedIn(listener: PlayServices.Listener) {
+		gpgsListener = listener
+		Log.e(tag, "addOnSignedIn:-----------($gpgsListener)--------------")
+	}
 
 	override fun showLeaderBoard() {
-		//val signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
 		val account = GoogleSignIn.getLastSignedInAccount(this)
+		Log.e(tag, "showLeaderBoard:------- ${account?.displayName} / ${account?.email}")
 		account?.let {
-			Games.getLeaderboardsClient(this, account)
+			val leaderBoard = Games.getLeaderboardsClient(this, account)
+			leaderBoard.allLeaderboardsIntent.addOnCompleteListener { result: Task<Intent> ->
+				startActivityForResult(result.result, RC_LEADER_BOARD)
+			}
+
+		}
+	}
+	override fun showAchievements() {
+		val account = GoogleSignIn.getLastSignedInAccount(this)
+		Log.e(tag, "showLeaderBoard:------- ${account?.displayName} / ${account?.email}")
+		account?.let {
+			val leaderBoard = Games.getAchievementsClient(this, account)
+			leaderBoard.achievementsIntent.addOnCompleteListener { result: Task<Intent> ->
+				startActivityForResult(result.result, RC_ACHIEVEMENTS)
+			}
 		}
 	}
 
 	override fun submitScore(highScore: Long) {
 		val account = GoogleSignIn.getLastSignedInAccount(this)
 		account?.let {
-			Games.getLeaderboardsClient(this, account)
-					.submitScore(resources.getString(R.string.leaderboard_kill_count), highScore)
+			Games.getLeaderboardsClient(this, account).submitScoreImmediate(resources.getString(R.string.leaderboard_kill_count), highScore)
 		}
 	}
-
-
-
-
-/*
-
-
-	private fun iniPlayServices() {
-		Log.e(tag, "iniPlayServices-----------------------------------------------------0")
-		gameHelper = GameHelper(this)
-		Log.e(tag, "iniPlayServices-----------------------------------------------------1")
-		gameHelper!!.enableDebugLog(false)
-		Log.e(tag, "iniPlayServices-----------------------------------------------------2")
-
-		val gameHelperListener = object : GameHelper.GameHelperListener {
-			override fun onSignInFailed() {
-				Log.e(tag, "iniPlayServices:onSignInFailed-----------------------------------------------------")
+	override fun unlockAchievement(level: Int) {
+		val account = GoogleSignIn.getLastSignedInAccount(this)
+		account?.let {
+			val achievement = when(level) {
+				0 -> resources.getString(R.string.level_0_completed)
+				1 -> resources.getString(R.string.level_1_completed)
+				2 -> resources.getString(R.string.level_2_completed)
+				3 -> resources.getString(R.string.level_3_completed)
+				else -> return
 			}
-			override fun onSignInSucceeded() {
-				Log.e(tag, "iniPlayServices:onSignInSucceeded-----------------------------------------------------")
-			}
-		}
-		Log.e(tag, "iniPlayServices-----------------------------------------------------3")
-		gameHelper!!.setup(gameHelperListener)
-		Log.e(tag, "iniPlayServices-----------------------------------------------------4")
-	}
-
-	private val requestCode = 1
-	private var gameHelper: GameHelper? = null
-
-	override fun onStart() {
-		super.onStart()
-		gameHelper?.onStart(this)
-	}
-
-	override fun onStop() {
-		super.onStop()
-		gameHelper?.onStop()
-	}
-
-
-
-	override fun isSignedIn(): Boolean {
-		gameHelper?.let {
-			return it.isSignedIn
-		}?: run {
-			return false
+			Games.getAchievementsClient(this, account).unlockImmediate(achievement)
 		}
 	}
-
-	override fun signIn() {
-		try {
-			runOnUiThread { gameHelper?.beginUserInitiatedSignIn() }
-		} catch (e: Exception) { Log.e(tag, "signIn:e:",e) }
-	}
-
-	override fun signOut() {
-		try {
-			runOnUiThread { gameHelper?.signOut() }
-		} catch (e: Exception) { Log.e(tag, "signOut:e:",e) }
-	}
-
-
-	override fun unlockAchievement(str: String) {
-		Games.Achievements.unlock(gameHelper?.apiClient, str)
-	}
-
-	override fun submitScore(highScore: Int) {
-		if (isSignedIn()) {
-			Games.Leaderboards.submitScore(gameHelper?.apiClient, "CgkIkdTIyacFEAIQAQ", highScore.toLong())
-		}
-	}
-
-	override fun submitLevel(highLevel: Int) {
-		if (isSignedIn()) {
-			Games.Leaderboards.submitScore(gameHelper?.apiClient, "CgkIkdTIyacFEAIQAg", highLevel.toLong())
-		}
-	}
-
-	override fun showAchievement() {
-		if (isSignedIn()) {
-			startActivityForResult(Games.Achievements.getAchievementsIntent(gameHelper?.apiClient), requestCode)
-		} else {
-			signIn()
-		}
-	}
-
-	override fun showScore() {
-		if (isSignedIn()) {
-			startActivityForResult(Games.Leaderboards.getLeaderboardIntent(gameHelper?.apiClient, "CgkIkdTIyacFEAIQAQ"), requestCode)
-		} else {
-			signIn()
-		}
-	}
-
-	override fun showLevel() {
-		if (isSignedIn()) {
-			startActivityForResult(Games.Leaderboards.getLeaderboardIntent(gameHelper?.apiClient, "CgkIkdTIyacFEAIQAg"), requestCode)
-		} else {
-			signIn()
-		}
-	}*/
-
-
-
-/*
-	override fun showBannerAd() {
-		runOnUiThread {
-			bannerAd.setVisibility(View.VISIBLE)
-			val builder = AdRequest.Builder().addTestDevice("BAA254E1D59E02763BB1A917CF86CDDE")
-			val ad = builder.build()
-			bannerAd.loadAd(ad)
-		}
-	}
-	override fun hideBannerAd() {
-		//runOnUiThread { bannerAd.setVisibility(View.INVISIBLE) }
-	}
-	override fun isRewardEarned(): Boolean {
-		val temp = rewarded
-		rewarded = false
-		return temp
-	}
-	override fun showRewardedVideo() {
-		runOnUiThread {
-			if (rewardedVideoAd.isLoaded()) {
-				rewardedVideoAd.show()
-			}
-			loadRewardedVideoAd()
-		}
-	}
-	override fun showInterstitialAd(then: Runnable) {
-		runOnUiThread {
-			if (then != null) {
-				interstitialAd.setAdListener(object : AdListener() {
-					fun onAdClosed() {
-						Gdx.app.postRunnable(then)
-						requestNewInterstitial()
-					}
-				})
-			}
-			if (interstitialAd.isLoaded()) {
-				interstitialAd.show()
-			} else {
-				requestNewInterstitial()
-			}
-		}
-	}*/
-
 
 	// Implements PlayServices ---------------------------------------------------------------------
 

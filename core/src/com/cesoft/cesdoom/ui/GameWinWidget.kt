@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.Inputs
 
 
@@ -87,12 +88,17 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 
 	//______________________________________________________________________________________________
 	fun show() {
-		game.nextLevel()
+		val oldLevel = game.nextLevel()
+		game.playServices?.unlockAchievement(oldLevel)
 
-		if(game.isNextOrReload())
+		if(game.isNextOrReload()) {
 			btnRestart.setText(assets.getString(Assets.NEXT_LEVEL))
-		else
-			btnRestart.setText(assets.getString(Assets.RECARGAR))//RECARGAR -...> YOU WIN, PLAY AGAIN...
+		}
+		else {
+			//TODO: cambiar pantalla RECARGAR -...> YOU WIN, PLAY AGAIN...
+			btnRestart.setText(assets.getString(Assets.RECARGAR))
+			game.playServices?.submitScore(PlayerComponent.score)
+		}
 
 		stage.addActor(window)
 		Gdx.input.isCursorCatched = false

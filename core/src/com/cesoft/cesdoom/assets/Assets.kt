@@ -35,6 +35,7 @@ class Assets {
 		const val RECARGAR="RECARGAR"
 		const val NEXT_LEVEL="NEXT_LEVEL"
 		const val PUNTUACIONES="PUNTUACIONES"
+		const val LOGROS="LOGROS"
 		const val GPGS_SIGN_IN="GPGS_SIGN_IN"
 		const val CREDITOS="CREDITOS"
 		const val AMMO="AMMO"

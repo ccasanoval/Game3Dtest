@@ -8,4 +8,10 @@
     <!-- leaderboard Kill count -->
     <string name="leaderboard_kill_count" translatable="false">CgkI-tHKm_cWEAIQAA</string>
 
+    <!-- achievements -->
+    <string name="level_0_completed" translatable="false">CgkI-tHKm_cWEAIQAg</string>
+    <string name="level_1_completed" translatable="false">CgkI-tHKm_cWEAIQBA</string>
+    <string name="level_2_completed" translatable="false">CgkI-tHKm_cWEAIQBQ</string>
+    <string name="level_3_completed" translatable="false">CgkI-tHKm_cWEAIQBg</string>
+
 </resources>

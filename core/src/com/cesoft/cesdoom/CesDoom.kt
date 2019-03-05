@@ -33,15 +33,14 @@ import com.cesoft.cesdoom.util.PlayServices
 //TODO:
 //
 //TODO: FPS !!!  (Enemy consume mucho, es todo por pathfinding?)
-//TODO: Monstruo 2 (spider) cambiar sonido aracnido..
 //TODO: You win the game widget que muestre puntuacion etc...
+//TODO: Pathfinding 3D (enhancement) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //TODO: Joystick!!
 //TODO: Level Constructor
-//TODO: Pathfinding 3D (enhancement)
-//TODO: Monster3, Weapon2 ?
 //TODO: Radar de monster?
 //TODO: Textura en suelo donde nacen los bichos?
 //TODO: Ascensores y escaleras!!!
+//TODO: Monster3, Weapon2 ?
 //
 //TODO: Columnas en maze?
 //TODO: mandos de pantalla : Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir salto?
@@ -135,10 +134,13 @@ class CesDoom(
 		Status.gameOver = false
 		Status.mainMenu = false
 	}
-	fun nextLevel() {
+	fun nextLevel() : Int {
+		val oldLevel = PlayerComponent.currentLevel
 		PlayerComponent.currentLevel++
-		if(PlayerComponent.currentLevel > MazeFactory.MAX_LEVEL)//TODO: show final congrats screen
+		if(PlayerComponent.currentLevel > MazeFactory.MAX_LEVEL) {//TODO: show final congrats screen
 			PlayerComponent.currentLevel = 0
+		}
+		return oldLevel
 	}
 	fun isNextOrReload():Boolean {
 		return PlayerComponent.currentLevel > 0

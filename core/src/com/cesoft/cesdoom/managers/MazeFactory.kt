@@ -25,7 +25,7 @@ object MazeFactory {
 	private const val mapWidth = 3*(5*lng2)
 	private const val mapHeight = 3*(5*lng2)
 	const val scale = 5
-	private val mapFactory = MapGraphFactory(mapWidth, mapHeight, scale)
+	private lateinit var mapFactory: MapGraphFactory
 	private lateinit var rampFactory: RampFactory
 
 	fun findPath(floorEnemy: Int, pos: Vector2, target: Vector2, smooth: Boolean): ArrayList<Vector2> {
@@ -40,6 +40,7 @@ object MazeFactory {
 	//______________________________________________________________________________________________
 	fun create(engine: Engine, assets: Assets) {
 		WallFactory.iniMaterials(assets)
+		mapFactory = MapGraphFactory(mapWidth, mapHeight, scale)
 		rampFactory = RampFactory(assets)
 
 		createLevel(engine, assets)
@@ -104,26 +105,26 @@ object MazeFactory {
 
 
 		/// Outer Wall ------------------
-		for(z in -11..11 step 2) {
-			wf.create(mapFactory, e, Vector3(+7f * lng2, 0f, z * lng), 00f, WallFactory.Type.GRILLE)
-			wf.create(mapFactory, e, Vector3(-7f * lng2, 0f, z * lng), 00f, WallFactory.Type.GRILLE)
+		for(z in -12..12 step 2) {
+			wf.create(mapFactory, e, Vector3(+7*lng2, 0f, z*lng), 00f, WallFactory.Type.GRILLE)
+			wf.create(mapFactory, e, Vector3(-7*lng2, 0f, z*lng), 00f, WallFactory.Type.GRILLE)
 		}
 		for(x in -13..13 step 2) {
 			if (x == 1) {
 				// SALIDA 0
 				var id = " A "
-				GateFactory.create(mapFactory, e, Vector3(x * lng, 0f, +6f * lng2), 90f, id, assets)
-				YouWinFactory.create(e, Vector3(x * lng, 0f, +6f * lng2 + (2 * YouWinFactory.SIZE + GateComponent.THICK)))
+				GateFactory.create(mapFactory, e, Vector3(x * lng, 0f, +6.5f*lng2), 90f, id, assets)
+				YouWinFactory.create(e, Vector3(x * lng, 0f, +6.5f*lng2 + (2*YouWinFactory.SIZE + GateComponent.THICK)))
 				// SALIDA 1
 				id = " B "
-				GateFactory.create(mapFactory, e, Vector3(x * lng, 0f, -6f * lng2), 90f, id, assets)
-				YouWinFactory.create(e, Vector3(x * lng, 0f, -6f * lng2 - (2 * YouWinFactory.SIZE + GateComponent.THICK)))
+				GateFactory.create(mapFactory, e, Vector3(x * lng, 0f, -6.5f*lng2), 90f, id, assets)
+				YouWinFactory.create(e, Vector3(x * lng, 0f, -6.5f*lng2 - (2*YouWinFactory.SIZE + GateComponent.THICK)))
 				//
 				addSwitchesLevelX(level, e, assets)
 				continue
 			}
-			wf.create(mapFactory, e, Vector3(x * lng, 0f, +6f * lng2), 90f, WallFactory.Type.GRILLE)
-			wf.create(mapFactory, e, Vector3(x * lng, 0f, -6f * lng2), 90f, WallFactory.Type.GRILLE)
+			wf.create(mapFactory, e, Vector3(x*lng, 0f, +6.5f*lng2), 90f, WallFactory.Type.GRILLE)
+			wf.create(mapFactory, e, Vector3(x*lng, 0f, -6.5f*lng2), 90f, WallFactory.Type.GRILLE)
 		}
 		// Outer Wall ------------------
 
@@ -135,12 +136,31 @@ object MazeFactory {
 		rampFactory.create(mapFactory, e, Vector3(+3f*lng2, high, 0f), angleX = 90f, angleY = -45f)
 		rampFactory.create(mapFactory, e, Vector3(-3f*lng2, high, 0f), angleX = 90f, angleY = +45f)
 		// GANG WAYS ------------------
-		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
-		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-		rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
-		rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-		rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+//		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
+//		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+//		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+//		rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
+//		rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+//		rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+		if(level == 0) {
+			for(x in -3..+3)
+				rampFactory.createGround(mapFactory, e, Vector3(x*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, xWay=true)
+
+			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
+			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, zWay=true)
+			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
+			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, zWay=true)
+			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+		}//TODO: Mejorar pathfinding entre plantas !!!!!!!!!!!!!!!!!!
+		else {
+			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
+			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
+			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+		}
 
 
 		// AMMO ------------------

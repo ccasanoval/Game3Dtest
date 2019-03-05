@@ -232,7 +232,7 @@ class EnemySystem(
 	private fun getTarget(floorPlayer: Int, playerPosition: Vector3, floorEnemy: Int, enemyPosition: Vector2): Vector2 {
 		if(floorEnemy < floorPlayer) {
 			val target = MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)
-			Log.e(tag, "getTarget(floorEnemy < floorPlayer): ----- target=$target")
+Log.e(tag, "getTarget(floorEnemy < floorPlayer): ----- target=$target")
 			return target//TODO: mejorar para buscar accesos desde niveles superiores hacia inferiores...Añadir al mapa
 		}
 		else {
@@ -353,7 +353,7 @@ Log.e(tag, "${enemy.id} : recalcPath--------------------------------------------
 			enemy.statusMov = EnemyComponent.StatusMov.WALK
 			//EnemyComponent.StatusMov.WALK	//TODO: una vez que empieza a correr, que no pare?
 		}
-		Log.e(tag, "enemy.statusMov-------------------------------------- ${enemy.statusMov}")
+		//Log.e(tag, "enemy.statusMov-------------------------------------- ${enemy.statusMov}")
 	}
 
 

@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.Status
+import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.Inputs
 
 
@@ -90,6 +91,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		Gdx.input.isCursorCatched = false
 		Status.paused = true
 		Status.gameOver = true
+		game.playServices?.submitScore(PlayerComponent.score)
 	}
 	private fun exit() {
 		window.remove()

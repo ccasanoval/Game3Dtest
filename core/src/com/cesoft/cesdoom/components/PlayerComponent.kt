@@ -55,7 +55,7 @@ class PlayerComponent : Component {
         }
 
         /// Score -----------------
-        var score: Int = 0          //TODO: MessageSystem + dispatch signal
+        var score: Long = 0          //TODO: MessageSystem + dispatch signal
         fun addScore(pts: Int) { PlayerComponent.score += pts }
 
 

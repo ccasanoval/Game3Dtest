@@ -131,7 +131,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
         val nodeDest = getNode(dest)
         val pathFinder = IndexedAStarPathFinder<Node>(this)
 
-
+/*
         val map0 = this
         Log.e("MAP", "\n------------------------------------------------ $id ------------------------------------------------\n")
         var col = " \t\t\t"
@@ -155,14 +155,15 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
             }
             Log.e("MAP", row)
         }
-        Log.e(tag, "$id path----------------from $nodeOrig to $nodeDest")
+        Log.e(tag, "$id path----------------from $nodeOrig to $nodeDest")*/
 
 
         try {
             val t0 = System.currentTimeMillis()
             pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
             val t1 = System.currentTimeMillis()
-            if(smooth) pathSmoother.smoothPath(path)
+            //if(smooth)
+                pathSmoother.smoothPath(path)
             val now = System.currentTimeMillis()
 //Log.e(tag, "smoothPath:----- ${path.count}   delay0= ${t1 - t0}  delay1=${now - t1}   delay2=${now - t0} ms")
 
