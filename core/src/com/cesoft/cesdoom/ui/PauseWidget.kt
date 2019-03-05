@@ -15,6 +15,7 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.input.Inputs
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,10 +91,16 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		})
 	}
 	//______________________________________________________________________________________________
+	private var delay = 0f
 	override fun act(delta: Float) {
 		super.act(delta)
+		delay += delta
+		if(delay < .50)return
+		Log.e("PauseWidget", "act------------------------------------ $delay")
+		delay = 0f
 		when {
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.BACK) -> exit()
+			game.playerInput.mapper.isButtonPressed(Inputs.Action.BACK)
+			|| game.playerInput.mapper.isButtonPressed(Inputs.Action.START)	-> exit()
 			game.playerInput.mapper.isButtonPressed(Inputs.Action.START) -> restart()
 			game.playerInput.mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
 		}

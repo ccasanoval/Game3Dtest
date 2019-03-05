@@ -16,6 +16,7 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.Inputs
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +131,13 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 	}
 
 	//______________________________________________________________________________________________
+	private var delay = 0f
 	override fun act(delta: Float) {
+		super.act(delta)
+		delay += delta
+		if(delay < .250)return
+		Log.e("GameWinWidget", "act----------------------------------------")
+		delay = 0f
 		when {
 			mapper.isButtonPressed(Inputs.Action.START) -> restart()
 			mapper.isButtonPressed(Inputs.Action.BACK) -> toMenu()

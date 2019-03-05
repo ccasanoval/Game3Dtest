@@ -44,7 +44,7 @@ class GameScreen(private val game: CesDoom, private val gameUI: GameUI, assets: 
 			}
 			input.mapper.isButtonPressed(Inputs.Action.EXIT) -> {
 				//TODO: Send message to go to menu
-				com.cesoft.cesdoom.util.Log.e(tag, "dddddddddddddddddddddddddddddddddddddddddddddddddd")
+				com.cesoft.cesdoom.util.Log.e(tag, "input.mapper.isButtonPressed(Inputs.Action.EXIT)-----------------------------")
 				game.reset2Menu()
 			}
 		}

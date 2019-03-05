@@ -150,6 +150,11 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 				}
 			}
 		}
+		else {
+			gpgsSignInButton.isVisible = false
+			leaderBoardButton.isVisible = false
+			achievementsButton.isVisible = false
+		}
 	}
 
 	//______________________________________________________________________________________________
@@ -222,48 +227,100 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		stage.act(delta)
 		stage.draw()
 	}
-	private var currentFocus = 0
+	private var currentFocus = ButtonFocus.JUGAR
+	private enum class ButtonFocus(value: Int) {
+		JUGAR(0), CONFIG(1),
+		SALIR(2), CREDITOS(3),
+		PUNTOS(4), LOGROS(5)
+	}
 	private fun processInput() {
-		val forward = input.mapper.isAxisValuePositive(Inputs.Action.MOVE_X)
-				|| input.mapper.isAxisValuePositive(Inputs.Action.MOVE_Y)
-				|| input.mapper.isAxisValuePositive(Inputs.Action.LOOK_X)
-				|| input.mapper.isAxisValuePositive(Inputs.Action.LOOK_Y)
-		val backward = input.mapper.isAxisValueNegative(Inputs.Action.MOVE_X)
-				|| input.mapper.isAxisValueNegative(Inputs.Action.MOVE_Y)
-				|| input.mapper.isAxisValueNegative(Inputs.Action.LOOK_X)
+		val down = input.mapper.isAxisValueNegative(Inputs.Action.MOVE_Y)
 				|| input.mapper.isAxisValueNegative(Inputs.Action.LOOK_Y)
+		val up = input.mapper.isAxisValuePositive(Inputs.Action.MOVE_Y)
+				|| input.mapper.isAxisValuePositive(Inputs.Action.LOOK_Y)
+		val backward = input.mapper.isAxisValuePositive(Inputs.Action.MOVE_X)
+				|| input.mapper.isAxisValuePositive(Inputs.Action.LOOK_X)
+		val forward = input.mapper.isAxisValueNegative(Inputs.Action.MOVE_X)
+				|| input.mapper.isAxisValueNegative(Inputs.Action.LOOK_X)
 		if(game.playerInput.mapper.isButtonPressed(Inputs.Action.START)) {
-			currentFocus = 0
+			currentFocus = ButtonFocus.JUGAR
 			game.reset()
 		}
 		else if(input.mapper.isButtonPressed(Inputs.Action.EXIT)) {
-			currentFocus = 1
+			currentFocus = ButtonFocus.SALIR
 			Gdx.app.exit()
 		}
 		else if(forward) {
-			currentFocus++
-			if(currentFocus > 3)currentFocus=3
+			when(currentFocus) {
+				ButtonFocus.JUGAR -> currentFocus = ButtonFocus.CONFIG
+				ButtonFocus.SALIR -> currentFocus = ButtonFocus.CREDITOS
+				ButtonFocus.PUNTOS -> currentFocus = ButtonFocus.LOGROS
+				else -> Unit
+			}
 		}
 		else if(backward) {
-			currentFocus--
-			if(currentFocus < 0)currentFocus=0
+			when(currentFocus) {
+				ButtonFocus.CONFIG -> currentFocus = ButtonFocus.JUGAR
+				ButtonFocus.CREDITOS -> currentFocus = ButtonFocus.SALIR
+				ButtonFocus.LOGROS -> currentFocus = ButtonFocus.PUNTOS
+				else -> Unit
+			}
+		}
+		else if(up) {
+			when(currentFocus) {
+				ButtonFocus.SALIR -> currentFocus = ButtonFocus.JUGAR
+				ButtonFocus.CREDITOS -> currentFocus = ButtonFocus.CONFIG
+				ButtonFocus.LOGROS -> currentFocus = ButtonFocus.CREDITOS
+				ButtonFocus.PUNTOS -> currentFocus = ButtonFocus.SALIR
+				else -> Unit
+			}
+		}
+		else if(down) {
+			when(currentFocus) {
+				ButtonFocus.JUGAR -> currentFocus = ButtonFocus.SALIR
+				ButtonFocus.CONFIG -> currentFocus = ButtonFocus.CREDITOS
+				//ButtonFocus.SALIR -> currentFocus = ButtonFocus.PUNTOS//check if is shown
+				//ButtonFocus.CREDITOS -> currentFocus = ButtonFocus.LOGROS//check if is shown
+				else -> Unit
+			}
 		}
 		updateFocus()
+		if(game.playerInput.mapper.isButtonPressed(Inputs.Action.FIRE)) {
+			when(currentFocus) {
+				ButtonFocus.JUGAR -> game.reset()
+				ButtonFocus.CREDITOS -> game.setScreen(AboutScreen(game, assets))
+				ButtonFocus.SALIR -> Gdx.app.exit()
+				ButtonFocus.CONFIG -> game.setScreen(SettingsScreen(game, assets))
+			}
+		}
 	}
 	private fun updateFocus() {
-//		playButton.background = playButton.style.up
-//		quitButton.background = playButton.style.up
-//		settingsButton.background = playButton.style.up
-//		aboutButton.background = playButton.style.up
-		//playButton.setColor(1f,1f,1f,1f)
+		if(playButton.color.a != 0f) {
+			playButton.setColor(1f,1f,1f,1f)
+			settingsButton.setColor(1f,1f,1f,1f)
+			quitButton.setColor(1f,1f,1f,1f)
+			aboutButton.setColor(1f,1f,1f,1f)
+		}
+		Log.e("updateFocus", "-----------------------------------$currentFocus")
 		when(currentFocus) {
-			0 -> {
-				playButton.background = playButton.style.over
-				//playButton.setColor(1f,0f,0f,1f)
+			ButtonFocus.JUGAR -> {
+				playButton.background = playButton.style.checked
+				playButton.setColor(1f,0f,0f,1f)
 			}
-			1 -> quitButton.background = playButton.style.over
-			2 -> settingsButton.background = playButton.style.over
-			3 -> aboutButton.background = playButton.style.over
+			ButtonFocus.SALIR -> {
+				quitButton.background = quitButton.style.over
+				quitButton.setColor(1f,0f,0f,1f)
+			}
+			ButtonFocus.CONFIG -> settingsButton.setColor(1f,0f,0f,1f)
+			ButtonFocus.CREDITOS -> aboutButton.setColor(1f,0f,0f,1f)
+			ButtonFocus.PUNTOS -> {
+				leaderBoardButton.setColor(1f,0f,0f,1f)
+				gpgsSignInButton.setColor(1f,0f,0f,1f)
+			}
+			ButtonFocus.LOGROS -> {
+				achievementsButton.setColor(1f,0f,0f,1f)
+				gpgsSignInButton.setColor(1f,0f,0f,1f)
+			}
 		}
 		/*when(currentFocus) {
 			0 -> playButton.background = playButton.style.focused
