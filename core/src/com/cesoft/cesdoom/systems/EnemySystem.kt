@@ -168,17 +168,14 @@ class EnemySystem(
 		val isQuiet = enemy.statusMov == EnemyComponent.StatusMov.QUIET
 		moveEnemy(entity, playerPosition, isMoving, isQuiet, force, delta)
 	}
-	private fun walkForce(enemy: EnemyComponent) = if(CesDoom.isMobile) 800f else 900f
+	private fun walkForce(enemy: EnemyComponent): Float {
+		val force = 800f//if(CesDoom.isMobile) 800f else 900f
+		return force + (PlayerComponent.currentLevel * 50)
+	}
 	private fun runForce(enemy: EnemyComponent): Float {
-		return if(CesDoom.isMobile) {
-			if(enemy.type == EnemyComponent.TYPE.MONSTER0)
-				1600f
-			else
-				900f
-		}
-		else {
-			2200f
-		}
+		//if(CesDoom.isMobile) { 2200f
+		val force = if(enemy.type == EnemyComponent.TYPE.MONSTER0) 1600f else 1000f
+		return force + (PlayerComponent.currentLevel * 75)
 	}
 	//______________________________________________________________________________________________
 	private fun moveEnemy(entity: Entity, playerPosition: Vector3, isWalking: Boolean, isQuiet: Boolean, force: Float, delta: Float) {
@@ -355,8 +352,6 @@ Log.e(tag, "${enemy.id} : recalcPath--------------------------------------------
 		}
 		//Log.e(tag, "enemy.statusMov-------------------------------------- ${enemy.statusMov}")
 	}
-
-
 
 	private fun updateStatusSys(entity: Entity, delta: Float) {
 		updateStatus(entity, delta)

@@ -115,4 +115,11 @@ class InputMapper {
     fun isAxisValueNegative(axis: Inputs.Action):Boolean
             = values[axis] == Value.NEGATIVE
             || (!CesDoom.isMobile && Gdx.input.isKeyPressed(mapperKey[AxisKey(axis, false)]?:-1))
+
+
+
+    fun isGoingUp(): Boolean = isAxisValuePositive(Inputs.Action.MOVE_Y) || isAxisValuePositive(Inputs.Action.LOOK_Y)
+    fun isGoingDown(): Boolean = isAxisValueNegative(Inputs.Action.MOVE_Y) || isAxisValueNegative(Inputs.Action.LOOK_Y)
+    fun isGoingBackwards(): Boolean = isAxisValuePositive(Inputs.Action.MOVE_X) || isAxisValuePositive(Inputs.Action.LOOK_X)
+    fun isGoingForward(): Boolean = isAxisValueNegative(Inputs.Action.MOVE_X) || isAxisValueNegative(Inputs.Action.LOOK_X)
 }

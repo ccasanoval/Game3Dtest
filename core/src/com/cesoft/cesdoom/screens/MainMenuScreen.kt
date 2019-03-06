@@ -53,6 +53,14 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		Controllers.addListener(input)
 	}
 
+	private fun goPlay() { game.reset() }
+	private fun goQuit() { Gdx.app.exit() }
+	private fun goSettings() { game.setScreen(SettingsScreen(game, assets)) }
+	private fun goAbout() { game.setScreen(AboutScreen(game, assets)) }
+	private fun goLeaderBoard() { game.playServices?.showLeaderBoard() }
+	private fun goAchievements() { game.playServices?.showAchievements() }
+	private fun goSignInGPGS() { game.playServices?.signIn() }
+
 	//______________________________________________________________________________________________
 	private fun configureWidgets() {
 		var y = 110f
@@ -186,37 +194,37 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 
 		playButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.reset()
+				goPlay()
 			}
 		})
 		quitButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				Gdx.app.exit()
+				goQuit()
 			}
 		})
         settingsButton.addListener(object : ClickListener() {
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                game.setScreen(SettingsScreen(game, assets))
+                goSettings()
             }
         })
 		aboutButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.setScreen(AboutScreen(game, assets))
+				goAbout()
 			}
 		})
 		leaderBoardButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.playServices?.showLeaderBoard()
+				goLeaderBoard()
 			}
 		})
 		achievementsButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.playServices?.showAchievements()
+				goAchievements()
 			}
 		})
 		gpgsSignInButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.playServices?.signIn()
+				goSignInGPGS()
 			}
 		})
 	}
@@ -227,70 +235,75 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		stage.act(delta)
 		stage.draw()
 	}
-	private var currentFocus = ButtonFocus.JUGAR
+	private var currentFocus = ButtonFocus.PLAY
 	private enum class ButtonFocus(value: Int) {
-		JUGAR(0), CONFIG(1),
-		SALIR(2), CREDITOS(3),
-		PUNTOS(4), LOGROS(5)
+		PLAY(0), SETTINGS(1),
+		QUIT(2), ABOUT(3),
+		LEADERBOARD(4), ACHIEVEMENTS(5), SIGNIN(6)
 	}
 	private fun processInput() {
-		val down = input.mapper.isAxisValueNegative(Inputs.Action.MOVE_Y)
-				|| input.mapper.isAxisValueNegative(Inputs.Action.LOOK_Y)
-		val up = input.mapper.isAxisValuePositive(Inputs.Action.MOVE_Y)
-				|| input.mapper.isAxisValuePositive(Inputs.Action.LOOK_Y)
-		val backward = input.mapper.isAxisValuePositive(Inputs.Action.MOVE_X)
-				|| input.mapper.isAxisValuePositive(Inputs.Action.LOOK_X)
-		val forward = input.mapper.isAxisValueNegative(Inputs.Action.MOVE_X)
-				|| input.mapper.isAxisValueNegative(Inputs.Action.LOOK_X)
 		if(game.playerInput.mapper.isButtonPressed(Inputs.Action.START)) {
-			currentFocus = ButtonFocus.JUGAR
-			game.reset()
+			currentFocus = ButtonFocus.PLAY
+			goPlay()
 		}
 		else if(input.mapper.isButtonPressed(Inputs.Action.EXIT)) {
-			currentFocus = ButtonFocus.SALIR
-			Gdx.app.exit()
+			currentFocus = ButtonFocus.QUIT
+			goQuit()
 		}
-		else if(forward) {
+
+		val down = input.mapper.isGoingDown()
+		val up = input.mapper.isGoingUp()
+		val backward = input.mapper.isGoingBackwards()
+		val forward = input.mapper.isGoingForward()
+		if(forward) {
 			when(currentFocus) {
-				ButtonFocus.JUGAR -> currentFocus = ButtonFocus.CONFIG
-				ButtonFocus.SALIR -> currentFocus = ButtonFocus.CREDITOS
-				ButtonFocus.PUNTOS -> currentFocus = ButtonFocus.LOGROS
+				ButtonFocus.PLAY -> currentFocus = ButtonFocus.SETTINGS
+				ButtonFocus.QUIT -> currentFocus = ButtonFocus.ABOUT
+				ButtonFocus.LEADERBOARD -> currentFocus = ButtonFocus.ACHIEVEMENTS
 				else -> Unit
 			}
 		}
 		else if(backward) {
 			when(currentFocus) {
-				ButtonFocus.CONFIG -> currentFocus = ButtonFocus.JUGAR
-				ButtonFocus.CREDITOS -> currentFocus = ButtonFocus.SALIR
-				ButtonFocus.LOGROS -> currentFocus = ButtonFocus.PUNTOS
+				ButtonFocus.SETTINGS -> currentFocus = ButtonFocus.PLAY
+				ButtonFocus.ABOUT -> currentFocus = ButtonFocus.QUIT
+				ButtonFocus.ACHIEVEMENTS -> currentFocus = ButtonFocus.LEADERBOARD
 				else -> Unit
 			}
 		}
-		else if(up) {
+		if(up) {
 			when(currentFocus) {
-				ButtonFocus.SALIR -> currentFocus = ButtonFocus.JUGAR
-				ButtonFocus.CREDITOS -> currentFocus = ButtonFocus.CONFIG
-				ButtonFocus.LOGROS -> currentFocus = ButtonFocus.CREDITOS
-				ButtonFocus.PUNTOS -> currentFocus = ButtonFocus.SALIR
+				ButtonFocus.QUIT -> currentFocus = ButtonFocus.PLAY
+				ButtonFocus.ABOUT -> currentFocus = ButtonFocus.SETTINGS
+				ButtonFocus.ACHIEVEMENTS -> currentFocus = ButtonFocus.ABOUT
+				ButtonFocus.LEADERBOARD -> currentFocus = ButtonFocus.QUIT
+				ButtonFocus.SIGNIN -> currentFocus = ButtonFocus.ABOUT
 				else -> Unit
 			}
 		}
 		else if(down) {
 			when(currentFocus) {
-				ButtonFocus.JUGAR -> currentFocus = ButtonFocus.SALIR
-				ButtonFocus.CONFIG -> currentFocus = ButtonFocus.CREDITOS
-				//ButtonFocus.SALIR -> currentFocus = ButtonFocus.PUNTOS//check if is shown
-				//ButtonFocus.CREDITOS -> currentFocus = ButtonFocus.LOGROS//check if is shown
+				ButtonFocus.PLAY -> currentFocus = ButtonFocus.QUIT
+				ButtonFocus.SETTINGS -> currentFocus = ButtonFocus.ABOUT
+				ButtonFocus.QUIT ->
+					currentFocus = if(gpgsSignInButton.isVisible) ButtonFocus.SIGNIN
+									else ButtonFocus.LEADERBOARD
+				ButtonFocus.ABOUT ->
+					currentFocus = if(gpgsSignInButton.isVisible) ButtonFocus.SIGNIN
+									else ButtonFocus.ACHIEVEMENTS
 				else -> Unit
 			}
 		}
 		updateFocus()
 		if(game.playerInput.mapper.isButtonPressed(Inputs.Action.FIRE)) {
 			when(currentFocus) {
-				ButtonFocus.JUGAR -> game.reset()
-				ButtonFocus.CREDITOS -> game.setScreen(AboutScreen(game, assets))
-				ButtonFocus.SALIR -> Gdx.app.exit()
-				ButtonFocus.CONFIG -> game.setScreen(SettingsScreen(game, assets))
+				ButtonFocus.PLAY -> goPlay()
+				ButtonFocus.ABOUT -> goAbout()
+				ButtonFocus.QUIT -> goQuit()
+				ButtonFocus.SETTINGS -> goSettings()
+				ButtonFocus.SIGNIN -> goSignInGPGS()
+				ButtonFocus.LEADERBOARD -> goLeaderBoard()
+				ButtonFocus.ACHIEVEMENTS -> goAchievements()
 			}
 		}
 	}
@@ -300,34 +313,21 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 			settingsButton.setColor(1f,1f,1f,1f)
 			quitButton.setColor(1f,1f,1f,1f)
 			aboutButton.setColor(1f,1f,1f,1f)
+			//
+			gpgsSignInButton.setColor(.7f,1f,.7f,1f)
+			leaderBoardButton.setColor(.7f,1f,.7f,1f)
+			achievementsButton.setColor(.7f,1f,.7f,1f)
 		}
 		Log.e("updateFocus", "-----------------------------------$currentFocus")
 		when(currentFocus) {
-			ButtonFocus.JUGAR -> {
-				playButton.background = playButton.style.checked
-				playButton.setColor(1f,0f,0f,1f)
-			}
-			ButtonFocus.SALIR -> {
-				quitButton.background = quitButton.style.over
-				quitButton.setColor(1f,0f,0f,1f)
-			}
-			ButtonFocus.CONFIG -> settingsButton.setColor(1f,0f,0f,1f)
-			ButtonFocus.CREDITOS -> aboutButton.setColor(1f,0f,0f,1f)
-			ButtonFocus.PUNTOS -> {
-				leaderBoardButton.setColor(1f,0f,0f,1f)
-				gpgsSignInButton.setColor(1f,0f,0f,1f)
-			}
-			ButtonFocus.LOGROS -> {
-				achievementsButton.setColor(1f,0f,0f,1f)
-				gpgsSignInButton.setColor(1f,0f,0f,1f)
-			}
+			ButtonFocus.PLAY -> playButton.setColor(1f,0f,0f,1f)
+			ButtonFocus.QUIT -> quitButton.setColor(1f,0f,0f,1f)
+			ButtonFocus.SETTINGS -> settingsButton.setColor(1f,0f,0f,1f)
+			ButtonFocus.ABOUT -> aboutButton.setColor(1f,0f,0f,1f)
+			ButtonFocus.SIGNIN -> gpgsSignInButton.setColor(1f,0f,0f,1f)
+			ButtonFocus.LEADERBOARD -> leaderBoardButton.setColor(1f,0f,0f,1f)
+			ButtonFocus.ACHIEVEMENTS -> achievementsButton.setColor(1f,0f,0f,1f)
 		}
-		/*when(currentFocus) {
-			0 -> playButton.background = playButton.style.focused
-			1 -> quitButton.background = playButton.style.focused
-			2 -> settingsButton.background = playButton.style.focused
-			3 -> aboutButton.background = playButton.style.focused
-		}*/
 	}
 
 	//______________________________________________________________________________________________

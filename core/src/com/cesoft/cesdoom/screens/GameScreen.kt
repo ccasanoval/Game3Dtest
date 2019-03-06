@@ -11,6 +11,7 @@ import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.ui.GameUI
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,16 +37,22 @@ class GameScreen(private val game: CesDoom, private val gameUI: GameUI, assets: 
 		gameUI.render()
 	}
 	private fun processInput() {
+
+		val down = input.mapper.isGoingDown()
+		val up = input.mapper.isGoingUp()
+		val backward = input.mapper.isGoingBackwards()
+		val forward = input.mapper.isGoingForward()
+
 		when {
 			input.mapper.isButtonPressed(Inputs.Action.BACK) -> {
-				//TODO: Send message to go to pause widget
-				gameUI.pause()
-				com.cesoft.cesdoom.util.Log.e(tag, "cccccccccccccccccccccccccccccccccccccccccccccccccc")
+				//TODO: Send message to go to ... WICH widget is on? Pause, GameOver, GameWin ?
+				//gameUI.pause()
+				Log.e(tag, "input.mapper.isButtonPressed(Inputs.Action.BACK) ---> gameUI.pause()")
 			}
 			input.mapper.isButtonPressed(Inputs.Action.EXIT) -> {
 				//TODO: Send message to go to menu
-				com.cesoft.cesdoom.util.Log.e(tag, "input.mapper.isButtonPressed(Inputs.Action.EXIT)-----------------------------")
-				game.reset2Menu()
+				Log.e(tag, "input.mapper.isButtonPressed(Inputs.Action.EXIT) ---> game.reset2Menu()")
+				//game.reset2Menu()
 			}
 		}
 	}
