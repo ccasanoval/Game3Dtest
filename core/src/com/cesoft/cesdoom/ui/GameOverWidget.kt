@@ -1,7 +1,7 @@
 package com.cesoft.cesdoom.ui
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
@@ -34,7 +34,6 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		//
 		val ws = Window.WindowStyle()
 		ws.titleFont = BitmapFont()
-		ws.titleFontColor = Color.BLUE
 		window = Window("", ws)
 		//
 		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
@@ -46,6 +45,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		//
 		configureWidgets()
 		setListeners()
+		Controllers.addListener(game.playerInput)
 		//
 		setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
 		setPosition((CesDoom.VIRTUAL_WIDTH - width)/2, (CesDoom.VIRTUAL_HEIGHT - height)/2)
@@ -140,5 +140,67 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	}
 	private fun exitApp() {
 		Gdx.app.exit()
+	}
+
+
+//TODO
+	/// PROCESS INPUT ------------------------------------------------------------------------------
+	private var currentFocus = ButtonFocus.NONE
+	private enum class ButtonFocus {
+		NONE, RESTART, MENU, QUIT
+	}
+	private fun processInput() {
+		when {
+//			mapper.isButtonPressed(Inputs.Action.BACK) -> goBack()
+//			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()
+//			mapper.isButtonPressed(Inputs.Action.EXIT) -> goQuit()
+		}
+		updateFocusSelection()
+		updateFocusColor()
+		if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
+			processSelectedButton()
+		}
+	}
+	private fun updateFocusSelection() {
+		val down = mapper.isGoingDown()
+		val up = mapper.isGoingUp()
+		if(up) {
+			when(currentFocus) {
+				ButtonFocus.NONE -> currentFocus = ButtonFocus.RESTART
+				ButtonFocus.MENU-> currentFocus = ButtonFocus.RESTART
+				ButtonFocus.QUIT -> currentFocus = ButtonFocus.MENU
+				else -> Unit
+			}
+		}
+		else if(down) {
+			when(currentFocus) {
+				ButtonFocus.NONE -> currentFocus = ButtonFocus.RESTART
+				ButtonFocus.RESTART-> currentFocus = ButtonFocus.MENU
+				ButtonFocus.MENU -> currentFocus = ButtonFocus.QUIT
+				else -> Unit
+			}
+		}
+	}
+	private fun updateFocusColor() {
+		//Log.e("updateFocus", "-----------------------------------$currentFocus")
+		if(btnRestart.color.a != 0f) {
+			btnRestart.color = Styles.colorNormal1
+			btnMenu.color = Styles.colorNormal1
+			btnQuit.color = Styles.colorNormal1
+		}
+		when(currentFocus) {
+			ButtonFocus.NONE -> Unit
+			ButtonFocus.RESTART -> btnRestart.color = Styles.colorSelected1
+			ButtonFocus.MENU -> btnMenu.color = Styles.colorSelected1
+			ButtonFocus.QUIT -> btnQuit.color = Styles.colorSelected1
+		}
+	}
+	private fun processSelectedButton() {
+		when(currentFocus) {
+			ButtonFocus.NONE -> Unit
+//			ButtonFocus.RESTART -> goRestart()
+//			ButtonFocus.MENU -> goMenu()
+//			ButtonFocus.QUIT -> goQuit()
+		}
 	}
 }

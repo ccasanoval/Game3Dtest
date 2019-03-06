@@ -2,7 +2,7 @@ package com.cesoft.cesdoom.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
@@ -15,13 +15,13 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.input.Inputs
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Actor() {
 
+	private val mapper = game.playerInput.mapper
 	private var window: Window
 	private var btnRestart: TextButton
 	private var btnMenu: TextButton
@@ -32,8 +32,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		super.setStage(stage)
 		//
 		val ws = Window.WindowStyle()
-		ws.titleFont = BitmapFont()
-		ws.titleFontColor = Color.BLUE
+		ws.titleFont = BitmapFont()//Necessary, stupid but necessary
 		window = Window("", ws)
 		//
 		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
@@ -48,6 +47,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		//
 		configureWidgets()
 		setListeners()
+		Controllers.addListener(game.playerInput)
 		//
 		setSize(0.8f*CesDoom.VIRTUAL_WIDTH, 0.8f*CesDoom.VIRTUAL_HEIGHT)
 		setPosition(CesDoom.VIRTUAL_WIDTH - width, CesDoom.VIRTUAL_HEIGHT - height)
@@ -73,47 +73,42 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 				return false
 			}
 		})
-
 		btnRestart.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				restart()
+				goRestart()
 			}
 		})
 		btnMenu.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				toMenu()
+				goMenu()
 			}
 		})
 		btnQuit.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				exitApp()
+				goQuit()
 			}
 		})
 	}
 	//______________________________________________________________________________________________
-	private var delay = 0f
+	private var inputDelay = 0f
 	override fun act(delta: Float) {
 		super.act(delta)
-		delay += delta
-		if(delay < .50)return
-		Log.e("PauseWidget", "act------------------------------------ $delay")
-		delay = 0f
-		when {
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.BACK)
-			|| game.playerInput.mapper.isButtonPressed(Inputs.Action.START)	-> exit()
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.START) -> restart()
-			game.playerInput.mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
+		inputDelay+=delta
+		if(inputDelay > .250f) {
+			inputDelay = 0f
+			processInput()
 		}
 	}
-	private fun restart() {
-		exit()
+
+	//______________________________________________________________________________________________
+	private fun goRestart() {
+		goBack()
 		game.reset()
 	}
-	private fun toMenu() {
-		exit()
+	private fun goMenu() {
 		game.reset2Menu()
 	}
-	private fun exitApp() {
+	private fun goQuit() {
 		Gdx.app.exit()
 	}
 
@@ -124,7 +119,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		if(window.stage == null)
 			goIn()
 		else
-			exit()
+			goBack()
 	}
 	private fun goIn() {
 		game.pauseGame()
@@ -132,7 +127,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		Gdx.input.isCursorCatched = false
 		Status.paused = true
 	}
-	private fun exit() {
+	private fun goBack() {
 		window.remove()
 		Gdx.input.isCursorCatched = true
 		Status.paused = false
@@ -150,6 +145,67 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	override fun setSize(width: Float, height: Float) {
 		super.setSize(width, height)
 		window.setSize(width, height)
+	}
+
+
+	/// PROCESS INPUT ------------------------------------------------------------------------------
+	private var currentFocus = ButtonFocus.NONE
+	private enum class ButtonFocus {
+		NONE, RESTART, MENU, QUIT
+	}
+	private fun processInput() {
+		when {
+			mapper.isButtonPressed(Inputs.Action.BACK) -> goBack()
+			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()
+			mapper.isButtonPressed(Inputs.Action.EXIT) -> goQuit()
+		}
+		updateFocusSelection()
+		updateFocusColor()
+		if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
+			processSelectedButton()
+		}
+	}
+	private fun updateFocusSelection() {
+		val down = mapper.isGoingDown()
+		val up = mapper.isGoingUp()
+		if(up) {
+			when(currentFocus) {
+				ButtonFocus.NONE -> currentFocus = ButtonFocus.RESTART
+				ButtonFocus.MENU-> currentFocus = ButtonFocus.RESTART
+				ButtonFocus.QUIT -> currentFocus = ButtonFocus.MENU
+				else -> Unit
+			}
+		}
+		else if(down) {
+			when(currentFocus) {
+				ButtonFocus.NONE -> currentFocus = ButtonFocus.RESTART
+				ButtonFocus.RESTART-> currentFocus = ButtonFocus.MENU
+				ButtonFocus.MENU -> currentFocus = ButtonFocus.QUIT
+				else -> Unit
+			}
+		}
+	}
+	private fun updateFocusColor() {
+		//Log.e("updateFocus", "-----------------------------------$currentFocus")
+		if(btnRestart.color.a != 0f) {
+			btnRestart.color = Styles.colorNormal1
+			btnMenu.color = Styles.colorNormal1
+			btnQuit.color = Styles.colorNormal1
+		}
+		when(currentFocus) {
+			ButtonFocus.NONE -> Unit
+			ButtonFocus.RESTART -> btnRestart.color = Styles.colorSelected1
+			ButtonFocus.MENU -> btnMenu.color = Styles.colorSelected1
+			ButtonFocus.QUIT -> btnQuit.color = Styles.colorSelected1
+		}
+	}
+	private fun processSelectedButton() {
+		when(currentFocus) {
+			ButtonFocus.NONE -> Unit
+			ButtonFocus.RESTART -> goRestart()
+			ButtonFocus.MENU -> goMenu()
+			ButtonFocus.QUIT -> goQuit()
+		}
 	}
 
 }

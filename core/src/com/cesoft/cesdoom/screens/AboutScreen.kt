@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -13,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.input.Inputs
+import com.cesoft.cesdoom.ui.Styles
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,15 +27,17 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 	private var backButton: TextButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
 	private var rateButton: TextButton = TextButton(assets.getString(Assets.PUNTUA), assets.skin)
 
-	private val texto: Label = Label(assets.getString(Assets.SOBRE_TXT), assets.skin)
-	private val scrollPane = ScrollPane(texto, assets.skin)
-	private val win = Window("About", assets.skin, "special")
+	private val text: Label = Label(assets.getString(Assets.SOBRE_TXT), assets.skin)
+	private val scrollPane = ScrollPane(text, assets.skin)
+	private val win = Window("About", assets.skin, Styles.windowStyle)
+
+	private val mapper = game.playerInput.mapper
 
 	init {
 		configureWidgets()
 		setListeners()
 		Gdx.input.inputProcessor = this
-        stage.keyboardFocus
+		Controllers.addListener(game.playerInput)//TODO: needed?
 	}
 
 	//______________________________________________________________________________________________
@@ -43,9 +48,9 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 		rateButton.setSize(350f, 85f)
 		rateButton.setPosition(backButton.x - rateButton.width -5, 5f)
 
-		texto.setWrap(true)
-		texto.setFontScale(1.5f)
-		texto.setColor(.9f, .9f, .9f, 1f)
+		text.setWrap(true)
+		text.setFontScale(1.5f)
+		//texto.color = Styles.colorNormal1
 
 		scrollPane.setScrollingDisabled(true, false)
 		scrollPane.setSize(CesDoom.VIRTUAL_WIDTH-250, CesDoom.VIRTUAL_HEIGHT-250)
@@ -66,6 +71,7 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 
 	//______________________________________________________________________________________________
 	private fun goBack() { game.setScreen(MainMenuScreen(game, assets)) }
+	private fun goRate() { game.playServices?.rateGame() }
 	private fun setListeners() {
 		backButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
@@ -74,16 +80,23 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 		})
 		rateButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
-				game.playServices?.rateGame()
+				goRate()
 			}
 		})
 	}
 
 	//______________________________________________________________________________________________
+	private var inputDelay = 0f
 	override fun render(delta: Float) {
+		inputDelay+=delta
+		if(inputDelay > .250f) {
+			inputDelay = 0f
+			processInput()
+		}
 		stage.act(delta)
 		stage.draw()
 	}
+
 	//______________________________________________________________________________________________
 	override fun resize(width: Int, height: Int) {
 		stage.viewport.update(width, height)
@@ -99,6 +112,7 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 	override fun hide() = Unit
 
 
+	//______________________________________________________________________________________________
 	/// Implements: InputProcessor
 	override fun keyDown(keycode: Int): Boolean {
 		if (keycode == Input.Keys.BACK) goBack()
@@ -111,4 +125,60 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 	override fun keyUp(keycode: Int): Boolean = stage.keyUp(keycode)
 	override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = stage.touchDragged(screenX, screenY, pointer)
 	override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = stage.touchDown(screenX, screenY, pointer, button)
+
+
+	/// PROCESS INPUT ------------------------------------------------------------------------------
+	private var currentFocus = ButtonFocus.NONE
+	private enum class ButtonFocus {
+		NONE, BACK, RATE
+	}
+	private fun processInput() {
+		if(mapper.isButtonPressed(Inputs.Action.START)
+				|| mapper.isButtonPressed(Inputs.Action.EXIT)
+				|| mapper.isButtonPressed(Inputs.Action.BACK)) {
+			currentFocus = ButtonFocus.BACK
+			goBack()
+		}
+		updateFocusSelection()
+		updateFocusColor()
+		if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
+			processSelectedButton()
+		}
+	}
+	private fun updateFocusSelection() {
+		val backwards = mapper.isGoingBackwards()
+		val forward = mapper.isGoingForward()
+		if(forward) {
+			when(currentFocus) {
+				ButtonFocus.NONE -> currentFocus = ButtonFocus.RATE
+				ButtonFocus.RATE -> currentFocus = ButtonFocus.BACK
+				else -> Unit
+			}
+		}
+		else if(backwards) {
+			when(currentFocus) {
+				ButtonFocus.NONE -> currentFocus = ButtonFocus.BACK
+				ButtonFocus.BACK -> currentFocus = ButtonFocus.RATE
+				else -> Unit
+			}
+		}
+	}
+	private fun updateFocusColor() {
+		if(backButton.color.a != 0f) {
+			backButton.color = Styles.colorNormal1
+			rateButton.color = Styles.colorNormal1
+		}
+		when (currentFocus) {
+			ButtonFocus.NONE -> Unit
+			ButtonFocus.RATE -> rateButton.color = Styles.colorSelected1
+			ButtonFocus.BACK -> backButton.color = Styles.colorSelected1
+		}
+	}
+	private fun processSelectedButton() {
+		when (currentFocus) {
+			ButtonFocus.NONE -> Unit
+			ButtonFocus.RATE -> goRate()
+			ButtonFocus.BACK -> goBack()
+		}
+	}
 }

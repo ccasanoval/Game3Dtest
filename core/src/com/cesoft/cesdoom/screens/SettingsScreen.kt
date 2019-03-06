@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
@@ -14,18 +15,21 @@ import com.cesoft.cesdoom.Settings
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
-import com.cesoft.cesdoom.util.Log
+import com.cesoft.cesdoom.input.Inputs
+import com.cesoft.cesdoom.ui.Styles
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : Screen, InputProcessor {
 
+    private val mapper = game.playerInput.mapper
+
     private var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
     private var backgroundImage = Image(Texture(Gdx.files.internal("data/background.png")))
     private var backButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
 
-    private val win = Window("SettingsScreen", assets.skin, "special")
+    private val win = Window("SettingsScreen", assets.skin, Styles.windowStyle)
     private val titleLabel = Label(assets.getString(Assets.CONFIG), assets.skin)
 
     private val soundButton = TextButton(assets.getString(Assets.CONFIG_SOUND_EFFECTS_ONOF), assets.skin, "toggle")
@@ -47,6 +51,7 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         configure()
         setListeners()
         Gdx.input.inputProcessor = this
+        Controllers.addListener(game.playerInput)
     }
 
     //______________________________________________________________________________________________
@@ -199,7 +204,7 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         }
         //
         gamepadButton.addListener {
-            game.setScreen(SettingsGamepadSceen(game, assets))
+            game.setScreen(SettingsGamePadScreen(game, assets))
             return@addListener false
         }
         //
@@ -207,9 +212,16 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
 
     //______________________________________________________________________________________________
     /// Implements: Screen
+    private var inputDelay = 0f
     override fun render(delta: Float) {
         stage.act(delta)
         stage.draw()
+        //
+        inputDelay+=delta
+        if(inputDelay > .250f) {
+            inputDelay = 0f
+            processInput()
+        }
     }
     override fun resize(width: Int, height: Int) {
         stage.viewport.update(width, height)
@@ -235,4 +247,13 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
     override fun keyUp(keycode: Int): Boolean = stage.keyUp(keycode)
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = stage.touchDragged(screenX, screenY, pointer)
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = stage.touchDown(screenX, screenY, pointer, button)
+
+
+
+    /// PROCESS INPUT ------------------------------------------------------------------------------
+    private fun processInput() {
+        when {
+            mapper.isButtonPressed(Inputs.Action.BACK) || mapper.isButtonPressed(Inputs.Action.FIRE) -> goBack()
+        }
+    }
 }

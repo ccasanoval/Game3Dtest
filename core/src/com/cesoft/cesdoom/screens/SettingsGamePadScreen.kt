@@ -19,24 +19,24 @@ import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.systems.PlayerSystem
+import com.cesoft.cesdoom.ui.Styles
 import com.cesoft.cesdoom.util.Log
 import kotlin.math.absoluteValue
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class SettingsGamepadSceen(internal val game: CesDoom, private val assets: Assets)
+class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Assets)
     : Screen, InputProcessor, ControllerListener {
 
     companion object {
-        private val tag: String = SettingsGamepadSceen::class.java.simpleName
+        private val tag: String = SettingsGamePadScreen::class.java.simpleName
     }
 
     private var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
     private var backgroundImage = Image(Texture(Gdx.files.internal("data/background.png")))
     private var backButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
-    //private var saveButton = TextButton(assets.getString(Assets.SAVE), assets.skin)
 
-    private val win = Window("SettingsGamepadSceen", assets.skin, "special")
+    private val win = Window(tag, assets.skin, Styles.windowStyle)
     private val titleLabel = Label("GAME PAD", assets.skin)
     private val lblSeparator = Label("", assets.skin)
 

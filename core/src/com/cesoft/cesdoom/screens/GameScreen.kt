@@ -16,7 +16,7 @@ import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameScreen(private val game: CesDoom, private val gameUI: GameUI, assets: Assets) : Screen {
+class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Screen {
 	private val input = game.playerInput
 	private var gameWorld = GameWorld(gameUI.gameWinWidget, gameUI.gameOverWidget, input.mapper, assets)
 
@@ -38,6 +38,10 @@ class GameScreen(private val game: CesDoom, private val gameUI: GameUI, assets: 
 	}
 	private fun processInput() {
 
+
+		gameUI.gameWinWidget.isVisible
+		gameUI.gameOverWidget.isVisible
+
 		val down = input.mapper.isGoingDown()
 		val up = input.mapper.isGoingUp()
 		val backward = input.mapper.isGoingBackwards()
@@ -47,7 +51,8 @@ class GameScreen(private val game: CesDoom, private val gameUI: GameUI, assets: 
 			input.mapper.isButtonPressed(Inputs.Action.BACK) -> {
 				//TODO: Send message to go to ... WICH widget is on? Pause, GameOver, GameWin ?
 				//gameUI.pause()
-				Log.e(tag, "input.mapper.isButtonPressed(Inputs.Action.BACK) ---> gameUI.pause()")
+				Log.e(tag, "isButtonPressed(Inputs.Action.BACK) ---> gameUI.pause()")
+				Log.e(tag, "isButtonPressed(Inputs.Action.BACK) ---> Win=${gameUI.gameWinWidget.isVisible}  Over=${gameUI.gameOverWidget.isVisible}  Pause=${gameUI}")
 			}
 			input.mapper.isButtonPressed(Inputs.Action.EXIT) -> {
 				//TODO: Send message to go to menu
