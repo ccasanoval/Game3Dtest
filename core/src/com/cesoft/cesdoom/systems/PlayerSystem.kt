@@ -222,7 +222,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private fun updateTranslationMobile(delta: Float) {
 		var isMoving = false
-		val offsetHorizontal = +0.60f
+		val offsetHorizontal = +0.60f//TODO: Set equal for inputMap... in one place only!!!
 		val offsetVertical = +0.20f
 
 		//Log.e(tag, "updateTranslationMobile-------- ${inputMap.isAxisValuePositive(Inputs.MOVE_Y)}")

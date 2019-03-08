@@ -17,8 +17,8 @@ class PlayerComponent : Component {
 
         const val TALL = 22f
         private const val HEALTH_FULL = 100
-        const val IMPULSE_MOBIL = 2200f
-        const val IMPULSE_PC = 5000f
+        const val IMPULSE_MOBIL = 3000f
+        //const val IMPULSE_PC = 5000f
         const val MASS = 65f
         const val RADIO = 16f
 

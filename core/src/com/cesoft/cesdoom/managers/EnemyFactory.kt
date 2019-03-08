@@ -26,7 +26,7 @@ class EnemyFactory(assets: Assets) {
 
     companion object {
         private val tag: String = EnemyFactory::class.java.simpleName
-        private const val SPAWN_DELAY = 5*1000	//TODO: si pausa o background, debe actualizar time!!!
+        private val SPAWN_DELAY = (5 - PlayerComponent.currentLevel)*1000 //TODO: si pausa o background, debe actualizar time!!!
         private val MAX_ENEMIES = 5+(PlayerComponent.currentLevel)*4
         private val random = java.util.Random()
     }

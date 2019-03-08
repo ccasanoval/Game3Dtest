@@ -69,19 +69,17 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	private fun setListeners() {
 		btnRestart.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				exit()
-                game.reset()
+                goRestart()
 			}
 		})
 		btnMenu.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				exit()
-                game.reset2Menu()
+				goMenu()
 			}
 		})
 		btnQuit.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				Gdx.app.exit()
+				goQuit()
 			}
 		})
 	}
@@ -94,7 +92,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		Status.gameOver = true
 		game.playServices?.submitScore(PlayerComponent.score)
 	}
-	private fun exit() {
+	private fun clean() {
 		window.remove()
 		Gdx.input.isCursorCatched = true
 		Status.paused = false
@@ -124,26 +122,21 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		if(delay < .250)return
 		Log.e("GameOverWidget", "act----------------------------------------")
 		delay = 0f
-		when {
-			mapper.isButtonPressed(Inputs.Action.START) -> restart()
-			mapper.isButtonPressed(Inputs.Action.BACK) -> toMenu()
-			mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
-		}
+		processInput()
 	}
-	private fun restart() {
-		exit()
+	private fun goRestart() {
+		clean()
 		game.reset()
 	}
-	private fun toMenu() {
-		exit()
+	private fun goMenu() {
+		clean()
 		game.reset2Menu()
 	}
-	private fun exitApp() {
+	private fun goQuit() {
 		Gdx.app.exit()
 	}
 
 
-//TODO
 	/// PROCESS INPUT ------------------------------------------------------------------------------
 	private var currentFocus = ButtonFocus.NONE
 	private enum class ButtonFocus {
@@ -151,9 +144,9 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	}
 	private fun processInput() {
 		when {
-//			mapper.isButtonPressed(Inputs.Action.BACK) -> goBack()
-//			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()
-//			mapper.isButtonPressed(Inputs.Action.EXIT) -> goQuit()
+			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()
+			mapper.isButtonPressed(Inputs.Action.BACK) -> goMenu()
+			mapper.isButtonPressed(Inputs.Action.EXIT) -> goQuit()
 		}
 		updateFocusSelection()
 		updateFocusColor()
