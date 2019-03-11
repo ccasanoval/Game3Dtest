@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.*
@@ -169,12 +168,11 @@ class EnemySystem(
 		moveEnemy(entity, playerPosition, isMoving, isQuiet, force, delta)
 	}
 	private fun walkForce(enemy: EnemyComponent): Float {
-		val force = 800f//if(CesDoom.isMobile) 800f else 900f
+		val force = 900f//if(CesDoom.isMobile) 800f else 900f
 		return force + (PlayerComponent.currentLevel * 50)
 	}
 	private fun runForce(enemy: EnemyComponent): Float {
-		//if(CesDoom.isMobile) { 2200f
-		val force = if(enemy.type == EnemyComponent.TYPE.MONSTER0) 1600f else 1000f
+		val force = if(enemy.type == EnemyComponent.TYPE.MONSTER0) 1600f else 1100f
 		return force + (PlayerComponent.currentLevel * 75)
 	}
 	//______________________________________________________________________________________________
@@ -229,7 +227,7 @@ class EnemySystem(
 	private fun getTarget(floorPlayer: Int, playerPosition: Vector3, floorEnemy: Int, enemyPosition: Vector2): Vector2 {
 		if(floorEnemy < floorPlayer) {
 			val target = MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)
-Log.e(tag, "getTarget(floorEnemy < floorPlayer): ----- target=$target")
+//Log.e(tag, "getTarget(floorEnemy < floorPlayer): ----- target=$target")
 			return target//TODO: mejorar para buscar accesos desde niveles superiores hacia inferiores...Añadir al mapa
 		}
 		else {
@@ -248,24 +246,24 @@ Log.e(tag, "getTarget(floorEnemy < floorPlayer): ----- target=$target")
 		if(floorEnemy != floorPlayer && !enemy.isAccessFloorPath) {
 			enemy.isAccessFloorPath = true
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-Log.e(tag, "${enemy.id} : Distintas plantas -----------------floor: player=$floorPlayer / enemy=$floorEnemy------------- target=${enemy.player2D} ")
+//Log.e(tag, "${enemy.id} : Distintas plantas -----------------floor: player=$floorPlayer / enemy=$floorEnemy------------- target=${enemy.player2D} ")
 			recalcPath(enemy, playerPosition)
 		}
 		//Misma planta: Buscar a jundador en mapa
 		else if(floorEnemy == floorPlayer && enemy.isAccessFloorPath) {
 			enemy.isAccessFloorPath = false
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-Log.e(tag, "${enemy.id}----- Restaurar misma planta -------------------------------- target=${enemy.player2D} ")
+//Log.e(tag, "${enemy.id}----- Restaurar misma planta -------------------------------- target=${enemy.player2D} ")
 			recalcPath(enemy, playerPosition)
 		}
 		else if(enemy.stepCounter++ > 100) {
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-Log.e(tag, "${enemy.id}--------------------------- RECALCULAR LIMITE DE PASOS : target=${enemy.player2D}")
+//Log.e(tag, "${enemy.id}--------------------------- RECALCULAR LIMITE DE PASOS : target=${enemy.player2D}")
 			recalcPath(enemy, playerPosition)
 		}
 		else if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH : target=${enemy.player2D}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
+//Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH : target=${enemy.player2D}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
 			recalcPath(enemy, playerPosition)
 		}
 		else
@@ -274,7 +272,7 @@ Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH 
 
 	private fun usePath(enemy: EnemyComponent) {
 		val next = enemy.path!![enemy.pathIndex]
-Log.e(tag, "${enemy.id} : usePath--------------------pos=${enemy.currentPos2D}---------------------------  path index=${enemy.pathIndex}  /  $next")
+//Log.e(tag, "${enemy.id} : usePath--------------------pos=${enemy.currentPos2D}---------------------------  path index=${enemy.pathIndex}  /  $next")
 
 		if(enemy.currentPos2D.dst(next) < MazeFactory.scale) {
 			enemy.pathIndex++
@@ -295,17 +293,17 @@ Log.e(tag, "${enemy.id} : usePath--------------------pos=${enemy.currentPos2D}--
 		enemy.player2D.set(accessPoint)
 		enemy.stepCounter = 0
 
-		enemy.path = MazeFactory.findPath(floorEnemy, enemy.currentPos2D, enemy.player2D, !enemy.isAccessFloorPath)
-Log.e(tag, "${enemy.id} : recalcPath---------pos=${enemy.currentPos2D}/floor=$floorEnemy-------target=${enemy.player2D}------------- path size=${enemy.path?.size}")
+		enemy.path = MazeFactory.findPath(floorEnemy, enemy.currentPos2D, enemy.player2D)//, !enemy.isAccessFloorPath)
+//Log.e(tag, "${enemy.id} : recalcPath---------pos=${enemy.currentPos2D}/floor=$floorEnemy-------target=${enemy.player2D}------------- path size=${enemy.path?.size}")
 		enemy.path?.let { path ->
 			if(path.size > 1) {
 				for(step in path) {
-Log.e(tag, " recalcPath---------step=$step")
+//Log.e(tag, " recalcPath---------step=$step")
 				}
 
 				enemy.pathIndex = 1
 				enemy.stepCalc2D = path[1]
-Log.e(tag, "${enemy.id} : recalcPath----------------------------------------------- step=${enemy.stepCalc2D}")
+//Log.e(tag, "${enemy.id} : recalcPath----------------------------------------------- step=${enemy.stepCalc2D}")
 				enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
 			}
 			else

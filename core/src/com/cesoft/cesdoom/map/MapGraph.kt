@@ -75,7 +75,6 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
                 if(node.isValid)
                     break
             }
-            //Log.e(tag, "id=$id:getNode: cuidado, esto podria retardar mucho la busqueda -------------------- point=$point / nodeIni=$nodeOld <> nodeFin=$node / #nodes=${nodes.size}")
             Log.e(tag, "id=$id:getNode: cuidado, esto podria retardar mucho la busqueda -------------------- nodeIni=${nodeOld.point} <> nodeFin=${node.point}")
         }
         return node
@@ -86,7 +85,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
     }
 
     fun clear() {
-        Log.e(tag, "$id------------------------------------------------ clear ------------------------------------------------\n")
+        //Log.e(tag, "$id------------------------------------------------ clear ------------------------------------------------\n")
         floorAccess.clear()
 //        nodes.clear()
 //        nodes.clear()
@@ -123,7 +122,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
     /// Find path in game
     private val path = MapGraphSmooth()
     private val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
-    fun findPath(orig: Vector2, dest: Vector2, smooth: Boolean): ArrayList<Vector2> {
+    fun findPath(orig: Vector2, dest: Vector2, smooth: Boolean=true): ArrayList<Vector2> {
 
         path.clear()
 
@@ -159,17 +158,17 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
 
 
         try {
-            val t0 = System.currentTimeMillis()
+            //val t0 = System.currentTimeMillis()
             pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
-            val t1 = System.currentTimeMillis()
+            //val t1 = System.currentTimeMillis()
             //if(smooth)
                 pathSmoother.smoothPath(path)
-            val now = System.currentTimeMillis()
+            //val now = System.currentTimeMillis()
 //Log.e(tag, "smoothPath:----- ${path.count}   delay0= ${t1 - t0}  delay1=${now - t1}   delay2=${now - t0} ms")
 
             val res = ArrayList<Vector2>()
             for(step in path) {
-                Log.e(tag, "$id path----------------$step")
+                //Log.e(tag, "$id path----------------$step")
                 res.add(toWorldCoord(step.point))
             }
             return res
@@ -210,7 +209,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
                 access = floorAccess[i]
             }
         }
-Log.e(tag, "getNearerFloorFloorAccess:----------------------------- $access")
+//Log.e(tag, "getNearerFloorFloorAccess:----------------------------- $access")
         return access.cpy()
     }
 

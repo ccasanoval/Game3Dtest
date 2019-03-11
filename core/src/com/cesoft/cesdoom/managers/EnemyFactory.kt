@@ -34,7 +34,7 @@ class EnemyFactory(assets: Assets) {
     lateinit var enemies: ImmutableArray<Entity>
     private val allEnemies = ArrayList<Enemy>()
     init {
-        Log.e(tag, "INIT---------------------------------------------------------------- MAX_ENEMIES=$MAX_ENEMIES")
+        Log.e(tag, "INIT---------------------------------------------------------------- MAX_ENEMIES=$MAX_ENEMIES INI="+java.util.Date())
         if(allEnemies.size < MAX_ENEMIES) {
             for(i in allEnemies.size until MAX_ENEMIES) {
                 val type = if(PlayerComponent.currentLevel > 0)
@@ -48,6 +48,7 @@ class EnemyFactory(assets: Assets) {
                 allEnemies.add(enemy)
             }
         }
+        Log.e(tag, "INIT---------------------------------------------------------------- MAX_ENEMIES=$MAX_ENEMIES FIN="+java.util.Date())
     }
 
     private fun getNextEnemy(id: Int): Enemy {

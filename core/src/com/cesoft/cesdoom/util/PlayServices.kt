@@ -1,5 +1,10 @@
 package com.cesoft.cesdoom.util
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//Google Game Services
+//Kill all the hideous monsters to get out of the labyrinth of death. CesDooM is just a proof of concept of a First Person Shooter game for Android, developed with Kotlin under Android Studio by Cesar Casanova
+//Mátalos a todos esos monstruos horribles para salir del laberinto de la muerte. CesDooM es solo una prueba de concepto de un juego de acción en primera persona para Android, desarrollado en Kotlin con Android Studio por Cesar Casanova
 interface PlayServices {
     fun rateGame()
 
@@ -16,12 +21,5 @@ interface PlayServices {
     }
     fun addOnSignedIn(listener: Listener)
 
-/*
-    fun signOut()
-    fun unlockAchievement(str: String)
-    fun submitScore(highScore: Int)
-    fun submitLevel(highLevel: Int)
-    fun showAchievement()
-    fun showScore()
-    fun showLevel()*/
+    //fun signOut()
 }

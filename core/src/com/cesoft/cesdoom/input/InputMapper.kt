@@ -53,10 +53,6 @@ class InputMapper {
 	init {
 		if( ! CesDoom.isMobile)
 			addKeyboard()
-
-		Log.e(tag, ":::::::::::::::::::::::::::::::::1:"+isButtonPressed(Inputs.Action.START))
-		Log.e(tag, ":::::::::::::::::::::::::::::::::2:"+values[Inputs.Action.START])
-        Log.e(tag, ":::::::::::::::::::::::::::::::::3:"+Gdx.input.isKeyPressed(mapperKey[AxisKey(Inputs.Action.START, true)]?:-1))
 	}
 
 
@@ -73,11 +69,30 @@ class InputMapper {
         }
     }
     fun povMoved(povCode: Int, value: PovDirection?) {
-        //TODO: asociar con Axis en addMap(event: Int, axis: Int, offset: Float, isPovX: Boolean, isPovY: Boolean)
-        /*when(value) {
-            PovDirection.east ->
+        //TODO: TEST
+        when(value) {
+            PovDirection.east -> values[Inputs.Action.MOVE_X] = Inputs.Value.NEGATIVE
+            PovDirection.west -> values[Inputs.Action.MOVE_X] = Inputs.Value.POSITIVE
+            PovDirection.south -> values[Inputs.Action.MOVE_Y] = Inputs.Value.POSITIVE
+            PovDirection.north -> values[Inputs.Action.MOVE_Y] = Inputs.Value.NEGATIVE
+            PovDirection.southEast -> {
+                values[Inputs.Action.MOVE_X] = Inputs.Value.NEGATIVE
+                values[Inputs.Action.MOVE_Y] = Inputs.Value.POSITIVE
+            }
+            PovDirection.southWest -> {
+                values[Inputs.Action.MOVE_X] = Inputs.Value.POSITIVE
+                values[Inputs.Action.MOVE_Y] = Inputs.Value.POSITIVE
+            }
+            PovDirection.northEast -> {
+                values[Inputs.Action.MOVE_X] = Inputs.Value.NEGATIVE
+                values[Inputs.Action.MOVE_Y] = Inputs.Value.NEGATIVE
+            }
+            PovDirection.northWest -> {
+                values[Inputs.Action.MOVE_X] = Inputs.Value.POSITIVE
+                values[Inputs.Action.MOVE_Y] = Inputs.Value.NEGATIVE
+            }
             else -> Unit
-        }*/
+        }
     }
     fun buttonUp(buttonCode: Int) {
         mapper[buttonCode]?.let { button ->
@@ -100,7 +115,6 @@ class InputMapper {
 	}
     fun getAxisValue(axis: Inputs.Action):Value {
         var v = values[axis]?:Value.ZERO
-		//if(v != Value.ZERO)Log.e(tag, "getAxisValue-------------------------------$axis=$v")
         if(v == Value.ZERO && !CesDoom.isMobile) {
             if(Gdx.input.isKeyPressed(mapperKey[AxisKey(axis, false)]?:-1))
                 v = Inputs.Value.NEGATIVE

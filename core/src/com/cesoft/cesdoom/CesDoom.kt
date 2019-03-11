@@ -33,9 +33,10 @@ import com.cesoft.cesdoom.util.PlayServices
 //TODO:
 //
 //TODO: FPS !!!  (Enemy consume mucho, es todo por pathfinding?)
-//TODO: You win the game widget que muestre puntuacion etc...
 //TODO: Pathfinding 3D (enhancement) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//TODO: Joystick!!
+//TODO: You win the game widget que muestre puntuacion etc...
+//TODO: Usar paredes diagonales para maze mas chulo !!!!!!
+
 //TODO: Level Constructor
 //TODO: Radar de monster?
 //TODO: Textura en suelo donde nacen los bichos?
@@ -51,9 +52,6 @@ import com.cesoft.cesdoom.util.PlayServices
 //TODO: Multiplayer !!!!!
 //https://developers.google.com/games/services/common/concepts/realtimeMultiplayer
 //https://github.com/playgameservices/android-basic-samples
-//TODO: Google Game Services
-//Kill all the hideous monsters to get out of the labyrinth of death. CesDooM is just a proof of concept of a First Person Shooter game for Android, developed with Kotlin under Android Studio by Cesar Casanova
-//Mátalos a todos esos monstruos horribles para salir del laberinto de la muerte. CesDooM es solo una prueba de concepto de un juego de acción en primera persona para Android, desarrollado en Kotlin con Android Studio por Cesar Casanova
 
 //VR
 //TODO: VR Glasses !!!!!! https://github.com/LWJGL/lwjgl3/blob/master/modules/core/src/test/java/org/lwjgl/demo/openvr/HelloOpenVR.java
@@ -86,7 +84,6 @@ class CesDoom(
 
 	//______________________________________________________________________________________________
 	override fun create() {
-		Log.e(tag, "CREATE--------------------------------------------------------------------------------")
 		Settings.loadPrefs()
 		playerInput = PlayerInput(Settings.getInputMapper())
 		isMobile = Gdx.app.type == Application.ApplicationType.Android
@@ -137,7 +134,7 @@ class CesDoom(
 	fun nextLevel() : Int {
 		val oldLevel = PlayerComponent.currentLevel
 		PlayerComponent.currentLevel++
-		if(PlayerComponent.currentLevel > MazeFactory.MAX_LEVEL) {//TODO: show final congrats screen
+		if(PlayerComponent.currentLevel > MazeFactory.MAX_LEVEL) {
 			PlayerComponent.currentLevel = 0
 		}
 		return oldLevel
@@ -155,7 +152,6 @@ class CesDoom(
 
 	//______________________________________________________________________________________________
 	override fun dispose() {
-		Log.e("CesDoom", "dispose------------------------------------------------")
 		delScreen()
 		Sounds.dispose()
 		gameUI.dispose()

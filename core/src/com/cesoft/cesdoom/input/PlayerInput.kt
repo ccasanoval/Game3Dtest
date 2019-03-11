@@ -44,6 +44,12 @@ class PlayerInput(val mapper: InputMapper) : ControllerListener {
         return false
     }
     ///
+    override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
+        Log.e(PlayerSystem.tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
+        mapper.povMoved(povCode, value)
+        return false
+    }
+    ///
     override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
         Log.e(PlayerSystem.tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
         return false
@@ -54,10 +60,6 @@ class PlayerInput(val mapper: InputMapper) : ControllerListener {
     }
     override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
         Log.e(PlayerSystem.tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
-        return false
-    }
-    override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
-        Log.e(PlayerSystem.tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
         return false
     }
 

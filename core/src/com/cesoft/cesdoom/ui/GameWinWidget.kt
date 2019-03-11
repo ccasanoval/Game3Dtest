@@ -5,6 +5,7 @@ import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -12,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
@@ -100,6 +102,7 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 		else {
 			//TODO: cambiar pantalla RECARGAR -...> YOU WIN, PLAY AGAIN...
 			btnRestart.setText(assets.getString(Assets.RECARGAR))
+			image.drawable = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/gameWinOver.png"))))
 			game.playServices?.submitScore(PlayerComponent.score)
 		}
 

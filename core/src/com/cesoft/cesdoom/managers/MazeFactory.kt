@@ -13,7 +13,7 @@ import com.cesoft.cesdoom.map.MapGraphFactory
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: Usar paredes diagonales para maze mas chulo !!!!!!!1
+//
 object MazeFactory {
     val tag: String = MazeFactory::class.java.simpleName
 
@@ -28,7 +28,7 @@ object MazeFactory {
 	private lateinit var mapFactory: MapGraphFactory
 	private lateinit var rampFactory: RampFactory
 
-	fun findPath(floorEnemy: Int, pos: Vector2, target: Vector2, smooth: Boolean): ArrayList<Vector2> {
+	fun findPath(floorEnemy: Int, pos: Vector2, target: Vector2, smooth: Boolean=false): ArrayList<Vector2> {
 		val map = MazeFactory.mapFactory.map[floorEnemy]
 		return map.findPath(pos, target, smooth)
 	}
@@ -51,17 +51,19 @@ object MazeFactory {
 //		mapFactory.print()
 //		com.cesoft.cesdoom.util.Log.e(tag, "")
 //		com.cesoft.cesdoom.util.Log.e(tag, "")
+
 		mapFactory.print2()
 		com.cesoft.cesdoom.util.Log.e(tag, "----------------------------------------------------------------------------")
 		com.cesoft.cesdoom.util.Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].floorAccess.size)
         for(access in mapFactory.map[0].floorAccess) {
 			com.cesoft.cesdoom.util.Log.e(tag, "access----------------------- $access")
         }
-		com.cesoft.cesdoom.util.Log.e(tag, "----------------------------------------------------------------------------")
-		com.cesoft.cesdoom.util.Log.e(tag, " LEVEL ACCESSES:LEVEL(1) "+ mapFactory.map[1].floorAccess.size)
-		for(access in mapFactory.map[1].floorAccess) {
-			com.cesoft.cesdoom.util.Log.e(tag, "access----------------------- $access")
-		}
+//		com.cesoft.cesdoom.util.Log.e(tag, "----------------------------------------------------------------------------")
+//		com.cesoft.cesdoom.util.Log.e(tag, " LEVEL ACCESSES:LEVEL(1) "+ mapFactory.map[1].floorAccess.size)
+//		for(access in mapFactory.map[1].floorAccess) {
+//			com.cesoft.cesdoom.util.Log.e(tag, "access----------------------- $access")
+//		}
+
 //		//
 //		Log.e(tag, "----------------------------------------------------------------------------")
 //		Log.e(tag, "--------------------------- ${PlayerComponent.currentLevel} ------------------------------------------")
@@ -84,12 +86,11 @@ object MazeFactory {
 	private fun createLevelX(level: Int, e: Engine, assets: Assets) {
 		val wf = WallFactory
 
-		/// Shapes -------------
+		/// INTERIOR SHAPES -------------
 		addShapesX(level, e)
 
 
-		/// First Wall -------------
-		//---
+		/// FIRST WALL -------------
 		for(x in -7..+7 step 2) {
 			wf.create(mapFactory, e, Vector3(x*lng, 0f, +4*lng2), 90f)
 			wf.create(mapFactory, e, Vector3(x*lng, 0f, -4*lng2), 90f)
@@ -100,22 +101,21 @@ object MazeFactory {
 			if(z != +7 && z != -7)
 				wf.create(mapFactory, e, Vector3(-4*lng2, 0f, z*lng), 0f)
 		}
-		//---
-		// First Wall -------------
+		// FIRST WALL -------------
 
 
-		/// Outer Wall ------------------
+		/// OUTER WALL ------------------
 		for(z in -12..12 step 2) {
 			wf.create(mapFactory, e, Vector3(+7*lng2, 0f, z*lng), 00f, WallFactory.Type.GRILLE)
 			wf.create(mapFactory, e, Vector3(-7*lng2, 0f, z*lng), 00f, WallFactory.Type.GRILLE)
 		}
 		for(x in -13..13 step 2) {
 			if (x == 1) {
-				// SALIDA 0
+				// EXIT 0
 				var id = " A "
 				GateFactory.create(mapFactory, e, Vector3(x * lng, 0f, +6.5f*lng2), 90f, id, assets)
 				YouWinFactory.create(e, Vector3(x * lng, 0f, +6.5f*lng2 + (2*YouWinFactory.SIZE + GateComponent.THICK)))
-				// SALIDA 1
+				// EXIT 1
 				id = " B "
 				GateFactory.create(mapFactory, e, Vector3(x * lng, 0f, -6.5f*lng2), 90f, id, assets)
 				YouWinFactory.create(e, Vector3(x * lng, 0f, -6.5f*lng2 - (2*YouWinFactory.SIZE + GateComponent.THICK)))
@@ -126,9 +126,9 @@ object MazeFactory {
 			wf.create(mapFactory, e, Vector3(x*lng, 0f, +6.5f*lng2), 90f, WallFactory.Type.GRILLE)
 			wf.create(mapFactory, e, Vector3(x*lng, 0f, -6.5f*lng2), 90f, WallFactory.Type.GRILLE)
 		}
-		// Outer Wall ------------------
+		// OUTER WALL ------------------
 
-		/// Extra Gates
+		/// INTERIOR GATES
 		GateFactory.create(mapFactory, e, Vector3(+GateComponent.LONG + .2f, 0f, 0f), 0f, " C ", assets).unlock()
 		GateFactory.create(mapFactory, e, Vector3(-GateComponent.LONG - .2f, 0f, 0f), 0f, " D ", assets).unlock()
 
@@ -136,12 +136,6 @@ object MazeFactory {
 		rampFactory.create(mapFactory, e, Vector3(+3f*lng2, high, 0f), angleX = 90f, angleY = -45f)
 		rampFactory.create(mapFactory, e, Vector3(-3f*lng2, high, 0f), angleX = 90f, angleY = +45f)
 		// GANG WAYS ------------------
-//		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
-//		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-//		rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-//		rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
-//		rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-//		rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
 		if(level == 0) {
 			for(x in -3..+3)
 				rampFactory.createGround(mapFactory, e, Vector3(x*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, xWay=true)
@@ -152,7 +146,7 @@ object MazeFactory {
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, zWay=true)
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-		}//TODO: Mejorar pathfinding entre plantas !!!!!!!!!!!!!!!!!!
+		}
 		else {
 			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
 			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
@@ -174,8 +168,7 @@ object MazeFactory {
 		val wf = WallFactory
 		when {
 			level < 999 -> {
-				val yMax = level//if (level > 0) 1 else 0
-				for(y in 0..yMax) {
+				for(y in 0..level) {
 					/// U Shapes -------------
 					wf.create(mapFactory, e, Vector3(+0 * lng, y * high2, +.5f * lng2), 90f)
 					wf.create(mapFactory, e, Vector3(+0 * lng, y * high2, -.5f * lng2), 90f)
@@ -265,7 +258,6 @@ object MazeFactory {
 
 	//______________________________________________________________________________________________
 	private fun createFirstFloor(level: Int, e: Engine, assets: Assets) {
-com.cesoft.cesdoom.util.Log.e(tag, "createFirstFloor:------------- level=$level")
 		val cx = RampFactory.LONG_GROUND
 		val cz = RampFactory.LONG_GROUND
 		for(z in -8..+8 step 2) {
@@ -277,7 +269,7 @@ com.cesoft.cesdoom.util.Log.e(tag, "createFirstFloor:------------- level=$level"
 				rampFactory.createGround(mapFactory, e, Vector3(-3*cx, high2, 0f), type)
 			}
 			else {
-				for (x in -8..+8 step 2) {
+				for(x in -8..+8 step 2) {
 					val type = if(level != 1 || z==+2 || z==-2) RampFactory.Type.STEEL else RampFactory.Type.GRILLE
 					rampFactory.createGround(mapFactory, e, Vector3(x * cx, high2, z * cz), type)
 				}
@@ -294,9 +286,9 @@ com.cesoft.cesdoom.util.Log.e(tag, "createFirstFloor:------------- level=$level"
 			val wf = WallFactory
 			for(x in -4..+4) {
 				if(x != -2)
-					wf.create(mapFactory, e, Vector3(x*lng2, high2, +4.5f * lng2), 90f, WallFactory.Type.GRILLE)
+					wf.create(mapFactory, e, Vector3(x*lng2, high2, +4.5f*lng2), 90f, WallFactory.Type.GRILLE)
 				if(x != +2)
-					wf.create(mapFactory, e, Vector3(x*lng2, high2, -4.5f * lng2), 90f, WallFactory.Type.GRILLE)
+					wf.create(mapFactory, e, Vector3(x*lng2, high2, -4.5f*lng2), 90f, WallFactory.Type.GRILLE)
 			}
 			wf.create(mapFactory, e, Vector3(-4.5f*lng2, high2, +4f*lng2), 0f, WallFactory.Type.GRILLE)
 			wf.create(mapFactory, e, Vector3(+4.5f*lng2, high2, +4f*lng2), 0f, WallFactory.Type.GRILLE)
@@ -359,7 +351,7 @@ com.cesoft.cesdoom.util.Log.e(tag, "createFirstFloor:------------- level=$level"
 
 	//______________________________________________________________________________________________
 	private fun createLevel3(e: Engine, assets: Assets) {
-		val level = 3//TODO: something new
+		val level = 3//TODO: something new?
 		createLevelX(level, e, assets)
 		createFirstFloor(level, e, assets)
 		createSecondFloor(level, e, assets)
