@@ -15,11 +15,16 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.input.Inputs
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Actor() {
+
+	companion object {
+		private val tag: String = PauseWidget::class.java.simpleName
+	}
 
 	private val mapper = game.playerInput.mapper
 	private var window: Window
@@ -101,14 +106,14 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	}
 
 	//______________________________________________________________________________________________
-	private fun goRestart() {
+	fun goRestart() {
 		goBack()
 		game.reset()
 	}
-	private fun goMenu() {
+	fun goMenu() {
 		game.reset2Menu()
 	}
-	private fun goQuit() {
+	fun goQuit() {
 		Gdx.app.exit()
 	}
 
@@ -162,6 +167,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		updateFocusSelection()
 		updateFocusColor()
 		if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
+			Log.e(tag, "processInput-------------------------------------------------------------")
 			processSelectedButton()
 		}
 	}

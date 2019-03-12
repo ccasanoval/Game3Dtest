@@ -145,19 +145,19 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 		delay = 0f
 		when {
 			mapper.isButtonPressed(Inputs.Action.START) -> restart()
-			mapper.isButtonPressed(Inputs.Action.BACK) -> toMenu()
-			mapper.isButtonPressed(Inputs.Action.EXIT) -> exitApp()
+			mapper.isButtonPressed(Inputs.Action.BACK) -> goMenu()
+			mapper.isButtonPressed(Inputs.Action.EXIT) -> goQuit()
 		}
 	}
 	private fun restart() {
 		exit()
 		game.reset()
 	}
-	private fun toMenu() {
+	fun goMenu() {
 		exit()
 		game.reset2Menu()
 	}
-	private fun exitApp() {
+	fun goQuit() {
 		Gdx.app.exit()
 	}
 

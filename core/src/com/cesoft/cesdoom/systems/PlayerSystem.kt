@@ -68,13 +68,11 @@ class PlayerSystem(
 	lateinit var gun: Entity
 	private val posTemp = Vector3()
 	private val posTemp2 = Vector3()
-    //private val inputMap = //Settings.getInputMapper()//InputMapperFactory.getCes()
 
 	/// Extends EntitySystem
 	//______________________________________________________________________________________________
 	override fun addedToEngine(engine: Engine?) {
 		engine!!.addEntityListener(Family.all(PlayerComponent::class.java).get(), this)
-		//addListener(PlayerInput(inputMap))//TODO: Global
 	}
 
 	/// Implements EntityListener
@@ -90,7 +88,6 @@ class PlayerSystem(
 	override fun update(delta: Float) {
 		checkGameOver(delta)
 		checkYouWin(delta)
-		processInputs()
 		updateMovement(delta)
 		if( ! PlayerComponent.isDead()) {
 			updateWeapon(delta)
@@ -98,19 +95,6 @@ class PlayerSystem(
 		updateCamera()
 		restoreAmbientColor()
 		processEvents()
-	}
-	private fun processInputs() {
-		/* ya lo hago en GameScreen ????
-		when {
-			inputMap.isButtonPressed(Inputs.Action.BACK) -> {
-				//TODO: Send message to go to pause widget
-				Log.e(tag, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-			}
-			inputMap.isButtonPressed(Inputs.Action.EXIT) -> {
-				//TODO: Send message to go to menu
-				Log.e(tag, "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
-			}
-		}*/
 	}
 
 	//______________________________________________________________________________________________

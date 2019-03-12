@@ -124,15 +124,15 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		delay = 0f
 		processInput()
 	}
-	private fun goRestart() {
+	fun goRestart() {
 		clean()
 		game.reset()
 	}
-	private fun goMenu() {
+	fun goMenu() {
 		clean()
 		game.reset2Menu()
 	}
-	private fun goQuit() {
+	fun goQuit() {
 		Gdx.app.exit()
 	}
 

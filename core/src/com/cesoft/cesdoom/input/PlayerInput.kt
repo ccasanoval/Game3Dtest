@@ -4,7 +4,6 @@ import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerListener
 import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.math.Vector3
-import com.cesoft.cesdoom.systems.PlayerSystem
 import com.cesoft.cesdoom.util.Log
 
 
@@ -20,11 +19,11 @@ class PlayerInput(val mapper: InputMapper) : ControllerListener {
     //----------------------------------------------------------------------------------------------
     override fun connected(controller: Controller?) {
         this.controller = controller
-        Log.e(PlayerSystem.tag, "connected:----------*****************************--------------"+controller?.name)
+        Log.e(tag, "connected:----------*****************************--------------"+controller?.name)
     }
     override fun disconnected(controller: Controller?) {
         this.controller = null
-        Log.e(PlayerSystem.tag, "disconnected:---------*************************---------------"+controller?.name)
+        Log.e(tag, "disconnected:---------*************************---------------"+controller?.name)
     }
     ///
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
@@ -34,32 +33,32 @@ class PlayerInput(val mapper: InputMapper) : ControllerListener {
     }
     ///
     override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
-        Log.e(PlayerSystem.tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
+        Log.e(tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
         mapper.buttonUp(buttonCode)
         return false
     }
     override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
-        Log.e(PlayerSystem.tag, "buttonDown:----------------"+controller?.name+" : "+buttonCode)
+        Log.e(tag, "buttonDown:----------------"+controller?.name+" : "+buttonCode)
         mapper.buttonDown(buttonCode)
         return false
     }
     ///
     override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
-        Log.e(PlayerSystem.tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
+        Log.e(tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
         mapper.povMoved(povCode, value)
         return false
     }
     ///
     override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
-        Log.e(PlayerSystem.tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
+        Log.e(tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
         return false
     }
     override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-        Log.e(PlayerSystem.tag, "ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+        Log.e(tag, "ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
         return false
     }
     override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-        Log.e(PlayerSystem.tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+        Log.e(tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
         return false
     }
 

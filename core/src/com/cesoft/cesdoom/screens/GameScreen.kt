@@ -37,8 +37,6 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 		gameUI.render()
 	}
 	private fun processInput() {
-
-
 		gameUI.gameWinWidget.isVisible
 		gameUI.gameOverWidget.isVisible
 
@@ -50,14 +48,35 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 		when {
 			input.mapper.isButtonPressed(Inputs.Action.BACK) -> {
 				//TODO: Send message to go to ... WICH widget is on? Pause, GameOver, GameWin ?
-				//gameUI.pause()
-				Log.e(tag, "isButtonPressed(Inputs.Action.BACK) ---> gameUI.pause()")
-				Log.e(tag, "isButtonPressed(Inputs.Action.BACK) ---> Win=${gameUI.gameWinWidget.isVisible}  Over=${gameUI.gameOverWidget.isVisible}  Pause=${gameUI}")
+				//TODO:
+				//TODO
+				when {
+					Status.gameOver -> { gameUI.gameOverWidget.goMenu() }
+					Status.gameWin -> { gameUI.gameWinWidget.goMenu() }
+					Status.mainMenu -> { }
+					Status.paused -> gameUI.pauseWidget.goMenu()
+					else -> gameUI.pause()
+				}
+				Log.e(tag, "isButtonPressed(Inputs.Action.BACK) ---> gameOVer="+Status.gameOver+" / win="+Status.gameWin+"/menu="+Status.mainMenu+" / pause="+Status.paused)
 			}
 			input.mapper.isButtonPressed(Inputs.Action.EXIT) -> {
-				//TODO: Send message to go to menu
-				Log.e(tag, "input.mapper.isButtonPressed(Inputs.Action.EXIT) ---> game.reset2Menu()")
-				//game.reset2Menu()
+				when {
+					Status.gameOver -> { gameUI.gameOverWidget.goQuit() }
+					Status.gameWin -> { gameUI.gameWinWidget.goQuit() }
+					Status.mainMenu -> {  }
+					Status.paused -> gameUI.pauseWidget.goQuit()
+				}
+			}
+			input.mapper.isButtonPressed(Inputs.Action.FIRE) -> {
+				when {
+					Status.gameOver -> {  }
+					Status.gameWin -> {  }
+					Status.mainMenu -> {  }
+					Status.paused -> {  }
+				}
+			}
+			input.mapper.isButtonPressed(Inputs.Action.START) -> {
+				Log.e(tag, "input.mapper.isButtonPressed(Inputs.Action.START)")
 			}
 		}
 	}
