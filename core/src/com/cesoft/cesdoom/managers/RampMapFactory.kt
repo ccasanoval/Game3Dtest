@@ -38,10 +38,9 @@ object RampMapFactory {
             for(y_ in -h..+h) {
                 mapFactory.addCollider(level, Point(posMap.x + l, posMap.y + y_))
                 //TODO:Enhance 3D pathfinding !!!
-                if(y_ != 0) {
+                if(y_ != 0)
                     mapFactory.addCollider(level + 1, Point(posMap.x + l, posMap.y + y_))
-                    mapFactory.addCollider(level + 1, Point(posMap.x - l, posMap.y + y_))
-                }
+                mapFactory.addCollider(level + 1, Point(posMap.x - l, posMap.y + y_))
             }
         }
         // Sube hacia la izquierda (-X)
@@ -60,10 +59,9 @@ object RampMapFactory {
             for(y_ in -h..+h) {
                 mapFactory.addCollider(level, Point(posMap.x - l, posMap.y + y_))
                 //TODO:Enhance 3D pathfinding !!!
-                if(y_ != 0) {
-                    mapFactory.addCollider(level + 1, Point(posMap.x + l, posMap.y + y_))
+                if(y_ != 0)
                     mapFactory.addCollider(level + 1, Point(posMap.x - l, posMap.y + y_))
-                }
+                mapFactory.addCollider(level + 1, Point(posMap.x + l, posMap.y + y_))
             }
         }
         // Sube hacia la adelante (-Z)

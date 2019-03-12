@@ -39,19 +39,25 @@ class PlayerComponent : Component {
 
         /// Walk camera vibration -----------------
         var yFoot = 0f
+        var oFoot = 0f
+        private var FOOT_MULTI = 12
+        private var FOOT_MAX = 3f
         private var isFootUp = false
         fun animFootStep(delta: Float)
         {
             if(isFootUp) {
-                PlayerComponent.yFoot += delta*7
-                if(PlayerComponent.yFoot > 0.8f)
+                yFoot += delta*FOOT_MULTI
+                if(yFoot > +FOOT_MAX) {
                     isFootUp = false
+                }
             }
             else {
-                PlayerComponent.yFoot -= delta*7
-                if(PlayerComponent.yFoot < -0.8f)
+                yFoot -= delta*FOOT_MULTI
+                if(yFoot < -FOOT_MAX) {
                     isFootUp = true
+                }
             }
+            oFoot = yFoot
         }
 
         /// Score -----------------

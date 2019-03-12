@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
-import com.cesoft.cesdoom.util.Log
 
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -18,11 +17,6 @@ class GunFireWidget(private val fire: Image, x: Float, y: Float) : Actor() {
 		stage.addActor(this)
 		setSize(100f, 100f)
 		setPosition(x, y)//+30f, -60f)
-	}
-
-	fun dispose() {
-		Log.e("GunFireWidget", "dispose----------------------------------------------")
-		//stage.dispose()
 	}
 
 	fun draw() {

@@ -21,7 +21,7 @@ import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: la primera vez que genera un enemigo bloquea un poco !! generar los enemigos antes o tardar menos!!!!
+//
 class EnemyFactory(assets: Assets) {
 
     companion object {
@@ -34,7 +34,7 @@ class EnemyFactory(assets: Assets) {
     lateinit var enemies: ImmutableArray<Entity>
     private val allEnemies = ArrayList<Enemy>()
     init {
-        Log.e(tag, "INIT---------------------------------------------------------------- MAX_ENEMIES=$MAX_ENEMIES INI="+java.util.Date())
+        Log.e(tag, "INIT---------------------------------------------------------------- MAX_ENEMIES=$MAX_ENEMIES")
         if(allEnemies.size < MAX_ENEMIES) {
             for(i in allEnemies.size until MAX_ENEMIES) {
                 val type = if(PlayerComponent.currentLevel > 0)
@@ -48,13 +48,11 @@ class EnemyFactory(assets: Assets) {
                 allEnemies.add(enemy)
             }
         }
-        Log.e(tag, "INIT---------------------------------------------------------------- MAX_ENEMIES=$MAX_ENEMIES FIN="+java.util.Date())
     }
 
     private fun getNextEnemy(id: Int): Enemy {
         val enemy = allEnemies[id]
         val height = 200f
-        //val pos = when(countSpawnPosition++ % MAX_ENEMIES) {
         val pos = when(random.nextInt(MAX_ENEMIES)) {
             0 ->    Vector3(+250f, height, +250f)
             1 ->    Vector3(+250f, height, -250f)
@@ -100,12 +98,7 @@ class EnemyFactory(assets: Assets) {
         if(enemies.size() < MAX_ENEMIES) {
             val id = getNextEnemyId()
             if(id >= allEnemies.size) return//Max enemy number reached
-            try {
-                val enemy = getNextEnemy(id)
-                engine.addEntity(enemy)
-            } catch (e: Throwable) {//TODO: on pause, reset timer...
-                Log.e(tag, "spawnIfNeeded:e:$e")
-            }//TODO: check before fail
+            engine.addEntity(getNextEnemy(id))
         }
     }
 
@@ -124,7 +117,6 @@ class EnemyFactory(assets: Assets) {
         }
         return id
     }
-
 
     private fun resetEntity(entity: Entity, position: Vector3) {
         /// Components

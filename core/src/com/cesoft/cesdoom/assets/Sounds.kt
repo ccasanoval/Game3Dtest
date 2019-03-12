@@ -26,6 +26,7 @@ object Sounds {
     private const val SOUND_SWITCH = "sounds/switch.ogg"
     private const val SOUND_GAME_OVER = "sounds/gameOver.ogg"
     private const val SOUND_YOU_WIN = "sounds/missionCompleted.ogg"
+    private const val SOUND_YOU_WIN_OVER = "sounds/youWinGame.ogg"
     private const val SOUND_PLAYER_HURT = "sounds/playerHurt.ogg"
 	private const val SOUND_PLAYER_DYING = "sounds/playerDying.ogg"
     private const val SOUND_NO_AMMO = "sounds/noAmmo.ogg"
@@ -38,7 +39,8 @@ object Sounds {
     enum class SoundType {
 		RIFLE, ENEMY_ATTACK, ENEMY_DIE, ENEMY_HURT, ENEMY_NEAR, ENEMY1, ENEMY1_DIE,
 		FOOT_STEPS, GATE_OPENS, GATE_LOCKED, SWITCH,
-		GAME_OVER, YOU_WIN, PLAYER_HURT, PLAYER_DYING, NO_AMMO, AMMO_RELOAD, HEALTH_RELOAD
+		GAME_OVER, YOU_WIN, YOU_WIN_OVER,
+        PLAYER_HURT, PLAYER_DYING, NO_AMMO, AMMO_RELOAD, HEALTH_RELOAD
 	}
 
     private val lastPlayed = HashMap<SoundType, Long>()
@@ -57,6 +59,7 @@ object Sounds {
             SoundType.SWITCH -> SOUND_SWITCH
             SoundType.GAME_OVER -> SOUND_GAME_OVER
             SoundType.YOU_WIN -> SOUND_YOU_WIN
+            SoundType.YOU_WIN_OVER -> SOUND_YOU_WIN_OVER
             SoundType.PLAYER_HURT -> SOUND_PLAYER_HURT
 			SoundType.PLAYER_DYING -> SOUND_PLAYER_DYING
             SoundType.NO_AMMO -> SOUND_NO_AMMO
@@ -72,6 +75,7 @@ object Sounds {
 			SoundType.FOOT_STEPS -> 700
 			SoundType.ENEMY_DIE -> 3600
 			SoundType.ENEMY_ATTACK -> 1500
+            SoundType.ENEMY_NEAR -> 9500
 			Sounds.SoundType.ENEMY1 -> 1500
 			Sounds.SoundType.ENEMY1_DIE -> 1500
 			Sounds.SoundType.GATE_OPENS -> 3000

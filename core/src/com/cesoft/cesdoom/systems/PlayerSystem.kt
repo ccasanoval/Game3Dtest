@@ -30,6 +30,7 @@ import com.cesoft.cesdoom.events.RenderEvent
 import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.managers.GunFactory
+import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.ui.GameOverWidget
 import com.cesoft.cesdoom.ui.GameWinWidget
 import com.cesoft.cesdoom.util.Log
@@ -276,7 +277,7 @@ class PlayerSystem(
 	private fun updateCamera() {
 		val pos = getPosition()
 		pos.y += PlayerComponent.tall/1.5f +PlayerComponent.yFoot
-		pos.x += camera.direction.x*PlayerComponent.RADIO/2 // camara adelantada a colision, para no disparar a self bullet body
+		pos.x += camera.direction.x*PlayerComponent.RADIO/2// camara adelantada a colision, para no disparar a self bullet body
 		pos.z += camera.direction.z*PlayerComponent.RADIO/2
 		camera.position.set(pos)
 		camera.update()
@@ -399,7 +400,10 @@ class PlayerSystem(
 	private fun checkYouWin(delta: Float) {
 		if(PlayerComponent.isWinning && !Status.paused) {
 			if(delayYouWin == 0f) {
-				Sounds.play(Sounds.SoundType.YOU_WIN)
+				if(PlayerComponent.currentLevel == MazeFactory.MAX_LEVEL)
+					Sounds.play(Sounds.SoundType.YOU_WIN_OVER)
+				else
+					Sounds.play(Sounds.SoundType.YOU_WIN)
 				//TODO: Why can we delay this with delayYouWin, it crashes
 				Status.paused = true
 				gameWinWidget.show()

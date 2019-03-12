@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent
 
@@ -53,7 +54,7 @@ class GameUI(game: CesDoom, assets: Assets) {
 	private var previousLevel = Int.MAX_VALUE
 	fun update(delta: Float) {
 		fpsLabel.setText("FPS: ${Gdx.graphics.framesPerSecond}")
-		if(previousLevel != PlayerComponent.currentLevel) {
+		if(previousLevel != PlayerComponent.currentLevel && !Status.paused) {
 			previousLevel = PlayerComponent.currentLevel
 			levelLabel.setText("LEVEL: ${PlayerComponent.currentLevel}")
 		}

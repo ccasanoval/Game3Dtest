@@ -118,7 +118,6 @@ class EnemySystem(
 
 		val playerPosition = player!!.getPosition().cpy()
 
-		val force: Float
 		val enemy = EnemyComponent.get(entity)
 		val model = ModelComponent.get(entity)
 
@@ -126,8 +125,8 @@ class EnemySystem(
 		enemy.currentPos2D = Vector2(enemy.position.x, enemy.position.z)
 		val distPlayer = enemy.position.dst(playerPosition)
 
-		//val statusMov =
 		calcStatusMov(entity, distPlayer)
+		val force: Float
 		when(enemy.statusMov) {
 			EnemyComponent.StatusMov.QUIET, EnemyComponent.StatusMov.FALL -> {
 				force = 0f
@@ -235,12 +234,20 @@ class EnemySystem(
 		}
 	}
 
+	private fun getPlayerFloor(playerPositionY: Float): Int {
+		return if(playerPositionY > 2*WallFactory.HIGH) 1 else 0
+	}
+	private fun getEnemyFloor(enemy: EnemyComponent): Int {
+		//val enemy = EnemyComponent.get(entity)
+		return if(enemy.position.y > 2*WallFactory.HIGH + enemy.radio) 1 else 0
+	}
+
 	//----------------------------------------------------------------------------------------------
 	private fun calcPath(entity: Entity, playerPosition: Vector3) {
 		val enemy = EnemyComponent.get(entity)
-		val floorEnemy = if(enemy.position.y > 2*WallFactory.HIGH+4) 1 else 0
-		val floorPlayer = if(playerPosition.y > 2*WallFactory.HIGH) 1 else 0
-//com.cesoft.cesdoom.util.Log.e(tag, "id=${enemy.id} : LEVELS ----------------(isAccessFloorPath=${enemy.isAccessFloorPath})-------------------- $levelEnemy  <>  $levelPlayer  / player2D=${enemy.player2D} ")
+		val floorEnemy = getEnemyFloor(enemy)
+		val floorPlayer = getPlayerFloor(playerPosition.y)
+//com.cesoft.cesdoom.util.Log.e(tag, "id=${enemy.id} : LEVELS ----------------(isAccessFloorPath=${enemy.isAccessFloorPath})-------------------- $floorEnemy  <>  $floorPlayer  / player2D=${enemy.player2D} ")
 
 		//Distintas plantas: Buscar en mapa de accessos
 		if(floorEnemy != floorPlayer && !enemy.isAccessFloorPath) {
@@ -287,8 +294,8 @@ class EnemySystem(
 	}
 
 	private fun recalcPath(enemy: EnemyComponent, playerPosition: Vector3) {
-		val floorEnemy = if(enemy.position.y > 2*WallFactory.HIGH) 1 else 0
-		val floorPlayer = if(playerPosition.y > 2*WallFactory.HIGH) 1 else 0
+		val floorEnemy = getEnemyFloor(enemy)//if(enemy.position.y > 2*WallFactory.HIGH) 1 else 0
+		val floorPlayer = getPlayerFloor(playerPosition.y)//if(playerPosition.y > 2*WallFactory.HIGH) 1 else 0
 		val accessPoint = getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D)
 		enemy.player2D.set(accessPoint)
 		enemy.stepCounter = 0

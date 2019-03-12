@@ -16,7 +16,7 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 		fun get(entity: Entity):EnemyComponent = mapper.get(entity)
 
 		private const val MASS0 = 110f
-		private const val MASS1 = 35f
+		private const val MASS1 = 45f
 		private const val RADIO0 = 16f
 		private const val RADIO1 = 10f
 		private const val KILL_REWARD0 = 20

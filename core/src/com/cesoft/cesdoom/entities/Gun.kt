@@ -10,7 +10,6 @@ class Gun : Entity() {
 
 	fun dispose() {
 		fire.remove()
-		fire.dispose()
 		removeAll()
 	}
 

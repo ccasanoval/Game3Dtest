@@ -33,7 +33,10 @@ import com.cesoft.cesdoom.util.PlayServices
 //TODO:
 //
 //TODO: FPS !!!  (Enemy consume mucho, es todo por pathfinding?)
+//TODO: Araña subir modelo para que imagen coincida con collider!!!
+//
 //TODO: Pathfinding 3D (enhancement) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//
 //TODO: You win the game widget que muestre puntuacion etc...
 //TODO: Usar paredes diagonales para maze mas chulo !!!!!!
 
