@@ -22,28 +22,24 @@ import com.cesoft.cesdoom.util.PlayServices
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // DESKTOP DEPLOY : gradlew desktop:dist --> cesgame2\desktop\build\libs
-// DESKTOP RUN    : desktop:run
+// DESKTOP RUN    : gradlew desktop:run
 //
 //
 //NOTE:
 //
-// si te dice que no exite el apk: https://stackoverflow.com/questions/34039834/the-apk-file-does-not-exist-on-disk
+// si te dice que no existe el apk: https://stackoverflow.com/questions/34039834/the-apk-file-does-not-exist-on-disk
 // https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
 
 //TODO:
 //
 //TODO: FPS !!!  (Enemy consume mucho, es todo por pathfinding?)
-//TODO: Araña subir modelo para que imagen coincida con collider!!!
-//
 //TODO: Pathfinding 3D (enhancement) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
-//TODO: You win the game widget que muestre puntuacion etc...
 //TODO: Usar paredes diagonales para maze mas chulo !!!!!!
-
-//TODO: Level Constructor
+//TODO: Ascensores y escaleras!!!
+//TODO: Level Constructor + Pathfinding compilator
 //TODO: Radar de monster?
 //TODO: Textura en suelo donde nacen los bichos?
-//TODO: Ascensores y escaleras!!!
 //TODO: Monster3, Weapon2 ?
 //
 //TODO: Columnas en maze?

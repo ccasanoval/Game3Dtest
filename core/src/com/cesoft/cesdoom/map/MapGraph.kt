@@ -1,14 +1,13 @@
 package com.cesoft.cesdoom.map
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.pfa.Connection
-import com.badlogic.gdx.ai.pfa.GraphPath
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder
 import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ObjectMap
 import com.cesoft.cesdoom.util.Log
 import com.badlogic.gdx.ai.pfa.PathSmoother
-import com.cesoft.cesdoom.managers.MazeFactory
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +26,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
     val cx: Int = (width / scale).toInt()
     val cy: Int = (height / scale).toInt()
 
-    private val vertexs = ArrayList<Vertex>()
+    private val vertexes = ArrayList<Vertex>()
     private val nodes = ArrayList<Node>()
     private val map = ObjectMap<Node, com.badlogic.gdx.utils.Array<Connection<Node>>>()
 
@@ -43,39 +42,31 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
             return nodes[i]
         }
         else {
-            Log.e(tag, "id=$id:getNode: coordinates out of boundaries: ($x, $y)  ${nodes.size} <> $i ---------------")
-            //return Node(9999999, Point(0, 0), false)
+            Log.e(tag, "id=$id:getNode: coordinates out of boundaries: ($x, $y)  ${nodes.size} <> $i ---------------------------")
             return nodes[0] // Para que los pathFinders no cojan toda la cpu buscando un path imposible
+            //return Node(9999999, Point(0, 0), false)
             //throw IndexOutOfBoundsException()
         }
-
     }
     private fun getNode(point: Point) = getNode(point.x, point.y)
-    //fun getNode(point: Vector2) = getNode(toMapGraphCoord(point))
     private fun getNode(point: Vector2) : Node {
         val pos = toMapGraphCoord(point)
         var node = getNode(pos)
-        while( ! node.isValid) {
+        if( ! node.isValid) {
             val nodeOld = node
-            for(y in 0..5) {
-                for(x in 0..5) {
-                    node = getNode(Point(pos.x + x, pos.y + y))
-                    if(node.isValid)
-                        break
-                    node = getNode(Point(pos.x - x, pos.y + y))
-                    if(node.isValid)
-                        break
-                    node = getNode(Point(pos.x + x, pos.y - y))
-                    if(node.isValid)
-                        break
-                    node = getNode(Point(pos.x - x, pos.y - y))
-                    if(node.isValid)
-                        break
+            for(i in 1..3) {
+                for(y in -i..+i) {
+                    for(x in -i..+i) {
+                        if(Math.abs(x) != i && Math.abs(y) != i) continue
+                        Log.e(tag, "id=$id:getNode: i=$i ---------------- TESTING NODE ($x, $y) ----------------")
+                        node = getNode(Point(pos.x + x, pos.y + y))
+                        if(node.isValid) {
+                            Log.e(tag, "id=$id:getNode: cuidado, esto podria retardar mucho la busqueda -------------------- nodeIni=${nodeOld.point} <> nodeFin=${node.point}")
+                            return node
+                        }
+                    }
                 }
-                if(node.isValid)
-                    break
             }
-            Log.e(tag, "id=$id:getNode: cuidado, esto podria retardar mucho la busqueda -------------------- nodeIni=${nodeOld.point} <> nodeFin=${node.point}")
         }
         return node
     }
@@ -103,7 +94,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
             map.put(orig, com.badlogic.gdx.utils.Array())
         }
         map.get(orig).add(vertex)
-        vertexs.add(vertex)
+        vertexes.add(vertex)
     }
 
     /// Find path in tests
@@ -120,6 +111,11 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
     }*/
 
     /// Find path in game
+private var maxDelay=0L
+private var callsPerSecond=0L
+private var callsPerSecondMedia=0L
+private var timeCallsPerSecond=0L
+
     private val path = MapGraphSmooth()
     private val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
     fun findPath(orig: Vector2, dest: Vector2, smooth: Boolean=true): ArrayList<Vector2> {
@@ -157,14 +153,26 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
         Log.e(tag, "$id path----------------from $nodeOrig to $nodeDest")*/
 
 
+        callsPerSecond++
+        val time = System.currentTimeMillis()
+        if(time >  timeCallsPerSecond + 999) {
+            timeCallsPerSecond = time
+            callsPerSecondMedia = (callsPerSecondMedia+callsPerSecond)/2
+            //callsPerSecondMedia = callsPerSecond
+            callsPerSecond = 0
+        }
+
+
         try {
-            //val t0 = System.currentTimeMillis()
+            val t0 = System.currentTimeMillis()
             pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
-            //val t1 = System.currentTimeMillis()
+            val t1 = System.currentTimeMillis()
             //if(smooth)
                 pathSmoother.smoothPath(path)
-            //val now = System.currentTimeMillis()
-//Log.e(tag, "smoothPath:----- ${path.count}   delay0= ${t1 - t0}  delay1=${now - t1}   delay2=${now - t0} ms")
+            val now = System.currentTimeMillis()
+//if()
+if(now - t0 > maxDelay)maxDelay=now - t0
+Log.e(tag, "smoothPath:----- #steps=${path.count} ->  delay0=${t1 - t0}  delay2=${now - t0} ms  (MAX=$maxDelay)      (CPS=$callsPerSecondMedia / $callsPerSecond) (FPS=${Gdx.graphics.framesPerSecond}) ")
 
             val res = ArrayList<Vector2>()
             for(step in path) {

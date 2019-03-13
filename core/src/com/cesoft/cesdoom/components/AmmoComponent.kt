@@ -10,7 +10,7 @@ class AmmoComponent : Component {
         private val mapper: ComponentMapper<AmmoComponent> = ComponentMapper.getFor(AmmoComponent::class.java)
         fun get(entity: Entity):AmmoComponent = mapper.get(entity)
 
-        const val SIZE = 5f
+        const val SIZE = 8f
         const val MAGAZINE_CAPACITY = 30
     }
 

@@ -35,7 +35,7 @@ class RampFactory(assets: Assets) {
 		private val tag: String = RampFactory::class.java.simpleName
 
 		const val LONG = 35f
-		const val HIGH = 20f//TODO: Cambiar para hacer cuadrado... mas facil construir...
+		const val HIGH = 20f
 		const val THICK = 1f
 
 		const val LONG_GROUND = 25f
@@ -47,14 +47,6 @@ class RampFactory(assets: Assets) {
 
 		private val dimGround = Vector3(LONG_GROUND, THICK_GROUND, LONG_GROUND)
 		private val dimFCGround = Vector3(2*LONG_GROUND, 2*THICK_GROUND, 2*LONG_GROUND)
-		//
-//		private val dimX00Y90Z90 = Vector3(2*LONG, 2*THICK, 2*HIGH)
-//		private val dimX00Y00Z00 = Vector3(THICK*2, HIGH*2, LONG*2)
-//		private val dimX00Y90Z00 = Vector3(LONG*2, HIGH*2, THICK*2)
-		//private val dimX00Y00Z90 = Vector3(HIGH*2, THICK*2, LONG*2)
-		//private val dimX90Y00Z00 = Vector3(LONG*2, HIGH*2, THICK*2)
-		//private val dimMax = Vector3(LONG*2, LONG*2, LONG*2)
-
 	}
 	enum class Type { STEEL, GRILLE, }
 
@@ -112,12 +104,6 @@ class RampFactory(assets: Assets) {
 			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimFCX45Y00Z90)
 		else
 			Log.e(tag, "create:--------------------------angleX=$angleX / angleY=$angleY / angleZ=$angleZ")
-//		if(angleX == 0f && angleY == 0f && angleZ == 0f)
-//			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y00Z00)
-//		else if(angleX == 0f && angleY == 90f && angleZ == 0f)
-//			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y90Z00)
-//		else if(angleX == 0f && angleY == 90f && angleZ == 90f)
-//			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimX00Y90Z90)
 
 		// ROTATION
 		modelComponent.instance.transform.rotate(Vector3.X, angleX)
@@ -150,10 +136,11 @@ class RampFactory(assets: Assets) {
 		val entity = Entity()
 
 		/// MAP
+		val floor = (pos.y / (2*WallFactory.HIGH)).toInt()
+		val l = RampFactory.LONG_GROUND.toInt()
 		if(xWay) {
-			val floor = (pos.y / (2*WallFactory.HIGH)).toInt()
-			val l = RampFactory.LONG_GROUND.toInt()
 			for(x in -l..+l) {
+				if(Math.abs(x) < RampFactory.LONG_GROUND/MazeFactory.scale)continue
 				val point1 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+x, pos.z+l))
 				val point2 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+x, pos.z-l))
 				mapFactory.addCollider(floor, point1)
@@ -161,13 +148,12 @@ class RampFactory(assets: Assets) {
 			}
 		}
 		if(zWay) {
-			val floor = (pos.y / (2*WallFactory.HIGH)).toInt()
-			val l = RampFactory.LONG_GROUND.toInt()
 			for(z in -l..+l) {
-				val point1 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+l, pos.z+z))
-				val point2 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x-l, pos.z+z))
-				mapFactory.addCollider(floor, point1)
-				mapFactory.addCollider(floor, point2)
+//				if(z == 0 || z == -1 || z == +1)continue
+//				val point1 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+l, pos.z+z))
+//				val point2 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x-l, pos.z+z))
+//				mapFactory.addCollider(floor, point1)
+//				mapFactory.addCollider(floor, point2)
 			}
 		}
 		//RampMapFactory.createGroundMap(mapFactory, pos)

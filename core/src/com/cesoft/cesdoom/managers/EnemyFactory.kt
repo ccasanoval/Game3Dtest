@@ -99,6 +99,7 @@ class EnemyFactory(assets: Assets) {
             val id = getNextEnemyId()
             if(id >= allEnemies.size) return//Max enemy number reached
             engine.addEntity(getNextEnemy(id))
+Log.e(tag, "spawnIfNeeded------------------------------------------------------------------id=$id")
         }
     }
 

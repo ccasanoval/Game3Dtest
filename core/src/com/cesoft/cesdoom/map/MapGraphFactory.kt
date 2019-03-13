@@ -26,8 +26,10 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
         }
     }
 
+    //TODO: Anora solo hay accesos de 0 a 1 y de 1 a 0 (y si hay segunda planta?)
     fun addFloorAccess(floor: Int, x: Float, y: Float) {
-        map[floor].addFloorAccess(Vector2(x,y))
+        if(floor < map.size)
+            map[floor].addFloorAccess(Vector2(x,y))
     }
     //
     fun toMapGraphCoord(floor: Int, pos: Vector2) : Point = map[floor].toMapGraphCoord(pos)

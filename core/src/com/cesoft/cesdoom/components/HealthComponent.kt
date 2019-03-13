@@ -10,7 +10,7 @@ class HealthComponent: Component {
         private val mapper: ComponentMapper<HealthComponent> = ComponentMapper.getFor(HealthComponent::class.java)
         fun get(entity: Entity): HealthComponent = mapper.get(entity)
 
-        const val SIZE = 5f
+        const val SIZE = 8f
         const val DRUG_CAPACITY = 25
     }
 

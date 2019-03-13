@@ -139,7 +139,7 @@ class EnemySystem(
 					gameEventSignal.dispatch(GameEvent(GameEvent.Type.PLAYER_HURT, EnemyComponent.BITE_PAIN))
 					when(enemy.type) {
 						EnemyComponent.TYPE.MONSTER0 -> Sounds.play(Sounds.SoundType.ENEMY_ATTACK)
-						EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1)
+						EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1_ATTACK)
 					}
 				}
 				force = 0f
@@ -224,7 +224,7 @@ class EnemySystem(
 	}
 
 	private fun getTarget(floorPlayer: Int, playerPosition: Vector3, floorEnemy: Int, enemyPosition: Vector2): Vector2 {
-		if(floorEnemy < floorPlayer) {
+		if(floorEnemy != floorPlayer) {
 			val target = MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)
 //Log.e(tag, "getTarget(floorEnemy < floorPlayer): ----- target=$target")
 			return target//TODO: mejorar para buscar accesos desde niveles superiores hacia inferiores...Añadir al mapa
@@ -265,12 +265,12 @@ class EnemySystem(
 		}
 		else if(enemy.stepCounter++ > 100) {
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-//Log.e(tag, "${enemy.id}--------------------------- RECALCULAR LIMITE DE PASOS : target=${enemy.player2D}")
+Log.e(tag, "${enemy.id}--------------------------- RECALCULAR LIMITE DE PASOS : target=${enemy.player2D}")
 			recalcPath(enemy, playerPosition)
 		}
 		else if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-//Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH : target=${enemy.player2D}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
+Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH : target=${enemy.player2D}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
 			recalcPath(enemy, playerPosition)
 		}
 		else
@@ -345,7 +345,7 @@ class EnemySystem(
 				enemy.statusMov = EnemyComponent.StatusMov.RUN
 				when(EnemyComponent.get(entity).type) {
 					EnemyComponent.TYPE.MONSTER0 -> Sounds.play(Sounds.SoundType.ENEMY_NEAR)
-					EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1)
+					EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1_NEAR)
 				}
 			}
 			//EnemyComponent.StatusMov.RUN
@@ -478,7 +478,7 @@ class EnemySystem(
 			playAching(entity)
 			when(EnemyComponent.get(entity).type) {
 				EnemyComponent.TYPE.MONSTER0 -> Sounds.play(Sounds.SoundType.ENEMY_HURT)
-				EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1)
+				EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1_HURT)
 			}
 		} else {
 			status.health -= pain/4f

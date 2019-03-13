@@ -333,7 +333,7 @@ class PlayerSystem(
 				val collider = rayTestAll.collisionObjects.atConst(i)
 				if(collider is btRigidBody) {
 
-					//Por que si mira hacia abajo golpea antes al suelo ??
+					//TODO: Por que si mira hacia abajo golpea antes al suelo que al enemigo ??
 //					if(collider.userValue == BulletComponent.STEEL_RAMP_FLAG
 //							|| collider.userValue == BulletComponent.SCENE_FLAG) {
 //						Log.e(tag, "checkBulletKillEnemy : $i : Bullet : suelo o rampa-acero -----------------")
@@ -345,7 +345,7 @@ class PlayerSystem(
 							|| collider.userValue == BulletComponent.SWITCH_FLAG
 							|| collider.userValue == BulletComponent.AMMO_FLAG
 							|| collider.userValue == BulletComponent.HEALTH_FLAG) {
-						// Dio primero con una pared, bala muerta
+						// Dio primero con una pared, suelo o rampa => bala perdida
 						break
 					}
 					if(collider.userValue == BulletComponent.ENEMY_FLAG) {

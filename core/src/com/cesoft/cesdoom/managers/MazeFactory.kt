@@ -74,13 +74,13 @@ object MazeFactory {
 
         /// La primera vez que se ejecuta el algoritmo, tarda un poco en cachear los nodos
         /// De modo que lo ejecutamos antes de que el juego empieze para que player no note el flick...
-        for(map in mapFactory.map) {
-            map.cx
-            val path = map.findPath(Vector2(0f, 0f), Vector2(map.width-1, map.height-1))
-            for (step in path) {
-                //Log.e("Maze", step.toString())
-            }
-        }
+//        for(map in mapFactory.map) {
+//            map.cx
+//            val path = map.findPath(Vector2(0f, 0f), Vector2(map.width-1, map.height-1))
+//            for (step in path) {
+//                //Log.e("Maze", step.toString())
+//            }
+//        }
         Log.e(tag, "create---------------------------------------------------------------------------- END")
 	}
 
@@ -130,6 +130,14 @@ object MazeFactory {
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, zWay=true)
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +4*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, zWay=true)
+			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -4*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+			//
+			for(i in -3..+3) {
+				mapFactory.addFloorAccess(1, i*lng2, -3*lng-10)
+			}
+			mapFactory.addFloorAccess(1, +4*lng2, -lng2)
+			mapFactory.addFloorAccess(1, -4*lng2, -lng2)
 		}
 		else {
 			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
@@ -138,6 +146,9 @@ object MazeFactory {
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+			//
+			mapFactory.addFloorAccess(1, +6*lng, 0f)
+			mapFactory.addFloorAccess(1, -6*lng, 0f)//TODO: Mas accesos de 1 a 0
 		}
 	}
 	//______________________________________________________________________________________________
@@ -169,14 +180,14 @@ object MazeFactory {
 	private fun addInnerWall(e: Engine) {
 		val wf = WallFactory
 		for (x in -7..+7 step 2) {
-			wf.create(mapFactory, e, Vector3(x * lng, 0f, +4 * lng2), 90f)
-			wf.create(mapFactory, e, Vector3(x * lng, 0f, -4 * lng2), 90f)
+			wf.create(mapFactory, e, Vector3(x*lng, 0f, +4*lng2), 90f)
+			wf.create(mapFactory, e, Vector3(x*lng, 0f, -4*lng2), 90f)
 		}
 		for (z in -7..+7 step 2) {
 			if (z != +7 && z != -7)
-				wf.create(mapFactory, e, Vector3(+4 * lng2, 0f, z * lng), 0f)
+				wf.create(mapFactory, e, Vector3(+4*lng2, 0f, z*lng), 0f)
 			if (z != +7 && z != -7)
-				wf.create(mapFactory, e, Vector3(-4 * lng2, 0f, z * lng), 0f)
+				wf.create(mapFactory, e, Vector3(-4*lng2, 0f, z*lng), 0f)
 		}
 	}
 	//______________________________________________________________________________________________
@@ -194,27 +205,25 @@ object MazeFactory {
 					wf.create(mapFactory, e, Vector3(-1*lng, y*high2, -2*lng), 00f)
 
 					/// S Shapes -------------
-					wf.create(mapFactory, e, Vector3(+5*lng, y*high2, +2*lng2-wf.THICK), 90f)
-					wf.create(mapFactory, e, Vector3(-5*lng, y*high2, +2*lng2-wf.THICK), 90f)
-					wf.create(mapFactory, e, Vector3(+5*lng, y*high2, -2*lng2+wf.THICK), 90f)
-					wf.create(mapFactory, e, Vector3(-5*lng, y*high2, -2*lng2+wf.THICK), 90f)
-					//
-					wf.create(mapFactory, e, Vector3(+3*lng, y*high2, +3*lng2+wf.THICK), 90f)
-					wf.create(mapFactory, e, Vector3(-3*lng, y*high2, +3*lng2+wf.THICK), 90f)
-					wf.create(mapFactory, e, Vector3(+3*lng, y*high2, -3*lng2-wf.THICK), 90f)
-					wf.create(mapFactory, e, Vector3(-3*lng, y*high2, -3*lng2-wf.THICK), 90f)
-					//
+					//+x +z
+					wf.create(mapFactory, e, Vector3(+5*lng-wf.THICK, y*high2, +2*lng2), 90f)
+					wf.create(mapFactory, e, Vector3(+3*lng+wf.THICK, y*high2, +3*lng2), 90f)
 					wf.create(mapFactory, e, Vector3(+2*lng2, y*high2, +5*lng), 00f)
-					wf.create(mapFactory, e, Vector3(-2*lng2, y*high2, +5*lng), 00f)
+					//+x -z
+					wf.create(mapFactory, e, Vector3(+5*lng-wf.THICK, y*high2, -2*lng2), 90f)
+					wf.create(mapFactory, e, Vector3(+3*lng+wf.THICK, y*high2, -3*lng2), 90f)
 					wf.create(mapFactory, e, Vector3(+2*lng2, y*high2, -5*lng), 00f)
+					//-x +z
+					wf.create(mapFactory, e, Vector3(-5*lng+wf.THICK, y*high2, +2*lng2), 90f)
+					wf.create(mapFactory, e, Vector3(-3*lng-wf.THICK, y*high2, +3*lng2), 90f)
+					wf.create(mapFactory, e, Vector3(-2*lng2, y*high2, +5*lng), 00f)
+					//-x -z
+					wf.create(mapFactory, e, Vector3(-5*lng+wf.THICK, y*high2, -2*lng2), 90f)
+					wf.create(mapFactory, e, Vector3(-3*lng-wf.THICK, y*high2, -3*lng2), 90f)
 					wf.create(mapFactory, e, Vector3(-2*lng2, y*high2, -5*lng), 00f)
 				}
 			}
-			else -> {
-				for (y in 0..2) {
-					wf.create(mapFactory, e, Vector3(+0 * lng, y * high2, +.5f * lng2), 90f)
-				}
-			}
+			else -> Unit
 		}
 	}
 
