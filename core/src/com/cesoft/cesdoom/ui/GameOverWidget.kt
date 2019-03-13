@@ -15,8 +15,8 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		//
 		configureWidgets()
 		setListeners()
-		Controllers.addListener(game.playerInput)
+		Controllers.addListener(game.playerInput)//TODO: remove!!!!!!!!!!!
 		//
 		setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
 		setPosition((CesDoom.VIRTUAL_WIDTH - width)/2, (CesDoom.VIRTUAL_HEIGHT - height)/2)
@@ -115,24 +115,24 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	}
 
 	//______________________________________________________________________________________________
-	private var delay = 0f
+	/*private var delay = 0f
 	override fun act(delta: Float) {
 		super.act(delta)
 		delay += delta
 		if(delay < .250)return
-		Log.e("GameOverWidget", "act----------------------------------------")
+		com.cesoft.cesdoom.util.Log.e("GameOverWidget", "act----------------------------------------")
 		delay = 0f
-		processInput()
-	}
-	fun goRestart() {
+		processInput(game.playerInput.mapper)
+	}*/
+	private fun goRestart() {
 		clean()
 		game.reset()
 	}
-	fun goMenu() {
+	private fun goMenu() {
 		clean()
 		game.reset2Menu()
 	}
-	fun goQuit() {
+	private fun goQuit() {
 		Gdx.app.exit()
 	}
 
@@ -142,7 +142,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 	private enum class ButtonFocus {
 		NONE, RESTART, MENU, QUIT
 	}
-	private fun processInput() {
+	fun processInput(mapper: InputMapper) {
 		when {
 			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()
 			mapper.isButtonPressed(Inputs.Action.BACK) -> goMenu()
@@ -189,7 +189,7 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		}
 	}
 	private fun processSelectedButton() {
-		when(currentFocus) {
+		when(currentFocus) {//TODO
 			ButtonFocus.NONE -> Unit
 //			ButtonFocus.RESTART -> goRestart()
 //			ButtonFocus.MENU -> goMenu()

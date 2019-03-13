@@ -214,14 +214,13 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
     /// Implements: Screen
     private var inputDelay = 0f
     override fun render(delta: Float) {
-        stage.act(delta)
-        stage.draw()
-        //
         inputDelay+=delta
         if(inputDelay > .250f) {
             inputDelay = 0f
             processInput()
         }
+        stage.act(delta)
+        stage.draw()
     }
     override fun resize(width: Int, height: Int) {
         stage.viewport.update(width, height)
@@ -249,11 +248,44 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = stage.touchDown(screenX, screenY, pointer, button)
 
 
-
     /// PROCESS INPUT ------------------------------------------------------------------------------
+    private var currentFocus = ButtonFocus.NONE
+    private enum class ButtonFocus {
+        NONE, BACK
+    }
     private fun processInput() {
-        when {
-            mapper.isButtonPressed(Inputs.Action.BACK) || mapper.isButtonPressed(Inputs.Action.FIRE) -> goBack()
+        if(mapper.isButtonPressed(Inputs.Action.START)
+                || mapper.isButtonPressed(Inputs.Action.EXIT)
+                || mapper.isButtonPressed(Inputs.Action.BACK)) {
+            currentFocus = ButtonFocus.BACK
+            goBack()
+        }
+        updateFocusSelection()
+        updateFocusColor()
+        if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
+            processSelectedButton()
+        }
+    }
+    private fun updateFocusSelection() {
+        val backwards = mapper.isGoingBackwards()
+        val forward = mapper.isGoingForward()
+        if(forward || backwards) {
+            currentFocus = ButtonFocus.BACK
+        }
+    }
+    private fun updateFocusColor() {
+        if(backButton.color.a != 0f) {
+            backButton.color = Styles.colorNormal1
+        }
+        when (currentFocus) {
+            ButtonFocus.NONE -> Unit
+            ButtonFocus.BACK -> backButton.color = Styles.colorSelected1
+        }
+    }
+    private fun processSelectedButton() {
+        when (currentFocus) {
+            ButtonFocus.NONE -> Unit
+            ButtonFocus.BACK -> goBack()
         }
     }
 }

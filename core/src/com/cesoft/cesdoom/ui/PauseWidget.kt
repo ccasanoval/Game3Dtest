@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.util.Log
 
@@ -52,7 +53,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		//
 		configureWidgets()
 		setListeners()
-		Controllers.addListener(game.playerInput)
+		Controllers.addListener(game.playerInput)//TODO: remove!!!!!!!!!!!
 		//
 		setSize(0.8f*CesDoom.VIRTUAL_WIDTH, 0.8f*CesDoom.VIRTUAL_HEIGHT)
 		setPosition(CesDoom.VIRTUAL_WIDTH - width, CesDoom.VIRTUAL_HEIGHT - height)
@@ -95,7 +96,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		})
 	}
 	//______________________________________________________________________________________________
-	private var inputDelay = 0f
+	/*private var inputDelay = 0f
 	override fun act(delta: Float) {
 		super.act(delta)
 		inputDelay+=delta
@@ -103,7 +104,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 			inputDelay = 0f
 			processInput()
 		}
-	}
+	}*/
 
 	//______________________________________________________________________________________________
 	fun goRestart() {
@@ -158,7 +159,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 	private enum class ButtonFocus {
 		NONE, RESTART, MENU, QUIT
 	}
-	private fun processInput() {
+	fun processInput(mapper: InputMapper) {
 		when {
 			mapper.isButtonPressed(Inputs.Action.BACK) -> goBack()
 			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()

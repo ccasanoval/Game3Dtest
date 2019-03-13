@@ -18,8 +18,8 @@ import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 		//
 		configureWidgets()
 		setListeners()
-		Controllers.addListener(game.playerInput)
+		Controllers.addListener(game.playerInput)//TODO: remove!!!!!!!!!!!
 		//
 		setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
 		setPosition((CesDoom.VIRTUAL_WIDTH - width)/2, (CesDoom.VIRTUAL_HEIGHT - height)/2)
@@ -100,7 +100,6 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 			btnRestart.setText(assets.getString(Assets.NEXT_LEVEL))
 		}
 		else {
-			//TODO: cambiar pantalla RECARGAR -...> YOU WIN, PLAY AGAIN...
 			btnRestart.setText(assets.getString(Assets.RECARGAR))
 			image.drawable = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/gameWinOver.png"))))
 			game.playServices?.submitScore(PlayerComponent.score)
@@ -136,43 +135,42 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 	}
 
 	//______________________________________________________________________________________________
-	private var delay = 0f
+	/*private var delay = 0f
 	override fun act(delta: Float) {
 		super.act(delta)
 		delay += delta
 		if(delay < .250)return
-		Log.e("GameWinWidget", "act----------------------------------------")
+		com.cesoft.cesdoom.util.Log.e("GameWinWidget", "act----------------------------------------")
 		delay = 0f
 		when {
-			mapper.isButtonPressed(Inputs.Action.START) -> restart()
+			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()
 			mapper.isButtonPressed(Inputs.Action.BACK) -> goMenu()
 			mapper.isButtonPressed(Inputs.Action.EXIT) -> goQuit()
 		}
-	}
-	private fun restart() {
+	}*/
+	private fun goRestart() {
 		exit()
 		game.reset()
 	}
-	fun goMenu() {
+	private fun goMenu() {
 		exit()
 		game.reset2Menu()
 	}
-	fun goQuit() {
+	private fun goQuit() {
 		Gdx.app.exit()
 	}
 
 
-	//TODO
 	/// PROCESS INPUT ------------------------------------------------------------------------------
 	private var currentFocus = ButtonFocus.NONE
 	private enum class ButtonFocus {
 		NONE, RESTART, MENU, QUIT
 	}
-	private fun processInput() {
+	fun processInput(mapper: InputMapper) {
 		when {
-//			mapper.isButtonPressed(Inputs.Action.BACK) -> goBack()
-//			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()
-//			mapper.isButtonPressed(Inputs.Action.EXIT) -> goQuit()
+			mapper.isButtonPressed(Inputs.Action.BACK) -> goMenu()
+			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()
+			mapper.isButtonPressed(Inputs.Action.EXIT) -> goQuit()
 		}
 		updateFocusSelection()
 		updateFocusColor()
@@ -201,7 +199,6 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 		}
 	}
 	private fun updateFocusColor() {
-		//Log.e("updateFocus", "-----------------------------------$currentFocus")
 		if(btnRestart.color.a != 0f) {
 			btnRestart.color = Styles.colorNormal1
 			btnMenu.color = Styles.colorNormal1
@@ -217,9 +214,9 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 	private fun processSelectedButton() {
 		when(currentFocus) {
 			ButtonFocus.NONE -> Unit
-//			ButtonFocus.RESTART -> goRestart()
-//			ButtonFocus.MENU -> goMenu()
-//			ButtonFocus.QUIT -> goQuit()
+			ButtonFocus.RESTART -> goRestart()
+			ButtonFocus.MENU -> goMenu()
+			ButtonFocus.QUIT -> goQuit()
 		}
 	}
 }

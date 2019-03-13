@@ -86,7 +86,7 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 	}
 
 	//______________________________________________________________________________________________
-	private var inputDelay = 0f
+	private var inputDelay = 0f//TODO:Use a base class so not to repeat ys
 	override fun render(delta: Float) {
 		inputDelay+=delta
 		if(inputDelay > .250f) {

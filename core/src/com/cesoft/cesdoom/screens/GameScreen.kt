@@ -11,7 +11,6 @@ import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.ui.GameUI
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +29,13 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 		Sounds.playMusic()
 	}
 
+	//TODO:
+	//private var inputDelay = 0f
+	/*inputDelay+=delta
+	if(inputDelay > .250f) {
+		inputDelay = 0f
+		processInput()
+	}*/
 	override fun render(delta: Float) {
 		processInput()
 		gameUI.update(delta)
@@ -37,6 +43,17 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 		gameUI.render()
 	}
 	private fun processInput() {
+		when {
+			Status.gameOver -> gameUI.gameOverWidget.processInput(input.mapper)
+			Status.gameWin -> gameUI.gameWinWidget.processInput(input.mapper)
+			Status.mainMenu -> Unit//MainMenuScreen ya procesa sus entradas
+			Status.paused -> gameUI.pauseWidget.processInput(input.mapper)
+			else -> {
+				if(input.mapper.isButtonPressed(Inputs.Action.BACK))
+					gameUI.pause()//Abrir pauseWidget
+			}
+		}
+		/*
 		gameUI.gameWinWidget.isVisible
 		gameUI.gameOverWidget.isVisible
 
@@ -45,11 +62,11 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 		val backward = input.mapper.isGoingBackwards()
 		val forward = input.mapper.isGoingForward()
 
+		//TODO: Send message to go to ... WICH widget is on? Pause, GameOver, GameWin ?
+		//TODO:
+		//TODO
 		when {
 			input.mapper.isButtonPressed(Inputs.Action.BACK) -> {
-				//TODO: Send message to go to ... WICH widget is on? Pause, GameOver, GameWin ?
-				//TODO:
-				//TODO
 				when {
 					Status.gameOver -> { gameUI.gameOverWidget.goMenu() }
 					Status.gameWin -> { gameUI.gameWinWidget.goMenu() }
@@ -78,7 +95,7 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 			input.mapper.isButtonPressed(Inputs.Action.START) -> {
 				Log.e(tag, "input.mapper.isButtonPressed(Inputs.Action.START)")
 			}
-		}
+		}*/
 	}
 
 	override fun resize(width: Int, height: Int) {
