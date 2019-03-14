@@ -140,7 +140,11 @@ class RampFactory(assets: Assets) {
 		val l = RampFactory.LONG_GROUND.toInt()
 		if(xWay) {
 			for(x in -l..+l) {
-				if(Math.abs(x) < RampFactory.LONG_GROUND/MazeFactory.scale)continue
+				if(Math.abs(x) < RampFactory.LONG_GROUND/MazeFactory.scale) {
+					//mapFactory.addFloorAccess(floor,pos.x+x, pos.z+l+mapFactory.scale)
+					//mapFactory.addFloorAccess(floor,pos.x+x, pos.z-l-mapFactory.scale)
+					continue
+				}
 				val point1 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+x, pos.z+l))
 				val point2 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+x, pos.z-l))
 				mapFactory.addCollider(floor, point1)

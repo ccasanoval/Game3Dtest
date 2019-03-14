@@ -96,22 +96,22 @@ object WallFactory {
 		}
 
 		/// MODEL
-		val modelo : Model = mb.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
-		val modelComponent = ModelComponent(modelo, pos)
+		val model : Model = mb.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
+		val modelComponent = ModelComponent(model, pos)
 
 		// Mejora para frustum culling
-		val frustumCullingData : FrustumCullingData
-		if(angle == 0f)//angle > -5f && angle < 5f)
-			frustumCullingData = FrustumCullingData.create(pos, dim0)
-		else if(angle == 90f)
-			frustumCullingData = FrustumCullingData.create(pos, dim90)
-		else if(angle == 45f || angle == -45f)
-			frustumCullingData = FrustumCullingData.create(pos, dim45)
-		else {
-			val boundingBox = BoundingBox()
-			modelComponent.instance.calculateBoundingBox(boundingBox)
-			frustumCullingData = FrustumCullingData.create(boundingBox)
-		}
+		val frustumCullingData =
+			if(angle == 0f)
+				FrustumCullingData.create(pos, dim0)
+			else if(angle == 90f)
+				FrustumCullingData.create(pos, dim90)
+			else if(angle == 45f || angle == -45f)
+				FrustumCullingData.create(pos, dim45)
+			else {
+				val boundingBox = BoundingBox()
+				modelComponent.instance.calculateBoundingBox(boundingBox)
+				FrustumCullingData.create(boundingBox)
+			}
 		modelComponent.frustumCullingData = frustumCullingData
 
 		modelComponent.instance.transform.rotate(Vector3.Y, angle)

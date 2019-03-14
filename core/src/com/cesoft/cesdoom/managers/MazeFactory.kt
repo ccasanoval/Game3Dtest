@@ -133,9 +133,10 @@ object MazeFactory {
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +4*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, zWay=true)
 			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -4*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
 			//
-			for(i in -3..+3) {
-				mapFactory.addFloorAccess(1, i*lng2, -3*lng-10)
-			}
+			for(i in -3..+3)
+				mapFactory.addFloorAccess(1, i*lng2, -3*lng-2*mapFactory.scale)
+			for(i in -1..+1)
+				mapFactory.addFloorAccess(1, i*lng2, -lng+2*mapFactory.scale)
 			mapFactory.addFloorAccess(1, +4*lng2, -lng2)
 			mapFactory.addFloorAccess(1, -4*lng2, -lng2)
 		}
@@ -189,6 +190,12 @@ object MazeFactory {
 			if (z != +7 && z != -7)
 				wf.create(mapFactory, e, Vector3(-4*lng2, 0f, z*lng), 0f)
 		}
+		//
+		wf.create(mapFactory, e, Vector3(+9*lng-2*wf.THICK, 0f, -9*lng+wf.THICK), -45f)
+		wf.create(mapFactory, e, Vector3(+9*lng-2*wf.THICK, 0f, -5*lng-+wf.THICK), +45f)
+		//
+		wf.create(mapFactory, e, Vector3(-9*lng+2*wf.THICK, 0f, -9*lng+wf.THICK), +45f)
+		wf.create(mapFactory, e, Vector3(-9*lng+2*wf.THICK, 0f, -5*lng-+wf.THICK), -45f)
 	}
 	//______________________________________________________________________________________________
 	private fun addShapesX(level: Int, e: Engine) {
