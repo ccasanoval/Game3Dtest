@@ -237,6 +237,7 @@ class PlayerSystem(
 		}
 		posTemp.add(posTemp2)
 		posTemp.scl(PlayerComponent.IMPULSE_MOBIL * delta)
+		PlayerComponent.isWalking = isMoving
 	}
 
 	//______________________________________________________________________________________________

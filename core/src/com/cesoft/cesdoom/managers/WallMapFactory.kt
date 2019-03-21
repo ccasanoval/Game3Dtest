@@ -15,7 +15,7 @@ object WallMapFactory {
     fun create(mapFactory: MapGraphFactory, pos: Vector3, angle: Float, ignore: Int) {
         val t = ((WallFactory.THICK+mapFactory.scale/2) / mapFactory.scale).toInt()
         val l = ((WallFactory.LONG+mapFactory.scale/2) / mapFactory.scale).toInt()
-        val td = (0.7071*WallFactory.THICK / mapFactory.scale).toInt()+0
+        val td = (WallFactory.THICK / mapFactory.scale).toInt()+0
         val ld = (0.7071*WallFactory.LONG / mapFactory.scale).toInt()+0
         val level = if(pos.y > 2*WallFactory.HIGH-1) 1 else 0//TODO: more levels ?
         val posMap = mapFactory.toMapGraphCoord(level, Vector2(pos.x, pos.z))

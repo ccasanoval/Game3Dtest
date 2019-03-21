@@ -27,6 +27,7 @@ class PlayerComponent : Component {
         var ammo: Int = 0           //TODO: MessageSystem + dispatch signal
         var isWinning = false
         var isJumping = false
+        var isWalking = false
 
         var tall = PlayerComponent.TALL
 

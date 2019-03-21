@@ -35,12 +35,12 @@ import com.cesoft.cesdoom.util.PlayServices
 //TODO: FPS !!!  (Enemy consume mucho, es todo por pathfinding?)
 //TODO: Pathfinding 3D (enhancement) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
-//TODO: Usar paredes diagonales para maze mas chulo !!!!!!
 //TODO: Ascensores y escaleras!!!
 //TODO: Level Constructor + Pathfinding compilator
 //TODO: Radar de monster?
 //TODO: Textura en suelo donde nacen los bichos?
 //TODO: Monster3, Weapon2 ?
+//TODO: Saltar? Sonido al caer desde cierta altura y bounce de camara!
 //
 //TODO: Columnas en maze?
 //TODO: mandos de pantalla : Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir salto?

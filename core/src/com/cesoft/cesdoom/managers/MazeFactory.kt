@@ -180,22 +180,22 @@ object MazeFactory {
 	//______________________________________________________________________________________________
 	private fun addInnerWall(e: Engine) {
 		val wf = WallFactory
-		for (x in -7..+7 step 2) {
+		for (x in -5..+5 step 2) {
 			wf.create(mapFactory, e, Vector3(x*lng, 0f, +4*lng2), 90f)
 			wf.create(mapFactory, e, Vector3(x*lng, 0f, -4*lng2), 90f)
 		}
-		for (z in -7..+7 step 2) {
-			if (z != +7 && z != -7)
+		for(z in -7..+7 step 2) {
+			if(z != +7 && z > -5)
 				wf.create(mapFactory, e, Vector3(+4*lng2, 0f, z*lng), 0f)
-			if (z != +7 && z != -7)
+			if(z != +7 && z > -5)
 				wf.create(mapFactory, e, Vector3(-4*lng2, 0f, z*lng), 0f)
 		}
-		//
-		wf.create(mapFactory, e, Vector3(+9*lng-2*wf.THICK, 0f, -9*lng+wf.THICK), -45f)
-		wf.create(mapFactory, e, Vector3(+9*lng-2*wf.THICK, 0f, -5*lng-+wf.THICK), +45f)
-		//
-		wf.create(mapFactory, e, Vector3(-9*lng+2*wf.THICK, 0f, -9*lng+wf.THICK), +45f)
-		wf.create(mapFactory, e, Vector3(-9*lng+2*wf.THICK, 0f, -5*lng-+wf.THICK), -45f)
+		//x+ z-
+		wf.create(mapFactory, e, Vector3(+7*lng-3*wf.THICK, 0f, -8*lng+3*wf.THICK), +45f)
+		wf.create(mapFactory, e, Vector3(+9*lng-2*wf.THICK, 0f, -5*lng+3*wf.THICK), -45f)
+		//x- z-
+		wf.create(mapFactory, e, Vector3(-7*lng+3*wf.THICK, 0f, -8*lng+3*wf.THICK), -45f)
+		wf.create(mapFactory, e, Vector3(-9*lng+2*wf.THICK, 0f, -5*lng+3*wf.THICK), +45f)
 	}
 	//______________________________________________________________________________________________
 	private fun addShapesX(level: Int, e: Engine) {

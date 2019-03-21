@@ -79,10 +79,10 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 	}
 
 	//______________________________________________________________________________________________
-	private var countMax = 0
+	//private var countMax = 0
 	override fun update(delta: Float) {
 		if(isDisposed)return
-		var countDrawn = 0
+		//var countDrawn = 0
 
 		processEvents()
 
@@ -129,12 +129,18 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 	//______________________________________________________________________________________________
 	private var isDrawGunUp = true
 	private var yDrawGunOrg = -999f
+	private var isDrawGunSwitch = true
+	private var xDrawGunOrg = Float.MIN_VALUE
 	private fun drawGun(delta: Float) {
 		if(PlayerComponent.isDead())return
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT)
 		batch.begin(gunCamera)
 		val model = ModelComponent.get(gun)
 		animGunBreathing(model, delta)
+		if(PlayerComponent.isWalking)
+			animGunWalking(model, delta)
+		else
+			restoreGunPosition(model, delta)
 		batch.render(model.instance)
 		batch.end()
 	}
@@ -154,6 +160,26 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 				isDrawGunUp = true
 		}
 		model.instance.transform.setTranslation(posTemp)
+	}
+	private fun animGunWalking(model: ModelComponent, delta: Float) {
+		model.instance.transform.getTranslation(posTemp)
+		if(xDrawGunOrg == Float.MIN_VALUE)
+			xDrawGunOrg = posTemp.x
+		if(isDrawGunSwitch) {
+			posTemp.x += delta*9
+			if(posTemp.x > xDrawGunOrg+5f)
+				isDrawGunSwitch = false
+		}
+		else {
+			posTemp.x -= delta*9
+			if(posTemp.x < xDrawGunOrg-5f)
+				isDrawGunSwitch = true
+		}
+		model.instance.transform.setTranslation(posTemp)
+	}
+	private fun restoreGunPosition(model: ModelComponent, delta: Float) {
+		if(xDrawGunOrg == Float.MIN_VALUE || Math.abs(xDrawGunOrg - posTemp.x) < 0.2) return
+		animGunWalking(model, delta/2)
 	}
 
 	//______________________________________________________________________________________________
