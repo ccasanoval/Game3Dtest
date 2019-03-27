@@ -14,7 +14,7 @@ import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+// TODO: Change the way we create the objects to a more efficient way (Meshes...) so to increase FPS
 object MazeFactory {
     val tag: String = MazeFactory::class.java.simpleName
 
@@ -92,7 +92,7 @@ object MazeFactory {
 	private fun createLevelX(level: Int, e: Engine, assets: Assets) {
 
 		/// INTERIOR SHAPES -------------
-		addShapesX(level, e)
+		addShapesX(level, e, assets)
 
 		/// INNER WALL
 		addInnerWall(e)
@@ -155,27 +155,42 @@ object MazeFactory {
 	//______________________________________________________________________________________________
 	private fun addOuterWall(level: Int, e: Engine, assets: Assets) {
 		val wf = WallFactory
-		for (z in -12..12 step 2) {
-			wf.create(mapFactory, e, Vector3(+7 * lng2, 0f, z * lng), 00f, WallFactory.Type.GRILLE)
-			wf.create(mapFactory, e, Vector3(-7 * lng2, 0f, z * lng), 00f, WallFactory.Type.GRILLE)
+
+        //TODO
+		/*for(z in -12..12 step 2) {
+			wf.create(mapFactory, e, Vector3(+7*lng2, 0f, z*lng), 00f, WallFactory.Type.GRILLE)
+			wf.create(mapFactory, e, Vector3(-7*lng2, 0f, z*lng), 00f, WallFactory.Type.GRILLE)
 		}
-		for (x in -13..13 step 2) {
-			if (x == 1) {
-				// EXIT 0
-				var id = " A "
-				GateFactory.create(mapFactory, e, Vector3(x * lng, 0f, +6.5f * lng2), 90f, id, assets)
-				YouWinFactory.create(e, Vector3(x * lng, 0f, +6.5f * lng2 + (2 * YouWinFactory.SIZE + GateComponent.THICK)))
-				// EXIT 1
-				id = " B "
-				GateFactory.create(mapFactory, e, Vector3(x * lng, 0f, -6.5f * lng2), 90f, id, assets)
-				YouWinFactory.create(e, Vector3(x * lng, 0f, -6.5f * lng2 - (2 * YouWinFactory.SIZE + GateComponent.THICK)))
-				//
-				addSwitchesLevelX(level, e, assets)
-				continue
-			}
-			wf.create(mapFactory, e, Vector3(x * lng, 0f, +6.5f * lng2), 90f, WallFactory.Type.GRILLE)
-			wf.create(mapFactory, e, Vector3(x * lng, 0f, -6.5f * lng2), 90f, WallFactory.Type.GRILLE)
-		}
+		for(x in -13..13 step 2) {
+			if (x == 1)continue
+			wf.create(mapFactory, e, Vector3(x*lng, 0f, +6.5f*lng2), 90f, WallFactory.Type.GRILLE)
+			wf.create(mapFactory, e, Vector3(x*lng, 0f, -6.5f*lng2), 90f, WallFactory.Type.GRILLE)
+		}*/
+		wf.createGrille(mapFactory, e, Vector2(13*lng2, high2), Vector3(+6.5f*lng2, 0f, 0f), -90f)
+		wf.createGrille(mapFactory, e, Vector2(13*lng2, high2), Vector3(-6.5f*lng2, 0f, 0f), +90f)
+		//
+		wf.createGrille(mapFactory, e, Vector2(6*lng2, high2), Vector3(-3*lng2, 0f, -6.5f*lng2), 0f)
+		wf.createGrille(mapFactory, e, Vector2(6*lng2, high2), Vector3(+3*lng2, 0f, -6.5f*lng2), 0f)
+		//
+		wf.createGrille(mapFactory, e, Vector2(6*lng2, high2), Vector3(-3*lng2, 0f, +6.5f*lng2), 0f)
+		wf.createGrille(mapFactory, e, Vector2(6*lng2, high2), Vector3(+3*lng2, 0f, +6.5f*lng2), 0f)
+
+		//TODO: change YouWinFactory into a vehicle so the player can fly away to the next level...
+		val columnSize = Vector3(10f, 2*WallFactory.HIGH, 30f)
+		// EXIT 0
+		var id = " A "
+		GateFactory.create(mapFactory, e, Vector3(lng, 0f, +6.5f*lng2), 90f, id, assets)
+		YouWinFactory.create(e, Vector3(lng, 0f, +7.5f*lng2 + (2*YouWinFactory.SIZE + GateComponent.THICK)))
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-2f, 0f, +6.6f*lng2))
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(lng2+2f, 0f, +6.6f*lng2))
+		// EXIT 1
+		id = " B "
+		GateFactory.create(mapFactory, e, Vector3(lng, 0f, -6.5f*lng2), 90f, id, assets)
+		YouWinFactory.create(e, Vector3(lng, 0f, -7.5f*lng2 - (2*YouWinFactory.SIZE + GateComponent.THICK)))
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-2f, 0f, -6.6f*lng2))
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(lng2+2f, 0f, -6.6f*lng2))
+		//
+		addSwitchesLevelX(level, e, assets)
 	}
 	//______________________________________________________________________________________________
 	private fun addInnerWall(e: Engine) {
@@ -198,56 +213,65 @@ object MazeFactory {
 		wf.create(mapFactory, e, Vector3(-9*lng+2*wf.THICK, 0f, -5*lng+3*wf.THICK), +45f)
 	}
 	//______________________________________________________________________________________________
-	private fun addShapesX(level: Int, e: Engine) {
+	private fun addShapesX(level: Int, e: Engine, assets: Assets) {
 		val wf = WallFactory
-		when {
-			level < 999 -> {
-				for(y in 0..level) {
-					/// U Shapes -------------
-					wf.create(mapFactory, e, Vector3(+0*lng, y*high2, +.5f*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(+0*lng, y*high2, -.5f*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(+1*lng, y*high2, +2*lng), 00f)
-					wf.create(mapFactory, e, Vector3(-1*lng, y*high2, +2*lng), 00f)
-					wf.create(mapFactory, e, Vector3(+1*lng, y*high2, -2*lng), 00f)
-					wf.create(mapFactory, e, Vector3(-1*lng, y*high2, -2*lng), 00f)
+		val columnSize = Vector3(15f, 2*WallFactory.HIGH, 15f)
+        for(y in 0..level) {
+            /// U Shapes -------------
+            wf.create(mapFactory, e, Vector3(+0*lng, y*high2, +.5f*lng2), 90f, WallFactory.Type.CIRCUITS)
+            wf.create(mapFactory, e, Vector3(+0*lng, y*high2, -.5f*lng2), 90f, WallFactory.Type.CIRCUITS)
+            wf.create(mapFactory, e, Vector3(+1*lng, y*high2, +2*lng), 00f)
+            wf.create(mapFactory, e, Vector3(-1*lng, y*high2, +2*lng), 00f)
+            wf.create(mapFactory, e, Vector3(+1*lng, y*high2, -2*lng), 00f)
+            wf.create(mapFactory, e, Vector3(-1*lng, y*high2, -2*lng), 00f)
 
-					/// S Shapes -------------
-					//+x +z
-					wf.create(mapFactory, e, Vector3(+5*lng-wf.THICK, y*high2, +2*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(+3*lng+wf.THICK, y*high2, +3*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(+2*lng2, y*high2, +5*lng), 00f)
-					//+x -z
-					wf.create(mapFactory, e, Vector3(+5*lng-wf.THICK, y*high2, -2*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(+3*lng+wf.THICK, y*high2, -3*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(+2*lng2, y*high2, -5*lng), 00f)
-					//-x +z
-					wf.create(mapFactory, e, Vector3(-5*lng+wf.THICK, y*high2, +2*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(-3*lng-wf.THICK, y*high2, +3*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(-2*lng2, y*high2, +5*lng), 00f)
-					//-x -z
-					wf.create(mapFactory, e, Vector3(-5*lng+wf.THICK, y*high2, -2*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(-3*lng-wf.THICK, y*high2, -3*lng2), 90f)
-					wf.create(mapFactory, e, Vector3(-2*lng2, y*high2, -5*lng), 00f)
-				}
+            /// S Shapes -------------
+            //+x +z
+            wf.create(mapFactory, e, Vector3(+5*lng-wf.THICK, y*high2, +2*lng2), 90f)
+            wf.create(mapFactory, e, Vector3(+3*lng+wf.THICK, y*high2, +3*lng2), 90f)
+            wf.create(mapFactory, e, Vector3(+2*lng2, y*high2, +5*lng), 00f)
+            //+x -z
+            wf.create(mapFactory, e, Vector3(+5*lng-wf.THICK, y*high2, -2*lng2), 90f)
+            wf.create(mapFactory, e, Vector3(+3*lng+wf.THICK, y*high2, -3*lng2), 90f)
+            wf.create(mapFactory, e, Vector3(+2*lng2, y*high2, -5*lng), 00f)
+            //-x +z
+            wf.create(mapFactory, e, Vector3(-5*lng+wf.THICK, y*high2, +2*lng2), 90f)
+            wf.create(mapFactory, e, Vector3(-3*lng-wf.THICK, y*high2, +3*lng2), 90f)
+            wf.create(mapFactory, e, Vector3(-2*lng2, y*high2, +5*lng), 00f)
+            //-x -z
+            wf.create(mapFactory, e, Vector3(-5*lng+wf.THICK, y*high2, -2*lng2), 90f)
+            wf.create(mapFactory, e, Vector3(-3*lng-wf.THICK, y*high2, -3*lng2), 90f)
+            wf.create(mapFactory, e, Vector3(-2*lng2, y*high2, -5*lng), 00f)
+
+            /// Columns
+            if(y < 2) {
+				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(0f, y*2 * WallFactory.HIGH, +3.1f*lng2))
+				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(0f, y*2 * WallFactory.HIGH, -3.1f*lng2))
 			}
-			else -> Unit
-		}
+			if(y < 1) {
+				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-6.7f*lng2, y*2*WallFactory.HIGH, -6.3f*lng2))
+				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+6.7f*lng2, y*2*WallFactory.HIGH, -6.3f*lng2))
+				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-6.7f*lng2, y*2*WallFactory.HIGH, +6.3f*lng2))
+				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+6.7f*lng2, y*2*WallFactory.HIGH, +6.3f*lng2))
+            }
+        }
 	}
 
 	//______________________________________________________________________________________________
 	private fun addSwitchesLevelX(level: Int, e: Engine, assets: Assets) {
+		val z = +WallFactory.LONG+WallFactory.THICK+1
 		when(level) {
 			0 -> {
-				SwitchFactory.create(e, Vector3(0f, 0f, -WallFactory.LONG - SwitchComponent.SIZE / 2), 90f, " A ", assets)
-				SwitchFactory.create(e, Vector3(0f, 0f, +WallFactory.LONG + SwitchComponent.SIZE / 2), 90f, " B ", assets)
+				SwitchFactory.create(e, Vector3(0f, 0f, -z), 180f, " A ", assets)
+				SwitchFactory.create(e, Vector3(0f, 0f, +z), 0f, " B ", assets)
 			}
 			1,2 -> {
-				SwitchFactory.create(e, Vector3(0f, level*high2, -WallFactory.LONG - SwitchComponent.SIZE / 2), 90f, " A ", assets)
-				SwitchFactory.create(e, Vector3(0f, level*high2, +WallFactory.LONG + SwitchComponent.SIZE / 2), 90f, " B ", assets)
+				SwitchFactory.create(e, Vector3(0f, level*high2, -z), 180f, " A ", assets)
+				SwitchFactory.create(e, Vector3(0f, level*high2, +z), 0f, " B ", assets)
 			}
 			3 -> {
-				SwitchFactory.create(e, Vector3(0f, 2*high2, -WallFactory.LONG - SwitchComponent.SIZE / 2), 90f, " A ", assets)
-				SwitchFactory.create(e, Vector3(0f, 2*high2, +WallFactory.LONG + SwitchComponent.SIZE / 2), 90f, " B ", assets)
+				SwitchFactory.create(e, Vector3(0f, 2*high2, -z), 180f, " A ", assets)
+				SwitchFactory.create(e, Vector3(0f, 2*high2, +z), 0f, " B ", assets)
 			}
 		}
 	}

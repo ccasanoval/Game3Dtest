@@ -17,14 +17,13 @@ class PlayerComponent : Component {
 
         const val TALL = 22f
         private const val HEALTH_FULL = 100
-        const val IMPULSE_MOBIL = 3000f
-        //const val IMPULSE_PC = 5000f
+        const val IMPULSE = 3000f
         const val MASS = 65f
         const val RADIO = 16f
 
         ///TODO: most of this to GameStatus object...
         var isGodModeOn = false
-        var ammo: Int = 0           //TODO: MessageSystem + dispatch signal
+        var ammo: Int = 0
         var isWinning = false
         var isJumping = false
         var isWalking = false
@@ -32,7 +31,6 @@ class PlayerComponent : Component {
         var tall = PlayerComponent.TALL
 
         var isReloading = false
-        //var isReloadingHealth = false
 
 
         /// Level -----------------

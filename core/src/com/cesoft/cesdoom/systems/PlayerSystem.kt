@@ -236,7 +236,7 @@ class PlayerSystem(
 			Sounds.play(Sounds.SoundType.FOOT_STEPS)
 		}
 		posTemp.add(posTemp2)
-		posTemp.scl(PlayerComponent.IMPULSE_MOBIL * delta)
+		posTemp.scl(PlayerComponent.IMPULSE*delta)
 		PlayerComponent.isWalking = isMoving
 	}
 

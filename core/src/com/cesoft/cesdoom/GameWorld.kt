@@ -59,7 +59,7 @@ class GameWorld(gameWinWidget: GameWinWidget,
 	init {
 		Bullet.init()
 
-		val lonMundo = 4000f
+		val longWorld = 4000f
 
 		///----
 		gameEventSignal = Signal()
@@ -100,18 +100,18 @@ class GameWorld(gameWinWidget: GameWinWidget,
 			bulletSystem.collisionWorld.debugDrawer = debugDrawer
 		}
 
-		// TODO: Cargar desde constructor...
 		/// SCENE
-		engine.addEntity(SceneFactory.getDome(assets.getDome()))
-		engine.addEntity(SceneFactory.getSuelo(assets.getSuelo(), lonMundo))
-		SceneFactory.loadSkyline(assets.getSkyline(), engine, lonMundo/2f)
-		SceneFactory.loadJunk(assets.getJunk(), engine, lonMundo/4f)
+		SceneFactory.addDome(engine, assets.getDome())
+		SceneFactory.addGround(engine, assets.getSuelo(), longWorld)
+		SceneFactory.addSkyline(engine, assets.getSkyline(), longWorld/2f)
+		SceneFactory.addJunkAntenna(engine, assets.getJunkAntenna(), longWorld/4f)
+		SceneFactory.addJunk2(engine, assets.getJunk2(), longWorld/4f)
 
 		/// MAZE
 		MazeFactory.create(engine, assets)
 
 		/// PLAYER
-		createPlayer(Vector3(0f,175f,0f))
+		createPlayer(Vector3(0f,200f,0f))
 	}
 
 	//______________________________________________________________________________________________

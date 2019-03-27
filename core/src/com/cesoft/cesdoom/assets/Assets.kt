@@ -68,9 +68,12 @@ class Assets {
 		private const val IMG_GROUND = "scene/ground.jpg"
 		private const val IMG_SKYLINE = "scene/skyline.png"
 		private const val IMG_JUNK = "scene/junk.png"
-		private const val IMG_METAL1 = "scene/wall/metal1.jpg"
-		private const val IMG_METAL2 = "scene/wall/metal2.png"
-		private const val IMG_METAL3 = "scene/wall/metal3.png"
+		private const val IMG_JUNK2 = "scene/junk2.png"
+		private const val IMG_WALL_CONCRETE = "scene/wall/concrete.jpg"
+		private const val IMG_WALL_STEEL = "scene/wall/steel.png"
+		private const val IMG_WALL_GRILLE = "scene/wall/grille.png"
+        private const val IMG_WALL_PIPES = "scene/wall/pipes.jpg"
+		private const val IMG_WALL_CIRCUITS = "scene/wall/circuits.jpg"
 		private const val IMG_GATE = "scene/gate/doomdoor1.jpg"
 		private const val IMG_SWITCH_ON = "scene/switch/switchOn.png"
 		private const val IMG_SWITCH_OFF = "scene/switch/switchOff.png"
@@ -162,17 +165,25 @@ class Assets {
 	fun iniSkyline() = assetManager.load(IMG_SKYLINE, Texture::class.java)
 	fun getSkyline():Texture = assetManager.get(IMG_SKYLINE, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniJunk() = assetManager.load(IMG_JUNK, Texture::class.java)
-	fun getJunk():Texture = assetManager.get(IMG_JUNK, Texture::class.java)
+	fun iniJunkAntenna() = assetManager.load(IMG_JUNK, Texture::class.java)
+	fun getJunkAntenna():Texture = assetManager.get(IMG_JUNK, Texture::class.java)
+	fun iniJunk2() = assetManager.load(IMG_JUNK2, Texture::class.java)
+	fun getJunk2():Texture = assetManager.get(IMG_JUNK2, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniWallMetal1() = assetManager.load(IMG_METAL1, Texture::class.java)
-	fun getWallMetal1():Texture = assetManager.get(IMG_METAL1, Texture::class.java)
+	fun iniWallConcrete() = assetManager.load(IMG_WALL_CONCRETE, Texture::class.java)
+	fun getWallConcrete():Texture = assetManager.get(IMG_WALL_CONCRETE, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniWallMetal2() = assetManager.load(IMG_METAL2, Texture::class.java)
-	fun getWallMetal2():Texture = assetManager.get(IMG_METAL2, Texture::class.java)
+	fun iniWallSteel() = assetManager.load(IMG_WALL_STEEL, Texture::class.java)
+	fun getWallSteel():Texture = assetManager.get(IMG_WALL_STEEL, Texture::class.java)
 	//______________________________________________________________________________________________
-	fun iniWallMetal3() = assetManager.load(IMG_METAL3, Texture::class.java)
-	fun getWallMetal3():Texture = assetManager.get(IMG_METAL3, Texture::class.java)
+	fun iniWallGrille() = assetManager.load(IMG_WALL_GRILLE, Texture::class.java)
+	fun getWallGrille():Texture = assetManager.get(IMG_WALL_GRILLE, Texture::class.java)
+    //______________________________________________________________________________________________
+    fun iniWallPipes() = assetManager.load(IMG_WALL_PIPES, Texture::class.java)
+    fun getWallPipes():Texture = assetManager.get(IMG_WALL_PIPES, Texture::class.java)
+	//______________________________________________________________________________________________
+	fun iniWallCircuits() = assetManager.load(IMG_WALL_CIRCUITS, Texture::class.java)
+	fun getWallCircuits():Texture = assetManager.get(IMG_WALL_CIRCUITS, Texture::class.java)
 	//______________________________________________________________________________________________
 	fun iniGate() = assetManager.load(IMG_GATE, Texture::class.java)
 	fun getGate():Texture = assetManager.get(IMG_GATE, Texture::class.java)
@@ -213,10 +224,13 @@ class Assets {
 			getRifle().dispose()
 			getSuelo().dispose()
 			getSkyline().dispose()
-			getJunk().dispose()
-			getWallMetal1().dispose()
-			getWallMetal2().dispose()
-			getWallMetal3().dispose()
+			getJunkAntenna().dispose()
+			getJunk2().dispose()
+			getWallConcrete().dispose()
+			getWallSteel().dispose()
+			getWallGrille().dispose()
+			getWallPipes().dispose()
+			getWallCircuits().dispose()
 			endFireShot()
 		}
 		catch(e: Exception) { Log.e(tag, "dispose:assetManager.dispose:e1: $e") }

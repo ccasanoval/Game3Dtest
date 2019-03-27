@@ -30,8 +30,8 @@ android {
         applicationId "com.cesoft.cesdoom"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 4
-        versionName "1.04"
+        versionCode 5
+        versionName "1.05"
         multiDexEnabled true
     }
     buildTypes {
@@ -129,6 +129,6 @@ idea {
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.google.android.gms:play-services-games:16.0.0'
+    implementation 'com.google.android.gms:play-services-games:17.0.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
 }

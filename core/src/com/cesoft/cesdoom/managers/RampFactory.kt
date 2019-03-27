@@ -47,37 +47,39 @@ class RampFactory(assets: Assets) {
 
 		private val dimGround = Vector3(LONG_GROUND, THICK_GROUND, LONG_GROUND)
 		private val dimFCGround = Vector3(2*LONG_GROUND, 2*THICK_GROUND, 2*LONG_GROUND)
+
+		private const val POSITION_NORMAL =
+				(VertexAttributes.Usage.Position
+						or VertexAttributes.Usage.Normal
+						or VertexAttributes.Usage.TextureCoordinates).toLong()
 	}
 	enum class Type { STEEL, GRILLE, }
 
-	private val material1 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
-	private val material2 = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
+	private val materialSteel = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
+	private val materialGrille = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
 
 	private val modelBuilder = ModelBuilder()
-	private val POSITION_NORMAL =
-			(VertexAttributes.Usage.Position
-					or VertexAttributes.Usage.Normal
-					or VertexAttributes.Usage.TextureCoordinates).toLong()
+
 
 	//______________________________________________________________________________________________
 	init {
-		val texture1 = assets.getWallMetal2()
-		val texture2 = assets.getWallMetal3()
+		val textureSteel = assets.getWallSteel()
+		val textureGrille = assets.getWallGrille()
 
 		/// MODEL 1 (CORRUGATED STEEL)
-		texture1.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-		val textureAttribute1 = TextureAttribute(TextureAttribute.Diffuse, texture1)
-		textureAttribute1.scaleU = 3f
-		textureAttribute1.scaleV = 3f * LONG / HIGH
-		material1.set(textureAttribute1)
+		textureSteel.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+		val textureAttributeSteel = TextureAttribute(TextureAttribute.Diffuse, textureSteel)
+		textureAttributeSteel.scaleU = 3f
+		textureAttributeSteel.scaleV = 3f * LONG / HIGH
+		materialSteel.set(textureAttributeSteel)
 
 		/// MODEL 2 (TRANSPARENT GRILLE)
-		texture2.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-		val textureAttribute2 = TextureAttribute(TextureAttribute.Diffuse, texture2)
-		textureAttribute2.scaleU = 2f
-		textureAttribute2.scaleV = 2f * LONG / HIGH
-		material2.set(textureAttribute2)
-		material2.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
+		textureGrille.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+		val textureAttributeGrille = TextureAttribute(TextureAttribute.Diffuse, textureGrille)
+		textureAttributeGrille.scaleU = 2f
+		textureAttributeGrille.scaleV = 2f * LONG / HIGH
+		materialGrille.set(textureAttributeGrille)
+		materialGrille.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
 	}
 
 	//______________________________________________________________________________________________
@@ -92,7 +94,7 @@ class RampFactory(assets: Assets) {
 		RampMapFactory.create(mapFactory, pos, angleX, angleY, angleZ)
 
 		/// MODEL
-		val material = if(type==Type.STEEL) material1 else material2
+		val material = if(type==Type.STEEL) materialSteel else materialGrille
 		val model : Model = modelBuilder.createBox(THICK*2, HIGH*2, LONG*2, material, POSITION_NORMAL)
 		val modelComponent = ModelComponent(model, pos)
 		entity.add(modelComponent)
@@ -141,8 +143,6 @@ class RampFactory(assets: Assets) {
 		if(xWay) {
 			for(x in -l..+l) {
 				if(Math.abs(x) < RampFactory.LONG_GROUND/MazeFactory.scale) {
-					//mapFactory.addFloorAccess(floor,pos.x+x, pos.z+l+mapFactory.scale)
-					//mapFactory.addFloorAccess(floor,pos.x+x, pos.z-l-mapFactory.scale)
 					continue
 				}
 				val point1 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+x, pos.z+l))
@@ -151,19 +151,9 @@ class RampFactory(assets: Assets) {
 				mapFactory.addCollider(floor, point2)
 			}
 		}
-		if(zWay) {
-			for(z in -l..+l) {
-//				if(z == 0 || z == -1 || z == +1)continue
-//				val point1 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+l, pos.z+z))
-//				val point2 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x-l, pos.z+z))
-//				mapFactory.addCollider(floor, point1)
-//				mapFactory.addCollider(floor, point2)
-			}
-		}
-		//RampMapFactory.createGroundMap(mapFactory, pos)
 
 		/// MODEL
-		val material = if(type==Type.STEEL) material1 else material2
+		val material = if(type==Type.STEEL) materialSteel else materialGrille
 		val model : Model = modelBuilder.createBox(dimFCGround.x, dimFCGround.y, dimFCGround.z, material, POSITION_NORMAL)
 		val modelComponent = ModelComponent(model, pos)
 		entity.add(modelComponent)

@@ -43,7 +43,7 @@ class Switch(private val id: String, private val assets: Assets) : Entity() {
 
         Sounds.play(Sounds.SoundType.SWITCH)
 
-        PlayerComponent.message = assets.formatString(Assets.GATE_UNLOCKED, id)//TODO: MessageSystem + dispatch signal
+        PlayerComponent.message = assets.formatString(Assets.GATE_UNLOCKED, id)//TODO: MessageSystem + dispatch signal (EventBus?)
 
         val modelComponent = ModelComponent.get(this)
         val textureAttributeOn = TextureAttribute(TextureAttribute.Diffuse, textureOn)

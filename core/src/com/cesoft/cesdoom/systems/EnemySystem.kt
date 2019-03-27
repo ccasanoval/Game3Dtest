@@ -213,7 +213,7 @@ class EnemySystem(
 				enemy.orientation = theta
 			}
 			else {
-				val weight = 5.0//TODO: referenciar a delta
+				val weight = 50.0*delta//TODO: referenciar a delta
 				enemy.orientation = (weight * enemy.orientation + theta) / (weight + 1)
 			}
 		}
@@ -224,13 +224,13 @@ class EnemySystem(
 	}
 
 	private fun getTarget(floorPlayer: Int, playerPosition: Vector3, floorEnemy: Int, enemyPosition: Vector2): Vector2 {
-		if(floorEnemy != floorPlayer) {
-			val target = MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)
-//Log.e(tag, "getTarget(floorEnemy < floorPlayer): ----- target=$target")
-			return target//TODO: mejorar para buscar accesos desde niveles superiores hacia inferiores...Añadir al mapa
+		return if(floorEnemy != floorPlayer) {
+			//TODO: coger el acceso que sumando Enemy->Acceso + Acceso->Player sea la menor distancia!!!!!!!!!
+			//MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)
+			MazeFactory.getNearerFloorAccess(floorEnemy, Vector2(playerPosition.x, playerPosition.z))
 		}
 		else {
-			return Vector2(playerPosition.x, playerPosition.z)
+			Vector2(playerPosition.x, playerPosition.z)
 		}
 	}
 
@@ -238,7 +238,6 @@ class EnemySystem(
 		return if(playerPositionY > 2*WallFactory.HIGH) 1 else 0
 	}
 	private fun getEnemyFloor(enemy: EnemyComponent): Int {
-		//val enemy = EnemyComponent.get(entity)
 		return if(enemy.position.y > 2*WallFactory.HIGH + enemy.radio) 1 else 0
 	}
 

@@ -42,7 +42,6 @@ import com.cesoft.cesdoom.util.PlayServices
 //TODO: Monster3, Weapon2 ?
 //TODO: Saltar? Sonido al caer desde cierta altura y bounce de camara!
 //
-//TODO: Columnas en maze?
 //TODO: mandos de pantalla : Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir salto?
 
 //TODO: Dependecy Injection? https://github.com/denisk20/libgdx-dagger2
@@ -171,9 +170,11 @@ class CesDoom(
 			assets.iniSwitchOn()
 			assets.iniSwitchOff()
 			// Wall
-			assets.iniWallMetal1()
-			assets.iniWallMetal2()
-			assets.iniWallMetal3()
+			assets.iniWallConcrete()
+			assets.iniWallSteel()
+			assets.iniWallGrille()
+			assets.iniWallPipes()
+			assets.iniWallCircuits()
 			// Enemy
 			assets.iniEnemy(EnemyComponent.TYPE.MONSTER0)
 			assets.iniEnemy(EnemyComponent.TYPE.MONSTER1)
@@ -188,7 +189,8 @@ class CesDoom(
 			assets.iniDome()
 			assets.iniSuelo()
 			assets.iniSkyline()
-			assets.iniJunk()
+			assets.iniJunkAntenna()
+			assets.iniJunk2()
 		}
 
 		//TODO: Also the rest of the object initialization?

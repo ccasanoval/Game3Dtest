@@ -79,10 +79,8 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 	}
 
 	//______________________________________________________________________________________________
-	//private var countMax = 0
 	override fun update(delta: Float) {
 		if(isDisposed)return
-		//var countDrawn = 0
 
 		processEvents()
 
@@ -108,9 +106,6 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 		}
 
 		drawGun(delta)
-
-		//if(countDrawn > countMax)countMax = countDrawn
-		//Log.e(tag, "RenderSystem:update:NUM----countDrawn=$countDrawn  countMax=$countMax  entities="+entities.size()+"-------------FPS="+Gdx.graphics.framesPerSecond)
 	}
 
 	//______________________________________________________________________________________________
@@ -136,11 +131,13 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT)
 		batch.begin(gunCamera)
 		val model = ModelComponent.get(gun)
-		animGunBreathing(model, delta)
-		if(PlayerComponent.isWalking)
+		if(PlayerComponent.isWalking) {
 			animGunWalking(model, delta)
-		else
+		}
+		else {
+			animGunBreathing(model, delta)
 			restoreGunPosition(model, delta)
+		}
 		batch.render(model.instance)
 		batch.end()
 	}
@@ -166,13 +163,13 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 		if(xDrawGunOrg == Float.MIN_VALUE)
 			xDrawGunOrg = posTemp.x
 		if(isDrawGunSwitch) {
-			posTemp.x += delta*9
-			if(posTemp.x > xDrawGunOrg+5f)
+			posTemp.x += delta*7
+			if(posTemp.x > xDrawGunOrg+4f)
 				isDrawGunSwitch = false
 		}
 		else {
-			posTemp.x -= delta*9
-			if(posTemp.x < xDrawGunOrg-5f)
+			posTemp.x -= delta*7
+			if(posTemp.x < xDrawGunOrg-4f)
 				isDrawGunSwitch = true
 		}
 		model.instance.transform.setTranslation(posTemp)

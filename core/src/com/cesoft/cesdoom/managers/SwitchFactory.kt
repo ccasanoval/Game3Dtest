@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
@@ -55,8 +56,10 @@ object SwitchFactory {
         materialOff.set(textureAttributeOff)
 
         /// Model
-        val model : Model = mb.createBox(SwitchComponent.SIZE, SwitchComponent.SIZE, SwitchComponent.SIZE, materialOff, POSITION_NORMAL)
-        val modelComponent = ModelComponent(model, pos)
+        //val model : Model = mb.createBox(SwitchComponent.SIZE, SwitchComponent.SIZE, SwitchComponent.SIZE, materialOff, POSITION_NORMAL)
+        //val modelComponent = ModelComponent(model, pos)
+        val size = Vector2(SwitchComponent.SIZE, SwitchComponent.SIZE)
+        val modelComponent = DecalFactory.createDecal(materialOff, size, pos, 0f, angle)
 
         modelComponent.instance.materials.get(0).set(textureAttributeOff)
         //modelComponent.instance.materials.get(1).set(textureAttributeOn)

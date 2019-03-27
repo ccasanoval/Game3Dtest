@@ -32,24 +32,17 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
             map[floor].addFloorAccess(Vector2(x,y))
     }
     //
-    fun toMapGraphCoord(floor: Int, pos: Vector2) : Point = map[floor].toMapGraphCoord(pos)
+    fun toMapGraphCoord(floor: Int, pos: Vector2) : Point
+            = if(floor < map.size) map[floor].toMapGraphCoord(pos)
+                else Point(0,0)
     fun addCollider(floor: Int, point: Point) {
+        if(floor >= map.size)return
         val index = map[floor].calcIndex(point.x, point.y)
         if(index > 0 && index < mapData[floor].size)
             mapData[floor][index] = 1
         else
             Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($floor, $point) => ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     }
-    /*fun addFloorAccess(level: Int, point: Point) {
-        map[level].addFloorAccess(Vector2(x,y))
-    }*/
-
-
-    /*fun clear() {
-        //map.clear()
-        for(i in 0 until mapData.size)
-            mapData[i]=0
-    }*/
 
     fun compile() {
         Log.e("MAP", "\n------------------------------------------------ compile ------------------------------------------------\n")
@@ -59,19 +52,26 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
                     val index = map[floor].calcIndex(x, y)
                     val node = Node(index, Point(x, y), mapData[floor][index] == 0)
                     map[floor].addNode(node)
-                    //if(mapData[level][x + y*cx] == 0) {
                     if(x - 1 >= 0 && y - 1 >= 0)
                         map[floor].connectNodes(node, map[floor].getNode(x - 1, y - 1))
                     if(x - 1 >= 0)
                         map[floor].connectNodes(node, map[floor].getNode(x - 1, y))
                     if(y - 1 >= 0)
                         map[floor].connectNodes(node, map[floor].getNode(x, y - 1))
-                    //}
                 }
             }
         }
     }
 
+    /*fun addFloorAccess(level: Int, point: Point) {
+        map[level].addFloorAccess(Vector2(x,y))
+    }*/
+
+    /*fun clear() {
+        //map.clear()
+        for(i in 0 until mapData.size)
+            mapData[i]=0
+    }*/
 
     fun print() {
         for(level in 0 until map.size) {
