@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
+import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
@@ -91,7 +92,7 @@ object WallFactory {
 	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angle: Float, type: Type = Type.CONCRETE): Entity {
 
 		/// GraphMap
-		WallMapFactory.create(mapFactory, pos, angle, 0)
+		WallMapFactory.create(mapFactory, pos, angle)
 
 		/// Entity
 		val entity = Entity()
@@ -155,27 +156,32 @@ object WallFactory {
 
 	//______________________________________________________________________________________________
 	//TODO
-	fun createGrille(mapFactory: MapGraphFactory, engine: Engine, size: Vector2, pos: Vector3, angle: Float): Entity {
+	fun createGrille(mapFactory: MapGraphFactory, engine: Engine, assets: Assets, size: Vector2, pos: Vector3, angle: Float): Entity {
+
+		/// MATERIAL
+		val texture = assets.getWallGrille()
+		texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+		val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
+		textureAttribute.scaleU = size.x/LONG
+		textureAttribute.scaleV = textureAttribute.scaleU * size.y/size.x
+		val material = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
+		material.set(textureAttribute)
+		material.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
 
 		/// GraphMap
-		//WallMapFactory.createGrille(mapFactory, pos, angle, 0)
+		WallMapFactory.createGrille(mapFactory, size, pos, angle)
 
 		/// Entity
 		val entity = Entity()
 
 		/// MODEL
-		val material = materialGrille.copy()
-//		val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
-//		textureAttribute.scaleU = 3f
-//		textureAttribute.scaleV = textureAttribute.scaleU * LONG / HIGH
-//		materialGrille.set(textureAttribute)
 		val modelComponent = DecalFactory.createDecal(material, size, pos, 0f, angle)
 		entity.add(modelComponent)
 
 		/// COLLISION
-		val transf = modelComponent.instance.transform
-		val shape = btBoxShape(dimCollision)
-		val motionState = MotionState(transf)
+		val dim = Vector3(size.x/2, size.y/2, WallFactory.THICK)
+		val shape = btBoxShape(dim)
+		val motionState = MotionState(modelComponent.instance.transform)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity

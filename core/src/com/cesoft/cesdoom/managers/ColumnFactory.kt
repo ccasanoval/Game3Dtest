@@ -38,7 +38,7 @@ object ColumnFactory {
         texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
         val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
-        textureAttribute.scaleV = size.z / 15f
+        textureAttribute.scaleU = size.z / 15f
         textureAttribute.scaleV = (size.z/size.y) * textureAttribute.scaleU
         material.set(textureAttribute)
 

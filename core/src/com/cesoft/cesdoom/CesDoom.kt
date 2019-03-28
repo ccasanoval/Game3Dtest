@@ -173,7 +173,6 @@ class CesDoom(
 			assets.iniWallConcrete()
 			assets.iniWallSteel()
 			assets.iniWallGrille()
-			assets.iniWallPipes()
 			assets.iniWallCircuits()
 			// Enemy
 			assets.iniEnemy(EnemyComponent.TYPE.MONSTER0)
@@ -191,6 +190,7 @@ class CesDoom(
 			assets.iniSkyline()
 			assets.iniJunkAntenna()
 			assets.iniJunk2()
+			assets.iniBike()
 		}
 
 		//TODO: Also the rest of the object initialization?

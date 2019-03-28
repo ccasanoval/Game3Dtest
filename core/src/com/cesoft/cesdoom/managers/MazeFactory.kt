@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.GateComponent
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.components.SwitchComponent
 import com.cesoft.cesdoom.entities.Ammo
 import com.cesoft.cesdoom.entities.Health
 import com.cesoft.cesdoom.map.MapGraphFactory
@@ -101,8 +100,8 @@ object MazeFactory {
 		addOuterWall(level, e, assets)
 
 		/// INTERIOR GATES
-		GateFactory.create(mapFactory, e, Vector3(+GateComponent.LONG + .2f, 0f, 0f), 0f, " C ", assets).unlock()
-		GateFactory.create(mapFactory, e, Vector3(-GateComponent.LONG - .2f, 0f, 0f), 0f, " D ", assets).unlock()
+		GateFactory.create(e, Vector3(+GateComponent.LONG + .2f, 0f, 0f), 0f, " C ", assets).unlock()
+		GateFactory.create(e, Vector3(-GateComponent.LONG - .2f, 0f, 0f), 0f, " D ", assets).unlock()
 
 		// RAMPS ------------------
 		rampFactory.create(mapFactory, e, Vector3(+3f*lng2, high, 0f), angleX = 90f, angleY = -45f)
@@ -156,39 +155,36 @@ object MazeFactory {
 	private fun addOuterWall(level: Int, e: Engine, assets: Assets) {
 		val wf = WallFactory
 
-        //TODO
-		/*for(z in -12..12 step 2) {
-			wf.create(mapFactory, e, Vector3(+7*lng2, 0f, z*lng), 00f, WallFactory.Type.GRILLE)
-			wf.create(mapFactory, e, Vector3(-7*lng2, 0f, z*lng), 00f, WallFactory.Type.GRILLE)
-		}
-		for(x in -13..13 step 2) {
-			if (x == 1)continue
-			wf.create(mapFactory, e, Vector3(x*lng, 0f, +6.5f*lng2), 90f, WallFactory.Type.GRILLE)
-			wf.create(mapFactory, e, Vector3(x*lng, 0f, -6.5f*lng2), 90f, WallFactory.Type.GRILLE)
-		}*/
-		wf.createGrille(mapFactory, e, Vector2(13*lng2, high2), Vector3(+6.5f*lng2, 0f, 0f), -90f)
-		wf.createGrille(mapFactory, e, Vector2(13*lng2, high2), Vector3(-6.5f*lng2, 0f, 0f), +90f)
+		/// GRILLE
+		var grilleSize = Vector2(13*lng2, high2)
+		wf.createGrille(mapFactory, e, assets, grilleSize, Vector3(+6.7f*lng2, 0f, 0f), -90f)
+		wf.createGrille(mapFactory, e, assets, grilleSize, Vector3(-6.7f*lng2, 0f, 0f), +90f)
 		//
-		wf.createGrille(mapFactory, e, Vector2(6*lng2, high2), Vector3(-3*lng2, 0f, -6.5f*lng2), 0f)
-		wf.createGrille(mapFactory, e, Vector2(6*lng2, high2), Vector3(+3*lng2, 0f, -6.5f*lng2), 0f)
-		//
-		wf.createGrille(mapFactory, e, Vector2(6*lng2, high2), Vector3(-3*lng2, 0f, +6.5f*lng2), 0f)
-		wf.createGrille(mapFactory, e, Vector2(6*lng2, high2), Vector3(+3*lng2, 0f, +6.5f*lng2), 0f)
+		grilleSize = Vector2(5.85f*lng2, high2)
+		wf.createGrille(mapFactory, e, assets, grilleSize, Vector3(-3.6f*lng2, 0f, -6.5f*lng2), 0f)
+		wf.createGrille(mapFactory, e, assets, grilleSize, Vector3(+3.6f*lng2, 0f, -6.5f*lng2), 0f)
+		wf.createGrille(mapFactory, e, assets, grilleSize, Vector3(-3.6f*lng2, 0f, +6.5f*lng2), 180f)
+		wf.createGrille(mapFactory, e, assets, grilleSize, Vector3(+3.6f*lng2, 0f, +6.5f*lng2), 180f)
 
-		//TODO: change YouWinFactory into a vehicle so the player can fly away to the next level...
-		val columnSize = Vector3(10f, 2*WallFactory.HIGH, 30f)
+		var columnSize = Vector3(10f, 2*WallFactory.HIGH, 30f)
 		// EXIT 0
 		var id = " A "
-		GateFactory.create(mapFactory, e, Vector3(lng, 0f, +6.5f*lng2), 90f, id, assets)
-		YouWinFactory.create(e, Vector3(lng, 0f, +7.5f*lng2 + (2*YouWinFactory.SIZE + GateComponent.THICK)))
-		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-2f, 0f, +6.6f*lng2))
-		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(lng2+2f, 0f, +6.6f*lng2))
+		GateFactory.create(e, Vector3(0f, 0f, +6.5f*lng2), 90f, id, assets)
+		YouWinFactory.create(e, Vector3(0f, 0f, +7.5f*lng2 + (2*YouWinFactory.SIZE + GateComponent.THICK)), 180f, assets)
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-GateComponent.LONG-columnSize.x/2, 0f, +6.6f*lng2))
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+GateComponent.LONG+columnSize.x/2, 0f, +6.6f*lng2))
 		// EXIT 1
 		id = " B "
-		GateFactory.create(mapFactory, e, Vector3(lng, 0f, -6.5f*lng2), 90f, id, assets)
-		YouWinFactory.create(e, Vector3(lng, 0f, -7.5f*lng2 - (2*YouWinFactory.SIZE + GateComponent.THICK)))
-		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-2f, 0f, -6.6f*lng2))
-		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(lng2+2f, 0f, -6.6f*lng2))
+		GateFactory.create(e, Vector3(0f, 0f, -6.5f*lng2), 90f, id, assets)
+		YouWinFactory.create(e, Vector3(0f, 0f, -7.5f*lng2 - (2*YouWinFactory.SIZE + GateComponent.THICK)), 0f, assets)
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-GateComponent.LONG-columnSize.x/2, 0f, -6.6f*lng2))
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+GateComponent.LONG+columnSize.x/2, 0f, -6.6f*lng2))
+		// 4 corner columns
+		columnSize = Vector3(15f, 2*WallFactory.HIGH, 15f)
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-6.6f*lng2, 0f, -6.4f*lng2))
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+6.6f*lng2, 0f, -6.4f*lng2))
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-6.6f*lng2, 0f, +6.4f*lng2))
+		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+6.6f*lng2, 0f, +6.4f*lng2))
 		//
 		addSwitchesLevelX(level, e, assets)
 	}
@@ -248,12 +244,6 @@ object MazeFactory {
 				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(0f, y*2 * WallFactory.HIGH, +3.1f*lng2))
 				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(0f, y*2 * WallFactory.HIGH, -3.1f*lng2))
 			}
-			if(y < 1) {
-				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-6.7f*lng2, y*2*WallFactory.HIGH, -6.3f*lng2))
-				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+6.7f*lng2, y*2*WallFactory.HIGH, -6.3f*lng2))
-				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-6.7f*lng2, y*2*WallFactory.HIGH, +6.3f*lng2))
-				ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+6.7f*lng2, y*2*WallFactory.HIGH, +6.3f*lng2))
-            }
         }
 	}
 
@@ -332,8 +322,8 @@ object MazeFactory {
 			}
 		}
 		/// Extra Gates
-		GateFactory.create(mapFactory, e, Vector3(+GateComponent.LONG + .2f, high2, 0f), 0f, " E ", assets).unlock()
-		GateFactory.create(mapFactory, e, Vector3(-GateComponent.LONG - .2f, high2, 0f), 0f, " F ", assets).unlock()
+		GateFactory.create(e, Vector3(+GateComponent.LONG + .2f, high2, 0f), 0f, " E ", assets).unlock()
+		GateFactory.create(e, Vector3(-GateComponent.LONG - .2f, high2, 0f), 0f, " F ", assets).unlock()
 		/// Extra Ramps
 		rampFactory.create(mapFactory, e, Vector3(-2*lng2, high, +5f*lng2), angleX = +45f, angleZ = 90f)
 		rampFactory.create(mapFactory, e, Vector3(+2*lng2, high, -5f*lng2), angleX = -45f, angleZ = 90f)

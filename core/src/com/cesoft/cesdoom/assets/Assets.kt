@@ -72,11 +72,11 @@ class Assets {
 		private const val IMG_WALL_CONCRETE = "scene/wall/concrete.jpg"
 		private const val IMG_WALL_STEEL = "scene/wall/steel.png"
 		private const val IMG_WALL_GRILLE = "scene/wall/grille.png"
-        private const val IMG_WALL_PIPES = "scene/wall/pipes.jpg"
 		private const val IMG_WALL_CIRCUITS = "scene/wall/circuits.jpg"
 		private const val IMG_GATE = "scene/gate/doomdoor1.jpg"
 		private const val IMG_SWITCH_ON = "scene/switch/switchOn.png"
 		private const val IMG_SWITCH_OFF = "scene/switch/switchOff.png"
+		private const val IMG_BIKE = "scene/bike.png"
 		//
 		private const val IMG_MM_BG = "data/background.png"
 		private const val IMG_MM_TITLE = "data/title.png"
@@ -178,9 +178,6 @@ class Assets {
 	//______________________________________________________________________________________________
 	fun iniWallGrille() = assetManager.load(IMG_WALL_GRILLE, Texture::class.java)
 	fun getWallGrille():Texture = assetManager.get(IMG_WALL_GRILLE, Texture::class.java)
-    //______________________________________________________________________________________________
-    fun iniWallPipes() = assetManager.load(IMG_WALL_PIPES, Texture::class.java)
-    fun getWallPipes():Texture = assetManager.get(IMG_WALL_PIPES, Texture::class.java)
 	//______________________________________________________________________________________________
 	fun iniWallCircuits() = assetManager.load(IMG_WALL_CIRCUITS, Texture::class.java)
 	fun getWallCircuits():Texture = assetManager.get(IMG_WALL_CIRCUITS, Texture::class.java)
@@ -192,6 +189,9 @@ class Assets {
 	fun getSwitchOn():Texture = assetManager.get(IMG_SWITCH_ON, Texture::class.java)
 	fun iniSwitchOff() = assetManager.load(IMG_SWITCH_OFF, Texture::class.java)
 	fun getSwitchOff():Texture = assetManager.get(IMG_SWITCH_OFF, Texture::class.java)
+	//______________________________________________________________________________________________
+	fun iniBike() = assetManager.load(IMG_BIKE, Texture::class.java)
+	fun getBike():Texture = assetManager.get(IMG_BIKE, Texture::class.java)
 
 	//______________________________________________________________________________________________
 	fun iniFireShot() = assetManager.load(IMG_FIRE_SHOT, Texture::class.java)
@@ -226,10 +226,10 @@ class Assets {
 			getSkyline().dispose()
 			getJunkAntenna().dispose()
 			getJunk2().dispose()
+			getBike().dispose()
 			getWallConcrete().dispose()
 			getWallSteel().dispose()
 			getWallGrille().dispose()
-			getWallPipes().dispose()
 			getWallCircuits().dispose()
 			endFireShot()
 		}

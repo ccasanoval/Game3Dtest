@@ -22,7 +22,6 @@ import com.cesoft.cesdoom.components.BulletComponent
 import com.cesoft.cesdoom.components.GateComponent
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.entities.Gate
-import com.cesoft.cesdoom.map.MapGraphFactory
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +34,6 @@ object GateFactory {
     // dimension en X grados para frustum culling
     private val dim0 = Vector3(THICK*2, HIGH*2, LONG*5)//5*LONG porque la puerta se mueve en ese eje
     private val dim90= Vector3(LONG*5, HIGH*2, THICK*2)
-    //private val dim45= Vector3(LONG*2, HIGH*2, LONG*2)
 
     private val dimCollision = Vector3(THICK+5f,HIGH+0f,LONG+0f)
 
@@ -45,14 +43,9 @@ object GateFactory {
                     or VertexAttributes.Usage.Normal
                     or VertexAttributes.Usage.TextureCoordinates).toLong()
 
-    /*private lateinit var texture: Texture
-    fun ini(texture: Texture) {
-        this.texture = texture
-    }*/
-
 
     //______________________________________________________________________________________________
-    fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angle: Float, id: String, assets: Assets): Gate {
+    fun create(engine: Engine, pos: Vector3, angle: Float, id: String, assets: Assets): Gate {
 
         /// GraphMap
         //WallMapFactory.create(mapFactory, pos, angle, 0)
