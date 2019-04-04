@@ -23,7 +23,7 @@ object RampMapFactory {
 
         // Sube hacia la derecha  (+X)
         if(angleX == 90f && angleY == -45f && angleZ == 0f) {
-            mapFactory.addFloorAccess(level, pos.x+RampFactory.LONG-mapFactory.scale, pos.z)
+            mapFactory.addFloorAccess(level, pos.x+RampFactory.LONG-2*mapFactory.scale, pos.z)
             mapFactory.addFloorAccess(level+1, pos.x-l, pos.z)
             for(x_ in -l..+l) {
                 for(y_ in 0..1) {
@@ -37,6 +37,7 @@ object RampMapFactory {
             }
             for(y_ in -h..+h) {
                 mapFactory.addCollider(level, Point(posMap.x+l, posMap.y+y_))
+                mapFactory.addCollider(level, Point(posMap.x+l-1, posMap.y+y_))
                 //TODO:Enhance 3D pathfinding !!!
                 //if(y_ < -1 || y_ > +1)
                 //    mapFactory.addCollider(level + 1, Point(posMap.x + l, posMap.y + y_))

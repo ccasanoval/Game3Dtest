@@ -25,8 +25,8 @@ object SceneFactory {
 		val ratio = 546f/1000f
 		val long = 500f
 		val high = long * ratio
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(-len, 0f, 0f), 0f, +90f)
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(+len, 0f, 0f), 0f, -90f)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(-len, high/2, 0f), 0f, +90f)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(+len, high/2, 0f), 0f, -90f)
 	}
 	//______________________________________________________________________________________________
 	//
@@ -34,8 +34,8 @@ object SceneFactory {
 		val ratio = 546f/1000f
 		val long = 500f
 		val high = long * ratio
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, 0f, -len), 0f, 0f)
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, 0f, +len), 0f, 180f)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, high/2, -len), 0f, 0f)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, high/2, +len), 0f, 180f)
 	}
 
 	//______________________________________________________________________________________________
@@ -44,14 +44,10 @@ object SceneFactory {
 		val long = 2*len
 		val high = 2*len*ratioSkyline
 		val pto = len*.6f
-//		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, 0f, -len), 0f, 0f, Color.GRAY)
-//		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, 0f, +len), 0f, 180f, Color.GRAY)
-//		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(-len, 0f, 0f), 0f, +90f, Color.GRAY)
-//		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(+len, 0f, 0f), 0f, -90f, Color.BLUE)
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(-pto, 0f, -pto), 0f, +45f, Color.GRAY)
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(-pto, 0f, +pto), 0f, +135f, Color.GRAY)
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(+pto, 0f, -pto), 0f, -45f, Color.GRAY)
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(+pto, 0f, +pto), 0f, -135f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(-pto, high/2, -pto), 0f, +45f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(-pto, high/2, +pto), 0f, +135f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(+pto, high/2, -pto), 0f, -45f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(+pto, high/2, +pto), 0f, -135f, Color.GRAY)
 	}
 
 	//______________________________________________________________________________________________
@@ -67,7 +63,7 @@ object SceneFactory {
 		material.set(textureAttribute1)
 		/// MODEL
 		val size = Vector2(len, len)
-		val pos = Vector3(0f, 0f, +len/2)
+		val pos = Vector3(0f, 0f, 0f)
 		val modelComponent = DecalFactory.createDecal(material, size, pos, -90f, 0f)
 		modelComponent.frustumCullingData = FrustumCullingData.create(Vector3.Zero, Vector3(len, 5f, len))
 		entity.add(modelComponent)

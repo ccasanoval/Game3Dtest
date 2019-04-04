@@ -264,12 +264,12 @@ class EnemySystem(
 		}
 		else if(enemy.stepCounter++ > 100) {
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-Log.e(tag, "${enemy.id}--------------------------- RECALCULAR LIMITE DE PASOS : target=${enemy.player2D}")
+//Log.e(tag, "${enemy.id}--------------------------- RECALCULAR LIMITE DE PASOS : target=${enemy.player2D}")
 			recalcPath(enemy, playerPosition)
 		}
 		else if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH : target=${enemy.player2D}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
+//Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH : target=${enemy.player2D}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
 			recalcPath(enemy, playerPosition)
 		}
 		else
@@ -347,12 +347,11 @@ Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH 
 					EnemyComponent.TYPE.MONSTER1 -> Sounds.play(Sounds.SoundType.ENEMY1_NEAR)
 				}
 			}
-			//EnemyComponent.StatusMov.RUN
 		}
 		/// Esta lejos, camina buscando
 		else {
-			enemy.statusMov = EnemyComponent.StatusMov.WALK
-			//EnemyComponent.StatusMov.WALK	//TODO: una vez que empieza a correr, que no pare?
+			if(enemy.statusMov != EnemyComponent.StatusMov.RUN)//Si está corriendo sigue corriendo
+				enemy.statusMov = EnemyComponent.StatusMov.WALK
 		}
 		//Log.e(tag, "enemy.statusMov-------------------------------------- ${enemy.statusMov}")
 	}

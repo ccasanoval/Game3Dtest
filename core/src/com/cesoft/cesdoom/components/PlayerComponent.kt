@@ -15,11 +15,11 @@ class PlayerComponent : Component {
 
         private const val MESSAGE_DURATION = 5000L
 
-        const val TALL = 22f
+        const val TALL = 20f
         private const val HEALTH_FULL = 100
         const val IMPULSE = 3000f
         const val MASS = 65f
-        const val RADIO = 16f
+        const val RADIO = 14f
 
         ///TODO: most of this to GameStatus object...
         var isGodModeOn = false
@@ -28,7 +28,7 @@ class PlayerComponent : Component {
         var isJumping = false
         var isWalking = false
 
-        var tall = PlayerComponent.TALL
+        var eyes = PlayerComponent.TALL
 
         var isReloading = false
 

@@ -48,11 +48,11 @@ object DecalFactory {
         return createDecal(material, size, position, angleX, angleY)
     }
     //______________________________________________________________________________________________
-    fun createDecal(material: Material, size: Vector2,
-                            position: Vector3, angleX: Float, angleY: Float) : ModelComponent {
+    fun createDecal(material: Material, size: Vector2, position: Vector3,
+                    angleX: Float, angleY: Float) : ModelComponent {
 
         val cx = size.x / 2
-        val cy = size.y
+        val cy = size.y / 2
         val dim = Vector3(size.x, size.y, size.x)
 
         /// MODEL
@@ -62,10 +62,10 @@ object DecalFactory {
         //
         val partName = modelBuilder.hashCode().toString()
         val meshBuilder = modelBuilder.part(partName, GL20.GL_TRIANGLES, attributes, material)
-        val v1 = MeshPartBuilder.VertexInfo().setPos(-cx, 0f, 0f).setNor(0f, 0f, 1f).setCol(null).setUV(0f, 1f)
-        val v2 = MeshPartBuilder.VertexInfo().setPos(+cx, 0f, 0f).setNor(0f, 0f, 1f).setCol(null).setUV(1f, 1f)
-        val v3 = MeshPartBuilder.VertexInfo().setPos(+cx, cy, 0f).setNor(0f, 0f, 1f).setCol(null).setUV(1f, 0f)
-        val v4 = MeshPartBuilder.VertexInfo().setPos(-cx, cy, 0f).setNor(0f, 0f, 1f).setCol(null).setUV(0f, 0f)
+        val v1 = MeshPartBuilder.VertexInfo().setPos(-cx, -cy, 0f).setNor(0f, 0f, 1f).setCol(null).setUV(0f, 1f)
+        val v2 = MeshPartBuilder.VertexInfo().setPos(+cx, -cy, 0f).setNor(0f, 0f, 1f).setCol(null).setUV(1f, 1f)
+        val v3 = MeshPartBuilder.VertexInfo().setPos(+cx, +cy, 0f).setNor(0f, 0f, 1f).setCol(null).setUV(1f, 0f)
+        val v4 = MeshPartBuilder.VertexInfo().setPos(-cx, +cy, 0f).setNor(0f, 0f, 1f).setCol(null).setUV(0f, 0f)
         meshBuilder.rect(v1, v2, v3, v4)
         val model = modelBuilder.end()
         //

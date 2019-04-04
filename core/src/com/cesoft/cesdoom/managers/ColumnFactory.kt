@@ -13,6 +13,8 @@ import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder
+import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
@@ -38,8 +40,8 @@ object ColumnFactory {
         texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         val material = Material(ColorAttribute.createDiffuse(Color.WHITE))
         val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
-        textureAttribute.scaleU = size.z / 15f
-        textureAttribute.scaleV = (size.z/size.y) * textureAttribute.scaleU
+        textureAttribute.scaleU = 1f//size.z / 15f
+        textureAttribute.scaleV = 1f//size.y / WallFactory.HIGH //(size.z/size.y) * textureAttribute.scaleU
         material.set(textureAttribute)
 
         /// MODEL
@@ -86,7 +88,7 @@ object ColumnFactory {
         modelBuilder.begin()
         val attributes = VertexAttributes.Usage.Position.toLong() or VertexAttributes.Usage.Normal.toLong() or VertexAttributes.Usage.TextureCoordinates.toLong()
         val mpb = modelBuilder.part(modelBuilder.hashCode().toString(), GL20.GL_TRIANGLES, attributes, material)
-        mpb.box(size.x, size.y, size.z)
+        BoxShapeBuilder.build(mpb, size.x, size.y, size.z)
         val model = modelBuilder.end()
         val modelComponent = ModelComponent(model, position)
         modelComponent.frustumCullingData = FrustumCullingData.create(position, size)

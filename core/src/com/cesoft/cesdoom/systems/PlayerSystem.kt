@@ -193,12 +193,11 @@ class PlayerSystem(
 		posTemp.set(0f, 0f, 0f)
 
 		if(PlayerComponent.isDead()) {
-			PlayerComponent.tall -= delta*12f
+			PlayerComponent.eyes -= delta*12f
 			return
 		}
-		//TODO: no mover si esta saltando?
-		//if(playerComponent!!.isSaltando)return
 
+		//if( ! PlayerComponent.isJumping)
 		updateTranslationMobile(delta)
 
 		posTemp.y = bulletComponent.rigidBody.linearVelocity.y
@@ -261,7 +260,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private fun updateCamera() {
 		val pos = getPosition()
-		pos.y += PlayerComponent.tall/1.5f +PlayerComponent.yFoot
+		pos.y += PlayerComponent.eyes/1.5f +PlayerComponent.yFoot
 		pos.x += camera.direction.x*PlayerComponent.RADIO/2// camara adelantada a colision, para no disparar a self bullet body
 		pos.z += camera.direction.z*PlayerComponent.RADIO/2
 		camera.position.set(pos)
@@ -494,7 +493,7 @@ class PlayerSystem(
 		PlayerComponent.isWinning = false
 		PlayerComponent.isJumping = false
 		PlayerComponent.isReloading = false
-		PlayerComponent.tall = PlayerComponent.TALL
+		PlayerComponent.eyes = PlayerComponent.TALL
 		if(PlayerComponent.currentLevel == 0) {
 			ammoReset()
 			PlayerComponent.score = 0

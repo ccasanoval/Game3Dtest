@@ -58,7 +58,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
                 for(y in -i..+i) {
                     for(x in -i..+i) {
                         if(Math.abs(x) != i && Math.abs(y) != i) continue
-                        Log.e(tag, "id=$id:getNode: i=$i ---------------- TESTING NODE ($x, $y) ----------------")
+                        //Log.e(tag, "id=$id:getNode: i=$i ---------------- TESTING NODE ($x, $y) ----------------")
                         node = getNode(Point(pos.x + x, pos.y + y))
                         if(node.isValid) {
                             Log.e(tag, "id=$id:getNode: cuidado, esto podria retardar mucho la busqueda -------------------- nodeIni=${nodeOld.point} <> nodeFin=${node.point}")
@@ -171,8 +171,8 @@ private var timeCallsPerSecond=0L
                 pathSmoother.smoothPath(path)
             val now = System.currentTimeMillis()
 //if()
-if(now - t0 > maxDelay)maxDelay=now - t0
-Log.e(tag, "smoothPath:----- #steps=${path.count} ->  delay0=${t1 - t0}  delay2=${now - t0} ms  (MAX=$maxDelay)      (CPS=$callsPerSecondMedia / $callsPerSecond) (FPS=${Gdx.graphics.framesPerSecond}) ")
+//if(now - t0 > maxDelay)maxDelay=now - t0
+//Log.e(tag, "smoothPath:----- #steps=${path.count} ->  delay0=${t1 - t0}  delay2=${now - t0} ms  (MAX=$maxDelay)      (CPS=$callsPerSecondMedia / $callsPerSecond) (FPS=${Gdx.graphics.framesPerSecond}) ")
 
             val res = ArrayList<Vector2>()
             for(step in path) {

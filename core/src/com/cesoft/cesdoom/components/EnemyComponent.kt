@@ -17,8 +17,8 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 
 		private const val MASS0 = 110f
 		private const val MASS1 = 45f
-		private const val RADIO0 = 16f
-		private const val RADIO1 = 10f
+		private const val RADIO0 = 10f///////16
+		private const val RADIO1 = 8f////////12
 		private const val KILL_REWARD0 = 20
 		private const val KILL_REWARD1 = 10
 		//

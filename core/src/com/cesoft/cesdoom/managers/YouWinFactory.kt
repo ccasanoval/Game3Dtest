@@ -44,14 +44,14 @@ object YouWinFactory {
 		material.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
 
 		/// Model
-		val modelComponent = DecalFactory.createDecal(material, Vector2(110f, 50f), pos, 0f, angle)
+		val size = Vector2(100f, 40f)
+		pos.y += size.y/2
+		val modelComponent = DecalFactory.createDecal(material, size, pos, 0f, angle)
 		modelComponent.instance.materials.get(0).set(textureAttribute)
 		entity.add(modelComponent)
 
 		/// Position & Shape
-		val rot = Quaternion()
-		val transf = Matrix4(pos, rot, Vector3(1f,1f,1f))
-		val motionState = MotionState(transf)
+		val motionState = MotionState(Matrix4(pos, Quaternion(), Vector3(1f,1f,1f)))
 		val shape = btBoxShape(Vector3(2*SIZE, 2*SIZE, 2*SIZE))
 
 		/// Collision

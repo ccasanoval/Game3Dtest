@@ -22,12 +22,13 @@ import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+//TODO: algunos se atascan debajo de escalera??!!!
 class EnemyFactory(assets: Assets) {
 
     companion object {
         private val tag: String = EnemyFactory::class.java.simpleName
-        private val SPAWN_DELAY = (5 - PlayerComponent.currentLevel)*1000 //TODO: si pausa o background, debe actualizar time!!!
-        private val MAX_ENEMIES = 5+(PlayerComponent.currentLevel)*4
+        private val SPAWN_DELAY = (5 - PlayerComponent.currentLevel)*800 //TODO: si pausa o background, debe actualizar time!!!
+        private val MAX_ENEMIES = 6 + 4*PlayerComponent.currentLevel
         private val random = java.util.Random()
     }
 
@@ -37,13 +38,10 @@ class EnemyFactory(assets: Assets) {
         Log.e(tag, "INIT---------------------------------------------------------------- MAX_ENEMIES=$MAX_ENEMIES")
         if(allEnemies.size < MAX_ENEMIES) {
             for(i in allEnemies.size until MAX_ENEMIES) {
-                val type = if(PlayerComponent.currentLevel > 0)
-                                when(random.nextInt(2)) {
-                                    0 -> EnemyComponent.TYPE.MONSTER0
-                                    else -> EnemyComponent.TYPE.MONSTER1
-                                }
-                            else
-                                EnemyComponent.TYPE.MONSTER1
+                val type = when(random.nextInt(1+PlayerComponent.currentLevel)) {
+                    0 -> EnemyComponent.TYPE.MONSTER1
+                    else -> EnemyComponent.TYPE.MONSTER0
+                }
                 val enemy = createEnemy(i, assets, type)
                 allEnemies.add(enemy)
             }
@@ -99,7 +97,7 @@ class EnemyFactory(assets: Assets) {
             val id = getNextEnemyId()
             if(id >= allEnemies.size) return//Max enemy number reached
             engine.addEntity(getNextEnemy(id))
-Log.e(tag, "spawnIfNeeded------------------------------------------------------------------id=$id")
+//Log.e(tag, "spawnIfNeeded------------------------------------------------------------------id=$id")
         }
     }
 

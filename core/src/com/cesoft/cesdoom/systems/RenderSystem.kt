@@ -85,13 +85,14 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 		processEvents()
 
 		batch.begin(perspectiveCamera)
+		var countDrawn = 0
 		for(entity in entities) {
 			if(entity is Gun)continue
 			val model = ModelComponent.get(entity)
 			try {
 				if(model.frustumCullingData.isVisible(perspectiveCamera)) {
 					batch.render(model.instance, environment)
-					//countDrawn++
+					countDrawn++
 				}
 			}
 			catch(e: Exception) {
@@ -106,6 +107,32 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 		}
 
 		drawGun(delta)
+
+		//if(Log.debugMode)statistics(countDrawn)
+	}
+	private var countDrawnMax = 0
+	private var countDrawnMedMax = 0
+	private var countDrawnMedMin = 100
+	private var fpsMax = 0
+	private var fpsMin = 100
+	private var fpsMed = 0.0
+	private var nVals = ArrayList<Int>()
+	private fun statistics(countDrawn: Int) {
+		if(countDrawn > countDrawnMax) countDrawnMax = countDrawn
+		val fps = Gdx.graphics.framesPerSecond
+		if(fps > fpsMax) fpsMax = fps
+		if(fps < fpsMin) fpsMin = fps
+		fpsMed = (fps+fpsMed) / 2
+
+		nVals.add(fps)
+		var V = 0
+		for(v in nVals) V += v
+		val med = V / nVals.size
+		if(nVals.size > 50) {
+			if (countDrawnMedMax < med) countDrawnMedMax = med
+			if (countDrawnMedMin > med) countDrawnMedMin = med
+		}
+		Log.e(tag, "RenderSystem:update:-----------------------countDrawnMax=$countDrawnMax / FPSmax=$fpsMax / FPSmin=$fpsMin /// fpsMed=${fpsMed.toInt()} /// fpsMed=${V/nVals.size} ---------- $countDrawnMedMax / $countDrawnMedMin")
 	}
 
 	//______________________________________________________________________________________________
