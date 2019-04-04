@@ -68,7 +68,8 @@ class Assets {
 		private const val IMG_GROUND = "scene/ground.jpg"
 		private const val IMG_SKYLINE = "scene/skyline.png"
 		private const val IMG_JUNK = "scene/junk.png"
-		//private const val IMG_JUNK2 = "scene/junk2.png"
+		private const val IMG_JUNK1 = "scene/junk1.png"
+		private const val IMG_JUNK2 = "scene/junk2.png"
 		private const val IMG_WALL_CONCRETE = "scene/wall/concrete.jpg"
 		private const val IMG_WALL_STEEL = "scene/wall/steel.png"
 		private const val IMG_WALL_GRILLE = "scene/wall/grille.png"
@@ -167,8 +168,10 @@ class Assets {
 	//______________________________________________________________________________________________
 	fun iniJunkAntenna() = assetManager.load(IMG_JUNK, Texture::class.java)
 	fun getJunkAntenna():Texture = assetManager.get(IMG_JUNK, Texture::class.java)
-	//fun iniJunk2() = assetManager.load(IMG_JUNK2, Texture::class.java)
-	//fun getJunk2():Texture = assetManager.get(IMG_JUNK2, Texture::class.java)
+	fun iniJunkWall() = assetManager.load(IMG_JUNK1, Texture::class.java)
+	fun getJunkWall():Texture = assetManager.get(IMG_JUNK1, Texture::class.java)
+	fun iniJunkBuilding() = assetManager.load(IMG_JUNK2, Texture::class.java)
+	fun getJunkBuilding():Texture = assetManager.get(IMG_JUNK2, Texture::class.java)
 	//______________________________________________________________________________________________
 	fun iniWallConcrete() = assetManager.load(IMG_WALL_CONCRETE, Texture::class.java)
 	fun getWallConcrete():Texture = assetManager.get(IMG_WALL_CONCRETE, Texture::class.java)
@@ -225,7 +228,8 @@ class Assets {
 			getSuelo().dispose()
 			getSkyline().dispose()
 			getJunkAntenna().dispose()
-			//getJunk2().dispose()
+			getJunkWall().dispose()
+			getJunkBuilding().dispose()
 			getBike().dispose()
 			getWallConcrete().dispose()
 			getWallSteel().dispose()

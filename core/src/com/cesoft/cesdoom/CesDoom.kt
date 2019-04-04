@@ -189,7 +189,8 @@ class CesDoom(
 			assets.iniSuelo()
 			assets.iniSkyline()
 			assets.iniJunkAntenna()
-			//assets.iniJunk2()
+			assets.iniJunkWall()
+			assets.iniJunkBuilding()
 			assets.iniBike()
 		}
 

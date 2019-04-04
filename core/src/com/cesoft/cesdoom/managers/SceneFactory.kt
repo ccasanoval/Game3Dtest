@@ -27,15 +27,30 @@ object SceneFactory {
 		val high = long * ratio
 		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(-len, high/2, 0f), 0f, +90f)
 		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(+len, high/2, 0f), 0f, -90f)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, high/2, -len), 0f, 0f)
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, high/2, +len), 0f, 180f)
 	}
 	//______________________________________________________________________________________________
 	//
-	fun addJunk2(engine: Engine, texture: Texture, len: Float) {
-		val ratio = 546f/1000f
-		val long = 500f
+	fun addJunkWall(engine: Engine, texture: Texture, len: Float) {
+		val ratio = 825f/965f
+		val long = 80f
 		val high = long * ratio
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, high/2, -len), 0f, 0f)
-		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, high/2, +len), 0f, 180f)
+		val size = Vector2(long, high)
+		DecalFactory.addDecal(texture, engine, size, Vector3(+30f, high/2, -len), 0f, 0f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(-30f, high/2, +len), 0f, 180f, Color.GRAY)
+	}
+	//______________________________________________________________________________________________
+	//
+	fun addJunkBuilding(engine: Engine, texture: Texture, len: Float) {
+		val ratio = 838f/1764f
+		val long = 600f
+		val high = long * ratio
+		val size = Vector2(long, high)
+		DecalFactory.addDecal(texture, engine, size, Vector3(+len, high/2, -len), 0f, -45f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(-len, high/2, +len), 0f, 180f-45f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(+len, high/2, +len), 0f, 180f+45f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(-len, high/2, -len), 0f, +45f, Color.GRAY)
 	}
 
 	//______________________________________________________________________________________________

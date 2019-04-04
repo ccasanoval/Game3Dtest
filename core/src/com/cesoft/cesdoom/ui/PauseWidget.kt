@@ -112,6 +112,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		game.reset()
 	}
 	fun goMenu() {
+		goBack()
 		game.reset2Menu()
 	}
 	fun goQuit() {
