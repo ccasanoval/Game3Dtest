@@ -134,7 +134,8 @@ class RampFactory(assets: Assets) {
 
 	//______________________________________________________________________________________________
 	fun createGround(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3,
-			   type:Type=Type.STEEL, xWay: Boolean=false, zWay: Boolean=false): Entity {
+			   type:Type=Type.STEEL, xWay: Boolean=false, zWay: Boolean=false) {
+
 		val entity = Entity()
 
 		/// MAP
@@ -178,7 +179,70 @@ class RampFactory(assets: Assets) {
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 
 		engine.addEntity(entity)
-		return entity
 	}
+
+
+
+	//______________________________________________________________________________________________
+	fun createGround2(mapFactory: MapGraphFactory, engine: Engine, assets: Assets,
+					  size: Vector2, pos: Vector3, angle: Float=-90f,
+					  type:Type=Type.STEEL, double: Boolean=false) {
+
+		if(double) {
+			createGround2(mapFactory, engine, assets, size, pos.cpy(), angle + 180f, type)
+		}
+		else {
+			/// PATH FINDING MAP
+			val floor = (pos.y / (2*WallFactory.HIGH)).toInt()
+			for(x in 0..size.x.toInt()) {
+				for(y in 0..size.y.toInt()) {
+					val point = mapFactory.toMapGraphCoord(floor, Vector2(pos.x + x, pos.y + y))
+					mapFactory.addWay(floor, point)
+				}
+			}
+		}
+
+		val entity = Entity()
+
+		/// MATERIAL
+		val texture = when(type) {
+			Type.GRILLE -> assets.getWallGrille()
+			else -> assets.getWallSteel()
+		}
+		texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+		val textureAttribute = TextureAttribute(TextureAttribute.Diffuse, texture)
+		textureAttribute.scaleU = size.x/WallFactory.LONG
+		textureAttribute.scaleV = textureAttribute.scaleU * size.y/size.x
+		val material = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
+		material.set(textureAttribute)
+		if(type == Type.GRILLE)
+			material.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
+
+		/// MODEL
+		val modelComponent = DecalFactory.createDecal(material, size, pos, angle, 0f)
+		entity.add(modelComponent)
+
+		/// FRUSTUM CULLING
+		modelComponent.frustumCullingData = FrustumCullingData.create(pos, Vector3(size.x, 5f, size.y))
+
+		/// COLLISION
+		val shape = btBoxShape(Vector3(size.x/2, size.y/2, 4f))
+		val motionState = MotionState(modelComponent.instance.transform)
+		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
+		val rigidBody = btRigidBody(bodyInfo)
+		rigidBody.userData = entity
+		rigidBody.motionState = motionState
+		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
+		rigidBody.contactCallbackFilter = 0
+		rigidBody.userValue = if(type==Type.STEEL) BulletComponent.STEEL_RAMP_FLAG else 0	// La regilla no para las balas
+		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
+		rigidBody.friction = 1f
+		rigidBody.rollingFriction = 1f
+		rigidBody.spinningFriction = 1f
+		entity.add(BulletComponent(rigidBody, bodyInfo))
+
+		engine.addEntity(entity)
+	}
+
 
 }

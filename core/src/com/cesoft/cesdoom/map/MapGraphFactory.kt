@@ -43,6 +43,19 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
         else
             Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($floor, $point) => ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     }
+    fun collideAll(floor: Int) {
+        if(floor >= mapData.size)return
+        for(index in 0 until mapData[floor].size)
+            mapData[floor][index] = 1
+    }
+    fun addWay(floor: Int, point: Point) {
+        if(floor >= map.size)return
+        val index = map[floor].calcIndex(point.x, point.y)
+        if(index > 0 && index < mapData[floor].size)
+            mapData[floor][index] = 0
+        else
+            Log.e("MapGraphFactory", "addCollider:e: Negative map graph coordinates--------- ($floor, $point) => ---------- $index ------------ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    }
 
     fun compile() {
         Log.e("MAP", "\n------------------------------------------------ compile ------------------------------------------------\n")

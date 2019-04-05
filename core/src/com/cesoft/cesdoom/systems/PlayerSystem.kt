@@ -3,7 +3,6 @@ package com.cesoft.cesdoom.systems
 import com.badlogic.ashley.core.*
 import com.badlogic.ashley.signals.Signal
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.math.Vector3
@@ -179,13 +178,7 @@ class PlayerSystem(
         if(myPad != Inputs.Value.ZERO)
             deltaY += myPad.value * yWeight * delta
 
-        /// KEYBOARD
-        if(Gdx.input.deltaX != 0)
-            deltaX += -Gdx.input.deltaX * 5*delta
-        if(Gdx.input.deltaY != 0)
-            deltaY += -Gdx.input.deltaY * 2*delta
-
-        return Vector2(deltaX, deltaY)
+         return Vector2(deltaX, deltaY)
     }
 	//______________________________________________________________________________________________
 	private fun updateTranslation(delta: Float)
@@ -242,8 +235,7 @@ class PlayerSystem(
 	//______________________________________________________________________________________________
 	private fun updateJumping(delta: Float) {
 		val jumpPad = inputMap.isButtonPressed(Inputs.Action.JUMP)
-
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || jumpPad) {
+		if(jumpPad) {
 			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+PlayerComponent.isJumping)
 			if( ! PlayerComponent.isJumping) {
 				PlayerComponent.isJumping = true
@@ -279,9 +271,7 @@ class PlayerSystem(
 	private var deltaFire = 100f
 	private fun updateWeapon(delta: Float) {
 
-		val isFiring = (ControllerWidget.isFiring
-				|| Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
-				|| inputMap.isButtonPressed(Inputs.Action.FIRE))
+		val isFiring = (ControllerWidget.isFiring || inputMap.isButtonPressed(Inputs.Action.FIRE))
 		deltaFire += delta
 
 		if(PlayerComponent.isReloading) {
@@ -452,8 +442,10 @@ class PlayerSystem(
 		if(now > lastColorChange+COLOR_LOOP) {
 			PlayerComponent.hurt(pain)
 			changeAmbientColor(ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.0f, 0.0f, 1f))
-			if(Settings.isVibrationEnabled)
-				Gdx.input.vibrate(200)//Gdx.input.vibrate(new long[] { 0, 200, 200, 200}, -1) //Needs VIBRATE permission
+			if(Settings.isVibrationEnabled) {//Needs VIBRATE permission
+				Gdx.input.vibrate(200)
+				//Gdx.input.vibrate(longArrayOf(0, 200, 200, 200), -1)
+			}
 			if(PlayerComponent.health > 5)
 				Sounds.play(Sounds.SoundType.PLAYER_HURT)
 		}

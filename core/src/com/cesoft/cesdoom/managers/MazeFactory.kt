@@ -110,7 +110,7 @@ object MazeFactory {
 		rampFactory.create(mapFactory, e, Vector3(-3f*lng2, high, 0f), angleX = 90f, angleY = +45f)
 
 		// GANG WAYS ------------------
-		addGangWays(level, e)
+		addGangWays(level, e, assets)
 
 		// AMMO ------------------
 		addAmmoLevelX(level, e, assets)
@@ -120,19 +120,26 @@ object MazeFactory {
 	}
 
 
-	private fun addGangWays(level: Int, e: Engine) {
+	//TODO: Cuando crees un nivel sobre plataformas, hacerlo todo bloqueado (1) e ir poniendo (0) donde cubra cada gangway!!!!!!!!!!!
+	private fun addGangWays(level: Int, e: Engine, assets: Assets) {
 		if(level == 0) {
-			for(x in -3..+3)
-				rampFactory.createGround(mapFactory, e, Vector3(x*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, xWay=true)
+			mapFactory.collideAll(1)
 
-			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
-			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, zWay=true)
-			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
-			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, zWay=true)
-			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +4*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE, zWay=true)
-			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -4*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
+			var size = Vector2(7*lng2, high2)
+			var pos = Vector3(0f, high2, -lng2)
+			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
+
+			pos = Vector3(0f, high2, -4*lng2)
+			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
+			pos = Vector3(0f, high2, +4*lng2)
+			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
+
+			size = Vector2(high2, 8.5f*lng2)
+			pos = Vector3(+4*lng2, high2, 0f)
+			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
+			pos = Vector3(-4*lng2, high2, 0f)
+			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
+
 			//
 			for(i in -3..+3)
 				mapFactory.addFloorAccess(1, i*lng2, -3*lng-2*mapFactory.scale)

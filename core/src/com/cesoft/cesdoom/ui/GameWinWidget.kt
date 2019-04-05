@@ -74,14 +74,14 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 	private fun setListeners() {
 		btnRestart.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				exit()
 				game.reset(false)
+				exit()
 			}
 		})
 		btnMenu.addListener(object : ClickListener() {
 			override fun clicked(inputEvent: InputEvent?, x: Float, y: Float) {
-				exit()
 				game.reset2Menu()
+				exit()
 			}
 		})
 		btnQuit.addListener(object : ClickListener() {
@@ -98,6 +98,7 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 
 		if(game.isNextOrReload()) {
 			btnRestart.setText(assets.getString(Assets.NEXT_LEVEL))
+			image.drawable = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/gameWin.png"))))
 		}
 		else {
 			btnRestart.setText(assets.getString(Assets.RECARGAR))
