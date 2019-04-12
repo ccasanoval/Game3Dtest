@@ -116,9 +116,13 @@ class BulletSystem(
 	//______________________________________________________________________________________________
 	private fun collPlayerSwitch(iSwitch: Int) {
 		val switch = switches[iSwitch]
-		val gate = gates[iSwitch]
 		switch?.activate()
-		gate?.unlock()
+		for(gate in gates.values) {
+			if(gate.id == switch?.id) {
+				gate.unlock()
+				return
+			}
+		}
 	}
 
 	//______________________________________________________________________________________________

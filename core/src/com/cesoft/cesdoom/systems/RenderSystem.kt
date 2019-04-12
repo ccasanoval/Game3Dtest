@@ -108,7 +108,7 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 
 		drawGun(delta)
 
-		//if(Log.debugMode)statistics(countDrawn)
+		if(Log.debugMode)statistics(countDrawn)
 	}
 	private var countDrawnMax = 0
 	private var countDrawnMedMax = 0

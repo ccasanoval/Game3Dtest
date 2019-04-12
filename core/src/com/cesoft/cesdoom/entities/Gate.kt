@@ -9,10 +9,11 @@ import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.components.GateComponent.MAX_OFFSET_OPEN
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class Gate(private val id: String, private val assets: Assets) : Entity() {
+class Gate(val id: String, private val assets: Assets) : Entity() {
 
     companion object {
         val tag: String = Gate::class.java.simpleName
@@ -27,7 +28,9 @@ class Gate(private val id: String, private val assets: Assets) : Entity() {
 
     var isLocked = true
         private set
-        fun unlock() { isLocked = false }
+        fun unlock() {
+            isLocked = false
+        }
     private var offsetOpened = 0f
     private var isOpening = false
     private var isOpen = false

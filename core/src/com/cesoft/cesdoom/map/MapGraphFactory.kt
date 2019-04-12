@@ -17,21 +17,28 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
             IntArray(map[1].cx * map[1].cy))
 
     fun clear() {
-        Log.e("MapGraphFactory", "clear---------------------------------------------------------------")
-        for(level in 0 until mapData.size) {
-            map[level].clear()
-            for(i in 0 until mapData[level].size) {
-                mapData[level][i] = 0
+        for(floor in 0 until mapData.size) {
+            map[floor].clear()
+            for(i in 0 until mapData[floor].size) {
+                mapData[floor][i] = 0
             }
         }
     }
 
     //TODO: Anora solo hay accesos de 0 a 1 y de 1 a 0 (y si hay segunda planta?)
     fun addFloorAccess(floor: Int, x: Float, y: Float) {
-        if(floor < map.size)
-            map[floor].addFloorAccess(Vector2(x,y))
+        if(floor < map.size) {
+            map[floor].addFloorAccess(Vector2(x, y))
+            val pos = toMapGraphCoord(floor, Vector2(x, y))
+            addWay(floor, Point(pos.x, pos.y))
+            addWay(floor, Point(pos.x+1, pos.y))
+            addWay(floor, Point(pos.x-1, pos.y))
+            addWay(floor, Point(pos.x, pos.y+1))
+            addWay(floor, Point(pos.x, pos.y-1))
+        }
     }
     //
+    fun toMapGraphCoord(floor: Int, x: Float, y: Float) : Point = toMapGraphCoord(floor, Vector2(x, y))
     fun toMapGraphCoord(floor: Int, pos: Vector2) : Point
             = if(floor < map.size) map[floor].toMapGraphCoord(pos)
                 else Point(0,0)
@@ -87,9 +94,9 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
     }*/
 
     fun print() {
-        for(level in 0 until map.size) {
-            val map0 = map[level]
-            Log.e("MAP", "\n------------------------------------------------ LEVEL $level ------------------------------------------------\n")
+        for(floor in 0 until map.size) {
+            val map0 = map[floor]
+            Log.e("MAP", "\n------------------------------------------------ LEVEL $floor ------------------------------------------------\n")
             var col = " \t\t\t"
             for(x in 0 until map0.cx)
                 col += " " + (x % 10)

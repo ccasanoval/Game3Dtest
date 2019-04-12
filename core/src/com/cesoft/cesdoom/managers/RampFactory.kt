@@ -24,6 +24,7 @@ import com.badlogic.gdx.math.Vector2
 import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.map.MapGraphFactory
+import com.cesoft.cesdoom.map.Point
 import kotlin.math.absoluteValue
 import com.cesoft.cesdoom.util.Log
 
@@ -133,25 +134,9 @@ class RampFactory(assets: Assets) {
 	}
 
 	//______________________________________________________________________________________________
-	fun createGround(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3,
-			   type:Type=Type.STEEL, xWay: Boolean=false, zWay: Boolean=false) {
+	fun createGround(engine: Engine, pos: Vector3, type:Type=Type.STEEL) {
 
 		val entity = Entity()
-
-		/// MAP
-		val floor = (pos.y / (2*WallFactory.HIGH)).toInt()
-		val l = RampFactory.LONG_GROUND.toInt()
-		if(xWay) {
-			for(x in -l..+l) {
-				if(Math.abs(x) < RampFactory.LONG_GROUND/MazeFactory.scale) {
-					continue
-				}
-				val point1 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+x, pos.z+l))
-				val point2 = mapFactory.toMapGraphCoord(floor, Vector2(pos.x+x, pos.z-l))
-				mapFactory.addCollider(floor, point1)
-				mapFactory.addCollider(floor, point2)
-			}
-		}
 
 		/// MODEL
 		val material = if(type==Type.STEEL) materialSteel else materialGrille
@@ -193,13 +178,7 @@ class RampFactory(assets: Assets) {
 		}
 		else {
 			/// PATH FINDING MAP
-			val floor = (pos.y / (2*WallFactory.HIGH)).toInt()
-			for(x in 0..size.x.toInt()) {
-				for(y in 0..size.y.toInt()) {
-					val point = mapFactory.toMapGraphCoord(floor, Vector2(pos.x + x, pos.y + y))
-					mapFactory.addWay(floor, point)
-				}
-			}
+			RampMapFactory.addWays(mapFactory, size, pos)
 		}
 
 		val entity = Entity()

@@ -9,11 +9,12 @@ import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class Switch(private val id: String, private val assets: Assets) : Entity() {
+class Switch(val id: String, private val assets: Assets) : Entity() {
 
     companion object {
         val tag: String = Switch::class.java.simpleName
@@ -41,10 +42,11 @@ class Switch(private val id: String, private val assets: Assets) : Entity() {
         if(isActivated)return
         isActivated = true
 
-        Sounds.play(Sounds.SoundType.SWITCH)
-
         PlayerComponent.message = assets.formatString(Assets.GATE_UNLOCKED, id)//TODO: MessageSystem + dispatch signal (EventBus?)
 
+        //Sound
+        Sounds.play(Sounds.SoundType.SWITCH)
+        //Switch texture to ON
         val modelComponent = ModelComponent.get(this)
         val textureAttributeOn = TextureAttribute(TextureAttribute.Diffuse, textureOn)
         modelComponent.instance.materials.get(0).set(textureAttributeOn)

@@ -1,6 +1,5 @@
 package com.cesoft.cesdoom.map
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.pfa.Connection
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder
 import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph
@@ -8,6 +7,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ObjectMap
 import com.cesoft.cesdoom.util.Log
 import com.badlogic.gdx.ai.pfa.PathSmoother
+import com.cesoft.cesdoom.components.EnemyComponent
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
         }
     }
     private fun getNode(point: Point) = getNode(point.x, point.y)
-    private fun getNode(point: Vector2) : Node {
+    private fun getNode(point: Vector2, enemy: EnemyComponent?) : Node {
         val pos = toMapGraphCoord(point)
         var node = getNode(pos)
         if( ! node.isValid) {
@@ -58,16 +58,17 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
                 for(y in -i..+i) {
                     for(x in -i..+i) {
                         if(Math.abs(x) != i && Math.abs(y) != i) continue
-                        //Log.e(tag, "id=$id:getNode: i=$i ---------------- TESTING NODE ($x, $y) ----------------")
                         node = getNode(Point(pos.x + x, pos.y + y))
                         if(node.isValid) {
-                            Log.e(tag, "id=$id:getNode: cuidado, esto podria retardar mucho la busqueda -------------------- nodeIni=${nodeOld.point} <> nodeFin=${node.point}")
+                            Log.e(tag, "id=$id:getNode: cuidado, esto podria retardar mucho la busqueda -----Enemy=${enemy?.id}--------------- nodeIni=${nodeOld.point} <> nodeFin=${node.point}")
+                            enemy?.incRepeatedPos(node.index)
                             return node
                         }
                     }
                 }
             }
         }
+        enemy?.incRepeatedPos(node.index)
         return node
     }
 
@@ -76,11 +77,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
     }
 
     fun clear() {
-        //Log.e(tag, "$id------------------------------------------------ clear ------------------------------------------------\n")
         floorAccess.clear()
-//        nodes.clear()
-//        nodes.clear()
-//        map.clear()
     }
 
     fun connectNodes(orig: Node, dest: Node) {
@@ -97,86 +94,27 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
         vertexes.add(vertex)
     }
 
-    /// Find path in tests
-    /*fun findPath(orig: Point, dest: Point): GraphPath<Node> {
-        val path = MapGraphSmooth()
-        val pathFinder = IndexedAStarPathFinder<Node>(this)
-        val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
-        val nodeOrig = getNode(orig)
-        val nodeDest = getNode(dest)
-//Log.e(tag, "findPath a------:----- $nodeOrig $nodeDest")
-        pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
-        pathSmoother.smoothPath(path)
-        return path
-    }*/
-
-    /// Find path in game
-private var maxDelay=0L
-private var callsPerSecond=0L
-private var callsPerSecondMedia=0L
-private var timeCallsPerSecond=0L
 
     private val path = MapGraphSmooth()
     private val pathSmoother = PathSmoother<Node, Vector2>(NodeCollisionDetector(this))
-    fun findPath(orig: Vector2, dest: Vector2, smooth: Boolean=true): ArrayList<Vector2> {
+    fun findPath(orig: Vector2, dest: Vector2, enemy: EnemyComponent): ArrayList<Vector2> {
 
         path.clear()
 
-        val nodeOrig = getNode(orig)
-        val nodeDest = getNode(dest)
+        val nodeOrig = getNode(orig, enemy)
+        val nodeDest = getNode(dest, null)
+        if(enemy.isTrapped()) {
+            Log.e(tag, "Enemy: ${enemy.id} IS TRAPPED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            //val path = arrayListOf(Vector2())
+            return ArrayList()
+        }
         val pathFinder = IndexedAStarPathFinder<Node>(this)
 
-/*
-        val map0 = this
-        Log.e("MAP", "\n------------------------------------------------ $id ------------------------------------------------\n")
-        var col = " \t\t\t"
-        for(x in 0 until map0.cx)
-            col += " " + (x % 10)
-        Log.e("MAP", col)
-        for(y in 0 until map0.cy) {
-            var row = "$y    ".substring(0, 5)
-            for (x in 0 until map0.cx) {
-                var isAccess = false
-                for (la in map0.floorAccess) {
-                    val c = map0.toMapGraphCoord(la)
-                    if (c.x == x && c.y == y) {
-                        row += "A"
-                        isAccess = true
-                        break
-                    }
-                }
-                if (!isAccess)
-                    row += if (map0.getNode(x, y).isValid) "O" else "1"
-            }
-            Log.e("MAP", row)
-        }
-        Log.e(tag, "$id path----------------from $nodeOrig to $nodeDest")*/
-
-
-        callsPerSecond++
-        val time = System.currentTimeMillis()
-        if(time >  timeCallsPerSecond + 999) {
-            timeCallsPerSecond = time
-            callsPerSecondMedia = (callsPerSecondMedia+callsPerSecond)/2
-            //callsPerSecondMedia = callsPerSecond
-            callsPerSecond = 0
-        }
-
-
         try {
-            val t0 = System.currentTimeMillis()
             pathFinder.searchNodePath(nodeOrig, nodeDest, HeuristicDistance, path)
-            val t1 = System.currentTimeMillis()
-            //if(smooth)
-                pathSmoother.smoothPath(path)
-            val now = System.currentTimeMillis()
-//if()
-//if(now - t0 > maxDelay)maxDelay=now - t0
-//Log.e(tag, "smoothPath:----- #steps=${path.count} ->  delay0=${t1 - t0}  delay2=${now - t0} ms  (MAX=$maxDelay)      (CPS=$callsPerSecondMedia / $callsPerSecond) (FPS=${Gdx.graphics.framesPerSecond}) ")
-
+            pathSmoother.smoothPath(path)
             val res = ArrayList<Vector2>()
             for(step in path) {
-                //Log.e(tag, "$id path----------------$step")
                 res.add(toWorldCoord(step.point))
             }
             return res
@@ -186,7 +124,6 @@ private var timeCallsPerSecond=0L
             e.printStackTrace()
         }
 
-//Log.e(tag, "smoothPath:----------------------------- fin")
         return ArrayList()
     }
 

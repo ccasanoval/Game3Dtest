@@ -105,8 +105,8 @@ class GameWorld(gameWinWidget: GameWinWidget,
 		SceneFactory.addGround(engine, assets.getSuelo(), longWorld)
 		SceneFactory.addSkyline(engine, assets.getSkyline(), longWorld/2f)
 		SceneFactory.addJunkAntenna(engine, assets.getJunkAntenna(), longWorld/5f)
-		SceneFactory.addJunkWall(engine, assets.getJunkWall(), longWorld/8f)
-		SceneFactory.addJunkBuilding(engine, assets.getJunkBuilding(), longWorld/8f)
+		SceneFactory.addJunkWall(engine, assets.getJunkWall(), longWorld/7.5f)
+		SceneFactory.addJunkBuilding(engine, assets.getJunkBuilding(), longWorld/7.5f)
 
 		/// MAZE
 		MazeFactory.create(engine, assets)

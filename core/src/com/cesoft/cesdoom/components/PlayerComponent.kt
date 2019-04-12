@@ -17,7 +17,7 @@ class PlayerComponent : Component {
 
         const val TALL = 20f
         private const val HEALTH_FULL = 100
-        const val IMPULSE = 3000f
+        const val IMPULSE = 3600f
         const val MASS = 65f
         const val RADIO = 14f
 
@@ -28,7 +28,7 @@ class PlayerComponent : Component {
         var isJumping = false
         var isWalking = false
 
-        var eyes = PlayerComponent.TALL
+        var eyes = TALL
 
         var isReloading = false
 
@@ -61,7 +61,7 @@ class PlayerComponent : Component {
 
         /// Score -----------------
         var score: Long = 0          //TODO: MessageSystem + dispatch signal
-        fun addScore(pts: Int) { PlayerComponent.score += pts }
+        fun addScore(pts: Int) { score += pts }
 
 
         /// Health -----------------
@@ -80,7 +80,7 @@ class PlayerComponent : Component {
         fun resetHealth() {
             health = HEALTH_FULL
         }
-        fun isDead() = PlayerComponent.health < 1
+        fun isDead() = health < 1
 
 
         /// Messages -----------------
@@ -88,7 +88,7 @@ class PlayerComponent : Component {
         var message: String = ""
             get() {
                 val now = System.currentTimeMillis()
-                if(now > lastMessage + PlayerComponent.MESSAGE_DURATION)
+                if(now > lastMessage + MESSAGE_DURATION)
                     field = if(isGodModeOn)
                         "* GoD Mode On *"
                     else

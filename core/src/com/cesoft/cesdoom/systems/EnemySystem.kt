@@ -226,8 +226,8 @@ class EnemySystem(
 	private fun getTarget(floorPlayer: Int, playerPosition: Vector3, floorEnemy: Int, enemyPosition: Vector2): Vector2 {
 		return if(floorEnemy != floorPlayer) {
 			//TODO: coger el acceso que sumando Enemy->Acceso + Acceso->Player sea la menor distancia!!!!!!!!!
-			//MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)
-			MazeFactory.getNearerFloorAccess(floorEnemy, Vector2(playerPosition.x, playerPosition.z))
+			MazeFactory.getNearerFloorAccess(floorEnemy, enemyPosition)	//Access near enemy
+			//MazeFactory.getNearerFloorAccess(floorEnemy, Vector2(playerPosition.x, playerPosition.z))	//Access near player
 		}
 		else {
 			Vector2(playerPosition.x, playerPosition.z)
@@ -243,6 +243,10 @@ class EnemySystem(
 
 	//----------------------------------------------------------------------------------------------
 	private fun calcPath(entity: Entity, playerPosition: Vector3) {
+
+		//TODO: si se encierra, buscar salida: ie debajo escaleras
+		//TODO: si repite mismos movimientos 3 veces, ir girando hasta encontrar salida...
+
 		val enemy = EnemyComponent.get(entity)
 		val floorEnemy = getEnemyFloor(enemy)
 		val floorPlayer = getPlayerFloor(playerPosition.y)
@@ -278,7 +282,6 @@ class EnemySystem(
 
 	private fun usePath(enemy: EnemyComponent) {
 		val next = enemy.path!![enemy.pathIndex]
-//Log.e(tag, "${enemy.id} : usePath--------------------pos=${enemy.currentPos2D}---------------------------  path index=${enemy.pathIndex}  /  $next")
 
 		if(enemy.currentPos2D.dst(next) < MazeFactory.scale) {
 			enemy.pathIndex++
@@ -292,27 +295,46 @@ class EnemySystem(
 		}
 	}
 
+
 	private fun recalcPath(enemy: EnemyComponent, playerPosition: Vector3) {
-		val floorEnemy = getEnemyFloor(enemy)//if(enemy.position.y > 2*WallFactory.HIGH) 1 else 0
-		val floorPlayer = getPlayerFloor(playerPosition.y)//if(playerPosition.y > 2*WallFactory.HIGH) 1 else 0
+		val floorEnemy = getEnemyFloor(enemy)
+		val floorPlayer = getPlayerFloor(playerPosition.y)
 		val accessPoint = getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D)
 		enemy.player2D.set(accessPoint)
 		enemy.stepCounter = 0
 
-		enemy.path = MazeFactory.findPath(floorEnemy, enemy.currentPos2D, enemy.player2D)//, !enemy.isAccessFloorPath)
-//Log.e(tag, "${enemy.id} : recalcPath---------pos=${enemy.currentPos2D}/floor=$floorEnemy-------target=${enemy.player2D}------------- path size=${enemy.path?.size}")
+		if(enemy.isTrapped()) {
+			enemy.nextEscape++
+			val step = 10
+			val nextSteep =
+					when {
+						enemy.nextEscape < 10 -> Vector2(enemy.currentPos2D.x+step, enemy.currentPos2D.y+step)
+						enemy.nextEscape < 20 -> Vector2(enemy.currentPos2D.x+step, enemy.currentPos2D.y-step)
+						enemy.nextEscape < 30 -> Vector2(enemy.currentPos2D.x-step, enemy.currentPos2D.y-step)
+						enemy.nextEscape < 40 -> Vector2(enemy.currentPos2D.x-step, enemy.currentPos2D.y+step)
+						enemy.nextEscape < 50 -> Vector2(enemy.currentPos2D.x, enemy.currentPos2D.y-step)
+						enemy.nextEscape < 60 -> Vector2(enemy.currentPos2D.x+step, enemy.currentPos2D.y)
+						enemy.nextEscape < 70 -> Vector2(enemy.currentPos2D.x, enemy.currentPos2D.y+step)
+						enemy.nextEscape < 80 -> Vector2(enemy.currentPos2D.x-step, enemy.currentPos2D.y)
+						else -> {
+							enemy.nextEscape = 0
+							Vector2(enemy.currentPos2D.x, enemy.currentPos2D.y-step)
+						}
+					}
+			enemy.path = arrayListOf(nextSteep)
+			//Log.e(tag, "Enemy: ${enemy.id} IS TRAPPED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${enemy.nextEscape}  step=$nextSteep")
+			if(enemy.nextEscape %5 == 0)
+				MazeFactory.findPath(floorEnemy, enemy.currentPos2D, enemy.player2D, enemy)
+		}
+		else {
+			enemy.path = MazeFactory.findPath(floorEnemy, enemy.currentPos2D, enemy.player2D, enemy)
+		}
 		enemy.path?.let { path ->
-			if(path.size > 1) {
-				for(step in path) {
-//Log.e(tag, " recalcPath---------step=$step")
-				}
-
+			if (path.size > 1) {
 				enemy.pathIndex = 1
 				enemy.stepCalc2D = path[1]
-//Log.e(tag, "${enemy.id} : recalcPath----------------------------------------------- step=${enemy.stepCalc2D}")
 				enemy.nextStep3D = Vector3(enemy.stepCalc2D.x, enemy.position.y, enemy.stepCalc2D.y)
-			}
-			else
+			} else
 				enemy.nextStep3D = Vector3(enemy.player2D.x, enemy.position.y, enemy.player2D.y)
 		}
 	}

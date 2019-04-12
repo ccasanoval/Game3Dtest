@@ -37,8 +37,13 @@ object SceneFactory {
 		val long = 120f
 		val high = long * ratio
 		val size = Vector2(long, high)
-		DecalFactory.addDecal(texture, engine, size, Vector3(+30f, high/2, -len), 0f, 0f, Color.GRAY)
-		DecalFactory.addDecal(texture, engine, size, Vector3(-30f, high/2, +len), 0f, 180f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(+60f, high/2, -len), 0f, 0f, Color.LIGHT_GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(-30f, high/2, +len), 0f, 180f, Color.LIGHT_GRAY)
+		//
+		DecalFactory.addDecal(texture, engine, size, Vector3(-len, high/2, -100f), 0f, 90f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(-len, high/2, +250f), 0f, 90f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(+len, high/2, +150f), 0f, -90f, Color.LIGHT_GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(+len, high/2, -350f), 0f, -90f, Color.LIGHT_GRAY)
 	}
 	//______________________________________________________________________________________________
 	//
@@ -47,10 +52,12 @@ object SceneFactory {
 		val long = 600f
 		val high = long * ratio
 		val size = Vector2(long, high)
-		DecalFactory.addDecal(texture, engine, size, Vector3(+len, high/2, -len), 0f, -45f, Color.GRAY)
-		DecalFactory.addDecal(texture, engine, size, Vector3(-len, high/2, +len), 0f, 180f-45f, Color.GRAY)
-		DecalFactory.addDecal(texture, engine, size, Vector3(+len, high/2, +len), 0f, 180f+45f, Color.GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(+len, high/2, -len), 0f, -45f, Color.LIGHT_GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(-len, high/2, +len), 0f, 135f, Color.LIGHT_GRAY)
+		DecalFactory.addDecal(texture, engine, size, Vector3(+len, high/2, +len), 0f, 225f, Color.GRAY)
 		DecalFactory.addDecal(texture, engine, size, Vector3(-len, high/2, -len), 0f, +45f, Color.GRAY)
+		//
+		DecalFactory.addDecal(texture, engine, Vector2(long, high), Vector3(0f, high/2, -len-200), 0f, 15f, Color.LIGHT_GRAY)
 	}
 
 	//______________________________________________________________________________________________

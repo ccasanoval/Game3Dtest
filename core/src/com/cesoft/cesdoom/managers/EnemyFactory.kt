@@ -27,8 +27,8 @@ class EnemyFactory(assets: Assets) {
 
     companion object {
         private val tag: String = EnemyFactory::class.java.simpleName
-        private val SPAWN_DELAY = (5 - PlayerComponent.currentLevel)*800 //TODO: si pausa o background, debe actualizar time!!!
-        private val MAX_ENEMIES = 6 + 4*PlayerComponent.currentLevel
+        private val SPAWN_DELAY = (5 - PlayerComponent.currentLevel)*700 //TODO: si pausa o background, debe actualizar time!!!
+        private val MAX_ENEMIES = 4 + 4*PlayerComponent.currentLevel
         private val random = java.util.Random()
     }
 
@@ -142,11 +142,7 @@ class EnemyFactory(assets: Assets) {
 
     private fun resetComponents(entity: Entity) {
         val enemy = EnemyComponent.get(entity)
-        enemy.currentAnimation = EnemyComponent.ACTION.WALKING
-        enemy.isAccessFloorPath = false
-        enemy.player2D.set(Vector2.Zero)
-        enemy.path = null
-        enemy.pathIndex = 0
+        enemy.reset()
         //
         val status = StatusComponent.get(entity)
         status.alive = false

@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.assets.Assets
+import com.cesoft.cesdoom.components.EnemyComponent
 import com.cesoft.cesdoom.components.GateComponent
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.entities.Ammo
@@ -30,9 +31,16 @@ object MazeFactory {
 	private lateinit var mapFactory: MapGraphFactory
 	private lateinit var rampFactory: RampFactory
 
-	fun findPath(floorEnemy: Int, pos: Vector2, target: Vector2, smooth: Boolean=false): ArrayList<Vector2> {
+	private const val GATE_A = " A "
+	private const val GATE_B = " B "
+	private const val GATE_C = " C "
+	private const val GATE_D = " D "
+	private const val GATE_E = " E "
+	private const val GATE_F = " F "
+
+	fun findPath(floorEnemy: Int, pos: Vector2, target: Vector2, enemy: EnemyComponent): ArrayList<Vector2> {
 		val map = MazeFactory.mapFactory.map[floorEnemy]
-		return map.findPath(pos, target, smooth)
+		return map.findPath(pos, target, enemy)
 	}
 	fun getNearerFloorAccess(floorEnemy: Int, enemyPos2D: Vector2): Vector2 {
 		val map = MazeFactory.mapFactory.map[floorEnemy]
@@ -92,25 +100,27 @@ object MazeFactory {
 	//______________________________________________________________________________________________
 	private fun createLevelX(level: Int, e: Engine, assets: Assets) {
 
+		// GANG WAYS ------------------
+		if(level == 0)
+			addGangWays(e, assets)
+
 		/// INTERIOR SHAPES -------------
 		addShapesX(level, e, assets)
 
 		/// INNER WALL
 		addInnerWall(e, assets)
+		/// INTERIOR GATES
+		GateFactory.create(e, Vector3(+GateComponent.LONG + .2f, 0f, 0f), 0f, GATE_C, assets).unlock()
+		GateFactory.create(e, Vector3(-GateComponent.LONG - .2f, 0f, 0f), 0f, GATE_D, assets).unlock()
 
 		/// OUTER WALL ------------------
-		addOuterWall(level, e, assets)
-
-		/// INTERIOR GATES
-		GateFactory.create(e, Vector3(+GateComponent.LONG + .2f, 0f, 0f), 0f, " C ", assets).unlock()
-		GateFactory.create(e, Vector3(-GateComponent.LONG - .2f, 0f, 0f), 0f, " D ", assets).unlock()
+		addOuterWall(e, assets)
+		/// OUTER GATES ------------------
+		addOuterGates(level, e, assets)
 
 		// RAMPS ------------------
 		rampFactory.create(mapFactory, e, Vector3(+3f*lng2, high, 0f), angleX = 90f, angleY = -45f)
 		rampFactory.create(mapFactory, e, Vector3(-3f*lng2, high, 0f), angleX = 90f, angleY = +45f)
-
-		// GANG WAYS ------------------
-		addGangWays(level, e, assets)
 
 		// AMMO ------------------
 		addAmmoLevelX(level, e, assets)
@@ -119,49 +129,46 @@ object MazeFactory {
 		addHealthLevelX(level, e, assets)
 	}
 
+	//______________________________________________________________________________________________
+	private fun addGangWays(e: Engine, assets: Assets) {
+		/// WANG WAYS
+		var size = Vector2(7*lng2, high2)
+		var pos = Vector3(0f, high2, -lng2)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
 
-	//TODO: Cuando crees un nivel sobre plataformas, hacerlo todo bloqueado (1) e ir poniendo (0) donde cubra cada gangway!!!!!!!!!!!
-	private fun addGangWays(level: Int, e: Engine, assets: Assets) {
-		if(level == 0) {
-			mapFactory.collideAll(1)
+		pos = Vector3(0f, high2, -4*lng2)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
+		pos = Vector3(0f, high2, +4*lng2)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
 
-			var size = Vector2(7*lng2, high2)
-			var pos = Vector3(0f, high2, -lng2)
-			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
+		size = Vector2(high2, 9f*lng2)
+		pos = Vector3(+4*lng2, high2, 0f)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
+		pos = Vector3(-4*lng2, high2, 0f)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
 
-			pos = Vector3(0f, high2, -4*lng2)
-			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
-			pos = Vector3(0f, high2, +4*lng2)
-			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
-
-			size = Vector2(high2, 8.5f*lng2)
-			pos = Vector3(+4*lng2, high2, 0f)
-			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
-			pos = Vector3(-4*lng2, high2, 0f)
-			rampFactory.createGround2(mapFactory, e, assets, size, pos, -90f, RampFactory.Type.GRILLE, true)
-
+		// ACCESSES
+		for(x in -3..+3) {
+			mapFactory.addFloorAccess(1, x*lng2, -9f*lng-2*mapFactory.scale)
+			mapFactory.addFloorAccess(1, x*lng2, -7f*lng+2*mapFactory.scale)
+			mapFactory.addFloorAccess(1, x*lng2, -3f*lng-2*mapFactory.scale)
 			//
-			for(i in -3..+3)
-				mapFactory.addFloorAccess(1, i*lng2, -3*lng-2*mapFactory.scale)
-			for(i in -1..+1)
-				mapFactory.addFloorAccess(1, i*lng2, -lng+2*mapFactory.scale)
-			mapFactory.addFloorAccess(1, +4*lng2, -lng2)
-			mapFactory.addFloorAccess(1, -4*lng2, -lng2)
+			if(x != -3 && x != +3)
+				mapFactory.addFloorAccess(1, x*lng2, -1*lng+2*mapFactory.scale)
+			mapFactory.addFloorAccess(1, x*lng2, +7f*lng-2*mapFactory.scale)
+			mapFactory.addFloorAccess(1, x*lng2, +9*lng+2*mapFactory.scale)
 		}
-		else {
-			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, 0f), RampFactory.Type.GRILLE)
-			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-			rampFactory.createGround(mapFactory, e, Vector3(+4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, 0f), RampFactory.Type.GRILLE)
-			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, +2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-			rampFactory.createGround(mapFactory, e, Vector3(-4*lng2, high2, -2*RampFactory.LONG_GROUND), RampFactory.Type.GRILLE)
-			//
-			mapFactory.addFloorAccess(1, +6*lng, 0f)
-			mapFactory.addFloorAccess(1, -6*lng, 0f)//TODO: Mas accesos de 1 a 0
+		for(z in -9..+9) {
+			if(z in 0 until 7 || z in -4 downTo -6) {
+				mapFactory.addFloorAccess(1, -3.3f*lng2, z*lng)
+				mapFactory.addFloorAccess(1, +3.3f*lng2, z*lng)
+			}
+			mapFactory.addFloorAccess(1, -4.75f*lng2+mapFactory.scale, z*lng)
+			mapFactory.addFloorAccess(1, +4.7f*lng2, z*lng)
 		}
 	}
 	//______________________________________________________________________________________________
-	private fun addOuterWall(level: Int, e: Engine, assets: Assets) {
+	private fun addOuterWall(e: Engine, assets: Assets) {
 		val wf = WallFactory
 
 		/// GRILLE
@@ -174,17 +181,16 @@ object MazeFactory {
 		wf.createGrille(mapFactory, e, assets, grilleSize, Vector3(+3.6f*lng2, 0f, -6.5f*lng2), 0f)
 		wf.createGrille(mapFactory, e, assets, grilleSize, Vector3(-3.6f*lng2, 0f, +6.5f*lng2), 180f)
 		wf.createGrille(mapFactory, e, assets, grilleSize, Vector3(+3.6f*lng2, 0f, +6.5f*lng2), 180f)
-
+	}
+	private fun addOuterGates(level: Int, e: Engine, assets: Assets) {
 		var columnSize = Vector3(10f, high2, 30f)
 		// EXIT 0
-		var id = " A "
-		GateFactory.create(e, Vector3(0f, 0f, +6.5f*lng2), 90f, id, assets)
+		GateFactory.create(e, Vector3(0f, 0f, +6.5f*lng2), 90f, GATE_A, assets)
 		YouWinFactory.create(e, Vector3(0f, 0f, +7.5f*lng2 + (2*YouWinFactory.SIZE + GateComponent.THICK)), 180f, assets)
 		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-GateComponent.LONG-columnSize.x/2, 0f, +6.6f*lng2))
 		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+GateComponent.LONG+columnSize.x/2, 0f, +6.6f*lng2))
 		// EXIT 1
-		id = " B "
-		GateFactory.create(e, Vector3(0f, 0f, -6.5f*lng2), 90f, id, assets)
+		GateFactory.create(e, Vector3(0f, 0f, -6.5f*lng2), 90f, GATE_B, assets)
 		YouWinFactory.create(e, Vector3(0f, 0f, -7.5f*lng2 - (2*YouWinFactory.SIZE + GateComponent.THICK)), 0f, assets)
 		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(-GateComponent.LONG-columnSize.x/2, 0f, -6.6f*lng2))
 		ColumnFactory.add(e, mapFactory, assets, columnSize, Vector3(+GateComponent.LONG+columnSize.x/2, 0f, -6.6f*lng2))
@@ -264,20 +270,24 @@ object MazeFactory {
 	//______________________________________________________________________________________________
 	private fun addSwitchesLevelX(level: Int, e: Engine, assets: Assets) {
 		val z = +lng+thick+1
+		val posA: Vector3
+		val posB: Vector3
 		when(level) {
-			0 -> {
-				SwitchFactory.create(e, Vector3(0f, 0f, -z), 180f, " A ", assets)
-				SwitchFactory.create(e, Vector3(0f, 0f, +z), 0f, " B ", assets)
-			}
 			1,2 -> {
-				SwitchFactory.create(e, Vector3(0f, level*high2, -z), 180f, " A ", assets)
-				SwitchFactory.create(e, Vector3(0f, level*high2, +z), 0f, " B ", assets)
+				posA = Vector3(0f, level*high2, -z)
+				posB = Vector3(0f, level*high2, +z)
 			}
 			3 -> {
-				SwitchFactory.create(e, Vector3(0f, 2*high2, -z), 180f, " A ", assets)
-				SwitchFactory.create(e, Vector3(0f, 2*high2, +z), 0f, " B ", assets)
+				posA = Vector3(0f, 2*high2, -z)
+				posB = Vector3(0f, 2*high2, +z)
+			}
+			else -> {
+				posA = Vector3(0f, 0f, -z)
+				posB = Vector3(0f, 0f, +z)
 			}
 		}
+		SwitchFactory.create(e, posA, 180f, GATE_A, assets)
+		SwitchFactory.create(e, posB, 0f, GATE_B, assets)
 	}
 
 	//______________________________________________________________________________________________
@@ -321,47 +331,72 @@ object MazeFactory {
 	private fun createFirstFloorAccess(level: Int) {
 		val cx = RampFactory.LONG_GROUND
 		val cz = RampFactory.LONG_GROUND
-		if(level < 2) {
-			for(n in -10..+10) {
-				mapFactory.addFloorAccess(1, n*cx, -10*cz)
-				mapFactory.addFloorAccess(1, n*cx, +10*cz)
-				mapFactory.addFloorAccess(1, -10*cx, n*cz)
-				mapFactory.addFloorAccess(1, +10*cx, n*cz)
+		if(level != 0 && level < 2) {
+			for(n in -9..+9) {
+				if(n != +4)
+					mapFactory.addFloorAccess(1, n*cx, -9.25f*cz)
+				if(n != -4)
+					mapFactory.addFloorAccess(1, n*cx, +9.5f*cz)
+				mapFactory.addFloorAccess(1, -9.5f*cx, n*cz)
+				mapFactory.addFloorAccess(1, +9.5f*cx, n*cz)
 			}
 		}
 		else {
 			for(n in -5..+5) {
-				mapFactory.addFloorAccess(1, -10 * cx, n * cz)
-				mapFactory.addFloorAccess(1, +10 * cx, n * cz)
+				mapFactory.addFloorAccess(1, -9.5f*cx, n*cz)
+				mapFactory.addFloorAccess(1, +9.5f*cx, n*cz)
 			}
 		}
+	}
+	private fun createFirstFloorGround(level: Int, e: Engine, assets: Assets) {
+
+		val groundTypeA: RampFactory.Type
+		val groundTypeB: RampFactory.Type
+		val groundTypeC: RampFactory.Type
+		when(level) {
+			1 -> {
+				groundTypeA = RampFactory.Type.GRILLE
+				groundTypeB = RampFactory.Type.GRILLE
+				groundTypeC = RampFactory.Type.GRILLE
+			}
+			2 -> {
+				groundTypeA = RampFactory.Type.GRILLE
+				groundTypeB = RampFactory.Type.STEEL
+				groundTypeC = RampFactory.Type.STEEL
+			}
+			else -> {
+				groundTypeA = RampFactory.Type.STEEL
+				groundTypeB = RampFactory.Type.GRILLE
+				groundTypeC = RampFactory.Type.GRILLE
+			}
+		}
+		// A
+		val angle = -90f
+		var size = Vector2(9*lng2, 4*lng2)
+		var pos = Vector3(0f, high2+thick, -2.5f*lng2)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, angle, groundTypeA, true)
+		pos = Vector3(0f, high2+thick, +2.5f*lng2)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, angle, groundTypeA, true)
+		// B
+		size = Vector2(lng2, lng2)
+		pos = Vector3(-4*lng2, high2+thick, 0f)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, angle, groundTypeB, true)
+		pos = Vector3(+4*lng2, high2+thick, 0f)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, angle, groundTypeB, true)
+		// C
+		size = Vector2(1.5f*lng2, lng2)
+		pos = Vector3(-1.25f*lng2, high2+thick, 0f)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, angle, groundTypeC, true)
+		pos = Vector3(+1.25f*lng2, high2+thick, 0f)
+		rampFactory.createGround2(mapFactory, e, assets, size, pos, angle, groundTypeC, true)
 	}
 	private fun createFirstFloorExtras(e: Engine, assets: Assets) {
 		/// Extra Gates
-		GateFactory.create(e, Vector3(+GateComponent.LONG + .2f, high2, 0f), 0f, " E ", assets).unlock()
-		GateFactory.create(e, Vector3(-GateComponent.LONG - .2f, high2, 0f), 0f, " F ", assets).unlock()
+		GateFactory.create(e, Vector3(+GateComponent.LONG + .2f, high2, 0f), 0f, GATE_E, assets).unlock()
+		GateFactory.create(e, Vector3(-GateComponent.LONG - .2f, high2, 0f), 0f, GATE_F, assets).unlock()
 		/// Extra Ramps
 		rampFactory.create(mapFactory, e, Vector3(-2*lng2, high, +5f*lng2), angleX = +45f, angleZ = 90f)
 		rampFactory.create(mapFactory, e, Vector3(+2*lng2, high, -5f*lng2), angleX = -45f, angleZ = 90f)
-	}
-	private fun createFirstFloorGround(level: Int, e: Engine) {
-		val cx = RampFactory.LONG_GROUND
-		val cz = RampFactory.LONG_GROUND
-		for(z in -8..+8 step 2) {
-			if(z == 0) {
-				val type = RampFactory.Type.STEEL
-				rampFactory.createGround(mapFactory, e, Vector3(+2*cx, high2, 0f), type)//TODO: to mesh
-				rampFactory.createGround(mapFactory, e, Vector3(-2*cx, high2, 0f), type)
-				rampFactory.createGround(mapFactory, e, Vector3(+3*cx, high2, 0f), type)
-				rampFactory.createGround(mapFactory, e, Vector3(-3*cx, high2, 0f), type)
-			}
-			else {
-				for(x in -8..+8 step 2) {
-					val type = if(level != 1 || z==+2 || z==-2) RampFactory.Type.STEEL else RampFactory.Type.GRILLE
-					rampFactory.createGround(mapFactory, e, Vector3(x * cx, high2, z * cz), type)
-				}
-			}
-		}
 	}
 	private fun createFirstFloorWalls(e: Engine, assets: Assets) {
 		val wf = WallFactory
@@ -381,9 +416,9 @@ object MazeFactory {
 	}
 	//______________________________________________________________________________________________
 	private fun createFirstFloor(level: Int, e: Engine, assets: Assets) {
+		createFirstFloorGround(level, e, assets)
 		createFirstFloorAccess(level)
 		createFirstFloorExtras(e, assets)
-		createFirstFloorGround(level, e)
 		if(level > 1)
 			createFirstFloorWalls(e, assets)
 	}
@@ -396,7 +431,7 @@ object MazeFactory {
 		for(z in -2..+2 step 2) {
 			for (x in -2..+2 step 2) {
 				if(x == 0 && z == 0) continue
-				rampFactory.createGround(mapFactory, e, Vector3(x * cx, 2*high2, z * cz), type)
+				rampFactory.createGround(e, Vector3(x * cx, 2*high2, z * cz), type)
 			}
 		}
 		/// Extra Ramps
@@ -409,6 +444,7 @@ object MazeFactory {
 	const val MAX_LEVEL = 3
 	private fun createLevel(engine: Engine, assets: Assets) {
 		mapFactory.clear()
+		mapFactory.collideAll(1)
 		when(PlayerComponent.currentLevel) {
 			0 -> createLevel0(engine, assets)
 			1 -> createLevel1(engine, assets)
@@ -425,24 +461,24 @@ object MazeFactory {
 	//______________________________________________________________________________________________
 	private fun createLevel1(e: Engine, assets: Assets) {
 		val level = 1
-		createLevelX(level, e, assets)
 		createFirstFloor(level, e, assets)
+		createLevelX(level, e, assets)
 	}
 
 	//______________________________________________________________________________________________
 	private fun createLevel2(e: Engine, assets: Assets) {
 		val level = 2
-		createLevelX(level, e, assets)
 		createFirstFloor(level, e, assets)
 		createSecondFloor(level, e, assets)
+		createLevelX(level, e, assets)
 	}
 
 	//______________________________________________________________________________________________
 	private fun createLevel3(e: Engine, assets: Assets) {
 		val level = 3//TODO: something new?
-		createLevelX(level, e, assets)
 		createFirstFloor(level, e, assets)
 		createSecondFloor(level, e, assets)
+		createLevelX(level, e, assets)
 	}
 
 }
