@@ -159,7 +159,7 @@ object MazeFactory {
 			mapFactory.addFloorAccess(1, x*lng2, +9*lng+2*mapFactory.scale)
 		}
 		for(z in -9..+9) {
-			if(z in 0 until 7 || z in -4 downTo -6) {
+			if(z in 2 until 7 || z in -4 downTo -6) {
 				mapFactory.addFloorAccess(1, -3.3f*lng2, z*lng)
 				mapFactory.addFloorAccess(1, +3.3f*lng2, z*lng)
 			}
@@ -425,13 +425,24 @@ object MazeFactory {
 
 	//______________________________________________________________________________________________
 	private fun createSecondFloor(level: Int, e: Engine, assets: Assets) {
-		val cx = RampFactory.LONG_GROUND
+		/*val cx = RampFactory.LONG_GROUND
 		val cz = RampFactory.LONG_GROUND
 		val type = RampFactory.Type.GRILLE
 		for(z in -2..+2 step 2) {
 			for (x in -2..+2 step 2) {
 				if(x == 0 && z == 0) continue
 				rampFactory.createGround(e, Vector3(x * cx, 2*high2, z * cz), type)
+			}
+		}*/
+		val angle = -90f
+		val len = 2*RampFactory.LONG_GROUND
+		val size2D = Vector2(len, len)
+
+		for(z in -1..+1) {
+			for (x in -1..+1) {
+				if (x == 0 && z == 0) continue
+				val pos = Vector3(x*len, 2*high2, z*len)
+				rampFactory.createGround2(mapFactory, e, assets, size2D, pos, angle, RampFactory.Type.GRILLE, true)
 			}
 		}
 		/// Extra Ramps

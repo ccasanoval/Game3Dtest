@@ -91,68 +91,7 @@ object WallFactory {
 
 	//______________________________________________________________________________________________
 	//TODO : no cerrar modelBuilder.end() y crear todos los objetos antes para que sea una sola pieza mas eficiente...
-	/*fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3, angle: Float, type: Type = Type.CONCRETE): Entity {
 
-		/// GraphMap
-		WallMapFactory.create(mapFactory, pos, angle)
-
-		/// Entity
-		val entity = Entity()
-		pos.y += HIGH
-
-		/// MATERIAL
-		val material = when(type) {
-			Type.CONCRETE -> materialConcrete
-			Type.STEEL -> materialSteel
-			Type.GRILLE -> materialGrille
-            Type.CIRCUITS -> materialCircuits
-		}
-
-		/// MODEL
-		val modelBuilder = ModelBuilder()
-		modelBuilder.begin()
-		val mpb = modelBuilder.part(modelBuilder.hashCode().toString(), GL20.GL_TRIANGLES, POSITION_NORMAL, material)
-		BoxShapeBuilder.build(mpb, THICK*2, HIGH*2, LONG*2)
-		val model = modelBuilder.end()
-		val modelComponent = ModelComponent(model, pos)
-
-		// Mejora para frustum culling
-		val frustumCullingData =
-			if(angle == 0f)
-				FrustumCullingData.create(pos, dim0)
-			else if(angle == 90f)
-				FrustumCullingData.create(pos, dim90)
-			else if(angle == 45f || angle == -45f)
-				FrustumCullingData.create(pos, dim45)
-			else {
-				val boundingBox = BoundingBox()
-				modelComponent.instance.calculateBoundingBox(boundingBox)
-				FrustumCullingData.create(boundingBox)
-			}
-		modelComponent.frustumCullingData = frustumCullingData
-
-		modelComponent.instance.transform.rotate(Vector3.Y, angle)
-		entity.add(modelComponent)
-
-		/// COLLISION
-		val shape = btBoxShape(dimCollision)
-		val motionState = MotionState(modelComponent.instance.transform)
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
-		val rigidBody = btRigidBody(bodyInfo)
-		rigidBody.userData = entity
-		rigidBody.motionState = motionState
-		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-		rigidBody.contactCallbackFilter = 0
-		rigidBody.userValue = BulletComponent.SCENE_FLAG
-		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
-		rigidBody.friction = 1f
-		rigidBody.rollingFriction = 1f
-		rigidBody.spinningFriction = 1f
-		entity.add(BulletComponent(rigidBody, bodyInfo))
-
-		engine.addEntity(entity)
-		return entity
-	}*/
 
 	//______________________________________________________________________________________________
 	fun createWall(mapFactory: MapGraphFactory, engine: Engine, assets: Assets,
@@ -199,13 +138,17 @@ object WallFactory {
 
 		// FRUSTUM CULLING
 		//Los muros en 45 grados fallan un pelin en el frustum culling
-		val size2 = size.cpy()
-		if(Math.abs(angle) == 45f)size2.add(4f)
+		val size2: Vector3
+		if(Math.abs(angle) == 45f) {
+			size2 = size.cpy()
+			if(size2.x > size2.z) size2.z = size2.x
+			if(size2.z > size2.x) size2.x = size2.z
+		}
+		else size2 = size
 		modelComponent.frustumCullingData = FrustumCullingData.create(pos, size2)
 
 		/// COLLISION
-		val dim = Vector3(size.x/2, size.y/2, size.z/2)
-		val shape = btBoxShape(dim)
+		val shape = btBoxShape(Vector3(size.x/2, size.y/2, size.z/2))
 		val motionState = MotionState(modelComponent.instance.transform)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)

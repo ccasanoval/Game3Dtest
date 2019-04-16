@@ -24,7 +24,6 @@ import com.badlogic.gdx.math.Vector2
 import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.map.MapGraphFactory
-import com.cesoft.cesdoom.map.Point
 import kotlin.math.absoluteValue
 import com.cesoft.cesdoom.util.Log
 
@@ -46,8 +45,8 @@ class RampFactory(assets: Assets) {
 		private val dimFCX90Y45Z00 = Vector3(2*.707f*LONG, 2*.707f*LONG, HIGH*2)	///Izquierda y Derecha
 		private val dimFCX45Y00Z90 = Vector3(HIGH*2, 2*.707f*LONG, 2*.707f*LONG)	///Adelante y Atras
 
-		private val dimGround = Vector3(LONG_GROUND, THICK_GROUND, LONG_GROUND)
-		private val dimFCGround = Vector3(2*LONG_GROUND, 2*THICK_GROUND, 2*LONG_GROUND)
+//		private val dimGround = Vector3(LONG_GROUND, THICK_GROUND, LONG_GROUND)
+//		private val dimFCGround = Vector3(2*LONG_GROUND, 2*THICK_GROUND, 2*LONG_GROUND)
 
 		private const val POSITION_NORMAL =
 				(VertexAttributes.Usage.Position
@@ -134,7 +133,7 @@ class RampFactory(assets: Assets) {
 	}
 
 	//______________________________________________________________________________________________
-	fun createGround(engine: Engine, pos: Vector3, type:Type=Type.STEEL) {
+	/*fun createGround(engine: Engine, pos: Vector3, type:Type=Type.STEEL) {
 
 		val entity = Entity()
 
@@ -164,26 +163,9 @@ class RampFactory(assets: Assets) {
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 
 		engine.addEntity(entity)
-	}
+	}*/
 
-
-
-	//______________________________________________________________________________________________
-	fun createGround2(mapFactory: MapGraphFactory, engine: Engine, assets: Assets,
-					  size: Vector2, pos: Vector3, angle: Float=-90f,
-					  type:Type=Type.STEEL, double: Boolean=false) {
-
-		if(double) {
-			createGround2(mapFactory, engine, assets, size, pos.cpy(), angle + 180f, type)
-		}
-		else {
-			/// PATH FINDING MAP
-			RampMapFactory.addWays(mapFactory, size, pos)
-		}
-
-		val entity = Entity()
-
-		/// MATERIAL
+	private fun createGroundMaterial(assets: Assets, size: Vector2, type:Type) : Material {
 		val texture = when(type) {
 			Type.GRILLE -> assets.getWallGrille()
 			else -> assets.getWallSteel()
@@ -196,15 +178,10 @@ class RampFactory(assets: Assets) {
 		material.set(textureAttribute)
 		if(type == Type.GRILLE)
 			material.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
+		return material
+	}
 
-		/// MODEL
-		val modelComponent = DecalFactory.createDecal(material, size, pos, angle, 0f)
-		entity.add(modelComponent)
-
-		/// FRUSTUM CULLING
-		modelComponent.frustumCullingData = FrustumCullingData.create(pos, Vector3(size.x, 5f, size.y))
-
-		/// COLLISION
+	private fun createGroundCollision(size: Vector2, modelComponent: ModelComponent, entity: Entity, type: Type) {
 		val shape = btBoxShape(Vector3(size.x/2, size.y/2, 4f))
 		val motionState = MotionState(modelComponent.instance.transform)
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
@@ -219,9 +196,39 @@ class RampFactory(assets: Assets) {
 		rigidBody.rollingFriction = 1f
 		rigidBody.spinningFriction = 1f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
-
-		engine.addEntity(entity)
 	}
 
+	//______________________________________________________________________________________________
+	fun createGround2(mapFactory: MapGraphFactory, engine: Engine, assets: Assets,
+					  s: Vector2, p: Vector3, angle: Float=-90f,
+					  type:Type=Type.STEEL, double: Boolean=false) {
+
+		val size = s.cpy()
+		val pos = p.cpy()
+
+		if(double) {
+			createGround2(mapFactory, engine, assets, size, pos.cpy(), angle + 180f, type)
+		}
+		else {
+			/// PATH FINDING MAP
+			RampMapFactory.addWays(mapFactory, size, pos)
+		}
+
+		val entity = Entity()
+		engine.addEntity(entity)
+
+		/// MATERIAL
+		val material = createGroundMaterial(assets, size, type)
+
+		/// MODEL
+		val modelComponent = DecalFactory.createDecal(material, size, pos, angle, 0f)
+		entity.add(modelComponent)
+
+		/// FRUSTUM CULLING
+		modelComponent.frustumCullingData = FrustumCullingData.create(pos, Vector3(size.x, 5f, size.y))
+
+		/// COLLISION
+		createGroundCollision(size, modelComponent, entity, type)
+	}
 
 }

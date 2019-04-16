@@ -44,10 +44,15 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 	private var isDisposed = false
 	//private val shadowLight: DirectionalShadowLight
 
+	val fpsLogger = com.badlogic.gdx.graphics.FPSLogger()
+	val glProfiler = com.badlogic.gdx.graphics.profiling.GLProfiler(Gdx.graphics)
+
 
 	//______________________________________________________________________________________________
 	init {
 		Log.e(tag, "INI ---------------------------------------------------------")
+
+		glProfiler.enable()
 
 		/// Events
 		eventSignal.add(renderQueue)
@@ -108,9 +113,20 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 
 		drawGun(delta)
 
-		if(Log.debugMode)statistics(countDrawn)
+		if(Log.debugMode) {
+			//statistics(countDrawn)
+			val now = System.currentTimeMillis()
+			if(now > lastOutput+1000) {
+				lastOutput = now
+				Log.e(tag, "textureBindings=" + glProfiler.textureBindings +"  :  "+(glProfiler.textureBindings)*1000/(now-secFromIni))
+				Log.e(tag, "      drawCalls=" + glProfiler.drawCalls +"  :  "+(glProfiler.drawCalls)*1000/(now-secFromIni))
+				Log.e(tag, "            fps=" + Gdx.graphics.framesPerSecond)//fpsLogger.log()
+			}
+		}
 	}
-	private var countDrawnMax = 0
+	private var lastOutput = 0L
+	private val secFromIni = System.currentTimeMillis()
+	/*private var countDrawnMax = 0
 	private var countDrawnMedMax = 0
 	private var countDrawnMedMin = 100
 	private var fpsMax = 0
@@ -133,7 +149,7 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 			if (countDrawnMedMin > med) countDrawnMedMin = med
 		}
 		Log.e(tag, "RenderSystem:update:-----------------------countDrawnMax=$countDrawnMax / FPSmax=$fpsMax / FPSmin=$fpsMin /// fpsMed=${fpsMed.toInt()} /// fpsMed=${V/nVals.size} ---------- $countDrawnMedMax / $countDrawnMedMin")
-	}
+	}*/
 
 	//______________________________________________________________________________________________
 	private fun renderParticleEffects() {

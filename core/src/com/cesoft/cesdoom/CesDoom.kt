@@ -32,8 +32,10 @@ import com.cesoft.cesdoom.util.PlayServices
 
 //TODO:
 //
-//TODO: FPS !!!  (Enemy consume mucho, es todo por pathfinding?)
-//TODO: Pathfinding 3D (enhancement) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//TODO: FPS !!!
+//	+ https://github.com/libgdx/libgdx/wiki/Profiling
+// 	+ (Enemy consume mucho, es todo por pathfinding?)
+//TODO: Pathfinding 3D (enhancement) + level contructor !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
 //TODO: Ascensores y escaleras!!!
 //TODO: Level Constructor + Pathfinding compilator

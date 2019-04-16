@@ -120,7 +120,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
             return res
         }
         catch(e: Exception) {
-            Log.e(tag, "id=$id:findPath:e:-------------------- $e")
+            Log.e(tag, "id=$id:findPath:e:------- $nodeOrig / $nodeDest ------------- $e")
             e.printStackTrace()
         }
 
