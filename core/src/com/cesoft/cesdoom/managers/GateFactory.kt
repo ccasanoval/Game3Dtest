@@ -107,7 +107,7 @@ object GateFactory {
         rigidBody.spinningFriction = 1f
         entity.add(BulletComponent(rigidBody, bodyInfo))
 
-        entity.init(modelComponent, angle, pos, rigidBody, bodyInfo)
+        entity.init(modelComponent, angle, pos.cpy(), rigidBody, bodyInfo)
         engine.addEntity(entity)
         return entity
     }

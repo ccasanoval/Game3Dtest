@@ -12,11 +12,8 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder
-import com.badlogic.gdx.math.Matrix4
-import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.physics.bullet.collision.Collision
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
@@ -38,14 +35,6 @@ object WallFactory {
 
 	enum class Type { CONCRETE, STEEL, GRILLE, CIRCUITS }
 
-	// dimension en X grados para frustum culling
-	private val dim0 = Vector3(THICK*2, HIGH*2, LONG*2)
-	private val dim90= Vector3(LONG*2, HIGH*2, THICK*2)
-	private val dim45= Vector3(LONG*2, HIGH*2, LONG*2)
-
-	private val dimCollision = Vector3(THICK+0f,HIGH+0f,LONG+0f)
-
-	private val mb = ModelBuilder()
 	private const val POSITION_NORMAL =
 			(VertexAttributes.Usage.Position
 			or VertexAttributes.Usage.Normal
@@ -88,10 +77,8 @@ object WallFactory {
         materialCircuits.set(textureAttribute4)
 	}
 
-
 	//______________________________________________________________________________________________
 	//TODO : no cerrar modelBuilder.end() y crear todos los objetos antes para que sea una sola pieza mas eficiente...
-
 
 	//______________________________________________________________________________________________
 	fun createWall(mapFactory: MapGraphFactory, engine: Engine, assets: Assets,
@@ -199,10 +186,9 @@ object WallFactory {
 		entity.add(modelComponent)
 
 		/// COLLISION
-		val dim = Vector3(size.x/2, size.y/2, WallFactory.THICK)
+		val dim = Vector3(size.x/2, size.y/2, THICK)
 		val shape = btBoxShape(dim)
 		val motionState = MotionState(modelComponent.instance.transform)
-		//val motionState = MotionState(Matrix4(pos, Quaternion(), Vector3(1f,1f,1f)))
 		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
 		val rigidBody = btRigidBody(bodyInfo)
 		rigidBody.userData = entity

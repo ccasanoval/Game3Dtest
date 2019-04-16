@@ -113,16 +113,16 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 
 		drawGun(delta)
 
-		if(Log.debugMode) {
-			//statistics(countDrawn)
-			val now = System.currentTimeMillis()
-			if(now > lastOutput+1000) {
-				lastOutput = now
-				Log.e(tag, "textureBindings=" + glProfiler.textureBindings +"  :  "+(glProfiler.textureBindings)*1000/(now-secFromIni))
-				Log.e(tag, "      drawCalls=" + glProfiler.drawCalls +"  :  "+(glProfiler.drawCalls)*1000/(now-secFromIni))
-				Log.e(tag, "            fps=" + Gdx.graphics.framesPerSecond)//fpsLogger.log()
-			}
-		}
+//		if(Log.debugMode) {
+//			//statistics(countDrawn)
+//			val now = System.currentTimeMillis()
+//			if(now > lastOutput+1000) {
+//				lastOutput = now
+//				Log.e(tag, "textureBindings=" + glProfiler.textureBindings +"  :  "+(glProfiler.textureBindings)*1000/(now-secFromIni))
+//				Log.e(tag, "      drawCalls=" + glProfiler.drawCalls +"  :  "+(glProfiler.drawCalls)*1000/(now-secFromIni))
+//				Log.e(tag, "            fps=" + Gdx.graphics.framesPerSecond)//fpsLogger.log()
+//			}
+//		}
 	}
 	private var lastOutput = 0L
 	private val secFromIni = System.currentTimeMillis()

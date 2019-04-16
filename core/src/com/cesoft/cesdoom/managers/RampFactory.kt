@@ -39,14 +39,10 @@ class RampFactory(assets: Assets) {
 		const val THICK = 1f
 
 		const val LONG_GROUND = 25f
-		private const val THICK_GROUND = 2f
 
 		private val dim = Vector3(THICK+5, HIGH, LONG)//Aumenta espesor colision para que player no tenga rayos X !!
 		private val dimFCX90Y45Z00 = Vector3(2*.707f*LONG, 2*.707f*LONG, HIGH*2)	///Izquierda y Derecha
 		private val dimFCX45Y00Z90 = Vector3(HIGH*2, 2*.707f*LONG, 2*.707f*LONG)	///Adelante y Atras
-
-//		private val dimGround = Vector3(LONG_GROUND, THICK_GROUND, LONG_GROUND)
-//		private val dimFCGround = Vector3(2*LONG_GROUND, 2*THICK_GROUND, 2*LONG_GROUND)
 
 		private const val POSITION_NORMAL =
 				(VertexAttributes.Usage.Position
@@ -132,39 +128,6 @@ class RampFactory(assets: Assets) {
 		return entity
 	}
 
-	//______________________________________________________________________________________________
-	/*fun createGround(engine: Engine, pos: Vector3, type:Type=Type.STEEL) {
-
-		val entity = Entity()
-
-		/// MODEL
-		val material = if(type==Type.STEEL) materialSteel else materialGrille
-		val model : Model = modelBuilder.createBox(dimFCGround.x, dimFCGround.y, dimFCGround.z, material, POSITION_NORMAL)
-		val modelComponent = ModelComponent(model, pos)
-		entity.add(modelComponent)
-
-		/// Frustum Culling (Should not depend on it material is solid or not?)
-		modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimFCGround)
-
-		/// COLLISION
-		val shape = btBoxShape(dimGround)
-		val motionState = MotionState(modelComponent.instance.transform)
-		val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
-		val rigidBody = btRigidBody(bodyInfo)
-		rigidBody.userData = entity
-		rigidBody.motionState = motionState
-		rigidBody.collisionFlags = rigidBody.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
-		rigidBody.contactCallbackFilter = 0
-		rigidBody.userValue = if(type==Type.STEEL) BulletComponent.STEEL_RAMP_FLAG else 0	// La regilla no para las balas
-		rigidBody.activationState = Collision.DISABLE_DEACTIVATION
-		rigidBody.friction = 1f
-		rigidBody.rollingFriction = 1f
-		rigidBody.spinningFriction = 1f
-		entity.add(BulletComponent(rigidBody, bodyInfo))
-
-		engine.addEntity(entity)
-	}*/
-
 	private fun createGroundMaterial(assets: Assets, size: Vector2, type:Type) : Material {
 		val texture = when(type) {
 			Type.GRILLE -> assets.getWallGrille()
@@ -200,11 +163,8 @@ class RampFactory(assets: Assets) {
 
 	//______________________________________________________________________________________________
 	fun createGround2(mapFactory: MapGraphFactory, engine: Engine, assets: Assets,
-					  s: Vector2, p: Vector3, angle: Float=-90f,
+					  size: Vector2, pos: Vector3, angle: Float=-90f,
 					  type:Type=Type.STEEL, double: Boolean=false) {
-
-		val size = s.cpy()
-		val pos = p.cpy()
 
 		if(double) {
 			createGround2(mapFactory, engine, assets, size, pos.cpy(), angle + 180f, type)
