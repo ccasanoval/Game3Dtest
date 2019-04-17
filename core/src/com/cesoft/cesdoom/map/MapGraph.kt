@@ -19,10 +19,6 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
         val tag: String = MapGraph::class.java.simpleName
     }
 
-    init {
-        Log.e(tag, "$id------------------------------------------------ INIT ------------------------------------------------\n")
-    }
-
     val cx: Int = (width / scale).toInt()
     val cy: Int = (height / scale).toInt()
 
@@ -104,8 +100,7 @@ class MapGraph(val id: Int, val width: Float, val height: Float, private val sca
         val nodeOrig = getNode(orig, enemy)
         val nodeDest = getNode(dest, null)
         if(enemy.isTrapped()) {
-            Log.e(tag, "Enemy: ${enemy.id} IS TRAPPED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            //val path = arrayListOf(Vector2())
+            //Log.e(tag, "Enemy: ${enemy.id} IS TRAPPED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             return ArrayList()
         }
         val pathFinder = IndexedAStarPathFinder<Node>(this)

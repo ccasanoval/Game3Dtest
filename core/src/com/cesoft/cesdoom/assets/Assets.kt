@@ -2,10 +2,12 @@ package com.cesoft.cesdoom.assets
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.scenes.scene2d.ui.Image
@@ -133,8 +135,14 @@ class Assets {
 
 	// MODELS
 	//______________________________________________________________________________________________
+	private fun removeEmissiveAttrib(modelFileName: String):Model {
+		val model = assetManager.get(modelFileName, Model::class.java)
+		for(i in 0 until model.materials.size)//Some blender models comes with emissive colors...
+			model.materials.get(i).set(ColorAttribute(ColorAttribute.Emissive, Color.BLACK))
+		return model
+	}
 	fun iniDome() = assetManager.load(MODEL_DOME, Model::class.java)
-	fun getDome():Model = assetManager.get(MODEL_DOME, Model::class.java)
+	fun getDome():Model = removeEmissiveAttrib(MODEL_DOME)
 	//______________________________________________________________________________________________
 	fun iniEnemy(type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER0) {
 		when(type) {
@@ -144,19 +152,19 @@ class Assets {
 	}
 	fun getEnemy(type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER0): Model {
 		return when(type) {
-			EnemyComponent.TYPE.MONSTER0 -> assetManager.get(MODEL_MONSTER0, Model::class.java)
-			EnemyComponent.TYPE.MONSTER1 -> assetManager.get(MODEL_MONSTER1, Model::class.java)
+			EnemyComponent.TYPE.MONSTER0 -> removeEmissiveAttrib(MODEL_MONSTER0)
+			EnemyComponent.TYPE.MONSTER1 -> removeEmissiveAttrib(MODEL_MONSTER1)
 		}
 	}
 	//______________________________________________________________________________________________
 	fun iniAmmo() = assetManager.load(MODEL_AMMO, Model::class.java)
-	fun getAmmo():Model = assetManager.get(MODEL_AMMO, Model::class.java)
+	fun getAmmo():Model = removeEmissiveAttrib(MODEL_AMMO)
 	//______________________________________________________________________________________________
 	fun iniHealth() = assetManager.load(MODEL_HEALTH, Model::class.java)
-	fun getHealth():Model = assetManager.get(MODEL_HEALTH, Model::class.java)
+	fun getHealth():Model = removeEmissiveAttrib(MODEL_HEALTH)
 	//______________________________________________________________________________________________
 	fun iniRifle() = assetManager.load(MODEL_RIFLE, Model::class.java)
-	fun getRifle():Model = assetManager.get(MODEL_RIFLE, Model::class.java)
+	fun getRifle():Model = removeEmissiveAttrib(MODEL_RIFLE)
 
 	// IMAGES
 	//______________________________________________________________________________________________

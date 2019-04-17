@@ -120,7 +120,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
             }
         }
     }
-    fun print2() {
+    fun printMap() {
         for (floor in 0 until map.size) {
             val map0 = map[floor]
             Log.e("MAP", "\n------------------------------------------------ FLOOR $floor ------------------------------------------------\n")

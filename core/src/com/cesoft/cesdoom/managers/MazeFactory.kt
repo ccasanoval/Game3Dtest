@@ -61,8 +61,7 @@ object MazeFactory {
 		rampFactory = RampFactory(assets)
 
 		createLevel(engine, assets)
-		System.gc()
-
+System.gc()
 		mapFactory.compile()
 
 		//----- TEST
@@ -70,12 +69,13 @@ object MazeFactory {
 //		com.cesoft.cesdoom.util.Log.e(tag, "")
 //		com.cesoft.cesdoom.util.Log.e(tag, "")
 
-		mapFactory.print2()
-		com.cesoft.cesdoom.util.Log.e(tag, "----------------------------------------------------------------------------")
-		com.cesoft.cesdoom.util.Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].floorAccess.size)
-        for(access in mapFactory.map[0].floorAccess) {
-			com.cesoft.cesdoom.util.Log.e(tag, "access----------------------- $access")
-        }
+		mapFactory.printMap()
+//		Log.e(tag, "----------------------------------------------------------------------------")
+//		Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].floorAccess.size)
+//        for(access in mapFactory.map[0].floorAccess) {
+//			Log.e(tag, "access----------------------- $access")
+//        }
+
 //		com.cesoft.cesdoom.util.Log.e(tag, "----------------------------------------------------------------------------")
 //		com.cesoft.cesdoom.util.Log.e(tag, " LEVEL ACCESSES:LEVEL(1) "+ mapFactory.map[1].floorAccess.size)
 //		for(access in mapFactory.map[1].floorAccess) {
@@ -100,10 +100,6 @@ object MazeFactory {
 //        }
         Log.e(tag, "create---------------------------------------------------------------------------- END")
 	}
-
-
-	//TODO: Level constructor !!!
-
 
 	//______________________________________________________________________________________________
 	private fun createLevelX(level: Int, e: Engine, assets: Assets) {
@@ -201,6 +197,7 @@ object MazeFactory {
 		wf.createGrille(mapFactory, e, assets, size2D, pos, 180f)
 		pos.set(+3.6f*lng2, 0f, +6.5f*lng2)
 		wf.createGrille(mapFactory, e, assets, size2D, pos, 180f)
+System.gc()
 	}
 	private fun addOuterGates(level: Int, e: Engine, assets: Assets) {
 		size.set(10f, high2, 30f)
@@ -234,6 +231,7 @@ object MazeFactory {
 		ColumnFactory.add(e, mapFactory, assets, size, pos)
 		//
 		addSwitchesLevelX(level, e, assets)
+System.gc()
 	}
 	//______________________________________________________________________________________________
 	private fun addInnerWall(e: Engine, assets: Assets) {
@@ -265,6 +263,7 @@ object MazeFactory {
 		wf.createWall(mapFactory, e, assets, size, pos, -45f)
 		pos.set(-8.6f*lng, 0f, -4*lng)
 		wf.createWall(mapFactory, e, assets, size, pos, +45f)
+System.gc()
 	}
 	//______________________________________________________________________________________________
 	private fun addShapesX(level: Int, e: Engine, assets: Assets) {
@@ -325,6 +324,7 @@ object MazeFactory {
 				ColumnFactory.add(e, mapFactory, assets, size, pos)
 			}
         }
+System.gc()
 	}
 
 	//______________________________________________________________________________________________
@@ -409,45 +409,44 @@ object MazeFactory {
 		}
 	}
 	private fun createFirstFloorGround(level: Int, e: Engine, assets: Assets) {
-
 		val groundTypeA: RampFactory.Type
 		val groundTypeB: RampFactory.Type
 		val groundTypeC: RampFactory.Type
 		when(level) {
 			1 -> {
 				groundTypeA = RampFactory.Type.GRILLE
-				groundTypeB = RampFactory.Type.GRILLE
-				groundTypeC = RampFactory.Type.GRILLE
-			}
-			2 -> {
-				groundTypeA = RampFactory.Type.GRILLE
 				groundTypeB = RampFactory.Type.STEEL
 				groundTypeC = RampFactory.Type.STEEL
+			}
+			2 -> {
+				groundTypeA = RampFactory.Type.STEEL
+				groundTypeB = RampFactory.Type.GRILLE
+				groundTypeC = RampFactory.Type.GRILLE
 			}
 			else -> {
 				groundTypeA = RampFactory.Type.STEEL
 				groundTypeB = RampFactory.Type.GRILLE
-				groundTypeC = RampFactory.Type.GRILLE
+				groundTypeC = RampFactory.Type.STEEL
 			}
 		}
 		// A
 		val angle = -90f
 		size2D.set(9*lng2, 4*lng2)
-		pos.set(0f, high2+thick, -2.5f*lng2)
+		pos.set(0f, high2+1, -2.5f*lng2)
 		rampFactory.createGround2(mapFactory, e, assets, size2D, pos, angle, groundTypeA, true)
-		pos.set(0f, high2+thick, +2.5f*lng2)
+		pos.set(0f, high2+1, +2.5f*lng2)
 		rampFactory.createGround2(mapFactory, e, assets, size2D, pos, angle, groundTypeA, true)
 		// B
 		size2D.set(lng2, lng2)
-		pos.set(-4*lng2, high2+thick, 0f)
+		pos.set(-4*lng2, high2+1, 0f)
 		rampFactory.createGround2(mapFactory, e, assets, size2D, pos, angle, groundTypeB, true)
-		pos.set(+4*lng2, high2+thick, 0f)
+		pos.set(+4*lng2, high2+1, 0f)
 		rampFactory.createGround2(mapFactory, e, assets, size2D, pos, angle, groundTypeB, true)
 		// C
 		size2D.set(1.5f*lng2, lng2)
-		pos.set(-1.25f*lng2, high2+thick, 0f)
+		pos.set(-1.25f*lng2, high2+1, 0f)
 		rampFactory.createGround2(mapFactory, e, assets, size2D, pos, angle, groundTypeC, true)
-		pos.set(+1.25f*lng2, high2+thick, 0f)
+		pos.set(+1.25f*lng2, high2+1, 0f)
 		rampFactory.createGround2(mapFactory, e, assets, size2D, pos, angle, groundTypeC, true)
 	}
 	private fun createFirstFloorExtras(e: Engine, assets: Assets) {

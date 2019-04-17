@@ -142,7 +142,7 @@ class EnemyFactory(assets: Assets) {
 
     private fun resetComponents(entity: Entity) {
         val enemy = EnemyComponent.get(entity)
-        enemy.reset()
+        enemy.reset(PlayerComponent.currentLevel, random.nextInt(100))
         //
         val status = StatusComponent.get(entity)
         status.alive = false

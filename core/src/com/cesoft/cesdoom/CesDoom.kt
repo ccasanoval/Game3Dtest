@@ -29,6 +29,8 @@ import com.cesoft.cesdoom.util.PlayServices
 //
 // si te dice que no existe el apk: https://stackoverflow.com/questions/34039834/the-apk-file-does-not-exist-on-disk
 // https://xoppa.github.io/blog/using-the-libgdx-3d-physics-bullet-wrapper-part1/
+//
+//READ: https://github.com/libgdx/libgdx/wiki/Using-libGDX-with-Kotlin
 
 //TODO:
 //
@@ -36,16 +38,17 @@ import com.cesoft.cesdoom.util.PlayServices
 //	+ https://github.com/libgdx/libgdx/wiki/Profiling
 // 	+ (Enemy consume mucho, es todo por pathfinding?)
 //TODO: Pathfinding 3D (enhancement) + level contructor !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//TODO: Pathfinding some randomnes so monsters don't look like machines!!
 //
 //TODO: Ascensores y escaleras!!!
 //TODO: Level Constructor + Pathfinding compilator
+//TODO: Saltar? Sonido al caer desde cierta altura y bounce de camara!
 //TODO: Radar de monster?
 //TODO: Textura en suelo donde nacen los bichos?
 //TODO: Monster3, Weapon2 ?
-//TODO: Saltar? Sonido al caer desde cierta altura y bounce de camara!
 //
 //TODO: mandos de pantalla : Ampliar y cambiar por mitad pantalla, mirar+disparo unidos? .... añadir salto?
-
+//
 //TODO: Dependecy Injection? https://github.com/denisk20/libgdx-dagger2
 //TODO: Shadows? Fog?
 

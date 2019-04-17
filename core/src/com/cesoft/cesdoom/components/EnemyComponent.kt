@@ -56,6 +56,9 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 			TYPE.MONSTER1 -> RADIO1
 		}
 
+	var forceWalk = 0f
+	var forceRun = 0f
+
 	var orientation: Double = 0.0
 	var position = Vector3()
 	var positionOld = Vector3()
@@ -99,7 +102,7 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 	var statusMov: StatusMov = StatusMov.QUIET
 
 
-	fun reset() {
+	fun reset(level: Int, random: Int) {
 		currentAnimation = ACTION.WALKING
 		isAccessFloorPath = false
 		player2D.set(Vector2.Zero)
@@ -109,5 +112,8 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 		repeatedPos = 0
 		nextEscape = 0
 		lastNodes.clear()
+		//
+		forceWalk = (level * 75) + random + if(type == TYPE.MONSTER0) 1200f else 1000f
+		forceRun = (level * 75) + random + if(type == TYPE.MONSTER0) 1700f else 1300f
 	}
 }

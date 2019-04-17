@@ -83,20 +83,20 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 	}
 
 	private fun signInSilently() {
-		Log.e(tag, "signInSilently------------------------- isSignedIn="+isSignedIn())
+		//Log.e(tag, "signInSilently------------------------- isSignedIn="+isSignedIn())
 		if(isSignedIn())return
 		val signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
 		signInClient.silentSignIn().addOnCompleteListener(this) { task ->
 			if(task.isSuccessful) {
 				// The signed in account is stored in the task's result.
 				val signedInAccount = task.result
-				Log.e(tag, "signInSilently:isSuccess!!!!!!!!!!!!!!!!------------------------- $signedInAccount")
+				//Log.e(tag, "signInSilently:isSuccess!!!!!!!!!!!!!!!!------------------------- $signedInAccount")
 			}
 			else {
 				// Player will need to sign-in explicitly using via UI
 				try {
-					Log.e(tag, "signInSilently: NOT isSuccess1------------------------- ${task.exception?.printStackTrace()}")
-					Log.e(tag, "signInSilently: NOT isSuccess2------------------------- ${task.exception?.message}")
+					//Log.e(tag, "signInSilently: NOT isSuccess1------------------------- ${task.exception?.printStackTrace()}")
+					//Log.e(tag, "signInSilently: NOT isSuccess2------------------------- ${task.exception?.message}")
 					//Log.e(tag, "signInSilently: NOT isSuccess3------------------------- ${task.result}")
 				} catch(e: Exception) {}
 				startSignInIntent()
@@ -106,14 +106,11 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 
 	private var hasTriedToSignIn = false
 	private fun startSignInIntent() {
-		Log.e(tag, "startSignInIntent 0-------------------------")
 		if(hasTriedToSignIn)return
 		hasTriedToSignIn = true
-		Log.e(tag, "startSignInIntent 1-------------------------")
 		val signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
 		val intent = signInClient.signInIntent
 		startActivityForResult(intent, RC_SIGN_IN)
-		Log.e(tag, "startSignInIntent 9-------------------------")
 	}
 	override fun onResume() {
 		super.onResume()
@@ -124,13 +121,13 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 		super.onActivityResult(requestCode, resultCode, data)
 		when(requestCode) {
 			RC_ACHIEVEMENTS -> {
-				Log.e(tag, "RC_ACHIEVEMENTS---------------------------------------- $resultCode")
+				//Log.e(tag, "RC_ACHIEVEMENTS---------------------------------------- $resultCode")
 				if(resultCode == GamesActivityResultCodes.RESULT_RECONNECT_REQUIRED) {
 					gpgsListener?.onSignedOut()
 				}
 			}
 			RC_LEADER_BOARD -> {
-				Log.e(tag, "RC_LEADER_BOARD---------------------------------------- $resultCode")
+				//Log.e(tag, "RC_LEADER_BOARD---------------------------------------- $resultCode")
 				if(resultCode == GamesActivityResultCodes.RESULT_RECONNECT_REQUIRED) {
 					gpgsListener?.onSignedOut()
 				}
@@ -141,7 +138,7 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 					// The signed in account is stored in the result.
 					val signedInAccount = result.signInAccount
 					gpgsListener?.onSignedIn()
-					Log.e(tag, "onActivityResult:RC_SIGN_IN:isSuccess-----------($gpgsListener)-------------- $signedInAccount")
+					//Log.e(tag, "onActivityResult:RC_SIGN_IN:isSuccess-----------($gpgsListener)-------------- $signedInAccount")
 				}
 				else {
 					var message = result.status.statusMessage
@@ -162,12 +159,12 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 	var gpgsListener: PlayServices.Listener? = null
 	override fun addOnSignedIn(listener: PlayServices.Listener) {
 		gpgsListener = listener
-		Log.e(tag, "addOnSignedIn:-----------($gpgsListener)--------------")
+		//Log.e(tag, "addOnSignedIn:-----------($gpgsListener)--------------")
 	}
 
 	override fun showLeaderBoard() {
 		val account = GoogleSignIn.getLastSignedInAccount(this)
-		Log.e(tag, "showLeaderBoard:------- ${account?.displayName} / ${account?.email}")
+		//Log.e(tag, "showLeaderBoard:------- ${account?.displayName} / ${account?.email}")
 		account?.let {
 			val leaderBoard = Games.getLeaderboardsClient(this, account)
 			leaderBoard.allLeaderboardsIntent.addOnCompleteListener { result: Task<Intent> ->
@@ -178,7 +175,7 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 	}
 	override fun showAchievements() {
 		val account = GoogleSignIn.getLastSignedInAccount(this)
-		Log.e(tag, "showLeaderBoard:------- ${account?.displayName} / ${account?.email}")
+		//Log.e(tag, "showLeaderBoard:------- ${account?.displayName} / ${account?.email}")
 		account?.let {
 			val leaderBoard = Games.getAchievementsClient(this, account)
 			leaderBoard.achievementsIntent.addOnCompleteListener { result: Task<Intent> ->

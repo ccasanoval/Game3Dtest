@@ -21,8 +21,8 @@ object WallMapFactory {
 
         val length = (if(size.x > size.z) size.x else size.z)/2
         val thick = (if(size.x > size.z) size.z else size.x)
-        val length45 = (0.7071*length / mapFactory.scale).toInt()
-        var thick45 = (0.7071*thick / mapFactory.scale).toInt()
+        val length45 = (0.7071*length / mapFactory.scale).toInt()   +1
+        var thick45 = (0.7071*thick / mapFactory.scale).toInt()     +1
         if(thick45 < 1)thick45=1
 
         val floor = if(pos.y > size.y-1) 1 else 0//TODO: more levels ?

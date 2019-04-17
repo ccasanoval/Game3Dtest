@@ -18,7 +18,6 @@ import com.cesoft.cesdoom.components.*
 import com.cesoft.cesdoom.entities.Player
 import com.cesoft.cesdoom.events.*
 import com.cesoft.cesdoom.managers.*
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,11 +144,11 @@ class EnemySystem(
 				force = 0f
 			}
 			EnemyComponent.StatusMov.RUN -> {
-				force = runForce(enemy)
+				force = enemy.forceRun
 				setRunning(entity)
 			}
 			EnemyComponent.StatusMov.WALK -> {
-				force = walkForce(enemy)
+				force = enemy.forceWalk
 				setWalking(entity)
 			}
 		}
@@ -165,14 +164,6 @@ class EnemySystem(
 				&& (enemy.statusMov == EnemyComponent.StatusMov.WALK || enemy.statusMov == EnemyComponent.StatusMov.RUN)
 		val isQuiet = enemy.statusMov == EnemyComponent.StatusMov.QUIET
 		moveEnemy(entity, playerPosition, isMoving, isQuiet, force, delta)
-	}
-	private fun walkForce(enemy: EnemyComponent): Float {
-		val force = 900f//if(CesDoom.isMobile) 800f else 900f
-		return force + (PlayerComponent.currentLevel * 50)
-	}
-	private fun runForce(enemy: EnemyComponent): Float {
-		val force = if(enemy.type == EnemyComponent.TYPE.MONSTER0) 1600f else 1100f
-		return force + (PlayerComponent.currentLevel * 75)
 	}
 	//______________________________________________________________________________________________
 	private fun moveEnemy(entity: Entity, playerPosition: Vector3, isWalking: Boolean, isQuiet: Boolean, force: Float, delta: Float) {
@@ -243,10 +234,6 @@ class EnemySystem(
 
 	//----------------------------------------------------------------------------------------------
 	private fun calcPath(entity: Entity, playerPosition: Vector3) {
-
-		//TODO: si se encierra, buscar salida: ie debajo escaleras
-		//TODO: si repite mismos movimientos 3 veces, ir girando hasta encontrar salida...
-
 		val enemy = EnemyComponent.get(entity)
 		val floorEnemy = getEnemyFloor(enemy)
 		val floorPlayer = getPlayerFloor(playerPosition.y)

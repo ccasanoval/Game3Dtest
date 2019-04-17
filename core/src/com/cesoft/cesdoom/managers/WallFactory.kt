@@ -52,10 +52,10 @@ object WallFactory {
         val textureCircuits = assets.getWallCircuits()
 
 		textureConcrete.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-		val textureAttributeConcrtete = TextureAttribute(TextureAttribute.Diffuse, textureConcrete)
-		textureAttributeConcrtete.scaleU = 2f
-		textureAttributeConcrtete.scaleV = textureAttributeConcrtete.scaleU * HIGH/LONG
-		materialConcrete.set(textureAttributeConcrtete)
+		val textureAttributeConcrete = TextureAttribute(TextureAttribute.Diffuse, textureConcrete)
+		textureAttributeConcrete.scaleU = 2f
+		textureAttributeConcrete.scaleV = textureAttributeConcrete.scaleU * HIGH/LONG
+		materialConcrete.set(textureAttributeConcrete)
 
 		textureSteel.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
 		val textureAttribute2 = TextureAttribute(TextureAttribute.Diffuse, textureSteel)
@@ -78,19 +78,18 @@ object WallFactory {
 	}
 
 	//______________________________________________________________________________________________
-	//TODO : no cerrar modelBuilder.end() y crear todos los objetos antes para que sea una sola pieza mas eficiente...
-
-	//______________________________________________________________________________________________
 	fun createWall(mapFactory: MapGraphFactory, engine: Engine, assets: Assets,
 				   size: Vector3, pos: Vector3, angle: Float=0f,
 				   type: Type = Type.CONCRETE) {
+
+		pos.y += HIGH
 
 		/// GraphMap
 		WallMapFactory.createLongWall(mapFactory, size, pos, angle)
 
 		/// Entity
 		val entity = Entity()
-		pos.y += HIGH
+		engine.addEntity(entity)
 
 		/// MATERIAL
 		val length = if(size.x > size.z) size.x else size.z
@@ -150,7 +149,7 @@ object WallFactory {
 		rigidBody.spinningFriction = 1f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 
-		engine.addEntity(entity)
+System.gc()
 	}
 
 	//______________________________________________________________________________________________
@@ -160,11 +159,14 @@ object WallFactory {
 		if(double) {
 			createGrille(mapFactory, engine, assets, size, pos.cpy(), angle+180f, false)
 		}
-
 		pos.y += size.y/2
 
-		/// GraphMap
-		val size2 = Vector3(size.x, size.y, 2*WallFactory.THICK)
+		/// ENTITY
+		val entity = Entity()
+		engine.addEntity(entity)
+
+		/// PATH FINDING MAP
+		val size2 = Vector3(size.x, size.y, 2*THICK)
 		WallMapFactory.createLongWall(mapFactory, size2, pos, angle)
 
 		/// MATERIAL
@@ -176,9 +178,6 @@ object WallFactory {
 		val material = Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY))
 		material.set(textureAttribute)
 		material.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
-
-		/// Entity
-		val entity = Entity()
 
 		/// MODEL
 		// Por simplicidad el DECAL es siempre long=X, hight=Y, thick=Z / angulo=Y / looking=+Z
@@ -202,6 +201,6 @@ object WallFactory {
 		rigidBody.spinningFriction = 1f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 
-		engine.addEntity(entity)
+		System.gc()
 	}
 }
