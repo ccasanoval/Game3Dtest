@@ -193,8 +193,8 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
     }
     ///
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
-		val v = if(value.absoluteValue < 0.1) 0f else value
-        Log.e(tag, "axisMoved:------------"+controller?.name+"--------------axis=$axisCode  value=$v")
+		//val v = if(value.absoluteValue < 0.1) 0f else value
+        //Log.e(tag, "axisMoved:------------"+controller?.name+"--------------axis=$axisCode  value=$v")
         currentTxt?.let {
             it.text = axisCode.toString()
         }
@@ -202,11 +202,11 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
     }
     ///
     override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
-        Log.e(PlayerSystem.tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
+        //Log.e(PlayerSystem.tag, "buttonUp:----------------"+controller?.name+" : "+buttonCode)
         return false
     }
     override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
-        Log.e(PlayerSystem.tag, "buttonDown:----------------"+controller?.name+" : "+buttonCode)
+        //Log.e(PlayerSystem.tag, "buttonDown:----------------"+controller?.name+" : "+buttonCode)
         currentTxt?.let {
             it.text = buttonCode.toString()
         }
@@ -214,19 +214,19 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
     }
     ///
     override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
-        Log.e(PlayerSystem.tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
+        //Log.e(PlayerSystem.tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
         return false
     }
     override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-        Log.e(PlayerSystem.tag, "ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+        //Log.e(PlayerSystem.tag, "ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
         return false
     }
     override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-        Log.e(PlayerSystem.tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+        //Log.e(PlayerSystem.tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
         return false
     }
     override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
-        Log.e(PlayerSystem.tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
+        //Log.e(PlayerSystem.tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
         return false
     }
 }

@@ -22,7 +22,7 @@ class MessageWidget(assets: Assets) : Actor() {
 
 	override fun act(delta: Float) {
 		message.act(delta)
-		if(PlayerComponent.message.isEmpty() && !message.text.isEmpty()) {
+		if(PlayerComponent.message.isEmpty() && message.text.isNotEmpty()) {
 			/*if(PlayerComponent.isGodModeOn) {
 				message.text = " * GOD MODE * "
 			}

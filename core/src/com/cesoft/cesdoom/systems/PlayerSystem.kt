@@ -236,7 +236,7 @@ class PlayerSystem(
 	private fun updateJumping(delta: Float) {
 		val jumpPad = inputMap.isButtonPressed(Inputs.Action.JUMP)
 		if(jumpPad) {
-			Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+PlayerComponent.isJumping)
+			//Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+PlayerComponent.isJumping)
 			if( ! PlayerComponent.isJumping) {
 				PlayerComponent.isJumping = true
 				val force = 40 * delta
@@ -481,7 +481,6 @@ class PlayerSystem(
 
 
 	private fun resetPlayerComponent() {
-		Log.e(tag, "resetPlayerComponent------------------------------------- ${PlayerComponent.currentLevel}")
 		PlayerComponent.isWinning = false
 		PlayerComponent.isJumping = false
 		PlayerComponent.isReloading = false

@@ -6,17 +6,17 @@ import com.badlogic.gdx.ai.pfa.Connection
 //
 class Vertex(private val orig: Node, private val dest: Node) : Connection<Node> {
 
-    private var coste: Float = 0f
+    private var cost: Float = 0f
 
     init {
         if(dest.isValid)
-            this.coste = orig.point.dist2(dest.point).toFloat()
+            this.cost = orig.point.dist2(dest.point).toFloat()
         else
-            this.coste = java.lang.Float.MAX_VALUE / 2
+            this.cost = java.lang.Float.MAX_VALUE / 2
     }
 
     override fun getCost(): Float {
-        return coste
+        return cost
     }
 
     override fun getFromNode(): Node {

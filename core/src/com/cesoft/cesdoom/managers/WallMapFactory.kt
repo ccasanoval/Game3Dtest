@@ -41,7 +41,7 @@ object WallMapFactory {
                         mapFactory.addCollider(floor, Point(posMap.x + x_, posMap.y + y_))
             }
             +45f -> {//--- Diagonal 1
-                Log.e(tag, "--------- DIAGONAL 45 ------------ thick45=$thick45 length45=$length45 ")
+                //Log.e(tag, "--------- DIAGONAL 45 ------------ thick45=$thick45 length45=$length45 ")
                 for(t_ in -thick45..thick45)
                     for(xy_ in -length45..length45)
                         mapFactory.addCollider(floor, Point(posMap.x + xy_ + t_, posMap.y + xy_))

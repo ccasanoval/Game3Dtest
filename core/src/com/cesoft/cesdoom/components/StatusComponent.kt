@@ -16,35 +16,34 @@ class StatusComponent: Component {
 
 	var alive = false
 
-	//var isSaltando = true
-	var estado = EnemyComponent.ACTION.WALKING
+	var status = EnemyComponent.ACTION.WALKING
 
 	var deadStateTime: Float = 0f
 	var achingStateTime: Float = 0f
 
 
 	/// DEAD
-	fun isDead() = estado == EnemyComponent.ACTION.DYING
+	fun isDead() = status == EnemyComponent.ACTION.DYING
 
 	/// ACHING
 	var health: Float = 100f
-	fun isAching() = estado == EnemyComponent.ACTION.ACHING
-	fun setAchingState() {estado = EnemyComponent.ACTION.ACHING}
+	fun isAching() = status == EnemyComponent.ACTION.ACHING
+	fun setAchingState() {status = EnemyComponent.ACTION.ACHING}
 
 
 	/// RUNNING
-	fun isRunning() = estado == EnemyComponent.ACTION.RUNNING
-	fun setRunningState() {estado = EnemyComponent.ACTION.RUNNING}
+	fun isRunning() = status == EnemyComponent.ACTION.RUNNING
+	fun setRunningState() {status = EnemyComponent.ACTION.RUNNING}
 
 
 	/// WALKING
-	fun isWalking() = estado == EnemyComponent.ACTION.WALKING
-	fun setWalkingState() {estado = EnemyComponent.ACTION.WALKING}
+	fun isWalking() = status == EnemyComponent.ACTION.WALKING
+	fun setWalkingState() {status = EnemyComponent.ACTION.WALKING}
 
 
-	/// ATACKING
-	fun isAttacking() = estado == EnemyComponent.ACTION.ATTACKING
-	fun setAttackingState() {estado = EnemyComponent.ACTION.ATTACKING}
+	/// ATTACKING
+	fun isAttacking() = status == EnemyComponent.ACTION.ATTACKING
+	fun setAttackingState() {status = EnemyComponent.ACTION.ATTACKING}
 
 
 }

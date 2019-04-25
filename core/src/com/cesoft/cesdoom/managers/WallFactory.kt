@@ -91,6 +91,7 @@ object WallFactory {
 		val entity = Entity()
 		engine.addEntity(entity)
 
+		/*** */
 		/// MATERIAL
 		val length = if(size.x > size.z) size.x else size.z
 		val texture = when(type) {
@@ -120,6 +121,11 @@ object WallFactory {
 		val model = modelBuilder.end()
 		val modelComponent = ModelComponent(model, pos)
 		modelComponent.instance.transform.rotate(Vector3.Y, -angle)
+		/*** */
+		/***
+		val modelComponent = BoxFactory.createBox(type, assets, size, pos, 0f, -angle)
+		*/
+
 		entity.add(modelComponent)
 
 		// FRUSTUM CULLING

@@ -204,7 +204,7 @@ class EnemySystem(
 				enemy.orientation = theta
 			}
 			else {
-				val weight = 50.0*delta//TODO: referenciar a delta
+				val weight = 50.0*delta
 				enemy.orientation = (weight * enemy.orientation + theta) / (weight + 1)
 			}
 		}
@@ -255,12 +255,10 @@ class EnemySystem(
 		}
 		else if(enemy.stepCounter++ > 100) {
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-//Log.e(tag, "${enemy.id}--------------------------- RECALCULAR LIMITE DE PASOS : target=${enemy.player2D}")
 			recalcPath(enemy, playerPosition)
 		}
 		else if(enemy.pathIndex == 0 || enemy.pathIndex >= enemy.path!!.size) {
 			enemy.player2D.set(getTarget(floorPlayer, playerPosition, floorEnemy, enemy.currentPos2D))
-//Log.e(tag, "${enemy.id}--------------------------- RECALCULAR POR FALTA DE PATH : target=${enemy.player2D}  /  enemy.pathIndex=${enemy.pathIndex} path size=${enemy.path?.size}  ")
 			recalcPath(enemy, playerPosition)
 		}
 		else
@@ -395,7 +393,7 @@ class EnemySystem(
 			status.achingStateTime += delta
 			if (isAchingOver(entity)) {
 				status.achingStateTime = 0f
-				status.estado = EnemyComponent.ACTION.IDLE//REINCARNATING
+				status.status = EnemyComponent.ACTION.IDLE//REINCARNATING
 				playReincarnating(entity)
 			}
 		}
@@ -448,7 +446,7 @@ class EnemySystem(
 
 	private fun setDeadState(entity: Entity) {
 		val status = StatusComponent.get(entity)
-		status.estado = EnemyComponent.ACTION.DYING
+		status.status = EnemyComponent.ACTION.DYING
 		status.deadStateTime = 0f
 	}
 

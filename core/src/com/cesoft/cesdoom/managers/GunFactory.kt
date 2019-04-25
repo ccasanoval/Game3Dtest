@@ -58,9 +58,7 @@ object GunFactory {
 
 		val animParams = getAnimationParams(type, action)
 		if(animParams.id.isEmpty())return
-
-		if( ! animParams.id.isEmpty())
-			AnimationComponent.get(entity).animate(animParams)
+		AnimationComponent.get(entity).animate(animParams)
 	}
 	//______________________________________________________________________________________________
 	private fun getAnimationParams(type: GunComponent.TYPE, action: GunComponent.ACTION) : AnimationParams {

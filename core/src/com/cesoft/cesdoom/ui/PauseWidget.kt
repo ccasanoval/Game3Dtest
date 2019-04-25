@@ -16,7 +16,6 @@ import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +52,7 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		//
 		configureWidgets()
 		setListeners()
-		Controllers.addListener(game.playerInput)//TODO: remove!!!!!!!!!!!
+		Controllers.addListener(game.playerInput)
 		//
 		setSize(0.8f*CesDoom.VIRTUAL_WIDTH, 0.8f*CesDoom.VIRTUAL_HEIGHT)
 		setPosition(CesDoom.VIRTUAL_WIDTH - width, CesDoom.VIRTUAL_HEIGHT - height)
@@ -95,16 +94,6 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 			}
 		})
 	}
-	//______________________________________________________________________________________________
-	/*private var inputDelay = 0f
-	override fun act(delta: Float) {
-		super.act(delta)
-		inputDelay+=delta
-		if(inputDelay > .250f) {
-			inputDelay = 0f
-			processInput()
-		}
-	}*/
 
 	//______________________________________________________________________________________________
 	fun goRestart() {
@@ -169,7 +158,6 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		updateFocusSelection()
 		updateFocusColor()
 		if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
-			Log.e(tag, "processInput-------------------------------------------------------------")
 			processSelectedButton()
 		}
 	}
@@ -194,7 +182,6 @@ class PauseWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Act
 		}
 	}
 	private fun updateFocusColor() {
-		//Log.e("updateFocus", "-----------------------------------$currentFocus")
 		if(btnRestart.color.a != 0f) {
 			btnRestart.color = Styles.colorNormal1
 			btnMenu.color = Styles.colorNormal1

@@ -26,7 +26,7 @@ class Gate(val id: String, private val assets: Assets) : Entity() {
     private lateinit var rigidBodyInfo: btRigidBody.btRigidBodyConstructionInfo
     private lateinit var model: ModelComponent
 
-    var isLocked = true
+    private var isLocked = true
         private set
         fun unlock() {
             isLocked = false

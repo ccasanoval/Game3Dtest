@@ -17,14 +17,13 @@ import com.cesoft.cesdoom.components.PlayerComponent
 //
 class HealthWidget(assets: Assets) : Actor() {
 	private val healthBar: ProgressBar
-	private val progressBarStyle: ProgressBar.ProgressBarStyle
+	private val progressBarStyle: ProgressBar.ProgressBarStyle = ProgressBar.ProgressBarStyle(
+			assets.skin.newDrawable("progress-bar-back", Color.RED),
+			assets.skin.newDrawable("white", Color.GREEN))
 	private val label: Label
 
 	//______________________________________________________________________________________________
 	init {
-		progressBarStyle = ProgressBar.ProgressBarStyle(
-				assets.skin.newDrawable("progress-bar-back", Color.RED),
-				assets.skin.newDrawable("white", Color.GREEN))
 		progressBarStyle.knobBefore = progressBarStyle.knob
 		healthBar = ProgressBar(0f, 100f, 1f, false, progressBarStyle)
 

@@ -147,7 +147,7 @@ class EnemyFactory(assets: Assets) {
         val status = StatusComponent.get(entity)
         status.alive = false
         //status.isSaltando = true
-        status.estado = EnemyComponent.ACTION.WALKING
+        status.status = EnemyComponent.ACTION.WALKING
         status.deadStateTime = 0f
         status.achingStateTime = 0f
         status.health = if(enemy.type == EnemyComponent.TYPE.MONSTER0) 100f else 80f

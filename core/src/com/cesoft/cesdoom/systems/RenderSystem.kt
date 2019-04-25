@@ -44,15 +44,13 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 	private var isDisposed = false
 	//private val shadowLight: DirectionalShadowLight
 
-	val fpsLogger = com.badlogic.gdx.graphics.FPSLogger()
-	val glProfiler = com.badlogic.gdx.graphics.profiling.GLProfiler(Gdx.graphics)
+	//private val fpsLogger = com.badlogic.gdx.graphics.FPSLogger()
+	private val glProfiler = com.badlogic.gdx.graphics.profiling.GLProfiler(Gdx.graphics)
 
 
 	//______________________________________________________________________________________________
 	init {
-		Log.e(tag, "INI ---------------------------------------------------------")
-
-		glProfiler.enable()
+		//glProfiler.enable()
 
 		/// Events
 		eventSignal.add(renderQueue)
@@ -124,9 +122,9 @@ class RenderSystem(eventSignal: Signal<RenderEvent>, color: ColorAttribute, priv
 //			}
 //		}
 	}
-	private var lastOutput = 0L
+	/*private var lastOutput = 0L
 	private val secFromIni = System.currentTimeMillis()
-	/*private var countDrawnMax = 0
+	private var countDrawnMax = 0
 	private var countDrawnMedMax = 0
 	private var countDrawnMedMin = 100
 	private var fpsMax = 0

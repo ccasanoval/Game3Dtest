@@ -89,7 +89,7 @@ object Sounds {
 		}
 	}
 
-    private var assetManager: AssetManager? = null//TODO:Static Context!
+    private var assetManager: AssetManager? = null//TODO:Static Context! --------------------------------------------
     fun ini(assetManager: AssetManager) {
         this.assetManager = assetManager
     }

@@ -60,7 +60,7 @@ class InputMapper {
         mapper[axisCode]?.let { axis ->
             if(value.absoluteValue > axisOffset[axis]?:0.1f) {
                 values[axis] = if(value < 0) Value.POSITIVE else Value.NEGATIVE
-				Log.e(tag, "axisMoved-----axisCode=$axisCode---axis=$axis ------- ${axisOffset[axis]} ------------------- "+values[axis])
+				//Log.e(tag, "axisMoved-----axisCode=$axisCode---axis=$axis ------- ${axisOffset[axis]} ------------------- "+values[axis])
             }
             else {
                 values[axis] = Value.ZERO

@@ -38,7 +38,7 @@ class PlayerComponent : Component {
 
         /// Walk camera vibration -----------------
         var yFoot = 0f
-        var oFoot = 0f
+        private var oFoot = 0f
         private var FOOT_MULTI = 12
         private var FOOT_MAX = 3f
         private var isFootUp = false

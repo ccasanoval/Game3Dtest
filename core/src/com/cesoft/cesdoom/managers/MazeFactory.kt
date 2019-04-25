@@ -69,7 +69,8 @@ System.gc()
 //		com.cesoft.cesdoom.util.Log.e(tag, "")
 //		com.cesoft.cesdoom.util.Log.e(tag, "")
 
-		mapFactory.printMap()
+		//mapFactory.printMap()
+
 //		Log.e(tag, "----------------------------------------------------------------------------")
 //		Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].floorAccess.size)
 //        for(access in mapFactory.map[0].floorAccess) {

@@ -2,6 +2,6 @@
 <resources>
 
     <string name="app_name">CesDooM</string>
-    <!-- string name="app_id">787915909370</string  Ya lo tienes en res/values/ids.xml -->
+    <!-- string name="app_id">787915909370</string  Ya esta en res/values/ids.xml -->
 
 </resources>
