@@ -50,7 +50,7 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 
 		text.setWrap(true)
 		text.setFontScale(1.5f)
-		//texto.color = Styles.colorNormal1
+		//text.color = Styles.colorNormal1
 
 		scrollPane.setScrollingDisabled(true, false)
 		scrollPane.setSize(CesDoom.VIRTUAL_WIDTH-250, CesDoom.VIRTUAL_HEIGHT-250)

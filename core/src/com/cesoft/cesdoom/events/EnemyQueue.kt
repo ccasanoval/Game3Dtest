@@ -4,7 +4,6 @@ import com.badlogic.ashley.signals.Listener
 import com.badlogic.ashley.signals.Signal
 import java.util.PriorityQueue
 
-//TODO: make generics
 //https://kotlinlang.org/docs/reference/generics.html
 class EnemyQueue : Listener<EnemyEvent> {
 
@@ -17,9 +16,9 @@ class EnemyQueue : Listener<EnemyEvent> {
             return events
         }
 
-    fun poll(): EnemyEvent {
-        return eventQueue.poll()
-    }
+//    fun poll(): EnemyEvent {
+//        return eventQueue.poll()
+//    }
 
     // Implements Listener<EnemyEvent>
     override fun receive(signal: Signal<EnemyEvent>, event: EnemyEvent) {

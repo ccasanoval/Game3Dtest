@@ -37,6 +37,7 @@ import com.google.android.gms.tasks.Task
 //
 // TODO: Player Info to use in game messages: Hey Mr X, now you are dead! Hey Mr X, you Win!!
 //
+//(https://thinkmobiles.com/blog/best-vr-hardware/)
 // Para que GPGS te deje pasar:
 // Google Play Console -> Gestion de versiones (release management) -> Firma de aplicaciones () -> Certificado de firma de aplicaciones -> SHA-1
 // Ahora vas a https://console.developers.google.com/apis/credentials?project=cesdoom -> IDs de cliente de OAuth 2.0
@@ -156,7 +157,7 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 			}
 		}
 	}
-	var gpgsListener: PlayServices.Listener? = null
+	private var gpgsListener: PlayServices.Listener? = null
 	override fun addOnSignedIn(listener: PlayServices.Listener) {
 		gpgsListener = listener
 		//Log.e(tag, "addOnSignedIn:-----------($gpgsListener)--------------")

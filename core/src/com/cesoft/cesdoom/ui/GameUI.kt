@@ -15,8 +15,7 @@ import com.cesoft.cesdoom.components.PlayerComponent
 class GameUI(game: CesDoom, assets: Assets) {
 
 	var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
-	var healthWidget = HealthWidget(assets)
-		private set
+	private var healthWidget = HealthWidget(assets)
 	private var scoreWidget = ScoreWidget(assets)
 	private var ammoWidget = AmmoWidget(assets)
 	private var messageWidget = MessageWidget(assets)

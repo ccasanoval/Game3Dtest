@@ -9,29 +9,6 @@ import com.cesoft.cesdoom.components.EnemyComponent
 //
 object EnemyActions {
 
-    private val random = java.util.Random()
-
-    /*object ActionDuration {
-
-        val actionDuration = mapOf(//<EnemyComponent.TYPE, Map<EnemyComponent.ACTION, Float>>(
-            EnemyComponent.TYPE.MONSTER0 to
-                mapOf(
-                    EnemyComponent.ACTION.WALKING to 4.8f,
-                    EnemyComponent.ACTION.RUNNING to 2.4f,
-                    EnemyComponent.ACTION.ATTACKING to 3.15f,
-                    EnemyComponent.ACTION.IDLE to 0.88f,
-                    EnemyComponent.ACTION.REINCARNATING to 26f,//TODO
-                    EnemyComponent.ACTION.ACHING to 2.5f,
-                    EnemyComponent.ACTION.DYING to 3.4f//3.4f
-                ),
-            EnemyComponent.TYPE.MONSTER1 to
-                mapOf()
-        )
-    }
-
-    fun getActionDuration(action: EnemyComponent.ACTION, type: EnemyComponent.TYPE = EnemyComponent.TYPE.MONSTER1): Float {
-        return ActionDuration.actionDuration.getValue(type).getValue(action)
-    }*/
     fun getActionDuration(action: EnemyComponent.ACTION, type: EnemyComponent.TYPE): Float {
         return when(type) {
             EnemyComponent.TYPE.MONSTER0 ->
@@ -84,7 +61,6 @@ object EnemyActions {
 
             //--------------------------------------------------------------------------------------
             EnemyComponent.TYPE.MONSTER0 -> {
-                //val time = getActionDuration(action, type)
                 when(action) {
                     EnemyComponent.ACTION.WALKING ->
                         AnimationParams(ACTION_NAME0, loop, speed, 0f, 4.8f)

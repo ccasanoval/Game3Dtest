@@ -27,7 +27,6 @@ class Gate(val id: String, private val assets: Assets) : Entity() {
     private lateinit var model: ModelComponent
 
     private var isLocked = true
-        private set
         fun unlock() {
             isLocked = false
         }
