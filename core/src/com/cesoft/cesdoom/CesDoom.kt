@@ -39,6 +39,7 @@ import com.cesoft.cesdoom.util.PlayServices
 // 	+ (Enemy consume mucho, es todo por pathfinding?)
 //TODO: Pathfinding 3D (enhancement) + level contructor !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //TODO: Pathfinding some randomnes so monsters don't look like machines!!
+//TODO: Pathfinding When contact, refresh path, forget the old, just follow him
 //
 //TODO: Ascensores y escaleras!!!
 //TODO: Level Constructor + Pathfinding compilator
