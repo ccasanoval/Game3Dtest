@@ -26,7 +26,6 @@ class ParticleEffectPool(private val assetManager: AssetManager)
 	init {
 		particleSystem.add(billboardParticleBatch)
 		loadParam = ParticleEffectLoader.ParticleEffectLoadParameter(particleSystem.batches)
-
 		assetManager.load(PARTICLES_ENEMY, ParticleEffect::class.java, loadParam)
 		assetManager.finishLoadingAsset(PARTICLES_ENEMY)
 	}
@@ -55,9 +54,10 @@ class ParticleEffectPool(private val assetManager: AssetManager)
 //	}
 
 	fun dispose() {
-		for(effect in allEffects.items) {
-			effect.dispose()
-		}
+		val effects = allEffects.items
+		if(effects != null)
+			for(effect in effects.iterator())
+				effect.dispose()
 		freeAll(allEffects)
 		allEffects.clear()
 	}

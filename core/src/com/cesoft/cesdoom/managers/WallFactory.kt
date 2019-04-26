@@ -75,6 +75,14 @@ object WallFactory {
         textureAttribute4.scaleU = 1f
         textureAttribute4.scaleV = textureAttribute4.scaleU * HIGH/LONG
         materialCircuits.set(textureAttribute4)
+		System.gc()
+	}
+	fun endMaterials() {
+		materialConcrete.clear()
+		materialSteel.clear()
+		materialGrille.clear()
+		materialCircuits.clear()
+		System.gc()
 	}
 
 	//______________________________________________________________________________________________

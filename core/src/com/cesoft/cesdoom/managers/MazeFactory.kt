@@ -61,8 +61,14 @@ object MazeFactory {
 		rampFactory = RampFactory(assets)
 
 		createLevel(engine, assets)
-System.gc()
 		mapFactory.compile()
+
+//TODO: Reduce number of allocated memory, cos when released, gc takes too much time
+		//-verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails
+WallFactory.endMaterials()
+rampFactory.endMaterials()
+System.gc()
+
 
 		//----- TEST
 //		mapFactory.print()
@@ -111,6 +117,7 @@ System.gc()
 
 		/// INTERIOR SHAPES -------------
 		addShapesX(level, e, assets)
+		System.gc()
 
 		/// INNER WALL
 		addInnerWall(e, assets)
@@ -119,24 +126,28 @@ System.gc()
 		GateFactory.create(e, pos, 0f, GATE_C, assets).unlock()
 		pos.set(-GateComponent.LONG-.2f, 0f, 0f)
 		GateFactory.create(e, pos, 0f, GATE_D, assets).unlock()
+		System.gc()
 
 		/// OUTER WALL ------------------
 		addOuterWall(e, assets)
+		System.gc()
 		/// OUTER GATES ------------------
 		addOuterGates(level, e, assets)
+		System.gc()
 
 		// RAMPS ------------------
 		pos.set(+3f*lng2, high, 0f)
 		rampFactory.create(mapFactory, e, pos, angleX = 90f, angleY = -45f)
 		pos.set(-3f*lng2, high, 0f)
 		rampFactory.create(mapFactory, e, pos, angleX = 90f, angleY = +45f)
+		System.gc()
 
 		// AMMO ------------------
 		addAmmoLevelX(level, e, assets)
+		System.gc()
 
 		// HEALTH  ------------------
 		addHealthLevelX(level, e, assets)
-
 		System.gc()
 	}
 
@@ -198,7 +209,6 @@ System.gc()
 		wf.createGrille(mapFactory, e, assets, size2D, pos, 180f)
 		pos.set(+3.6f*lng2, 0f, +6.5f*lng2)
 		wf.createGrille(mapFactory, e, assets, size2D, pos, 180f)
-System.gc()
 	}
 	private fun addOuterGates(level: Int, e: Engine, assets: Assets) {
 		size.set(10f, high2, 30f)
@@ -232,7 +242,6 @@ System.gc()
 		ColumnFactory.add(e, mapFactory, assets, size, pos)
 		//
 		addSwitchesLevelX(level, e, assets)
-System.gc()
 	}
 	//______________________________________________________________________________________________
 	private fun addInnerWall(e: Engine, assets: Assets) {
@@ -264,7 +273,6 @@ System.gc()
 		wf.createWall(mapFactory, e, assets, size, pos, -45f)
 		pos.set(-8.6f*lng, 0f, -4*lng)
 		wf.createWall(mapFactory, e, assets, size, pos, +45f)
-System.gc()
 	}
 	//______________________________________________________________________________________________
 	private fun addShapesX(level: Int, e: Engine, assets: Assets) {
@@ -325,7 +333,6 @@ System.gc()
 				ColumnFactory.add(e, mapFactory, assets, size, pos)
 			}
         }
-System.gc()
 	}
 
 	//______________________________________________________________________________________________
@@ -359,6 +366,18 @@ System.gc()
 				Ammo(pos.set(+6*lng2, 0f, 0f), ammoModel, e)
 				Ammo(pos.set(-6*lng2, 0f, 0f), ammoModel, e)
 			}
+			1 -> {
+				Ammo(pos.set(-6*lng2, 0f, +3*lng2), ammoModel, e)
+				Ammo(pos.set(+6*lng2, 0f, -3*lng2), ammoModel, e)
+				Ammo(pos.set(+3*lng2, high2, +3*lng2), ammoModel, e)
+				Ammo(pos.set(-3*lng2, high2, -3*lng2), ammoModel, e)
+			}
+			2 -> {
+				Ammo(pos.set(-6*lng2, 0f, +3*lng2), ammoModel, e)
+				Ammo(pos.set(+6*lng2, 0f, -3*lng2), ammoModel, e)
+				Ammo(pos.set(-6*lng2, 0f, -3*lng2), ammoModel, e)
+				Ammo(pos.set(-3*lng2, high2, -3*lng2), ammoModel, e)
+			}
 			else -> {
 				Ammo(pos.set(+6*lng2, 0f, +3*lng2), ammoModel, e)
 				Ammo(pos.set(-6*lng2, 0f, +3*lng2), ammoModel, e)
@@ -378,11 +397,17 @@ System.gc()
 				Health(pos.set(+4*lng2, high2, 0f), healthModel, e)
 				Health(pos.set(-4*lng2, high2, 0f), healthModel, e)
 			}
+			1 -> {
+				Health(pos.set(-3.5f*lng2, 0f, 0f), healthModel, e)
+				Health(pos.set(+4*lng2, high2, -3*lng2), healthModel, e)
+			}
+			2 -> {
+				Health(pos.set(+3.5f*lng2, 0f, 0f), healthModel, e)
+				Health(pos.set(-4*lng2, high2, -3*lng2), healthModel, e)
+			}
 			else -> {
 				Health(pos.set(+3.5f*lng2, 0f, 0f), healthModel, e)
 				Health(pos.set(-3.5f*lng2, 0f, 0f), healthModel, e)
-				Health(pos.set(+4*lng2, high2, -3*lng2), healthModel, e)
-				Health(pos.set(-4*lng2, high2, +3*lng2), healthModel, e)
 			}
 		}
 	}

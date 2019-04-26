@@ -77,6 +77,11 @@ class RampFactory(assets: Assets) {
 		materialGrille.set(textureAttributeGrille)
 		materialGrille.set(BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA))
 	}
+	fun endMaterials() {
+		materialSteel.clear()
+		materialGrille.clear()
+		System.gc()
+	}
 
 	//______________________________________________________________________________________________
 	fun create(mapFactory: MapGraphFactory, engine: Engine, pos: Vector3,

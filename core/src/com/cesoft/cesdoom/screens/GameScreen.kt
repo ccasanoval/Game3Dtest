@@ -29,13 +29,6 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 		Sounds.playMusic()
 	}
 
-	//TODO:
-	//private var inputDelay = 0f
-	/*inputDelay+=delta
-	if(inputDelay > .250f) {
-		inputDelay = 0f
-		processInput()
-	}*/
 	override fun render(delta: Float) {
 		processInput()
 		gameUI.update(delta)
@@ -53,49 +46,6 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 					gameUI.pause()//Abrir pauseWidget
 			}
 		}
-		/*
-		gameUI.gameWinWidget.isVisible
-		gameUI.gameOverWidget.isVisible
-
-		val down = input.mapper.isGoingDown()
-		val up = input.mapper.isGoingUp()
-		val backward = input.mapper.isGoingBackwards()
-		val forward = input.mapper.isGoingForward()
-
-		//TODO: Send message to go to ... WICH widget is on? Pause, GameOver, GameWin ?
-		//TODO:
-		//TODO
-		when {
-			input.mapper.isButtonPressed(Inputs.Action.BACK) -> {
-				when {
-					Status.gameOver -> { gameUI.gameOverWidget.goMenu() }
-					Status.gameWin -> { gameUI.gameWinWidget.goMenu() }
-					Status.mainMenu -> { }
-					Status.paused -> gameUI.pauseWidget.goMenu()
-					else -> gameUI.pause()
-				}
-				Log.e(tag, "isButtonPressed(Inputs.Action.BACK) ---> gameOVer="+Status.gameOver+" / win="+Status.gameWin+"/menu="+Status.mainMenu+" / pause="+Status.paused)
-			}
-			input.mapper.isButtonPressed(Inputs.Action.EXIT) -> {
-				when {
-					Status.gameOver -> { gameUI.gameOverWidget.goQuit() }
-					Status.gameWin -> { gameUI.gameWinWidget.goQuit() }
-					Status.mainMenu -> {  }
-					Status.paused -> gameUI.pauseWidget.goQuit()
-				}
-			}
-			input.mapper.isButtonPressed(Inputs.Action.FIRE) -> {
-				when {
-					Status.gameOver -> {  }
-					Status.gameWin -> {  }
-					Status.mainMenu -> {  }
-					Status.paused -> {  }
-				}
-			}
-			input.mapper.isButtonPressed(Inputs.Action.START) -> {
-				Log.e(tag, "input.mapper.isButtonPressed(Inputs.Action.START)")
-			}
-		}*/
 	}
 
 	override fun resize(width: Int, height: Int) {
@@ -107,7 +57,6 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 		gameWorld.dispose()
 		if(PlayerComponent.currentLevel == 0)
 			Sounds.stopMusic()
-		com.cesoft.cesdoom.util.Log.e("GameScreen", "dispose------------------------------------------------ ${PlayerComponent.currentLevel}")
 	}
 
 	override fun show() {
@@ -117,7 +66,6 @@ class GameScreen(game: CesDoom, private val gameUI: GameUI, assets: Assets) : Sc
 		Gdx.input.isCursorCatched = false
 	}
 	override fun pause() {
-		//Log.e("GameScreen", "pause------------------------------------------------")
 		gameWorld.pause()
 	}
 	override fun resume() {
