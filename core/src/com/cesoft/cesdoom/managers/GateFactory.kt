@@ -73,8 +73,8 @@ object GateFactory {
 
         // Frustum culling
         val frustumCullingData = when(angle) {
-            0f -> FrustumCullingData.create(pos, dim0)
-            90f -> FrustumCullingData.create(pos, dim90)
+            0f, 180f -> FrustumCullingData.create(pos, dim0)
+            90f, -90f -> FrustumCullingData.create(pos, dim90)
             else -> {
                 val boundingBox = BoundingBox()
                 modelComponent.instance.calculateBoundingBox(boundingBox)
@@ -88,9 +88,8 @@ object GateFactory {
         entity.add(modelComponent)
 
         /// Position and Shape
-        val transf = modelComponent.instance.transform
         val shape = btBoxShape(dimCollision)
-        val motionState = MotionState(transf)
+        val motionState = MotionState(modelComponent.instance.transform)
 
         /// Collision
         val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)

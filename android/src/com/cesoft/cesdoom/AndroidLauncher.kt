@@ -199,6 +199,7 @@ class AndroidLauncher: AndroidApplication(), PlayServices {
 				1 -> resources.getString(R.string.level_1_completed)
 				2 -> resources.getString(R.string.level_2_completed)
 				3 -> resources.getString(R.string.level_3_completed)
+				4 -> resources.getString(R.string.level_4_completed)
 				else -> return
 			}
 			Games.getAchievementsClient(this, account).unlockImmediate(achievement)

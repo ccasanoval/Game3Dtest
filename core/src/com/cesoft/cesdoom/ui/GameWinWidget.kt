@@ -20,6 +20,7 @@ import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +50,7 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 		//
 		configureWidgets()
 		setListeners()
-		Controllers.addListener(game.playerInput)//TODO: remove!!!!!!!!!!!
+		Controllers.addListener(game.playerInput)//TODO: remove???
 		//
 		setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
 		setPosition((CesDoom.VIRTUAL_WIDTH - width)/2, (CesDoom.VIRTUAL_HEIGHT - height)/2)
@@ -135,20 +136,6 @@ class GameWinWidget(private val game: CesDoom, stage: Stage, private val assets:
 		window.setSize(width, height)
 	}
 
-	//______________________________________________________________________________________________
-	/*private var delay = 0f
-	override fun act(delta: Float) {
-		super.act(delta)
-		delay += delta
-		if(delay < .250)return
-		com.cesoft.cesdoom.util.Log.e("GameWinWidget", "act----------------------------------------")
-		delay = 0f
-		when {
-			mapper.isButtonPressed(Inputs.Action.START) -> goRestart()
-			mapper.isButtonPressed(Inputs.Action.BACK) -> goMenu()
-			mapper.isButtonPressed(Inputs.Action.EXIT) -> goQuit()
-		}
-	}*/
 	private fun goRestart() {
 		exit()
 		game.reset()

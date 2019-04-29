@@ -50,9 +50,8 @@ object ColumnFactory {
         entity.add(modelComponent)
 
         /// COLLISION
-        val transf = modelComponent.instance.transform
-        val shape = btBoxShape(Vector3(size.x/2, size.y, size.z/2))
-        val motionState = MotionState(transf)
+        val shape = btBoxShape(Vector3(size.x/2, size.y/2, size.z/2))
+        val motionState = MotionState(modelComponent.instance.transform)
         val bodyInfo = btRigidBody.btRigidBodyConstructionInfo(0f, motionState, shape, Vector3.Zero)
         val rigidBody = btRigidBody(bodyInfo)
         rigidBody.userData = entity
@@ -80,6 +79,8 @@ object ColumnFactory {
 
         // Entity to engine
         engine.addEntity(entity)
+
+        System.gc()
     }
 
     //______________________________________________________________________________________________
