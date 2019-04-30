@@ -21,6 +21,7 @@ android {
         }
         debug {
             res.srcDir 'debug/res'
+            //java.srcDirs = ['src-debug']//https://www.badlogicgames.com/forum/viewtopic.php?f=15&t=14854
         }
     }
     packagingOptions {
@@ -30,8 +31,8 @@ android {
         applicationId "com.cesoft.cesdoom"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 7
-        versionName "1.07"
+        versionCode 8
+        versionName "1.08"
         multiDexEnabled true
     }
     buildTypes {
@@ -44,6 +45,17 @@ android {
 //            signingConfig signingConfigs.config
         }
     }
+//    flavorDimensions "version"
+//    productFlavors {
+//        dev {
+//            dimension "version"
+////            applicationIdSuffix ".full"
+////            versionNameSuffix "-full"
+//        }
+//        prod {
+//            dimension "version"
+//        }
+//    }
 }
 
 
