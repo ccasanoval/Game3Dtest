@@ -20,7 +20,6 @@ import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

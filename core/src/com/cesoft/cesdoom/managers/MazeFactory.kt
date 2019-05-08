@@ -10,7 +10,6 @@ import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.entities.Ammo
 import com.cesoft.cesdoom.entities.Health
 import com.cesoft.cesdoom.map.MapGraphFactory
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,9 +64,9 @@ object MazeFactory {
 
 //TODO: Reduce number of allocated memory, cos when released, gc takes too much time
 		//-verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails
-WallFactory.endMaterials()
-rampFactory.endMaterials()
-System.gc()
+		WallFactory.endMaterials()
+		rampFactory.endMaterials()
+		System.gc()
 
 
 		//----- TEST
@@ -105,7 +104,6 @@ System.gc()
 //                //Log.e("Maze", step.toString())
 //            }
 //        }
-        Log.e(tag, "create---------------------------------------------------------------------------- END")
 	}
 
 	//______________________________________________________________________________________________

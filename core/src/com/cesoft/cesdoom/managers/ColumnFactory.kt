@@ -13,7 +13,6 @@ import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
-import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.bullet.collision.Collision

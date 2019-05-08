@@ -14,7 +14,6 @@ import com.cesoft.cesdoom.entities.*
 import com.cesoft.cesdoom.events.BulletEvent
 import com.cesoft.cesdoom.events.BulletQueue
 import com.cesoft.cesdoom.events.GameEvent
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

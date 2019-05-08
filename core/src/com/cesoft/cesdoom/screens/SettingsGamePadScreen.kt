@@ -18,10 +18,9 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.input.Inputs
-import com.cesoft.cesdoom.systems.PlayerSystem
 import com.cesoft.cesdoom.ui.Styles
 import com.cesoft.cesdoom.util.Log
-import kotlin.math.absoluteValue
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -185,11 +184,11 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
     //----------------------------------------------------------------------------------------------
     override fun connected(controller: Controller?) {
         this.controller = controller
-        Log.e(PlayerSystem.tag, "connected:----------*****************************--------------"+controller?.name)
+        Log.e(tag, "connected:----------*****************************--------------"+controller?.name)
     }
     override fun disconnected(controller: Controller?) {
         this.controller = null
-        Log.e(PlayerSystem.tag, "disconnected:---------*************************---------------"+controller?.name)
+        Log.e(tag, "disconnected:---------*************************---------------"+controller?.name)
     }
     ///
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {

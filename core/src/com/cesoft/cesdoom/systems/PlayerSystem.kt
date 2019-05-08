@@ -32,7 +32,6 @@ import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.ui.GameOverWidget
 import com.cesoft.cesdoom.ui.GameWinWidget
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

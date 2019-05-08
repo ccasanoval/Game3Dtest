@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffectLoader
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Pool
 import com.cesoft.cesdoom.util.Log
 
@@ -34,7 +35,7 @@ class ParticleEffectPool(private val assetManager: AssetManager)
 		billboardParticleBatch.setCamera(camera)
 	}
 
-	private val allEffects = com.badlogic.gdx.utils.Array<ParticleEffect>()
+	private val allEffects = Array<ParticleEffect>()
 	override fun newObject(): ParticleEffect {
 		val obj = assetManager.get(PARTICLES_ENEMY, ParticleEffect::class.java).copy()
 		allEffects.add(obj)
@@ -42,7 +43,8 @@ class ParticleEffectPool(private val assetManager: AssetManager)
 	}
 
 	fun dispose() {
-		for(effect in allEffects) {
+		val effects = Array.ArrayIterator(allEffects)
+		for(effect in effects) {
 			try {
 				effect?.let {
 					it.end()

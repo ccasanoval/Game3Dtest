@@ -2,22 +2,8 @@ package com.cesoft.cesdoom
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-
 import com.badlogic.gdx.backends.android.AndroidApplication
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
-
-import com.cesoft.cesdoom.util.PlayServices
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.games.Games
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import android.app.AlertDialog
-import android.net.Uri
-import com.google.android.gms.auth.api.Auth
-import com.google.android.gms.games.GamesActivityResultCodes
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-
 
 //import com.badlogic.gdx.Gdx
 //import com.badlogic.gdx.backends.android.CardBoardAndroidApplication

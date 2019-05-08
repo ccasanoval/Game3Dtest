@@ -18,7 +18,6 @@ import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.ui.Styles
-import com.cesoft.cesdoom.util.Log
 import com.cesoft.cesdoom.util.PlayServices
 
 
@@ -169,11 +168,11 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	//______________________________________________________________________________________________
 	/// Implements : PlayServices.SignedInListener
 	override fun onSignedIn() {
-		Log.e(tag, "onSignedIn------------------------------------------------------------")
+		//Log.e(tag, "onSignedIn------------------------------------------------------------")
 		updateGPGSButtons()
 	}
 	override fun onSignedOut() {
-		Log.e(tag, "onSignedOut------------------------------------------------------------")
+		//Log.e(tag, "onSignedOut------------------------------------------------------------")
 		updateGPGSButtons()
 	}
 
@@ -186,7 +185,7 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 			if(now > lastClick + 250) {
 				lastClick = now
 				if (!PlayerComponent.isGodModeOn && ++counter > 9) {
-					Log.e(tag, "GOD MODE ON !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+					//Log.e(tag, "GOD MODE ON !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 					PlayerComponent.isGodModeOn = true
 				}
 			}

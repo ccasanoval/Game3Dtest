@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
@@ -35,7 +34,6 @@ class EnemyFactory(assets: Assets) {
     lateinit var enemies: ImmutableArray<Entity>
     private val allEnemies = ArrayList<Enemy>()
     init {
-        Log.e(tag, "INIT---------------------------------------------------------------- MAX_ENEMIES=$MAX_ENEMIES")
         if(allEnemies.size < MAX_ENEMIES) {
             for(i in allEnemies.size until MAX_ENEMIES) {
                 val type = when(random.nextInt(1+PlayerComponent.currentLevel)) {
