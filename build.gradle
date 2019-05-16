@@ -27,7 +27,7 @@ allprojects {
         aiVersion = '1.8.1'
         kotlinCorroutinesVersion = '1.0.1'
         gamesvcsVersion = '0.2.5'
-        gdxVersion = '1.9.9'
+        gdxVersion = '1.9.8'//'1.9.9' emmisive light issue !!! Remove emmisive from .g3db
     }
 
     repositories {

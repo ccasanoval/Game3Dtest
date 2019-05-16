@@ -11,7 +11,7 @@ class EnemyEvent(val type: Type, val enemy: Enemy, val value: Int) : Comparable<
 
     /// Implements Comparable<EnemyEvent>
     override fun compareTo(other: EnemyEvent): Int {
-        Log.e("EnemyEvent", "compareTo---------------equal(${(type == other.type && enemy== other.enemy)})------------------ $type <> ${other.type}   /// ${enemy.hashCode()} <> ${other.enemy.hashCode()} ")
+        //Log.e("EnemyEvent", "compareTo---------------equal(${(type == other.type && enemy== other.enemy)})------------------ $type <> ${other.type}   /// ${enemy.hashCode()} <> ${other.enemy.hashCode()} ")
         if(type == other.type && enemy == other.enemy)
             return 0
         return 1

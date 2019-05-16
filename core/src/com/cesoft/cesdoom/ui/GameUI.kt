@@ -12,7 +12,12 @@ import com.cesoft.cesdoom.components.PlayerComponent
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameUI(game: CesDoom, assets: Assets) {
+class GameUI(game: CesDoom, val assets: Assets) {
+
+	companion object {
+		const val FPS_STRING = "FPS: "
+		//const val LEVEL_STRING = "LEVEL: "
+	}
 
 	var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var healthWidget = HealthWidget(assets)
@@ -51,12 +56,31 @@ class GameUI(game: CesDoom, assets: Assets) {
 	}
 
 	private var previousLevel = Int.MAX_VALUE
+
 	fun update(delta: Float) {
-		fpsLabel.setText("FPS: ${Gdx.graphics.framesPerSecond}")
+
+		val value = Gdx.graphics.framesPerSecond.toString()
+		val txt = StringBuilder(FPS_STRING.length + value.length)
+				.append(FPS_STRING)
+				.append(value)
+				.toString()
+		fpsLabel.setText(txt)
+		//"FPS: ${Gdx.graphics.framesPerSecond}")
+
+		/*if(previousLevel != PlayerComponent.currentLevel && !Status.paused) {
+			previousLevel = PlayerComponent.currentLevel
+			value = PlayerComponent.currentLevel.toString()
+			txt = StringBuilder(FPS_STRING.length + value.length)
+					.append(LEVEL_STRING)
+					.append(value)
+					.toString()
+			levelLabel.setText(txt)//"LEVEL: ${PlayerComponent.currentLevel}")
+		}*/
 		if(previousLevel != PlayerComponent.currentLevel && !Status.paused) {
 			previousLevel = PlayerComponent.currentLevel
-			levelLabel.setText("LEVEL: ${PlayerComponent.currentLevel}")
+			levelLabel.setText(assets.formatString(Assets.LEVEL, PlayerComponent.currentLevel.toString()))
 		}
+
 		stage.act(delta)
 	}
 
