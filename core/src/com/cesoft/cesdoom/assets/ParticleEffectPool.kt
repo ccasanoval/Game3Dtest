@@ -54,10 +54,8 @@ class ParticleEffectPool(private val assetManager: AssetManager)
 //	}
 
 	fun dispose() {
-		val effects = allEffects.items
-		if(effects != null)
-			for(effect in effects.iterator())
-				effect.dispose()
+		for(effect in allEffects)
+			effect.dispose()
 		freeAll(allEffects)
 		allEffects.clear()
 	}
