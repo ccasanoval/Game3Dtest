@@ -6,7 +6,6 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -18,8 +17,8 @@ class EnemyComponent(val type: TYPE, var id: Int) : Component
 
 		private const val MASS0 = 110f
 		private const val MASS1 = 45f
-		private const val RADIO0 = 12f///////16
-		private const val RADIO1 = 10f////////12
+		private const val RADIO0 = 15f///////12
+		private const val RADIO1 = 15f///////10
 		private const val KILL_REWARD0 = 20
 		private const val KILL_REWARD1 = 10
 		//

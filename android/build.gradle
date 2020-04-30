@@ -7,8 +7,8 @@ android {
 //            storePassword 'x'
 //        }
 //    }
-    buildToolsVersion "28.0.3"
-    compileSdkVersion 28
+    buildToolsVersion "29.0.3"
+    compileSdkVersion 29
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -28,10 +28,10 @@ android {
     }
     defaultConfig {
         applicationId "com.cesoft.cesdoom"
-        minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 7
-        versionName "1.07"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 8
+        versionName "1.08"
         multiDexEnabled true
     }
     buildTypes {
@@ -129,6 +129,6 @@ idea {
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.google.android.gms:play-services-games:17.0.0'
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.google.android.gms:play-services-games:19.0.0'
+    implementation 'com.google.android.gms:play-services-auth:18.0.0'
 }

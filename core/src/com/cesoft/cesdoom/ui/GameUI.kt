@@ -1,20 +1,25 @@
 package com.cesoft.cesdoom.ui
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.Input
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.util.Log
+import de.golfgl.gdx.controllers.ControllerMenuStage
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameUI(game: CesDoom, assets: Assets) {
-
-	var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
+class GameUI(val game: CesDoom, assets: Assets) {
+	var stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var healthWidget = HealthWidget(assets)
 	private var scoreWidget = ScoreWidget(assets)
 	private var ammoWidget = AmmoWidget(assets)
@@ -22,14 +27,19 @@ class GameUI(game: CesDoom, assets: Assets) {
 	private var crossHairWidget = CrosshairWidget()
 	private var fpsLabel = Label("", assets.skin)
 	private var levelLabel = Label("", assets.skin)
-	var pauseWidget = PauseWidget(game, stage, assets)
 	var gameOverWidget = GameOverWidget(game, stage, assets)
 		private set
 	var gameWinWidget = GameWinWidget(game, stage, assets)
 		private set
 
+    private val pauseWidget = PauseWidget(game, stage)
+
+
 	init {
 		configureWidgets()
+		pauseWidget.iniPauseControls(assets)
+        Gdx.input.inputProcessor = stage
+        pauseWidget.hidePauseControls()
 	}
 
 	private fun configureWidgets() {
@@ -43,11 +53,38 @@ class GameUI(game: CesDoom, assets: Assets) {
 		stage.addActor(ammoWidget)
 		stage.addActor(messageWidget)
 		stage.addActor(crossHairWidget)
-		stage.keyboardFocus = pauseWidget
 		stage.addActor(fpsLabel)
 		stage.addActor(levelLabel)
 		if(CesDoom.isMobile)
 			ControllerWidget().addToStage(stage)
+
+        //stage.keyboardFocus = pauseWidget
+        stage.addListener(object : InputListener() {
+			override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
+				when(keycode) {
+					Input.Keys.CENTER -> game.playerInput.center = false
+					Input.Keys.LEFT -> game.playerInput.left = false
+					Input.Keys.RIGHT -> game.playerInput.right = false
+					Input.Keys.DOWN -> game.playerInput.down = false
+					Input.Keys.UP -> game.playerInput.up = false
+				}
+				return false
+			}
+			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
+				if(keycode == Input.Keys.ESCAPE || keycode == Input.Keys.BACK) {
+                    pauseWidget.pauseOnOf()
+					return true
+				}
+				when(keycode) {
+					Input.Keys.CENTER -> game.playerInput.center = true
+					Input.Keys.LEFT -> game.playerInput.left = true
+					Input.Keys.RIGHT -> game.playerInput.right = true
+					Input.Keys.DOWN -> game.playerInput.down = true
+					Input.Keys.UP -> game.playerInput.up = true
+				}
+				return false
+			}
+		})
 	}
 
 	private var previousLevel = Int.MAX_VALUE
@@ -70,9 +107,5 @@ class GameUI(game: CesDoom, assets: Assets) {
 
 	fun dispose() {
 		stage.dispose()
-	}
-
-	fun pause() {
-		pauseWidget.pauseOnOf()
 	}
 }

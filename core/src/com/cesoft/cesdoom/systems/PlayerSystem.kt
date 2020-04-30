@@ -32,7 +32,6 @@ import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.ui.GameOverWidget
 import com.cesoft.cesdoom.ui.GameWinWidget
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,6 +177,14 @@ class PlayerSystem(
         if(myPad != Inputs.Value.ZERO)
             deltaY += myPad.value * yWeight * delta
 
+		/// ANDROID TV
+		if(inputMap.left) {
+			deltaX += 1 * xWeight * delta
+		}
+		else if(inputMap.right) {
+			deltaX -= 1 * xWeight * delta
+		}
+
          return Vector2(deltaX, deltaY)
     }
 	//______________________________________________________________________________________________
@@ -204,11 +211,11 @@ class PlayerSystem(
 
 		//Log.e(tag, "updateTranslationMobile-------- ${inputMap.isAxisValuePositive(Inputs.MOVE_Y)}")
 
-		if(ControllerWidget.movementVector.y > +offsetVertical || inputMap.isAxisValuePositive(Inputs.Action.MOVE_Y)) {
+		if(ControllerWidget.movementVector.y > +offsetVertical || inputMap.isAxisValuePositive(Inputs.Action.MOVE_Y) || inputMap.up) {
 			posTemp.add(camera.direction)
 			isMoving = true
 		}
-		else if(ControllerWidget.movementVector.y < -offsetVertical || inputMap.isAxisValueNegative(Inputs.Action.MOVE_Y)) {
+		else if(ControllerWidget.movementVector.y < -offsetVertical || inputMap.isAxisValueNegative(Inputs.Action.MOVE_Y) || inputMap.down) {
 			posTemp.sub(camera.direction)
 			isMoving = true
 		}
@@ -270,8 +277,7 @@ class PlayerSystem(
 	private val DELAY_RELOAD = 0.55f
 	private var deltaFire = 100f
 	private fun updateWeapon(delta: Float) {
-
-		val isFiring = (ControllerWidget.isFiring || inputMap.isButtonPressed(Inputs.Action.FIRE))
+		val isFiring = (ControllerWidget.isFiring || inputMap.isButtonPressed(Inputs.Action.FIRE) || inputMap.center)
 		deltaFire += delta
 
 		if(PlayerComponent.isReloading) {

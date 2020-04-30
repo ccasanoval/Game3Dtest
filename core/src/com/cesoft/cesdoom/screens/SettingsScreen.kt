@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
-import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
@@ -17,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.ui.Styles
+import de.golfgl.gdx.controllers.ControllerMenuStage
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
 
     private val mapper = game.playerInput.mapper
 
-    private var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
+    private var stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
     private var backgroundImage = Image(Texture(Gdx.files.internal("data/background.png")))
     private var backButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
 
@@ -50,8 +50,8 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
     init {
         configure()
         setListeners()
-        Gdx.input.inputProcessor = this
-        Controllers.addListener(game.playerInput)
+        //Gdx.input.inputProcessor = this
+        //Controllers.addListener(game.playerInput)
     }
 
     //______________________________________________________________________________________________
@@ -144,6 +144,22 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         stage.addActor(backgroundImage)
         stage.addActor(backButton)
         stage.addActor(win)
+
+        stage.addFocusableActor(scrollTable)
+
+//TODO: test ControllerScrollablePane, ControllerSlider
+
+//        stage.addFocusableActor(soundButton)
+//        stage.addFocusableActor(soundVolumeSlider)
+//        stage.addFocusableActor(musicButton)
+//        stage.addFocusableActor(musicVolumeSlider)
+//        stage.addFocusableActor(painVibrationButton)
+//        stage.addFocusableActor(gpgsSignInButton)
+//        stage.addFocusableActor(gamepadButton)
+        stage.addFocusableActor(backButton)
+        //stage.escapeActor = backButton
+        stage.focusedActor = backButton
+        Gdx.input.inputProcessor = stage
     }
 
     //______________________________________________________________________________________________

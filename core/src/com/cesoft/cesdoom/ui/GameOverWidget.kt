@@ -17,11 +17,12 @@ import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.InputMapper
 import com.cesoft.cesdoom.input.Inputs
+import de.golfgl.gdx.controllers.ControllerMenuStage
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : Actor() {
+class GameOverWidget(private val game: CesDoom, stage: ControllerMenuStage, assets: Assets) : Actor() {
 	private val mapper = game.playerInput.mapper
 	private var image: Image = Image(Texture(Gdx.files.internal("data/gameOver.png")))
 	private var window: Window
@@ -42,6 +43,10 @@ class GameOverWidget(private val game: CesDoom, stage: Stage, assets: Assets) : 
 		btnMenu.label.setFontScale(2f)
 		btnQuit = TextButton(assets.getString(Assets.SALIR), assets.skin)
 		btnQuit.label.setFontScale(2f)
+		//
+		stage.addFocusableActor(btnMenu)
+		stage.addFocusableActor(btnRestart)
+		stage.addFocusableActor(btnQuit)
 		//
 		configureWidgets()
 		setListeners()

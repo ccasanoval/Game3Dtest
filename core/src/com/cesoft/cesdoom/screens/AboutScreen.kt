@@ -16,13 +16,15 @@ import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.ui.Styles
+import com.cesoft.cesdoom.util.Log
+import de.golfgl.gdx.controllers.ControllerMenuStage
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Screen, InputProcessor {
 
-	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
+	private var stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/background.png")))
 	private var backButton: TextButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
 	private var rateButton: TextButton = TextButton(assets.getString(Assets.PUNTUA), assets.skin)
@@ -36,8 +38,8 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 	init {
 		configureWidgets()
 		setListeners()
-		Gdx.input.inputProcessor = this
-		Controllers.addListener(game.playerInput)//TODO: needed?
+		//Gdx.input.inputProcessor = this
+		//Controllers.addListener(game.playerInput)//TODO: needed?
 	}
 
 	//______________________________________________________________________________________________
@@ -60,13 +62,19 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 		win.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-100)
 		win.setPosition(75f,100f)
 		win.zIndex = 10
-		win.touchable = Touchable.disabled
+		//win.touchable = Touchable.disabled
 
 		stage.addActor(backgroundImage)
 		stage.addActor(backButton)
 		stage.addActor(rateButton)
 		stage.addActor(win)
 		stage.addActor(scrollPane)
+
+		stage.addFocusableActor(backButton)
+		stage.addFocusableActor(rateButton)
+		stage.escapeActor = backButton
+		stage.focusedActor = backButton
+		Gdx.input.inputProcessor = stage
 	}
 
 	//______________________________________________________________________________________________
@@ -115,6 +123,7 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 	//______________________________________________________________________________________________
 	/// Implements: InputProcessor
 	override fun keyDown(keycode: Int): Boolean {
+		Log.e("tag", "keyDown--------------------------------------------------------")
 		if (keycode == Input.Keys.BACK) goBack()
 		return false
 	}

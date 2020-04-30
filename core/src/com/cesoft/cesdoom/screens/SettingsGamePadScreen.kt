@@ -21,6 +21,7 @@ import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.systems.PlayerSystem
 import com.cesoft.cesdoom.ui.Styles
 import com.cesoft.cesdoom.util.Log
+import de.golfgl.gdx.controllers.ControllerMenuStage
 import kotlin.math.absoluteValue
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +33,7 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
         private val tag: String = SettingsGamePadScreen::class.java.simpleName
     }
 
-    private var stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
+    private var stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
     private var backgroundImage = Image(Texture(Gdx.files.internal("data/background.png")))
     private var backButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
 
@@ -126,6 +127,11 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
         stage.addActor(backgroundImage)
         stage.addActor(backButton)
         stage.addActor(win)
+
+        stage.addFocusableActor(backButton)
+        stage.escapeActor = backButton
+        stage.focusedActor = backButton
+        Gdx.input.inputProcessor = stage
     }
 
 

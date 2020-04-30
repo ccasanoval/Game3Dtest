@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.Image
@@ -20,6 +19,7 @@ import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.ui.Styles
 import com.cesoft.cesdoom.util.Log
 import com.cesoft.cesdoom.util.PlayServices
+import de.golfgl.gdx.controllers.ControllerMenuStage
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	}
 
 	private val mapper = game.playerInput.mapper
-	private var stage: Stage = Stage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
+	private val stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image
 	private var titleImage: Image
 	private var playButton: TextButton = TextButton(assets.getString(Assets.JUGAR), assets.skin)
@@ -140,6 +140,18 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 		stage.addActor(gpgsSignInButton)
 		stage.addActor(leaderBoardButton)
 		stage.addActor(achievementsButton)
+
+		stage.addFocusableActor(gpgsSignInButton)
+		stage.addFocusableActor(leaderBoardButton)
+		stage.addFocusableActor(achievementsButton)
+
+		stage.addFocusableActor(playButton)
+		stage.addFocusableActor(settingsButton)
+		stage.addFocusableActor(aboutButton)
+		stage.addFocusableActor(quitButton)
+		stage.escapeActor = quitButton
+		stage.focusedActor = playButton
+
 		updateGPGSButtons()
 	}
 

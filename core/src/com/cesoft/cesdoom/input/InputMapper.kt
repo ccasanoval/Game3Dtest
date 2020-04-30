@@ -15,6 +15,12 @@ class InputMapper {
 		private val tag = InputMapper::class.java.simpleName
 	}
 
+    var center = false
+    var left = false
+    var right = false
+    var up = false
+    var down = false
+
     // GAMEPAD
     private val mapper: MutableMap<Int, Inputs.Action> = mutableMapOf()       // Evento       -> Constante
     private val values: MutableMap<Inputs.Action, Value> = mutableMapOf()     // Constante    -> ON, OFF  o  LEFT, CENTER, RIGHT
@@ -51,7 +57,7 @@ class InputMapper {
         addMapKey(Input.Keys.W, Inputs.Action.LOOK_Y, true)
     }
 	init {
-		if( ! CesDoom.isMobile)
+		//if( ! CesDoom.isMobile)
 			addKeyboard()
 	}
 

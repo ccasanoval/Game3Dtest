@@ -16,6 +16,23 @@ class PlayerInput(val mapper: InputMapper) : ControllerListener {
 
     private var controller: Controller? = null
 
+    //TODO: mejora esto de android TV
+    var center
+        get() = mapper.center
+        set(value) { mapper.center = value }
+    var left
+        get() = mapper.left
+        set(value) { mapper.left = value }
+    var right
+        get() = mapper.right
+        set(value) { mapper.right = value }
+    var up
+        get() = mapper.up
+        set(value) { mapper.up = value }
+    var down
+        get() = mapper.down
+        set(value) { mapper.down = value }
+
     //----------------------------------------------------------------------------------------------
     override fun connected(controller: Controller?) {
         this.controller = controller
