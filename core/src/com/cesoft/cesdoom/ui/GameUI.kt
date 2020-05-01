@@ -5,14 +5,11 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.util.Log
 import de.golfgl.gdx.controllers.ControllerMenuStage
 
 
@@ -31,15 +28,11 @@ class GameUI(val game: CesDoom, assets: Assets) {
 		private set
 	var gameWinWidget = GameWinWidget(game, stage, assets)
 		private set
-
-    private val pauseWidget = PauseWidget(game, stage)
-
+    private val pauseWidget = PauseWidget(game, stage, assets)
 
 	init {
 		configureWidgets()
-		pauseWidget.iniPauseControls(assets)
         Gdx.input.inputProcessor = stage
-        pauseWidget.hidePauseControls()
 	}
 
 	private fun configureWidgets() {
@@ -88,6 +81,7 @@ class GameUI(val game: CesDoom, assets: Assets) {
 	}
 
 	private var previousLevel = Int.MAX_VALUE
+	private var inputDelay = 0f//TODO:Use a base class so not to repeat ys
 	fun update(delta: Float) {
 		fpsLabel.setText("FPS: ${Gdx.graphics.framesPerSecond}")
 		if(previousLevel != PlayerComponent.currentLevel && !Status.paused) {
@@ -95,6 +89,14 @@ class GameUI(val game: CesDoom, assets: Assets) {
 			levelLabel.setText("LEVEL: ${PlayerComponent.currentLevel}")
 		}
 		stage.act(delta)
+
+		inputDelay+=delta
+		if(inputDelay > .175f) {
+			inputDelay = 0f
+			pauseWidget.processInput()
+			//gameWinWidget.processInput()
+			//gameOverWidget.processInput()
+		}
 	}
 
 	fun render() {

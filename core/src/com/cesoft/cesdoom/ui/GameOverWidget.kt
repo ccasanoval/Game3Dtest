@@ -3,13 +3,9 @@ package com.cesoft.cesdoom.ui
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
@@ -22,53 +18,49 @@ import de.golfgl.gdx.controllers.ControllerMenuStage
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameOverWidget(private val game: CesDoom, stage: ControllerMenuStage, assets: Assets) : Actor() {
+class GameOverWidget(
+		private val game: CesDoom,
+		private val stage: ControllerMenuStage,
+		assets: Assets) {//}: Actor() {
+
+	companion object {
+		private val tag: String = GameOverWidget::class.java.simpleName
+	}
+
 	private val mapper = game.playerInput.mapper
 	private var image: Image = Image(Texture(Gdx.files.internal("data/gameOver.png")))
-	private var window: Window
-	private var btnRestart: TextButton
-	private var btnMenu: TextButton
-	private var btnQuit: TextButton
+	private var btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
+	private var btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
+	private var btnQuit = TextButton(assets.getString(Assets.SALIR), assets.skin)
 
 	init {
-		super.setStage(stage)
-		//
-		val ws = Window.WindowStyle()
-		ws.titleFont = BitmapFont()
-		window = Window("", ws)
-		//
-		btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
-		btnRestart.label.setFontScale(2f)
-		btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
-		btnMenu.label.setFontScale(2f)
-		btnQuit = TextButton(assets.getString(Assets.SALIR), assets.skin)
-		btnQuit.label.setFontScale(2f)
-		//
-		stage.addFocusableActor(btnMenu)
-		stage.addFocusableActor(btnRestart)
-		stage.addFocusableActor(btnQuit)
-		//
 		configureWidgets()
 		setListeners()
-		Controllers.addListener(game.playerInput)//TODO: remove!!!!!!!!!!!
-		//
-		setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-120)
-		setPosition((CesDoom.VIRTUAL_WIDTH - width)/2, (CesDoom.VIRTUAL_HEIGHT - height)/2)
-
 	}
 
 	private fun configureWidgets() {
+		btnRestart.label.setFontScale(2f)
+		btnMenu.label.setFontScale(2f)
+		btnQuit.label.setFontScale(2f)
+
+		Controllers.addListener(game.playerInput)//TODO: remove!!!!!!!!!!!
+
 		val ratio = 125f / 319f
 		val width = CesDoom.VIRTUAL_WIDTH*2f/4f
-		window.add<Image>(image).width(width).height(ratio * width)
-		window.row().pad(.5f)
-		window.add<TextButton>(btnRestart).width(350f).height(90f)
-		window.row().pad(1f)
-		window.add<TextButton>(btnMenu).width(300f).height(90f)
-		window.row().pad(1f)
-		window.add<TextButton>(btnQuit).width(300f).height(90f)
-	}
+		image.setSize(width, ratio * width)
+		btnRestart.setSize(350f, 90f)
+		btnMenu.setSize(300f, 90f)
+		btnQuit.setSize(300f, 90f)
 
+		var y = CesDoom.VIRTUAL_HEIGHT * 0.55f
+		image.setPosition((CesDoom.VIRTUAL_WIDTH-image.width)/2, y)
+		y -= image.height/3 +2
+		btnMenu.setPosition((CesDoom.VIRTUAL_WIDTH-btnMenu.width)/2, y)
+		y -= btnMenu.height + 2
+		btnRestart.setPosition((CesDoom.VIRTUAL_WIDTH-btnRestart.width)/2, y)
+		y -= btnRestart.height + 2
+		btnQuit.setPosition((CesDoom.VIRTUAL_WIDTH-btnQuit.width)/2, y)
+	}
 
 	//______________________________________________________________________________________________
 	private fun setListeners() {
@@ -89,46 +81,41 @@ class GameOverWidget(private val game: CesDoom, stage: ControllerMenuStage, asse
 		})
 	}
 
-	//______________________________________________________________________________________________
 	fun show() {
-		stage.addActor(window)
-		Gdx.input.isCursorCatched = false
+		game.playServices?.submitScore(PlayerComponent.score)
 		Status.paused = true
 		Status.gameOver = true
-		game.playServices?.submitScore(PlayerComponent.score)
+		Gdx.input.isCursorCatched = false
+		showControls()
 	}
+	private fun showControls() {
+		stage.addActor(image)
+		stage.addActor(btnQuit)
+		stage.addActor(btnRestart)
+		stage.addActor(btnMenu)
+
+		stage.addFocusableActor(btnMenu)
+		stage.addFocusableActor(btnRestart)
+		stage.addFocusableActor(btnQuit)
+
+		stage.focusedActor = btnRestart
+		//stage.escapeActor = btnQuit
+	}
+
 	private fun clean() {
-		window.remove()
-		Gdx.input.isCursorCatched = true
 		Status.paused = false
 		Status.gameOver = false
 		Status.gameWin = false
+		hideControls()
+	}
+	private fun hideControls() {
+		image.remove()
+		btnMenu.remove()
+		btnQuit.remove()
+		btnRestart.remove()
+		Gdx.input.isCursorCatched = true
 	}
 
-	//______________________________________________________________________________________________
-	override fun setPosition(x: Float, y: Float) {
-		super.setPosition(x, y)
-		window.setPosition(
-				(CesDoom.VIRTUAL_WIDTH - window.width) / 2,
-				(CesDoom.VIRTUAL_HEIGHT - window.height) / 2)
-	}
-
-	//______________________________________________________________________________________________
-	override fun setSize(width: Float, height: Float) {
-		super.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
-		window.setSize(width, height)
-	}
-
-	//______________________________________________________________________________________________
-	/*private var delay = 0f
-	override fun act(delta: Float) {
-		super.act(delta)
-		delay += delta
-		if(delay < .250)return
-		com.cesoft.cesdoom.util.Log.e("GameOverWidget", "act----------------------------------------")
-		delay = 0f
-		processInput(game.playerInput.mapper)
-	}*/
 	private fun goRestart() {
 		clean()
 		game.reset()

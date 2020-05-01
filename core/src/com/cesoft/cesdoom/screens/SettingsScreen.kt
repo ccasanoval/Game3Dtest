@@ -158,7 +158,7 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
 //        stage.addFocusableActor(gamepadButton)
         stage.addFocusableActor(backButton)
         //stage.escapeActor = backButton
-        stage.focusedActor = backButton
+        //stage.focusedActor = backButton
         Gdx.input.inputProcessor = stage
     }
 

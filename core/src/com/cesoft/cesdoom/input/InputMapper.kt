@@ -15,6 +15,7 @@ class InputMapper {
 		private val tag = InputMapper::class.java.simpleName
 	}
 
+    // ANDROID TV
     var center = false
     var left = false
     var right = false
@@ -57,7 +58,7 @@ class InputMapper {
         addMapKey(Input.Keys.W, Inputs.Action.LOOK_Y, true)
     }
 	init {
-		//if( ! CesDoom.isMobile)
+		if( ! CesDoom.isMobile)
 			addKeyboard()
 	}
 

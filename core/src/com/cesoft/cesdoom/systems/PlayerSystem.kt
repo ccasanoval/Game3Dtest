@@ -32,6 +32,8 @@ import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.ui.GameOverWidget
 import com.cesoft.cesdoom.ui.GameWinWidget
+import kotlin.math.atan2
+import kotlin.math.sqrt
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +142,7 @@ class PlayerSystem(
 		// X Z
 		posTemp.set(dir).crs(camera.up).nor()
 		val v = dir.cpy()
-		val pitch = (Math.atan2(Math.sqrt((v.x*v.x + v.z*v.z).toDouble()), v.y.toDouble()) * MathUtils.radiansToDegrees).toFloat()
+		val pitch = (atan2(sqrt((v.x*v.x + v.z*v.z).toDouble()), v.y.toDouble()) * MathUtils.radiansToDegrees).toFloat()
 		var pr = deltaY
 
 		// Cuando player no rote mirada en Y, centrar poco a poco mirada al frente
@@ -395,7 +397,6 @@ class PlayerSystem(
 			delayYouWin += delta
 		}
 	}
-
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
