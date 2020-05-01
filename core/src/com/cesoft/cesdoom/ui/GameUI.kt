@@ -81,7 +81,6 @@ class GameUI(val game: CesDoom, assets: Assets) {
 	}
 
 	private var previousLevel = Int.MAX_VALUE
-	private var inputDelay = 0f//TODO:Use a base class so not to repeat ys
 	fun update(delta: Float) {
 		fpsLabel.setText("FPS: ${Gdx.graphics.framesPerSecond}")
 		if(previousLevel != PlayerComponent.currentLevel && !Status.paused) {
@@ -90,13 +89,9 @@ class GameUI(val game: CesDoom, assets: Assets) {
 		}
 		stage.act(delta)
 
-		inputDelay+=delta
-		if(inputDelay > .175f) {
-			inputDelay = 0f
-			pauseWidget.processInput()
-			//gameWinWidget.processInput()
-			//gameOverWidget.processInput()
-		}
+		pauseWidget.processInput(delta)
+        gameWinWidget.processInput(delta)
+        gameOverWidget.processInput(delta)
 	}
 
 	fun render() {

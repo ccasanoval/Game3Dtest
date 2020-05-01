@@ -7,8 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
-import com.cesoft.cesdoom.input.Inputs
-import com.cesoft.cesdoom.util.Log
+import com.cesoft.cesdoom.input.GamepadUI
 import de.golfgl.gdx.controllers.ControllerMenuStage
 
 
@@ -26,6 +25,7 @@ class PauseWidget(
 	private val btnRestart = TextButton(assets.getString(Assets.RECARGAR), assets.skin)
 	private val btnMenu = TextButton(assets.getString(Assets.MENU), assets.skin)
 	private val btnQuit = TextButton(assets.getString(Assets.SALIR), assets.skin)
+	private val gamepadUI = GamepadUI(game.playerInput.mapper)
 
 	init {
 		btnRestart.label.setFontScale(2f)
@@ -48,9 +48,12 @@ class PauseWidget(
 			}
 		})
 
-		//TODO: Delelete?
-		showControls()
-		hideControls()
+		gamepadUI.setButtons(btnRestart, btnMenu, btnQuit)
+		gamepadUI.setFunctions({ goRestart() }, { goMenu() }, { goQuit() })
+		gamepadUI.setFunctionBack { goBack() }
+	}
+	fun processInput(delta: Float) {
+		gamepadUI.processInput(delta)
 	}
 	//______________________________________________________________________________________________
 	fun goRestart() {
@@ -87,35 +90,35 @@ class PauseWidget(
 	}
 	private fun showControls() {
 		var y = CesDoom.VIRTUAL_HEIGHT * 0.65f
-		btnMenu.setSize(350f,90f)
-		btnMenu.setPosition((CesDoom.VIRTUAL_WIDTH-btnMenu.width)/2, y)
-		y -= btnMenu.height + 10
 		btnRestart.setSize(350f,90f)
 		btnRestart.setPosition((CesDoom.VIRTUAL_WIDTH-btnRestart.width)/2, y)
 		y -= btnRestart.height + 10
+		btnMenu.setSize(350f,90f)
+		btnMenu.setPosition((CesDoom.VIRTUAL_WIDTH-btnMenu.width)/2, y)
+		y -= btnMenu.height + 10
 		btnQuit.setSize(350f,90f)
 		btnQuit.setPosition((CesDoom.VIRTUAL_WIDTH-btnQuit.width)/2, y)
 
-		stage.addActor(btnQuit)
 		stage.addActor(btnRestart)
 		stage.addActor(btnMenu)
+		stage.addActor(btnQuit)
 
-		stage.addFocusableActor(btnMenu)
 		stage.addFocusableActor(btnRestart)
+		stage.addFocusableActor(btnMenu)
 		stage.addFocusableActor(btnQuit)
 
-		stage.focusedActor = btnMenu
+		stage.focusedActor = btnRestart
 		//stage.escapeActor = btnQuit
 	}
 	private fun hideControls() {
+		btnRestart.remove()
 		btnMenu.remove()
 		btnQuit.remove()
-		btnRestart.remove()
 	}
 
 //TODO: Una sola clase... modifica simplemente los botones en cada caso!!!!
 	/// PROCESS INPUT ------------------------------------------------------------------------------
-	private val mapper = game.playerInput.mapper
+	/*private val mapper = game.playerInput.mapper
 	private var currentFocus = ButtonFocus.NONE
 	private enum class ButtonFocus {
 		NONE, QUIT, RESTART, MENU
@@ -174,5 +177,5 @@ class PauseWidget(
 			ButtonFocus.RESTART -> goRestart()
 			ButtonFocus.QUIT -> goQuit()
 		}
-	}
+	}*/
 }

@@ -6,7 +6,6 @@ import com.badlogic.gdx.controllers.PovDirection
 import com.cesoft.cesdoom.CesDoom
 import kotlin.math.absoluteValue
 import com.cesoft.cesdoom.input.Inputs.Value
-import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -109,7 +108,6 @@ class InputMapper {
     fun buttonDown(buttonCode: Int) {
         mapper[buttonCode]?.let { button ->
             values[button] = Value.POSITIVE
-			Log.e(tag, "buttonDown-----------------buttonCode=$buttonCode---------$button=${values[button]}")
         }
     }
 

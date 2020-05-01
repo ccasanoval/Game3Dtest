@@ -299,9 +299,12 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
         val up = mapper.isGoingUp()
         val backward = mapper.isGoingBackwards()
         val forward = mapper.isGoingForward()
-        if(forward) {
+
+		if(currentFocus == ButtonFocus.NONE && (forward || backward || up || down)) {
+			currentFocus = ButtonFocus.PLAY
+		}
+		else if(forward) {
             when(currentFocus) {
-                ButtonFocus.NONE -> currentFocus = ButtonFocus.PLAY
                 ButtonFocus.PLAY -> currentFocus = ButtonFocus.SETTINGS
                 ButtonFocus.QUIT -> currentFocus = ButtonFocus.ABOUT
                 ButtonFocus.LEADERBOARD -> currentFocus = ButtonFocus.ACHIEVEMENTS
@@ -310,7 +313,6 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
         }
         else if(backward) {
             when(currentFocus) {
-                ButtonFocus.NONE -> currentFocus = ButtonFocus.PLAY
                 ButtonFocus.SETTINGS -> currentFocus = ButtonFocus.PLAY
                 ButtonFocus.ABOUT -> currentFocus = ButtonFocus.QUIT
                 ButtonFocus.ACHIEVEMENTS -> currentFocus = ButtonFocus.LEADERBOARD
@@ -319,7 +321,6 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
         }
         if(up) {
             when(currentFocus) {
-                ButtonFocus.NONE -> currentFocus = ButtonFocus.PLAY
                 ButtonFocus.QUIT -> currentFocus = ButtonFocus.PLAY
                 ButtonFocus.ABOUT -> currentFocus = ButtonFocus.SETTINGS
                 ButtonFocus.ACHIEVEMENTS -> currentFocus = ButtonFocus.ABOUT
@@ -330,16 +331,20 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
         }
         else if(down) {
             when(currentFocus) {
-                ButtonFocus.NONE -> currentFocus = ButtonFocus.PLAY
                 ButtonFocus.PLAY -> currentFocus = ButtonFocus.QUIT
                 ButtonFocus.SETTINGS -> currentFocus = ButtonFocus.ABOUT
                 ButtonFocus.QUIT ->
-                    currentFocus = if(gpgsSignInButton.isVisible) ButtonFocus.SIGNIN
-                    else ButtonFocus.LEADERBOARD
+                    currentFocus = when {
+						gpgsSignInButton.isVisible -> ButtonFocus.SIGNIN
+						leaderBoardButton.isVisible -> ButtonFocus.LEADERBOARD
+						else -> ButtonFocus.QUIT
+					}
                 ButtonFocus.ABOUT ->
-                    currentFocus = if(gpgsSignInButton.isVisible) ButtonFocus.SIGNIN
-                    else ButtonFocus.ACHIEVEMENTS
-                else -> Unit
+                    currentFocus = when {
+						gpgsSignInButton.isVisible -> ButtonFocus.SIGNIN
+						achievementsButton.isVisible -> ButtonFocus.ACHIEVEMENTS
+						else -> ButtonFocus.ABOUT
+					}
             }
         }
     }
