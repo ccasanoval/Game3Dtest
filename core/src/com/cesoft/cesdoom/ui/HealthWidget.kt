@@ -18,7 +18,6 @@ import com.cesoft.cesdoom.components.PlayerComponent
 class HealthWidget(assets: Assets) : Actor() {
 	companion object {
 		const val VOID_STRING = ""
-		const val PERCENT_STRING = " %"
 	}
 
 	private val healthBar: ProgressBar
@@ -78,11 +77,6 @@ class HealthWidget(assets: Assets) : Actor() {
 	private fun updateValue() {
 		val value = PlayerComponent.health
 		healthBar.value = value-3f
-		val text = value.toString()
-		val health = StringBuilder(PERCENT_STRING.length + text.length)
-				.append(text)
-				.append(PERCENT_STRING)
-				.toString()
-		label.setText(health)
+		label.setText("$value %")
 	}
 }
