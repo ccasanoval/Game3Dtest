@@ -3,13 +3,12 @@ package com.cesoft.cesdoom.entities
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
-import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.components.GateComponent.MAX_OFFSET_OPEN
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.util.Log
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -56,16 +55,14 @@ class Gate(val id: String, private val assets: Assets) : Entity() {
                 isOpen = true
                 offsetOpened = MAX_OFFSET_OPEN
             }
-            when(angle) {
-                00f -> {
-                    val posTemp = Vector3(pos.x, pos.y, pos.z + offsetOpened)
-                    model.instance.transform.setTranslation(posTemp)
-                }
-                90f -> {
-                    val posTemp = Vector3(pos.x + offsetOpened, pos.y, pos.z)
-                    model.instance.transform.setTranslation(posTemp)
-                }
+            val posTemp = when(angle) {
+                000f -> Vector3(pos.x, pos.y, pos.z + offsetOpened)
+                180f -> Vector3(pos.x, pos.y, pos.z - offsetOpened)
+                +90f -> Vector3(pos.x + offsetOpened, pos.y, pos.z)
+                -90f -> Vector3(pos.x - offsetOpened, pos.y, pos.z)
+                else -> pos
             }
+            model.instance.transform.setTranslation(posTemp)
         }
     }
 

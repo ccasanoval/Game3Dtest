@@ -40,22 +40,11 @@ class ParticleEffectPool(private val assetManager: AssetManager)
 		return obj
 	}
 
-//	fun reset() {
-//		for(effect in allEffects) {
-//			try {
-//				effect?.let {
-//					it.end()
-//					it.reset()
-//				}
-//			}
-//			catch(e: Exception) {
-//				Log.e(tag, "reset:e:$effect:$e")}
-//		}
-//	}
-
 	fun dispose() {
-		for(effect in allEffects)
+		for(effect in allEffects) {
+			effect.end()
 			effect.dispose()
+		}
 		freeAll(allEffects)
 		allEffects.clear()
 	}

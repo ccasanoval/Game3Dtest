@@ -108,7 +108,9 @@ object SceneFactory {
 
 	//______________________________________________________________________________________________
 	fun addDome(engine: Engine, model: Model) {
-		engine.addEntity(Entity().add(ModelComponent(model, Vector3(0f,0f,0f))))
+		val modelComponent = ModelComponent(model, Vector3(0f,0f,0f))
+		modelComponent.instance.transform.scale(100f,100f,100f)
+		engine.addEntity(Entity().add(modelComponent))
 	}
 
 }

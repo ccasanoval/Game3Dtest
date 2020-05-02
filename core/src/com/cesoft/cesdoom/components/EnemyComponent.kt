@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class EnemyComponent(val type: TYPE, var id: Int) : Component

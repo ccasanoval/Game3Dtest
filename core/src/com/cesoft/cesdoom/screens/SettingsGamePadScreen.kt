@@ -10,7 +10,6 @@ import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -22,7 +21,6 @@ import com.cesoft.cesdoom.systems.PlayerSystem
 import com.cesoft.cesdoom.ui.Styles
 import com.cesoft.cesdoom.util.Log
 import de.golfgl.gdx.controllers.ControllerMenuStage
-import kotlin.math.absoluteValue
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //

@@ -16,6 +16,11 @@ import com.cesoft.cesdoom.components.PlayerComponent
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class HealthWidget(assets: Assets) : Actor() {
+	companion object {
+		const val VOID_STRING = ""
+		const val PERCENT_STRING = " %"
+	}
+
 	private val healthBar: ProgressBar
 	private val progressBarStyle: ProgressBar.ProgressBarStyle = ProgressBar.ProgressBarStyle(
 			assets.skin.newDrawable("progress-bar-back", Color.RED),
@@ -30,7 +35,7 @@ class HealthWidget(assets: Assets) : Actor() {
 		val ls = Label.LabelStyle()
 		ls.font = BitmapFont()
 		ls.fontColor = Color.YELLOW
-		label = Label("", ls)
+		label = Label(VOID_STRING, ls)
 		label.setAlignment(Align.center)
 
 		setSize(CesDoom.VIRTUAL_WIDTH/4.5f, CesDoom.VIRTUAL_HEIGHT/9.5f)
@@ -73,6 +78,11 @@ class HealthWidget(assets: Assets) : Actor() {
 	private fun updateValue() {
 		val value = PlayerComponent.health
 		healthBar.value = value-3f
-		label.setText("$value %")
+		val text = value.toString()
+		val health = StringBuilder(PERCENT_STRING.length + text.length)
+				.append(text)
+				.append(PERCENT_STRING)
+				.toString()
+		label.setText(health)
 	}
 }

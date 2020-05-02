@@ -9,7 +9,6 @@ import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.components.PlayerComponent
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

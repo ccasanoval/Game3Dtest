@@ -3,9 +3,7 @@ package com.cesoft.cesdoom.systems
 import com.badlogic.ashley.core.*
 import com.badlogic.ashley.signals.Signal
 import com.badlogic.ashley.utils.ImmutableArray
-import com.badlogic.gdx.math.Vector3
 import com.cesoft.cesdoom.components.AmmoComponent
-import com.cesoft.cesdoom.components.ModelComponent
 import com.cesoft.cesdoom.entities.Ammo
 import com.cesoft.cesdoom.events.GameEvent
 import com.cesoft.cesdoom.events.GameQueue

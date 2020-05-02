@@ -163,7 +163,7 @@ object WallFactory {
 		rigidBody.spinningFriction = 1f
 		entity.add(BulletComponent(rigidBody, bodyInfo))
 
-System.gc()
+		System.gc()
 	}
 
 	//______________________________________________________________________________________________

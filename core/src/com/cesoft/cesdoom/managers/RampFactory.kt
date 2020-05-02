@@ -25,8 +25,6 @@ import com.cesoft.cesdoom.renderUtils.FrustumCullingData
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.map.MapGraphFactory
 import kotlin.math.absoluteValue
-import com.cesoft.cesdoom.util.Log
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -105,8 +103,7 @@ class RampFactory(assets: Assets) {
 			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimFCX90Y45Z00)
 		else if(angleX.absoluteValue == 45f && angleY == 0f && angleZ == 90f)
 			modelComponent.frustumCullingData = FrustumCullingData.create(pos, dimFCX45Y00Z90)
-		else
-			Log.e(tag, "create:--------------------------angleX=$angleX / angleY=$angleY / angleZ=$angleZ")
+		//else Log.e(tag, "create:--------------------------angleX=$angleX / angleY=$angleY / angleZ=$angleZ")
 
 		// ROTATION
 		modelComponent.instance.transform.rotate(Vector3.X, angleX)

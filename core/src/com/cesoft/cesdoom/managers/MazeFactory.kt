@@ -10,7 +10,6 @@ import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.entities.Ammo
 import com.cesoft.cesdoom.entities.Health
 import com.cesoft.cesdoom.map.MapGraphFactory
-import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,9 +64,9 @@ object MazeFactory {
 
 //TODO: Reduce number of allocated memory, cos when released, gc takes too much time
 		//-verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails
-WallFactory.endMaterials()
-rampFactory.endMaterials()
-System.gc()
+		WallFactory.endMaterials()
+		rampFactory.endMaterials()
+		System.gc()
 
 
 		//----- TEST
@@ -75,7 +74,7 @@ System.gc()
 //		com.cesoft.cesdoom.util.Log.e(tag, "")
 //		com.cesoft.cesdoom.util.Log.e(tag, "")
 
-		//mapFactory.printMap()
+//		mapFactory.printMap()
 
 //		Log.e(tag, "----------------------------------------------------------------------------")
 //		Log.e(tag, " LEVEL ACCESSES:LEVEL(0) "+ mapFactory.map[0].floorAccess.size)
@@ -105,54 +104,45 @@ System.gc()
 //                //Log.e("Maze", step.toString())
 //            }
 //        }
-        Log.e(tag, "create---------------------------------------------------------------------------- END")
 	}
 
 	//______________________________________________________________________________________________
 	private fun createLevelX(level: Int, e: Engine, assets: Assets) {
 
-		// GANG WAYS ------------------
-		if(level == 0)
-			addGangWays(e, assets)
-
-		/// INTERIOR SHAPES -------------
+		/// GANG WAYS ------------------
+		addGangWays(level, e, assets)
+		/// INNER SHAPES -------------
 		addShapesX(level, e, assets)
-		System.gc()
+
+		System.gc()//-------------------------------------------------------------------------------
 
 		/// INNER WALL
-		addInnerWall(e, assets)
-		/// INTERIOR GATES
-		pos.set(+GateComponent.LONG+.2f, 0f, 0f)
-		GateFactory.create(e, pos, 0f, GATE_C, assets).unlock()
-		pos.set(-GateComponent.LONG-.2f, 0f, 0f)
-		GateFactory.create(e, pos, 0f, GATE_D, assets).unlock()
-		System.gc()
+		addInnerWall(level, e, assets)
+		/// INNER GATES
+		addInnerGates(level, e, assets)
+		/// INNER RAMPS
+		addInnerRamps(level, e, assets)
+
+		System.gc()//-------------------------------------------------------------------------------
 
 		/// OUTER WALL ------------------
 		addOuterWall(e, assets)
-		System.gc()
 		/// OUTER GATES ------------------
 		addOuterGates(level, e, assets)
-		System.gc()
 
-		// RAMPS ------------------
-		pos.set(+3f*lng2, high, 0f)
-		rampFactory.create(mapFactory, e, pos, angleX = 90f, angleY = -45f)
-		pos.set(-3f*lng2, high, 0f)
-		rampFactory.create(mapFactory, e, pos, angleX = 90f, angleY = +45f)
-		System.gc()
+		System.gc()//-------------------------------------------------------------------------------
 
 		// AMMO ------------------
 		addAmmoLevelX(level, e, assets)
-		System.gc()
-
 		// HEALTH  ------------------
 		addHealthLevelX(level, e, assets)
-		System.gc()
+
+		System.gc()//-------------------------------------------------------------------------------
 	}
 
 	//______________________________________________________________________________________________
-	private fun addGangWays(e: Engine, assets: Assets) {
+	private fun addGangWays(level: Int, e: Engine, assets: Assets) {
+		if(level != 0)return
 		/// WANG WAYS
 		size2D.set(7*lng2, high2)
 		pos.set(0f, high2, -lng2)
@@ -210,6 +200,7 @@ System.gc()
 		pos.set(+3.6f*lng2, 0f, +6.5f*lng2)
 		wf.createGrille(mapFactory, e, assets, size2D, pos, 180f)
 	}
+	//______________________________________________________________________________________________
 	private fun addOuterGates(level: Int, e: Engine, assets: Assets) {
 		size.set(10f, high2, 30f)
 		// EXIT 0
@@ -244,8 +235,23 @@ System.gc()
 		addSwitchesLevelX(level, e, assets)
 	}
 	//______________________________________________________________________________________________
-	private fun addInnerWall(e: Engine, assets: Assets) {
+	private fun addInnerRamps(level: Int, e: Engine, assets: Assets) {
+		pos.set(+3f * lng2, high, 0f)
+		rampFactory.create(mapFactory, e, pos, angleX = 90f, angleY = -45f)
+		pos.set(-3f * lng2, high, 0f)
+		rampFactory.create(mapFactory, e, pos, angleX = 90f, angleY = +45f)
+	}
+	//______________________________________________________________________________________________
+	private fun addInnerGates(level: Int, e: Engine, assets: Assets) {
+		pos.set(+GateComponent.LONG + .2f, 0f, 0f)
+		GateFactory.create(e, pos, 0f, GATE_C, assets).unlock()
+		pos.set(-GateComponent.LONG - .2f, 0f, 0f)
+		GateFactory.create(e, pos, 180f, GATE_D, assets).unlock()
+	}
+	//______________________________________________________________________________________________
+	private fun addInnerWall(level: Int, e: Engine, assets: Assets) {
 		val wf = WallFactory
+		if(level >= 4)return
 
 		// Horizontal
 		size.set(12*lng, high2, thick2)
@@ -280,7 +286,9 @@ System.gc()
 		size.set(15f, high2, 15f)
 		sizeX.set(lng2, high2, thick2)
 		sizeZ.set(thick2, high2, lng2)
-        for(y in 0..level) {
+		val ini = if(level >= 4) 1 else 0
+		val end = if(level >= 4) 3 else level
+        for(y in ini..end) {
             /// U Shapes -------------
 			pos.set(0f, y*high2, +.5f*lng2)
 			wf.createWall(mapFactory, e, assets, sizeX, pos, 0f, WallFactory.Type.CIRCUITS)
@@ -341,17 +349,17 @@ System.gc()
 		val posA: Vector3
 		val posB: Vector3
 		when(level) {
+			0 -> {
+				posA = Vector3(0f, 0f, -z)
+				posB = Vector3(0f, 0f, +z)
+			}
 			1,2 -> {
 				posA = Vector3(0f, level*high2, -z)
 				posB = Vector3(0f, level*high2, +z)
 			}
-			3 -> {
+			else -> {
 				posA = Vector3(0f, 2*high2, -z)
 				posB = Vector3(0f, 2*high2, +z)
-			}
-			else -> {
-				posA = Vector3(0f, 0f, -z)
-				posB = Vector3(0f, 0f, +z)
 			}
 		}
 		SwitchFactory.create(e, posA, 180f, GATE_A, assets)
@@ -378,13 +386,17 @@ System.gc()
 				Ammo(pos.set(-6*lng2, 0f, -3*lng2), ammoModel, e)
 				Ammo(pos.set(-3*lng2, high2, -3*lng2), ammoModel, e)
 			}
-			else -> {
+			3 -> {
 				Ammo(pos.set(+6*lng2, 0f, +3*lng2), ammoModel, e)
 				Ammo(pos.set(-6*lng2, 0f, +3*lng2), ammoModel, e)
 				Ammo(pos.set(+6*lng2, 0f, -3*lng2), ammoModel, e)
 				Ammo(pos.set(-6*lng2, 0f, -3*lng2), ammoModel, e)
 				Ammo(pos.set(+3*lng2, high2, +3*lng2), ammoModel, e)
 				Ammo(pos.set(-3*lng2, high2, -3*lng2), ammoModel, e)
+			}
+			4 -> {
+				Ammo(pos.set(+6*lng2, 0f, +3*lng2), ammoModel, e)
+				Ammo(pos.set(-6*lng2, 0f, -3*lng2), ammoModel, e)
 			}
 		}
 	}
@@ -405,7 +417,7 @@ System.gc()
 				Health(pos.set(+3.5f*lng2, 0f, 0f), healthModel, e)
 				Health(pos.set(-4*lng2, high2, -3*lng2), healthModel, e)
 			}
-			else -> {
+			3 -> {
 				Health(pos.set(+3.5f*lng2, 0f, 0f), healthModel, e)
 				Health(pos.set(-3.5f*lng2, 0f, 0f), healthModel, e)
 			}
@@ -417,20 +429,29 @@ System.gc()
 	private fun createFirstFloorAccess(level: Int) {
 		val cx = RampFactory.LONG_GROUND
 		val cz = RampFactory.LONG_GROUND
-		if(level != 0 && level < 2) {
-			for(n in -9..+9) {
-				if(n != +4)
-					mapFactory.addFloorAccess(1, n*cx, -9.25f*cz)
-				if(n != -4)
-					mapFactory.addFloorAccess(1, n*cx, +9.5f*cz)
-				mapFactory.addFloorAccess(1, -9.5f*cx, n*cz)
-				mapFactory.addFloorAccess(1, +9.5f*cx, n*cz)
+		when(level) {
+			1 -> {
+				for(n in -9..+9) {
+					if(n != +4)
+						mapFactory.addFloorAccess(1, n*cx, -9.25f*cz)
+					if(n != -4)
+						mapFactory.addFloorAccess(1, n*cx, +9.5f*cz)
+					mapFactory.addFloorAccess(1, -9.5f*cx, n*cz)
+					mapFactory.addFloorAccess(1, +9.5f*cx, n*cz)
+				}
 			}
-		}
-		else {
-			for(n in -5..+5) {
-				mapFactory.addFloorAccess(1, -9.5f*cx, n*cz)
-				mapFactory.addFloorAccess(1, +9.5f*cx, n*cz)
+			2 -> {
+				for(n in -5..+5) {
+					mapFactory.addFloorAccess(1, -9.5f*cx, n*cz)
+					mapFactory.addFloorAccess(1, +9.5f*cx, n*cz)
+				}
+			}
+			else -> {
+				for(n in -5..+5) {
+					if(n == 0) continue
+					mapFactory.addFloorAccess(1, -9.5f*cx, n*cz)
+					mapFactory.addFloorAccess(1, +9.5f*cx, n*cz)
+				}
 			}
 		}
 	}
@@ -487,7 +508,8 @@ System.gc()
 		pos.set(+2*lng2, high, -5f*lng2)
 		rampFactory.create(mapFactory, e, pos, angleX = -45f, angleZ = 90f)
 	}
-	private fun createFirstFloorWalls(e: Engine, assets: Assets) {
+	private fun createFirstFloorWalls(level: Int, e: Engine, assets: Assets) {
+		if(level <= 1)return
 		val wf = WallFactory
 		//-X +X
 		size2D.set(6*lng, high2)
@@ -510,14 +532,21 @@ System.gc()
 		wf.createGrille(mapFactory, e, assets, size2D, pos, 0f, true)
 		pos.set(-7f*lng, high2, +9f*lng)
 		wf.createGrille(mapFactory, e, assets, size2D, pos, 180f, true)
+
+		if(level >= 3) {
+			size2D.set(3f*lng, high2)
+			pos.set(-9f*lng, high2, 0f)
+			wf.createGrille(mapFactory, e, assets, size2D, pos, +90f, true)
+			pos.set(+9f*lng, high2, 0f)
+			wf.createGrille(mapFactory, e, assets, size2D, pos, +90f, true)
+		}
 	}
 	//______________________________________________________________________________________________
 	private fun createFirstFloor(level: Int, e: Engine, assets: Assets) {
 		createFirstFloorGround(level, e, assets)
 		createFirstFloorAccess(level)
 		createFirstFloorExtras(e, assets)
-		if(level > 1)
-			createFirstFloorWalls(e, assets)
+		createFirstFloorWalls(level, e, assets)
 	}
 
 	//______________________________________________________________________________________________
@@ -541,7 +570,7 @@ System.gc()
 
 
 	//______________________________________________________________________________________________
-	const val MAX_LEVEL = 3
+	const val MAX_LEVEL = 4
 	private fun createLevel(engine: Engine, assets: Assets) {
 		mapFactory.clear()
 		mapFactory.collideAll(1)
@@ -550,6 +579,7 @@ System.gc()
 			1 -> createLevel1(engine, assets)
 			2 -> createLevel2(engine, assets)
 			3 -> createLevel3(engine, assets)
+			4 -> createLevel4(engine, assets)
 		}
 	}
 	//______________________________________________________________________________________________
@@ -579,6 +609,110 @@ System.gc()
 		createFirstFloor(level, e, assets)
 		createSecondFloor(level, e, assets)
 		createLevelX(level, e, assets)
+	}
+
+	//______________________________________________________________________________________________
+	private fun createLevel4(e: Engine, assets: Assets) {
+		createLevelX(4, e, assets)
+		createFirstFloor(3, e, assets)
+		createSecondFloor(3, e, assets)
+		createFloorZeroMaze(e, assets)
+	}
+
+	private fun createFloorZeroMaze(e: Engine, assets: Assets) {
+		val wf = WallFactory
+
+		//X
+		size.set(lng2, high2, thick2)
+		pos.set(0f, 0f, -lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(0f, 0f, +lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(3*lng2, high2, thick2)
+		pos.set(+2*lng, 0f, -3*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-2*lng, 0f, +3*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(2*lng2+thick2, high2, thick2)
+		pos.set(+5*lng, 0f, +3*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-5*lng, 0f, -3*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(4*lng2, high2, thick2)
+		pos.set(+5*lng, 0f, +5*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-5*lng, 0f, -5*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(2*lng2, high2, thick2)
+		pos.set(+5*lng, 0f, +1*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-5*lng, 0f, -1*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(4*lng2, high2, thick2)
+		pos.set(+5*lng, 0f, -5*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-5*lng, 0f, +5*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(4*lng2, high2, thick2)
+		pos.set(+0*lng, 0f, -7*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-0*lng, 0f, +7*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(15f, high2, 15f)
+		for(i in 6..9) {
+			pos.set(-i*lng, 0f, -7*lng)
+			ColumnFactory.add(e, mapFactory, assets, size, pos)
+			pos.set(-i*lng, 0f, +7*lng)
+			ColumnFactory.add(e, mapFactory, assets, size, pos)
+			pos.set(+i*lng, 0f, -7*lng)
+			ColumnFactory.add(e, mapFactory, assets, size, pos)
+			pos.set(+i*lng, 0f, +7*lng)
+			ColumnFactory.add(e, mapFactory, assets, size, pos)
+		}
+		for(i in -6..+6 step 2) {
+			pos.set(+11*lng, 0f, i*lng)
+			ColumnFactory.add(e, mapFactory, assets, size, pos)
+			pos.set(-11*lng, 0f, i*lng)
+			ColumnFactory.add(e, mapFactory, assets, size, pos)
+		}
+
+		//Z
+		size.set(thick2, high2, 2*lng2)
+		pos.set(+3*lng, 0f, +1*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-3*lng, 0f, -1*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(thick2, high2, lng2)
+		pos.set(+1*lng, 0f, +4*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-1*lng, 0f, -4*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(thick2, high2, 3*lng2)
+		pos.set(+7*lng+thick, 0f, +0*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-7*lng-thick, 0f, -0*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(thick2, high2, 4*lng2)
+		pos.set(+9*lng, 0f, +1*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-9*lng, 0f, -1*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+
+		size.set(thick2, high2, lng2)
+		pos.set(+5*lng, 0f, -2*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
+		pos.set(-5*lng, 0f, +2*lng)
+		wf.createWall(mapFactory, e, assets, size, pos)
 	}
 
 }

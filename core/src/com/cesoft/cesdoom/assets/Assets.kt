@@ -46,6 +46,7 @@ class Assets {
 		const val ATRAS="ATRAS"
 		const val PUNTUA="PUNTUA"
 		const val CONFIG="CONFIG"
+		const val LEVEL="LEVEL"
 		const val CONFIG_SOUND_EFFECTS_VOLUME="CONFIG_SOUND_EFFECTS_VOLUME"
 		const val CONFIG_SOUND_EFFECTS_ONOF="CONFIG_SOUND_EFFECTS_ONOF"
         const val CONFIG_MUSIC_VOLUME="CONFIG_MUSIC_VOLUME"
@@ -57,7 +58,8 @@ class Assets {
 		const val GATE_UNLOCKED="GATE_UNLOCKED"
 
 		/// MODELS
-		private const val MODEL_DOME = "scene/dome/spacedome.g3db"
+		//private const val MODEL_DOME = "scene/dome/spacedome.g3db"
+		private const val MODEL_DOME = "scene/dome/spacesphere.obj"
 		private const val MODEL_MONSTER0 = "foes/monster0/a.g3db"	//Thanks to https://www.turbosquid.com/FullPreview/Index.cfm/ID/312341
 		private const val MODEL_MONSTER1 = "foes/monster1/out.g3db"
 		private const val MODEL_RIFLE = "weapons/cz805/a.g3db"
@@ -134,10 +136,11 @@ class Assets {
 
 	// MODELS
 	//______________________________________________________________________________________________
+	//TODO: Esto ralentiza y reserva mucha memoria -> quitalo desde el origen (en los modelos)
 	private fun removeEmissiveAttrib(modelFileName: String):Model {
 		val model = assetManager.get(modelFileName, Model::class.java)
-		for(i in 0 until model.materials.size)//Some blender models comes with emissive colors...
-			model.materials.get(i).set(ColorAttribute(ColorAttribute.Emissive, Color.BLACK))
+		//for(i in 0 until model.materials.size)//Some blender models comes with emissive colors...
+		//	model.materials.get(i).set(ColorAttribute(ColorAttribute.Emissive, Color.BLACK))
 		return model
 	}
 	fun iniDome() = assetManager.load(MODEL_DOME, Model::class.java)

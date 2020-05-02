@@ -6,7 +6,6 @@ import com.cesoft.cesdoom.util.Log
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//TODO: si monstruo en planta distinta que player, monstruo ha de buscar en mapa de cambios de nivel para encontrar la entrada al otro mapa? (saltos or rampas)
 class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
 
     val map = arrayListOf(
@@ -25,7 +24,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
         }
     }
 
-    //TODO: Anora solo hay accesos de 0 a 1 y de 1 a 0 (y si hay segunda planta?)
+    //TODO: Ahora solo hay accesos de 0 a 1 y de 1 a 0 (y si hay segunda planta?)
     fun addFloorAccess(floor: Int, x: Float, y: Float) {
         if(floor < map.size) {
             map[floor].addFloorAccess(Vector2(x, y))
@@ -65,7 +64,6 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
     }
 
     fun compile() {
-        Log.e("MAP", "\n------------------------------------------------ compile ------------------------------------------------\n")
         for(floor in 0 until map.size) {
             for(y in 0 until map[floor].cy) {
                 for(x in 0 until map[floor].cx) {
@@ -93,7 +91,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
             mapData[i]=0
     }*/
 
-    fun print() {
+    /*fun print() {
         for(floor in 0 until map.size) {
             val map0 = map[floor]
             Log.e("MAP", "\n------------------------------------------------ LEVEL $floor ------------------------------------------------\n")
@@ -153,7 +151,7 @@ class MapGraphFactory(val width: Float, val height: Float, val scale: Int) {
                 Log.e("MAP", row)
             }
         }
-    }
+    }*/
 
 
     /// TEST ---------------------------------------------------------------------------------------

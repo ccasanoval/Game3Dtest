@@ -87,6 +87,7 @@ class GameUI(val game: CesDoom, assets: Assets) {
 			previousLevel = PlayerComponent.currentLevel
 			levelLabel.setText("LEVEL: ${PlayerComponent.currentLevel}")
 		}
+
 		stage.act(delta)
 
 		pauseWidget.processInput(delta)
