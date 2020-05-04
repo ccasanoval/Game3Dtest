@@ -11,7 +11,7 @@ import com.cesoft.cesdoom.util.Log
 //
 class PlayerInput(val mapper: InputMapper) : ControllerListener {
 	companion object {
-		val tag: String = PlayerInput::class.java.simpleName
+		private val tag: String = PlayerInput::class.java.simpleName
 	}
 
     private var controller: Controller? = null
@@ -44,7 +44,7 @@ class PlayerInput(val mapper: InputMapper) : ControllerListener {
     }
     ///
     override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
-        Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : $value")
+        //Log.e(tag, "axisMoved:------------"+controller?.name+" : $axisCode : $value")
         mapper.axisMoved(axisCode, value)
         return false
     }
@@ -55,7 +55,7 @@ class PlayerInput(val mapper: InputMapper) : ControllerListener {
         return false
     }
     override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
-        Log.e(tag, "buttonDown:----------------"+controller?.name+" : "+buttonCode)
+        //Log.e(tag, "buttonDown:----------------"+controller?.name+" : "+buttonCode)
         mapper.buttonDown(buttonCode)
         return false
     }

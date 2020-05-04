@@ -174,7 +174,6 @@ class PlayerSystem(
 
 		/// GAME PAD
 		val mxPad = inputMap.getAxisValue(Inputs.Action.LookX)
-		Log.e(tag, "-------------------------------------------mxPAd=$mxPad")
 		val myPad = inputMap.getAxisValue(Inputs.Action.LookY)
 		if(mxPad != Inputs.Value.ZERO)
 			deltaX += mxPad.value * xWeight * delta

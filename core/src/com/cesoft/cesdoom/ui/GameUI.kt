@@ -17,7 +17,7 @@ import de.golfgl.gdx.controllers.ControllerMenuStage
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class GameUI(val game: CesDoom, assets: Assets) {
+class GameUI(val game: CesDoom, val assets: Assets) {
 	companion object {
 		private val tag: String = GameUI::class.simpleName!!
 	}
@@ -58,11 +58,10 @@ class GameUI(val game: CesDoom, assets: Assets) {
 			ControllerWidget().addToStage(stage)
 
         //stage.keyboardFocus = pauseWidget
-		//TODO: Why its not called?????????????????????????????????????????????????????????????????????????????????
+		//TODO: Why its not called with GamePad SELECT button ????
         stage.addListener(object : InputListener() {
 			//--------------------------------------------------------------------------------------
 			override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
-				Log.e(tag, "keyUp-------------------------------------------$event-------$keycode")
 				when(keycode) {
 					Input.Keys.CENTER -> game.playerInput.center = false
 					Input.Keys.LEFT -> game.playerInput.left = false
@@ -74,7 +73,7 @@ class GameUI(val game: CesDoom, assets: Assets) {
 			}
 			//--------------------------------------------------------------------------------------
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
-				Log.e(tag, "keyDown-------------------------------------------$event-------$keycode")
+				Log.e(tag, "keyDown----------------------------------------$event-----$keycode------")
 				if(keycode == Input.Keys.ESCAPE || keycode == Input.Keys.BACK) {
                     pauseWidget.pauseOnOf()
 					return true
@@ -96,7 +95,8 @@ class GameUI(val game: CesDoom, assets: Assets) {
 		fpsLabel.setText("FPS: ${Gdx.graphics.framesPerSecond}")
 		if(previousLevel != PlayerComponent.currentLevel && !Status.paused) {
 			previousLevel = PlayerComponent.currentLevel
-			levelLabel.setText("LEVEL: ${PlayerComponent.currentLevel}")
+			val level = assets.formatString(Assets.LEVEL, PlayerComponent.currentLevel)
+			levelLabel.setText(level)
 		}
 
 		stage.act(delta)
@@ -114,12 +114,9 @@ class GameUI(val game: CesDoom, assets: Assets) {
 			if(game.playerInput.mapper.isButtonPressed(Inputs.Action.Exit)
 					|| game.playerInput.mapper.isButtonPressed(Inputs.Action.Back)) {
 				pauseWidget.pauseOnOf()
-				Log.e(tag, "processInput--------------------------------------------------EXIT")
 			}
 		}
 	}
-
-
 
 	fun render() {
 		stage.draw()

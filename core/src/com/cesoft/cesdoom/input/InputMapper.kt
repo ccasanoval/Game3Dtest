@@ -6,9 +6,8 @@ import com.badlogic.gdx.controllers.PovDirection
 import com.cesoft.cesdoom.CesDoom
 import kotlin.math.absoluteValue
 import com.cesoft.cesdoom.input.Inputs.Value
-import com.cesoft.cesdoom.screens.MainMenuScreen
 import com.cesoft.cesdoom.util.Log
-import com.sun.org.apache.xpath.internal.operations.Bool
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -68,16 +67,13 @@ class InputMapper {
         mapper[axisCode]?.let { axis ->
             if(value.absoluteValue > axisOffset[axis]?:0.1f) {
                 values[axis] = if(value < 0) Value.POSITIVE else Value.NEGATIVE
-				//Log.e(tag, "axisMoved-----axisCode=$axisCode---axis=$axis ------- ${axisOffset[axis]} ------------------- "+values[axis])
             }
             else {
                 values[axis] = Value.ZERO
-				//Log.e(tag, "axisMoved-------- $axis ------- ${axisOffset[axis]} ------------------- "+values[axis])
             }
         }
     }
     fun povMoved(povCode: Int, value: PovDirection?) {
-        Log.e(tag, "--------------------------------------------$value")
         when(value) {
             PovDirection.east -> values[Inputs.Action.MoveX] = Value.NEGATIVE
             PovDirection.west -> values[Inputs.Action.MoveX] = Value.POSITIVE
