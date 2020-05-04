@@ -1,8 +1,11 @@
 package com.cesoft.cesdoom.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.controllers.Controllers
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.GameWorld
 import com.cesoft.cesdoom.Status

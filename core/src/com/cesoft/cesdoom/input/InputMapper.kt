@@ -6,6 +6,9 @@ import com.badlogic.gdx.controllers.PovDirection
 import com.cesoft.cesdoom.CesDoom
 import kotlin.math.absoluteValue
 import com.cesoft.cesdoom.input.Inputs.Value
+import com.cesoft.cesdoom.screens.MainMenuScreen
+import com.cesoft.cesdoom.util.Log
+import com.sun.org.apache.xpath.internal.operations.Bool
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -25,9 +28,9 @@ class InputMapper {
     private val mapper: MutableMap<Int, Inputs.Action> = mutableMapOf()       // Evento       -> Constante
     private val values: MutableMap<Inputs.Action, Value> = mutableMapOf()     // Constante    -> ON, OFF  o  LEFT, CENTER, RIGHT
     private val axisOffset: MutableMap<Inputs.Action, Float> = mutableMapOf() // Offset para Ejes
-	fun addMap(event: Int, button: Inputs.Action, offset: Float=.1f) {
-        mapper[event] = button
-        axisOffset[button] = offset
+	fun addMap(event: Int, action: Inputs.Action, offset: Float=.1f) {
+        mapper[event] = action
+        axisOffset[action] = offset
     }
 
     // KEYBOARD
@@ -41,20 +44,19 @@ class InputMapper {
         mapperKey[AxisKey(button, positive)] = event
     }
 	private fun addKeyboard() {
-        addMapKey(Input.Keys.ENTER, Inputs.Action.START)
-        addMapKey(Input.Keys.DEL, Inputs.Action.BACK)
-        addMapKey(Input.Keys.X, Inputs.Action.EXIT)
-        addMapKey(Input.Keys.CONTROL_LEFT, Inputs.Action.FIRE)
-        addMapKey(Input.Keys.CONTROL_RIGHT, Inputs.Action.FIRE)
-        addMapKey(Input.Keys.SPACE, Inputs.Action.JUMP)
-        addMapKey(Input.Keys.LEFT, Inputs.Action.LOOK_X, false)
-        addMapKey(Input.Keys.RIGHT, Inputs.Action.LOOK_X, true)
-        addMapKey(Input.Keys.DOWN, Inputs.Action.LOOK_Y, false)
-        addMapKey(Input.Keys.UP, Inputs.Action.LOOK_Y, true)
-        addMapKey(Input.Keys.A, Inputs.Action.LOOK_X, false)
-        addMapKey(Input.Keys.D, Inputs.Action.LOOK_X, true)
-        addMapKey(Input.Keys.S, Inputs.Action.LOOK_Y, false)
-        addMapKey(Input.Keys.W, Inputs.Action.LOOK_Y, true)
+        addMapKey(Input.Keys.ENTER, Inputs.Action.Start)
+        addMapKey(Input.Keys.DEL, Inputs.Action.Back)
+        addMapKey(Input.Keys.X, Inputs.Action.Exit)
+        addMapKey(Input.Keys.CONTROL_LEFT, Inputs.Action.Fire)
+        addMapKey(Input.Keys.CONTROL_RIGHT, Inputs.Action.Fire)
+        addMapKey(Input.Keys.LEFT, Inputs.Action.LookX ,false)
+        addMapKey(Input.Keys.RIGHT, Inputs.Action.LookX, true)
+        addMapKey(Input.Keys.DOWN, Inputs.Action.LookY, false)
+        addMapKey(Input.Keys.UP, Inputs.Action.LookY, true)
+        addMapKey(Input.Keys.A, Inputs.Action.MoveX, false)
+        addMapKey(Input.Keys.D, Inputs.Action.MoveX, true)
+        addMapKey(Input.Keys.S, Inputs.Action.MoveY, false)
+        addMapKey(Input.Keys.W, Inputs.Action.MoveY, true)
     }
 	init {
 		if( ! CesDoom.isMobile)
@@ -75,70 +77,71 @@ class InputMapper {
         }
     }
     fun povMoved(povCode: Int, value: PovDirection?) {
-        //TODO: TEST
+        Log.e(tag, "--------------------------------------------$value")
         when(value) {
-            PovDirection.east -> values[Inputs.Action.MOVE_X] = Inputs.Value.NEGATIVE
-            PovDirection.west -> values[Inputs.Action.MOVE_X] = Inputs.Value.POSITIVE
-            PovDirection.south -> values[Inputs.Action.MOVE_Y] = Inputs.Value.POSITIVE
-            PovDirection.north -> values[Inputs.Action.MOVE_Y] = Inputs.Value.NEGATIVE
+            PovDirection.east -> values[Inputs.Action.MoveX] = Value.NEGATIVE
+            PovDirection.west -> values[Inputs.Action.MoveX] = Value.POSITIVE
+            PovDirection.south -> values[Inputs.Action.MoveY] = Value.NEGATIVE
+            PovDirection.north -> values[Inputs.Action.MoveY] = Value.POSITIVE
             PovDirection.southEast -> {
-                values[Inputs.Action.MOVE_X] = Inputs.Value.NEGATIVE
-                values[Inputs.Action.MOVE_Y] = Inputs.Value.POSITIVE
+                values[Inputs.Action.MoveX] = Value.NEGATIVE
+                values[Inputs.Action.MoveY] = Value.NEGATIVE
             }
             PovDirection.southWest -> {
-                values[Inputs.Action.MOVE_X] = Inputs.Value.POSITIVE
-                values[Inputs.Action.MOVE_Y] = Inputs.Value.POSITIVE
+                values[Inputs.Action.MoveX] = Value.POSITIVE
+                values[Inputs.Action.MoveY] = Value.NEGATIVE
             }
             PovDirection.northEast -> {
-                values[Inputs.Action.MOVE_X] = Inputs.Value.NEGATIVE
-                values[Inputs.Action.MOVE_Y] = Inputs.Value.NEGATIVE
+                values[Inputs.Action.MoveX] = Value.NEGATIVE
+                values[Inputs.Action.MoveY] = Value.POSITIVE
             }
             PovDirection.northWest -> {
-                values[Inputs.Action.MOVE_X] = Inputs.Value.POSITIVE
-                values[Inputs.Action.MOVE_Y] = Inputs.Value.NEGATIVE
+                values[Inputs.Action.MoveX] = Value.POSITIVE
+                values[Inputs.Action.MoveY] = Value.POSITIVE
             }
             else -> Unit
         }
     }
     fun buttonUp(buttonCode: Int) {
         mapper[buttonCode]?.let { button ->
-            values[button] = Value.ZERO
+            if(button.isButton)
+                values[button] = Value.ZERO
         }
     }
     fun buttonDown(buttonCode: Int) {
         mapper[buttonCode]?.let { button ->
-            values[button] = Value.POSITIVE
+            if(button.isButton)
+                values[button] = Value.POSITIVE
         }
     }
 
 
     fun isButtonPressed(button: Inputs.Action):Boolean {
-		return values[button] == Value.POSITIVE
+        return (values[button] == Value.POSITIVE && button.isButton)
             || (!CesDoom.isMobile
 				&& mapperKey[AxisKey(button, true)] != null
 				&& Gdx.input.isKeyPressed(mapperKey[AxisKey(button, true)]!!))
 	}
     fun getAxisValue(axis: Inputs.Action):Value {
         var v = values[axis]?:Value.ZERO
+        if(axis.isButton) v = Value.ZERO
         if(v == Value.ZERO && !CesDoom.isMobile) {
             if(Gdx.input.isKeyPressed(mapperKey[AxisKey(axis, false)]?:-1))
-                v = Inputs.Value.NEGATIVE
+                v = Value.NEGATIVE
             else if(Gdx.input.isKeyPressed(mapperKey[AxisKey(axis, true)]?:-1))
-                v = Inputs.Value.POSITIVE
+                v = Value.POSITIVE
         }
         return v
     }
     fun isAxisValuePositive(axis: Inputs.Action):Boolean
-            = values[axis] == Value.POSITIVE
+            = (values[axis] == Value.POSITIVE && !axis.isButton)
             || (!CesDoom.isMobile && Gdx.input.isKeyPressed(mapperKey[AxisKey(axis, true)]?:-1))
     fun isAxisValueNegative(axis: Inputs.Action):Boolean
-            = values[axis] == Value.NEGATIVE
+            = (values[axis] == Value.NEGATIVE && !axis.isButton)
             || (!CesDoom.isMobile && Gdx.input.isKeyPressed(mapperKey[AxisKey(axis, false)]?:-1))
 
-
-
-    fun isGoingUp(): Boolean = isAxisValuePositive(Inputs.Action.MOVE_Y) || isAxisValuePositive(Inputs.Action.LOOK_Y)
-    fun isGoingDown(): Boolean = isAxisValueNegative(Inputs.Action.MOVE_Y) || isAxisValueNegative(Inputs.Action.LOOK_Y)
-    fun isGoingBackwards(): Boolean = isAxisValuePositive(Inputs.Action.MOVE_X) || isAxisValuePositive(Inputs.Action.LOOK_X)
-    fun isGoingForward(): Boolean = isAxisValueNegative(Inputs.Action.MOVE_X) || isAxisValueNegative(Inputs.Action.LOOK_X)
+    fun isGoingUp(): Boolean = isAxisValuePositive(Inputs.Action.MoveY) || isAxisValuePositive(Inputs.Action.LookY)
+    fun isGoingDown(): Boolean = isAxisValueNegative(Inputs.Action.MoveY) || isAxisValueNegative(Inputs.Action.LookY)
+    fun isGoingBackwards(): Boolean = isAxisValuePositive(Inputs.Action.MoveX) || isAxisValuePositive(Inputs.Action.LookX)
+    fun isGoingForward(): Boolean = isAxisValueNegative(Inputs.Action.MoveX) || isAxisValueNegative(Inputs.Action.LookX)
 }

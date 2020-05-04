@@ -17,6 +17,7 @@ import com.cesoft.cesdoom.assets.Sounds
 import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.ui.Styles
+import com.cesoft.cesdoom.util.Log
 import com.cesoft.cesdoom.util.PlayServices
 import de.golfgl.gdx.controllers.ControllerMenuStage
 
@@ -25,7 +26,7 @@ import de.golfgl.gdx.controllers.ControllerMenuStage
 //
 class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Screen, PlayServices.Listener {
 	companion object {
-	    val tag: String = MainMenuScreen::class.java.simpleName
+	    private val tag: String = MainMenuScreen::class.java.simpleName
 	}
 
 	private val mapper = game.playerInput.mapper
@@ -244,7 +245,7 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	private var inputDelay = 0f
 	override fun render(delta: Float) {
 		inputDelay+=delta
-		if(inputDelay > .250f) {
+		if(inputDelay > .150f) {
 			inputDelay = 0f
 			processInput()
 		}
@@ -279,17 +280,18 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
         SIGNIN
     }
     private fun processInput() {
-        if(mapper.isButtonPressed(Inputs.Action.START)) {
+        if(mapper.isButtonPressed(Inputs.Action.Start)) {
             currentFocus = ButtonFocus.PLAY
             goPlay()
         }
-        else if(mapper.isButtonPressed(Inputs.Action.EXIT)) {
+        else if(mapper.isButtonPressed(Inputs.Action.Exit)) {
+			Log.e(tag, "-------------------------------------mapper.isButtonPressed(Inputs.Action.EXIT)-----------------------")
             currentFocus = ButtonFocus.QUIT
             goQuit()
         }
         updateFocusSelection()
         updateFocusColor()
-        if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
+        if(mapper.isButtonPressed(Inputs.Action.Fire)) {
             processSelectedButton()
         }
     }

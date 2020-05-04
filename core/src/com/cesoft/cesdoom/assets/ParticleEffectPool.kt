@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.particles.ParticleEffectLoader
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem
 import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch
 import com.badlogic.gdx.utils.Pool
+import com.cesoft.cesdoom.util.Log
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,8 +43,7 @@ class ParticleEffectPool(private val assetManager: AssetManager)
 
 	fun dispose() {
 		for(effect in allEffects) {
-			effect.end()
-			effect.dispose()
+			effect?.dispose()
 		}
 		freeAll(allEffects)
 		allEffects.clear()

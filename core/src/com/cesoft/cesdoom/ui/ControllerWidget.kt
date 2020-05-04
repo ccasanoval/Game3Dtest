@@ -49,7 +49,9 @@ class ControllerWidget {
 		val cx = 350f
 		val cx2 = 180f
 
-		movementPad.setBounds(margin, 0f, cx, cx)
+		val movementPadX = margin
+		val movementPadY = 0f
+		movementPad.setBounds(movementPadX, movementPadY, cx, cx)
 
 		val watchPadX = stage.width - cx - margin
 		val watchPadY = 0f

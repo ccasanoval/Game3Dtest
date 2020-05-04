@@ -34,18 +34,18 @@ class GamepadUI(private val mapper: InputMapper) {
     fun processInput(delta: Float) {
         if(btnMenu?.stage == null)return
         inputDelay+=delta
-        if(inputDelay < .175f)return
+        if(inputDelay < .150f)return
         inputDelay = 0f
 
-        if(mapper.isButtonPressed(Inputs.Action.START)
-                || mapper.isButtonPressed(Inputs.Action.EXIT)
-                || mapper.isButtonPressed(Inputs.Action.BACK)) {
+        if(mapper.isButtonPressed(Inputs.Action.Start)
+                || mapper.isButtonPressed(Inputs.Action.Exit)
+                || mapper.isButtonPressed(Inputs.Action.Back)) {
             currentFocus = ButtonFocus.MENU
             funBack
         }
         updateFocusSelection()
         updateFocusColor()
-        if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
+        if(mapper.isButtonPressed(Inputs.Action.Fire)) {
             processSelectedButton()
         }
     }

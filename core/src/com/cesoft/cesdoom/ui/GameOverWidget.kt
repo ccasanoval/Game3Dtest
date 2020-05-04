@@ -36,14 +36,13 @@ class GameOverWidget(
 	init {
 		configureWidgets()
 		setListeners()
+		Controllers.addListener(game.playerInput)
 	}
 
 	private fun configureWidgets() {
 		btnRestart.label.setFontScale(2f)
 		btnMenu.label.setFontScale(2f)
 		btnQuit.label.setFontScale(2f)
-
-		//Controllers.addListener(game.playerInput)//TODO: remove!!!!!!!!!!!
 
 		val ratio = 125f / 319f
 		val width = CesDoom.VIRTUAL_WIDTH * 2f / 4f

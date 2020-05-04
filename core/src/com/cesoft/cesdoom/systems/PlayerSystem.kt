@@ -32,6 +32,7 @@ import com.cesoft.cesdoom.managers.GunFactory
 import com.cesoft.cesdoom.managers.MazeFactory
 import com.cesoft.cesdoom.ui.GameOverWidget
 import com.cesoft.cesdoom.ui.GameWinWidget
+import com.cesoft.cesdoom.util.Log
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
@@ -48,11 +49,11 @@ class PlayerSystem(
 		private val gameWinWidget: GameWinWidget,
 		private val gameOverWidget: GameOverWidget,
 		private val inputMap: InputMapper
-	)
+)
 	: EntitySystem(), EntityListener
 {
 	companion object {
-	    val tag: String = PlayerSystem::class.java.simpleName
+		val tag: String = PlayerSystem::class.java.simpleName
 		private const val COLOR_DELAY = 150
 		private const val COLOR_LOOP = 800
 	}
@@ -126,15 +127,15 @@ class PlayerSystem(
 	private fun updateMovement(delta: Float) {
 		updateRotation(delta)
 		updateTranslation(delta)
-		updateJumping(delta)
+		//updateJumping(delta)
 	}
 	//______________________________________________________________________________________________
 	private fun updateRotation(delta: Float) {
 		if(PlayerComponent.isDead())return
 
 		val inputVals = getInputRotation(delta)
-        val deltaX = inputVals.x
-        val deltaY = inputVals.y
+		val deltaX = inputVals.x
+		val deltaY = inputVals.y
 
 		// Y
 		val dir = camera.direction.cpy()
@@ -161,23 +162,24 @@ class PlayerSystem(
 		camera.direction.set(dir)
 		camera.update()
 	}
-    private fun getInputRotation(delta: Float) : Vector2 {
-        val xWeight=90f
-        val yWeight=50f
-        var deltaX = 0f
-        var deltaY = 0f
+	private fun getInputRotation(delta: Float) : Vector2 {
+		val xWeight=90f
+		val yWeight=50f
+		var deltaX = 0f
+		var deltaY = 0f
 
-        /// SCREEN CONTROLS
-        deltaX += -ControllerWidget.watchVector.x * xWeight*delta		// Velocidad angulo horizontal (GOOD: 90)
-        deltaY += +ControllerWidget.watchVector.y * yWeight*delta		// Velocidad angulo vertical (GOOD: 60)
+		/// SCREEN CONTROLS
+		deltaX += -ControllerWidget.watchVector.x * xWeight*delta		// Velocidad angulo horizontal (GOOD: 90)
+		deltaY += +ControllerWidget.watchVector.y * yWeight*delta		// Velocidad angulo vertical (GOOD: 60)
 
-        /// GAME PAD
-        val mxPad = inputMap.getAxisValue(Inputs.Action.LOOK_X)
-        val myPad = inputMap.getAxisValue(Inputs.Action.LOOK_Y)
-        if(mxPad != Inputs.Value.ZERO)
-            deltaX += mxPad.value * xWeight * delta
-        if(myPad != Inputs.Value.ZERO)
-            deltaY += myPad.value * yWeight * delta
+		/// GAME PAD
+		val mxPad = inputMap.getAxisValue(Inputs.Action.LookX)
+		Log.e(tag, "-------------------------------------------mxPAd=$mxPad")
+		val myPad = inputMap.getAxisValue(Inputs.Action.LookY)
+		if(mxPad != Inputs.Value.ZERO)
+			deltaX += mxPad.value * xWeight * delta
+		if(myPad != Inputs.Value.ZERO)
+			deltaY += myPad.value * yWeight * delta
 
 		/// ANDROID TV
 		if(inputMap.left) {
@@ -187,8 +189,8 @@ class PlayerSystem(
 			deltaX -= 1 * xWeight * delta
 		}
 
-         return Vector2(deltaX, deltaY)
-    }
+		return Vector2(deltaX, deltaY)
+	}
 	//______________________________________________________________________________________________
 	private fun updateTranslation(delta: Float)
 	{
@@ -213,19 +215,19 @@ class PlayerSystem(
 
 		//Log.e(tag, "updateTranslationMobile-------- ${inputMap.isAxisValuePositive(Inputs.MOVE_Y)}")
 
-		if(ControllerWidget.movementVector.y > +offsetVertical || inputMap.isAxisValuePositive(Inputs.Action.MOVE_Y) || inputMap.up) {
+		if(ControllerWidget.movementVector.y > +offsetVertical || inputMap.isAxisValuePositive(Inputs.Action.MoveY) || inputMap.up) {
 			posTemp.add(camera.direction)
 			isMoving = true
 		}
-		else if(ControllerWidget.movementVector.y < -offsetVertical || inputMap.isAxisValueNegative(Inputs.Action.MOVE_Y) || inputMap.down) {
+		else if(ControllerWidget.movementVector.y < -offsetVertical || inputMap.isAxisValueNegative(Inputs.Action.MoveY) || inputMap.down) {
 			posTemp.sub(camera.direction)
 			isMoving = true
 		}
-		if(ControllerWidget.movementVector.x < -offsetHorizontal || inputMap.isAxisValuePositive(Inputs.Action.MOVE_X)) {
+		if(ControllerWidget.movementVector.x < -offsetHorizontal || inputMap.isAxisValuePositive(Inputs.Action.MoveX)) {
 			posTemp2.set(camera.direction).crs(camera.up).scl(-1f)
 			isMoving = true
 		}
-		else if(ControllerWidget.movementVector.x > +offsetHorizontal || inputMap.isAxisValueNegative(Inputs.Action.MOVE_X)) {
+		else if(ControllerWidget.movementVector.x > +offsetHorizontal || inputMap.isAxisValueNegative(Inputs.Action.MoveX)) {
 			posTemp2.set(camera.direction).crs(camera.up)
 			isMoving = true
 		}
@@ -242,7 +244,7 @@ class PlayerSystem(
 	}
 
 	//______________________________________________________________________________________________
-	private fun updateJumping(delta: Float) {
+	/*private fun updateJumping(delta: Float) {
 		val jumpPad = inputMap.isButtonPressed(Inputs.Action.JUMP)
 		if(jumpPad) {
 			//Log.e(tag, "------------------"+getPosition().y+"----- SALTANDO :"+PlayerComponent.isJumping)
@@ -257,7 +259,7 @@ class PlayerSystem(
 		}
 		//TODO: utilizar Ray para saltando?
 		//playerComponent.isSaltando = getPosition().y > ALTURA/6 ==> No vale con rampas!!!
-	}
+	}*/
 	//______________________________________________________________________________________________
 	private fun updateCamera() {
 		val pos = getPosition()
@@ -279,7 +281,7 @@ class PlayerSystem(
 	private val DELAY_RELOAD = 0.55f
 	private var deltaFire = 100f
 	private fun updateWeapon(delta: Float) {
-		val isFiring = (ControllerWidget.isFiring || inputMap.isButtonPressed(Inputs.Action.FIRE) || inputMap.center)
+		val isFiring = (ControllerWidget.isFiring || inputMap.isButtonPressed(Inputs.Action.Fire) || inputMap.center)
 		deltaFire += delta
 
 		if(PlayerComponent.isReloading) {
@@ -439,9 +441,7 @@ class PlayerSystem(
 		return entity
 	}
 
-
 	////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 	private fun hurt(pain: Int) {
 		if(PlayerComponent.isGodModeOn)return
@@ -486,10 +486,9 @@ class PlayerSystem(
 		return transform.getTranslation(posTemp)
 	}
 
-
 	private fun resetPlayerComponent() {
 		PlayerComponent.isWinning = false
-		PlayerComponent.isJumping = false
+		//PlayerComponent.isJumping = false
 		PlayerComponent.isReloading = false
 		PlayerComponent.eyes = PlayerComponent.TALL
 		if(PlayerComponent.currentLevel == 0) {

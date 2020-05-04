@@ -16,10 +16,6 @@ import com.cesoft.cesdoom.components.PlayerComponent
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class HealthWidget(assets: Assets) : Actor() {
-	companion object {
-		const val VOID_STRING = ""
-	}
-
 	private val healthBar: ProgressBar
 	private val progressBarStyle: ProgressBar.ProgressBarStyle = ProgressBar.ProgressBarStyle(
 			assets.skin.newDrawable("progress-bar-back", Color.RED),
@@ -34,7 +30,7 @@ class HealthWidget(assets: Assets) : Actor() {
 		val ls = Label.LabelStyle()
 		ls.font = BitmapFont()
 		ls.fontColor = Color.YELLOW
-		label = Label(VOID_STRING, ls)
+		label = Label("", ls)
 		label.setAlignment(Align.center)
 
 		setSize(CesDoom.VIRTUAL_WIDTH/4.5f, CesDoom.VIRTUAL_HEIGHT/9.5f)

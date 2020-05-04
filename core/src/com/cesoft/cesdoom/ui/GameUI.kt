@@ -10,12 +10,18 @@ import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent
+import com.cesoft.cesdoom.input.Inputs
+import com.cesoft.cesdoom.util.Log
 import de.golfgl.gdx.controllers.ControllerMenuStage
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class GameUI(val game: CesDoom, assets: Assets) {
+	companion object {
+		private val tag: String = GameUI::class.simpleName!!
+	}
+
 	var stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var healthWidget = HealthWidget(assets)
 	private var scoreWidget = ScoreWidget(assets)
@@ -28,11 +34,11 @@ class GameUI(val game: CesDoom, assets: Assets) {
 		private set
 	var gameWinWidget = GameWinWidget(game, stage, assets)
 		private set
-    private val pauseWidget = PauseWidget(game, stage, assets)
+    val pauseWidget = PauseWidget(game, stage, assets)
 
 	init {
 		configureWidgets()
-        Gdx.input.inputProcessor = stage
+        //Gdx.input.inputProcessor = stage
 	}
 
 	private fun configureWidgets() {
@@ -52,8 +58,11 @@ class GameUI(val game: CesDoom, assets: Assets) {
 			ControllerWidget().addToStage(stage)
 
         //stage.keyboardFocus = pauseWidget
+		//TODO: Why its not called?????????????????????????????????????????????????????????????????????????????????
         stage.addListener(object : InputListener() {
+			//--------------------------------------------------------------------------------------
 			override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
+				Log.e(tag, "keyUp-------------------------------------------$event-------$keycode")
 				when(keycode) {
 					Input.Keys.CENTER -> game.playerInput.center = false
 					Input.Keys.LEFT -> game.playerInput.left = false
@@ -63,7 +72,9 @@ class GameUI(val game: CesDoom, assets: Assets) {
 				}
 				return false
 			}
+			//--------------------------------------------------------------------------------------
 			override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
+				Log.e(tag, "keyDown-------------------------------------------$event-------$keycode")
 				if(keycode == Input.Keys.ESCAPE || keycode == Input.Keys.BACK) {
                     pauseWidget.pauseOnOf()
 					return true
@@ -90,10 +101,25 @@ class GameUI(val game: CesDoom, assets: Assets) {
 
 		stage.act(delta)
 
+		processInput(delta)
 		pauseWidget.processInput(delta)
         gameWinWidget.processInput(delta)
         gameOverWidget.processInput(delta)
 	}
+	private var inputDelay = 0f
+	private fun processInput(delta: Float) {
+		inputDelay+=delta
+		if(inputDelay > .150f) {
+			inputDelay = 0f
+			if(game.playerInput.mapper.isButtonPressed(Inputs.Action.Exit)
+					|| game.playerInput.mapper.isButtonPressed(Inputs.Action.Back)) {
+				pauseWidget.pauseOnOf()
+				Log.e(tag, "processInput--------------------------------------------------EXIT")
+			}
+		}
+	}
+
+
 
 	fun render() {
 		stage.draw()

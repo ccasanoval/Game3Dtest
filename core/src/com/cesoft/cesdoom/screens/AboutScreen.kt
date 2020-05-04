@@ -135,15 +135,15 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 		NONE, BACK, RATE
 	}
 	private fun processInput() {
-		if(mapper.isButtonPressed(Inputs.Action.START)
-				|| mapper.isButtonPressed(Inputs.Action.EXIT)
-				|| mapper.isButtonPressed(Inputs.Action.BACK)) {
+		if(mapper.isButtonPressed(Inputs.Action.Start)
+				|| mapper.isButtonPressed(Inputs.Action.Exit)
+				|| mapper.isButtonPressed(Inputs.Action.Back)) {
 			currentFocus = ButtonFocus.BACK
 			goBack()
 		}
 		updateFocusSelection()
 		updateFocusColor()
-		if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
+		if(mapper.isButtonPressed(Inputs.Action.Fire)) {
 			processSelectedButton()
 		}
 	}

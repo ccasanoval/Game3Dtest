@@ -37,16 +37,16 @@ object Settings {
 	var inputMapping1: MutableList<Int> = arrayListOf()
 	fun getInputMapper(): InputMapper {
 		val im = InputMapper()
-		for(action in Inputs.Action.values()) {
+		for(action in Inputs.ActionName.values()) {
 			val offset = when(action) {
-				Inputs.Action.MOVE_X -> .6f
-				Inputs.Action.MOVE_Y -> .4f
-				Inputs.Action.LOOK_X -> .4f
-				Inputs.Action.LOOK_Y -> .6f
+				Inputs.ActionName.MOVE_X -> .6f
+				Inputs.ActionName.MOVE_Y -> .4f
+				Inputs.ActionName.LOOK_X -> .4f
+				Inputs.ActionName.LOOK_Y -> .6f
 				else -> 0f
 			}
-			im.addMap(inputMapping0[action.value], action, offset)
-			im.addMap(inputMapping1[action.value], action, offset)
+			im.addMap(inputMapping0[action.value], Inputs.Action.getAction(action), offset)
+			im.addMap(inputMapping1[action.value], Inputs.Action.getAction(action), offset)
 		}
         return im
 	}
@@ -66,7 +66,7 @@ object Settings {
 		val values1 = intArrayOf( 96,   6,  -1, 102,  -1,  -1,  -1,  -1,  -1)
 		inputMapping0.clear()
 		inputMapping1.clear()
-		for(i in Inputs.Action.values()) {
+		for(i in Inputs.ActionName.values()) {
 			inputMapping0.add(i.value, prefs.getInteger(PREF_INPUT_MAPPING0+i, values0[i.value]))
 			inputMapping1.add(i.value, prefs.getInteger(PREF_INPUT_MAPPING1+i, values1[i.value]))
 		}
@@ -79,92 +79,11 @@ object Settings {
 		prefs.putBoolean(PREF_PAIN_VIBRATION_ONOFF, isVibrationEnabled)
 		prefs.putBoolean(PREF_GPGS_ONOFF, isGPGSEnabled)
 
-		for(i in Inputs.Action.values()) {
+		for(i in Inputs.ActionName.values()) {
 			prefs.putInteger(PREF_INPUT_MAPPING0+i, inputMapping0[i.value])
 			prefs.putInteger(PREF_INPUT_MAPPING1+i, inputMapping1[i.value])
 		}
 
 		prefs.flush()
 	}
-
-
-
-	//var highscores = intArrayOf(1000, 800, 500, 300, 100)
-	//val file = ".spaceglad"
-
-	/*private val leaderURL = "http://dreamlo.com/lb/PLfBGtHgG02wU0lSzVNrPAG0uQf3J3-UGzK1i7mXmmxA"
-	private val request5 = "/pipe/5"
-	fun load(leaderboardItems: Array<Label>) {
-		val requestBests = Net.HttpRequest(Net.HttpMethods.GET)
-		requestBests.url = leaderURL + request5
-		Gdx.net.sendHttpRequest(requestBests, object : Net.HttpResponseListener {
-			override fun handleHttpResponse(httpResponse: Net.HttpResponse) {
-				println(httpResponse)
-				val string = httpResponse.resultAsString
-				val scores = string.split("\n".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
-				if(scores.size > 0)
-					for(i in scores.indices) {
-						val score = scores[i].split("\\|".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
-						if(i == 0) {
-							leaderboardItems[i].setText((Integer.valueOf(score[score.size - 1])!! + 1).toString() + ")" + score[0] + ": " + score[1])
-						}
-						else {
-							val assets = Assets()
-							leaderboardItems[i] = Label((Integer.valueOf(score[score.size - 1])!! + 1).toString() + ")" + score[0] + ": " + score[1], assets.skin)
-							assets.dispose()
-						}
-					}
-			}
-
-			override fun failed(t: Throwable) {
-				println(t)
-			}
-
-			override fun cancelled() {
-				println("Cancel")
-			}
-		})
-	}
-
-	fun load() {
-		try {
-			val filehandle = Gdx.files.external(file)
-			val strings = filehandle.readString().split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-			soundEnabled = java.lang.Boolean.parseBoolean(strings[0])
-			for(i in 0 .. 4) highscores[i] = Integer.parseInt(strings[i + 1])
-		}
-		catch(e: Throwable) {
-		}
-	}
-
-	fun save() {
-		try {
-			val filehandle = Gdx.files.external(file)
-			filehandle.writeString(java.lang.Boolean.toString(soundEnabled) + "\n", false)
-			for(i in 0 .. 4) filehandle.writeString(Integer.toString(highscores[i]) + "\n", true)
-		}
-		catch(e: Throwable) {
-		}
-	}
-
-	fun sendScore(score: Int) {
-		val request = Net.HttpRequest("GET")
-		request.url = "http://dreamlo.com/lb/PLfBGtHgG02wU0lSzVNrPAG0uQf3J3-UGzK1i7mXmmxA/add/" + "SpaceGladiator" + "/" + score
-		Gdx.net.sendHttpRequest(request, object : Net.HttpResponseListener {
-			override fun handleHttpResponse(httpResponse: Net.HttpResponse) {}
-
-			override fun failed(t: Throwable) {}
-
-			override fun cancelled() {}
-		})
-	}
-
-	fun addScore(score: Int) {
-		for(i in 0 .. 4) {
-			if(highscores[i] < score) {
-				for(j in 4 downTo i + 1) highscores[j] = highscores[j - 1]
-				highscores[i] = score
-			}
-		}
-	}*/
 }

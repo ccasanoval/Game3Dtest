@@ -2,16 +2,13 @@ package com.cesoft.cesdoom.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
 import com.cesoft.cesdoom.Status
-import com.cesoft.cesdoom.components.PlayerComponent
 import com.cesoft.cesdoom.input.GamepadUI
 import de.golfgl.gdx.controllers.ControllerMenuStage
 
@@ -21,7 +18,7 @@ import de.golfgl.gdx.controllers.ControllerMenuStage
 class GameWinWidget(
 		private val game: CesDoom,
 		private val stage: ControllerMenuStage,
-		private val assets: Assets) {
+		assets: Assets) {
 
 	companion object {
 		private val tag: String = GameWinWidget::class.java.simpleName
@@ -105,26 +102,7 @@ class GameWinWidget(
 		Status.gameOver = false
 	}
 
-	fun show() {
-		val oldLevel = game.nextLevel()
-		game.playServices?.unlockAchievement(oldLevel)
-
-		if(game.isNextOrReload()) {
-			btnRestart.setText(assets.getString(Assets.NEXT_LEVEL))
-			image.drawable = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/gameWin.png"))))
-		}
-		else {
-			btnRestart.setText(assets.getString(Assets.RECARGAR))
-			image.drawable = SpriteDrawable(Sprite(Texture(Gdx.files.internal("data/gameWinOver.png"))))
-			game.playServices?.submitScore(PlayerComponent.score)
-		}
-
-		Gdx.input.isCursorCatched = false
-		Status.paused = true
-		Status.gameWin = true
-
-		showControls()
-	}
+	fun show() = showControls()
 	private fun showControls() {
 		stage.addActor(image)
 		stage.addActor(btnQuit)

@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.assets.Assets
@@ -51,7 +51,7 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         configure()
         setListeners()
         //Gdx.input.inputProcessor = this
-        //Controllers.addListener(game.playerInput)
+        Controllers.addListener(game.playerInput)
     }
 
     //______________________________________________________________________________________________
@@ -270,15 +270,15 @@ class SettingsScreen(internal val game: CesDoom, private val assets: Assets) : S
         NONE, BACK
     }
     private fun processInput() {
-        if(mapper.isButtonPressed(Inputs.Action.START)
-                || mapper.isButtonPressed(Inputs.Action.EXIT)
-                || mapper.isButtonPressed(Inputs.Action.BACK)) {
+        if(mapper.isButtonPressed(Inputs.Action.Start)
+                || mapper.isButtonPressed(Inputs.Action.Exit)
+                || mapper.isButtonPressed(Inputs.Action.Back)) {
             currentFocus = ButtonFocus.BACK
             goBack()
         }
         updateFocusSelection()
         updateFocusColor()
-        if(mapper.isButtonPressed(Inputs.Action.FIRE)) {
+        if(mapper.isButtonPressed(Inputs.Action.Fire)) {
             processSelectedButton()
         }
     }

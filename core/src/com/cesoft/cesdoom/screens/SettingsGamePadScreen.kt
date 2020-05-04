@@ -57,7 +57,7 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
     private fun initFromSettings() {
         txt0.clear()
 		txt1.clear()
-        for(i in Inputs.Action.values()) {
+        for(i in Inputs.ActionName.values()) {
             txt0.add(i.value, TextField(Settings.inputMapping0[i.value].toString(), assets.skin))
             txt0[i.value].setOnscreenKeyboard {
                 txt0[i.value].selectAll()
@@ -72,7 +72,7 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
     }
     //______________________________________________________________________________________________
     private fun saveToSettings() {
-        for(i in Inputs.Action.values()) {
+        for(i in Inputs.ActionName.values()) {
             Settings.inputMapping0[i.value] = txt0[i.value].text.toInt()
             Settings.inputMapping1[i.value] = txt1[i.value].text.toInt()
         }
@@ -107,7 +107,7 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
         scrollTable.add(titleLabel).size(2*cx,2*cy).align(alignLabel)
         scrollTable.row()
 
-        for(i in Inputs.Action.values()) {
+        for(i in Inputs.ActionName.values()) {
             scrollTable.add(Label(Inputs.Names[i.value], assets.skin)).size(cx,cy).align(alignLabel)
             scrollTable.add(txt0[i.value]).size(cx,cy).align(alignField)
             scrollTable.add(txt1[i.value]).size(cx,cy).align(alignField)

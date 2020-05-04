@@ -25,7 +25,7 @@ class PlayerComponent : Component {
         var isGodModeOn = false
         var ammo: Int = 0
         var isWinning = false
-        var isJumping = false
+        //var isJumping = false
         var isWalking = false
 
         var eyes = TALL
