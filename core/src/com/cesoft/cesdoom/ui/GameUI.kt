@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.Status
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.components.PlayerComponent
@@ -38,7 +39,7 @@ class GameUI(val game: CesDoom, val assets: Assets) {
 
 	init {
 		configureWidgets()
-        //Gdx.input.inputProcessor = stage
+        Gdx.input.inputProcessor = stage
 	}
 
 	private fun configureWidgets() {
@@ -109,7 +110,7 @@ class GameUI(val game: CesDoom, val assets: Assets) {
 	private var inputDelay = 0f
 	private fun processInput(delta: Float) {
 		inputDelay+=delta
-		if(inputDelay > .150f) {
+		if(inputDelay > Settings.GAMEPAD_INPUT_DELAY) {
 			inputDelay = 0f
 			if(game.playerInput.mapper.isButtonPressed(Inputs.Action.Exit)
 					|| game.playerInput.mapper.isButtonPressed(Inputs.Action.Back)) {

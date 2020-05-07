@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.cesoft.cesdoom.assets.Assets
 import com.cesoft.cesdoom.CesDoom
+import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.input.Inputs
 import com.cesoft.cesdoom.ui.Styles
 import de.golfgl.gdx.controllers.ControllerMenuStage
@@ -20,25 +21,34 @@ import de.golfgl.gdx.controllers.ControllerMenuStage
 //
 class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Screen {//, InputProcessor {
 
+	private val mapper = game.playerInput.mapper
 	private var stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
 	private var backgroundImage: Image = Image(Texture(Gdx.files.internal("data/background.png")))
 	private var backButton: TextButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
 	private var rateButton: TextButton = TextButton(assets.getString(Assets.PUNTUA), assets.skin)
-
 	private val text: Label = Label(assets.getString(Assets.SOBRE_TXT), assets.skin)
 	private val scrollPane = ScrollPane(text, assets.skin)
 	private val win = Window("About", assets.skin, Styles.windowStyle)
 
-	private val mapper = game.playerInput.mapper
-
 	init {
-		configureWidgets()
+		configure()
 		setListeners()
 	}
 
 	//______________________________________________________________________________________________
-	private fun configureWidgets() {
+	private fun configure() {
 		backgroundImage.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
+
+		win.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-100)
+		win.setPosition(75f,100f)
+		win.zIndex = 10
+		//win.touchable = Touchable.disabled
+
+		scrollPane.setScrollingDisabled(true, false)
+		scrollPane.setSize(CesDoom.VIRTUAL_WIDTH-250, CesDoom.VIRTUAL_HEIGHT-250)
+		scrollPane.setPosition(150f, 150f)
+		scrollPane.zIndex = 2
+
 		backButton.setSize(175f, 85f)
 		backButton.setPosition(CesDoom.VIRTUAL_WIDTH - backButton.width - 5, 5f)
 		rateButton.setSize(350f, 85f)
@@ -46,17 +56,6 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 
 		text.setWrap(true)
 		text.setFontScale(1.5f)
-		//text.color = Styles.colorNormal1
-
-		scrollPane.setScrollingDisabled(true, false)
-		scrollPane.setSize(CesDoom.VIRTUAL_WIDTH-250, CesDoom.VIRTUAL_HEIGHT-250)
-		scrollPane.setPosition(150f, 150f)
-		scrollPane.zIndex = 2
-
-		win.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-100)
-		win.setPosition(75f,100f)
-		win.zIndex = 10
-		//win.touchable = Touchable.disabled
 
 		stage.addActor(backgroundImage)
 		stage.addActor(backButton)
@@ -68,13 +67,13 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 		stage.addFocusableActor(rateButton)
 		stage.escapeActor = backButton
 		stage.focusedActor = backButton
-		Gdx.input.inputProcessor = stage
 	}
 
 	//______________________________________________________________________________________________
 	private fun goBack() { game.setScreen(MainMenuScreen(game, assets)) }
 	private fun goRate() { game.playServices?.rateGame() }
 	private fun setListeners() {
+		Gdx.input.inputProcessor = stage
 		backButton.addListener(object : ClickListener() {
 			override fun clicked(event: InputEvent?, x: Float, y: Float) {
 				goBack()
@@ -91,7 +90,7 @@ class AboutScreen(internal val game: CesDoom, private val assets: Assets) : Scre
 	private var inputDelay = 0f//TODO:Use a base class so not to repeat ys
 	override fun render(delta: Float) {
 		inputDelay+=delta
-		if(inputDelay > .150f) {
+		if(inputDelay > Settings.GAMEPAD_INPUT_DELAY) {
 			inputDelay = 0f
 			processInput()
 		}

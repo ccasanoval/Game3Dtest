@@ -25,15 +25,13 @@ import de.golfgl.gdx.controllers.ControllerMenuStage
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Assets)
-    : Screen, InputProcessor, ControllerListener {
+    : Screen, InputProcessor, ControllerListener {//TODO: Copiar de aqui el input para que funcione la tecla SELECT del GAMEPAD en otras screens
 
-    companion object {
-        private val tag: String = SettingsGamePadScreen::class.java.simpleName
-    }
-
+    //private val mapper = game.playerInput.mapper ???
     private var stage = ControllerMenuStage(FitViewport(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT))
     private var backgroundImage = Image(Texture(Gdx.files.internal("data/background.png")))
     private var backButton = TextButton(assets.getString(Assets.ATRAS), assets.skin)
+    private var mainButton = TextButton(assets.getString(Assets.MAIN), assets.skin)
 
     private val win = Window(tag, assets.skin, Styles.windowStyle)
     private val titleLabel = Label("GAME PAD", assets.skin)
@@ -81,17 +79,16 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
 
     //______________________________________________________________________________________________
     private fun configure() {
+		/// Background image
+		backgroundImage.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
+		stage.addActor(backgroundImage)
 
-        backgroundImage.setSize(CesDoom.VIRTUAL_WIDTH, CesDoom.VIRTUAL_HEIGHT)
+		/// Window
+		win.setSize(CesDoom.VIRTUAL_WIDTH-80, CesDoom.VIRTUAL_HEIGHT-80)
+		win.setPosition(50f, 100f)
+		stage.addActor(win)
 
-        backButton.setSize(175f, 85f)
-        backButton.setPosition(CesDoom.VIRTUAL_WIDTH - backButton.width - 5, 5f)
-
-        /// Inside Window
-        val xWin = 50f
-        val yWin = 100f
-        win.setSize(CesDoom.VIRTUAL_WIDTH-100, CesDoom.VIRTUAL_HEIGHT-100)
-        win.setPosition(xWin, yWin)
+		var y = CesDoom.VIRTUAL_HEIGHT - 5f
 
         /// Title
         titleLabel.setColor(.9f, .9f, .9f, 1f)
@@ -121,29 +118,44 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
         table.setFillParent(true)
         table.add(scroller).fill().expand()
         win.addActor(table)
-
         stage.addActor(backgroundImage)
-        stage.addActor(backButton)
         stage.addActor(win)
 
+
+        /// Back button ----------------------------------------------------------------------------
+        backButton.setSize(175f, 85f)
+        backButton.setPosition(CesDoom.VIRTUAL_WIDTH - backButton.width - 10f, 5f)
+        stage.addActor(backButton)
         stage.addFocusableActor(backButton)
-        //stage.escapeActor = backButton
-        //stage.focusedActor = backButton
-        Gdx.input.inputProcessor = stage
+
+        /// Main Menu button ----------------------------------------------------------------------------
+        mainButton.setSize(175f, 85f)
+        mainButton.setPosition(CesDoom.VIRTUAL_WIDTH - 2*backButton.width - 20f, 5f)
+        stage.addActor(mainButton)
+        stage.addFocusableActor(mainButton)
+
+        stage.escapeActor = mainButton
     }
 
 
     //______________________________________________________________________________________________
     private fun goBack() {
         saveToSettings()
-        //game.setScreen(MainMenuScreen(game, assets))
-        game.setScreen(SettingsScreen(game, assets))
+        game.setScreen(OthersSettingsScreen(game, assets))
+    }
+    private fun goMain() {
+        Settings.savePrefs()
+        game.setScreen(MainMenuScreen(game, assets))
     }
     //______________________________________________________________________________________________
     private fun setListeners() {
-
+        Gdx.input.inputProcessor = stage
         backButton.addListener {
             goBack()
+            return@addListener false
+        }
+        mainButton.addListener {
+            goMain()
             return@addListener false
         }
     }
@@ -232,5 +244,10 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
     override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
         //Log.e(PlayerSystem.tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
         return false
+    }
+
+
+    companion object {
+        private val tag: String = SettingsGamePadScreen::class.java.simpleName
     }
 }

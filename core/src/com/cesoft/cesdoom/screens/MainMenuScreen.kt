@@ -245,7 +245,7 @@ class MainMenuScreen(private val game: CesDoom, private val assets: Assets) : Sc
 	private var inputDelay = 0f
 	override fun render(delta: Float) {
 		inputDelay+=delta
-		if(inputDelay > .150f) {
+		if(inputDelay > Settings.GAMEPAD_INPUT_DELAY) {
 			inputDelay = 0f
 			processInput()
 		}

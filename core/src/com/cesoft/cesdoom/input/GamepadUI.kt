@@ -1,6 +1,7 @@
 package com.cesoft.cesdoom.input
 
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.cesoft.cesdoom.Settings
 import com.cesoft.cesdoom.ui.Styles
 import com.cesoft.cesdoom.util.Log
 
@@ -34,7 +35,7 @@ class GamepadUI(private val mapper: InputMapper) {
     fun processInput(delta: Float) {
         if(btnMenu?.stage == null)return
         inputDelay+=delta
-        if(inputDelay < .150f)return
+        if(inputDelay < Settings.GAMEPAD_INPUT_DELAY)return
         inputDelay = 0f
 
         if(mapper.isButtonPressed(Inputs.Action.Start)
@@ -83,7 +84,6 @@ class GamepadUI(private val mapper: InputMapper) {
         }
     }
     private fun processSelectedButton() {
-        Log.e("aaa", "processSelectedButton-----------------------------------$currentFocus-----------")
         when(currentFocus) {
             ButtonFocus.NONE -> Unit
             ButtonFocus.RESTART -> funRestart?.invoke()

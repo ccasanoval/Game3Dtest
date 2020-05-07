@@ -18,6 +18,7 @@ object Settings {
 	private const val PREF_GPGS_ONOFF = "google_game_services"
 	private const val PREF_INPUT_MAPPING0 = "input_mapping0_"
 	private const val PREF_INPUT_MAPPING1 = "input_mapping1_"
+	const val GAMEPAD_INPUT_DELAY = .110f
 
 	var isMusicEnabled = true
 	var isSoundEnabled = true
