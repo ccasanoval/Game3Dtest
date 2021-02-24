@@ -83,6 +83,7 @@ class GameWinWidget(
 	}
 	//______________________________________________________________________________________________
 	private fun goRestart() {
+        game.nextLevel()
 		game.reset(false)
 		goBack()
 	}

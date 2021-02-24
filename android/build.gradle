@@ -8,7 +8,7 @@ android {
         }
     }
     buildToolsVersion "29.0.3"
-    compileSdkVersion 29
+    compileSdkVersion 30
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -29,9 +29,9 @@ android {
     defaultConfig {
         applicationId "com.cesoft.cesdoom"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 9
-        versionName "1.09"
+        versionName "1.10"
         multiDexEnabled true
     }
     buildTypes {
@@ -129,6 +129,6 @@ idea {
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.google.android.gms:play-services-games:19.0.0'
-    implementation 'com.google.android.gms:play-services-auth:18.0.0'
+    implementation 'com.google.android.gms:play-services-games:21.0.0'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
 }
