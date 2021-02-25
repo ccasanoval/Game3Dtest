@@ -30,7 +30,7 @@ android {
         applicationId "com.cesoft.cesdoom"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 9
+        versionCode 10
         versionName "1.10"
         multiDexEnabled true
     }
