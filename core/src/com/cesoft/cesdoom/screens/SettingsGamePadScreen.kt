@@ -7,7 +7,7 @@ import com.badlogic.gdx.Screen
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerListener
 import com.badlogic.gdx.controllers.Controllers
-import com.badlogic.gdx.controllers.PovDirection
+//import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.ui.*
@@ -185,9 +185,11 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
         return false
     }
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = stage.touchUp(screenX, screenY, pointer, button)
+    override fun touchCancelled(screenX: Int, screenY: Int, pointer: Int, button: Int) = stage.touchCancelled(screenX, screenY, pointer, button)
+
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean = stage.mouseMoved(screenX, screenY)
     override fun keyTyped(character: Char): Boolean = stage.keyTyped(character)
-    override fun scrolled(amount: Int): Boolean = stage.scrolled(amount)
+    override fun scrolled(amountX: Float, amountY: Float): Boolean = stage.scrolled(amountX, amountY)
     override fun keyUp(keycode: Int): Boolean = stage.keyUp(keycode)
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = stage.touchDragged(screenX, screenY, pointer)
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = stage.touchDown(screenX, screenY, pointer, button)
@@ -229,22 +231,22 @@ class SettingsGamePadScreen(internal val game: CesDoom, private val assets: Asse
         return false
     }
     ///
-    override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
-        //Log.e(PlayerSystem.tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
-        return false
-    }
-    override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-        //Log.e(PlayerSystem.tag, "ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
-        return false
-    }
-    override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-        //Log.e(PlayerSystem.tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
-        return false
-    }
-    override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
-        //Log.e(PlayerSystem.tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
-        return false
-    }
+//    override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
+//        //Log.e(PlayerSystem.tag, "accelerometerMoved:------------"+controller?.name+" : "+accelerometerCode+" : "+value)
+//        return false
+//    }
+//    override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
+//        //Log.e(PlayerSystem.tag, "ySliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+//        return false
+//    }
+//    override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
+//        //Log.e(PlayerSystem.tag, "xSliderMoved:------------"+controller?.name+" : "+sliderCode+" : "+value)
+//        return false
+//    }
+//    override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
+//        //Log.e(PlayerSystem.tag, "povMoved:------------"+controller?.name+" : "+povCode+" : "+value)
+//        return false
+//    }
 
 
     companion object {

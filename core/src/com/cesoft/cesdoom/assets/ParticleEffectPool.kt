@@ -28,7 +28,7 @@ class ParticleEffectPool(private val assetManager: AssetManager)
 		particleSystem.add(billboardParticleBatch)
 		loadParam = ParticleEffectLoader.ParticleEffectLoadParameter(particleSystem.batches)
 		assetManager.load(PARTICLES_ENEMY, ParticleEffect::class.java, loadParam)
-		assetManager.finishLoadingAsset(PARTICLES_ENEMY)
+		assetManager.finishLoadingAsset(PARTICLES_ENEMY) as ParticleEffect
 	}
 	fun setCamera(camera: PerspectiveCamera) {
 		billboardParticleBatch.setCamera(camera)

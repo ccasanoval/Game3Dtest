@@ -2,7 +2,7 @@ package com.cesoft.cesdoom.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.controllers.PovDirection
+//import com.badlogic.gdx.controllers.PovDirection
 import com.cesoft.cesdoom.CesDoom
 import kotlin.math.absoluteValue
 import com.cesoft.cesdoom.input.Inputs.Value
@@ -73,31 +73,31 @@ class InputMapper {
             }
         }
     }
-    fun povMoved(povCode: Int, value: PovDirection?) {
-        when(value) {
-            PovDirection.east -> values[Inputs.Action.MoveX] = Value.NEGATIVE
-            PovDirection.west -> values[Inputs.Action.MoveX] = Value.POSITIVE
-            PovDirection.south -> values[Inputs.Action.MoveY] = Value.NEGATIVE
-            PovDirection.north -> values[Inputs.Action.MoveY] = Value.POSITIVE
-            PovDirection.southEast -> {
-                values[Inputs.Action.MoveX] = Value.NEGATIVE
-                values[Inputs.Action.MoveY] = Value.NEGATIVE
-            }
-            PovDirection.southWest -> {
-                values[Inputs.Action.MoveX] = Value.POSITIVE
-                values[Inputs.Action.MoveY] = Value.NEGATIVE
-            }
-            PovDirection.northEast -> {
-                values[Inputs.Action.MoveX] = Value.NEGATIVE
-                values[Inputs.Action.MoveY] = Value.POSITIVE
-            }
-            PovDirection.northWest -> {
-                values[Inputs.Action.MoveX] = Value.POSITIVE
-                values[Inputs.Action.MoveY] = Value.POSITIVE
-            }
-            else -> Unit
-        }
-    }
+//    fun povMoved(povCode: Int, value: PovDirection?) {
+//        when(value) {
+//            PovDirection.east -> values[Inputs.Action.MoveX] = Value.NEGATIVE
+//            PovDirection.west -> values[Inputs.Action.MoveX] = Value.POSITIVE
+//            PovDirection.south -> values[Inputs.Action.MoveY] = Value.NEGATIVE
+//            PovDirection.north -> values[Inputs.Action.MoveY] = Value.POSITIVE
+//            PovDirection.southEast -> {
+//                values[Inputs.Action.MoveX] = Value.NEGATIVE
+//                values[Inputs.Action.MoveY] = Value.NEGATIVE
+//            }
+//            PovDirection.southWest -> {
+//                values[Inputs.Action.MoveX] = Value.POSITIVE
+//                values[Inputs.Action.MoveY] = Value.NEGATIVE
+//            }
+//            PovDirection.northEast -> {
+//                values[Inputs.Action.MoveX] = Value.NEGATIVE
+//                values[Inputs.Action.MoveY] = Value.POSITIVE
+//            }
+//            PovDirection.northWest -> {
+//                values[Inputs.Action.MoveX] = Value.POSITIVE
+//                values[Inputs.Action.MoveY] = Value.POSITIVE
+//            }
+//            else -> Unit
+//        }
+//    }
     fun buttonUp(buttonCode: Int) {
         mapper[buttonCode]?.let { button ->
             if(button.isButton)

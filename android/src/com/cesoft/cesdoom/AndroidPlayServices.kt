@@ -135,7 +135,7 @@ class AndroidPlayServices(private val context: AndroidApplication) : PlayService
                 }
             }
             RC_SIGN_IN -> {
-                val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+                val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data!!)
                 if(result?.isSuccess == true) {
                     // The signed in account is stored in the result.
                     val signedInAccount = result.signInAccount

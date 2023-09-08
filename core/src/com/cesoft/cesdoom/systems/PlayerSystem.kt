@@ -213,7 +213,6 @@ class PlayerSystem(
 		val offsetVertical = +0.20f
 
 		//Log.e(tag, "updateTranslationMobile-------- ${inputMap.isAxisValuePositive(Inputs.MOVE_Y)}")
-
 		if(ControllerWidget.movementVector.y > +offsetVertical || inputMap.isAxisValuePositive(Inputs.Action.MoveY) || inputMap.up) {
 			posTemp.add(camera.direction)
 			isMoving = true

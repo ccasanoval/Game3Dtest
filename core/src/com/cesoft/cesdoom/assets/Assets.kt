@@ -141,8 +141,8 @@ class Assets {
 	//TODO: Esto ralentiza y reserva mucha memoria -> quitalo desde el origen (en los modelos)
 	private fun removeEmissiveAttrib(modelFileName: String):Model {
 		val model = assetManager.get(modelFileName, Model::class.java)
-		//for(i in 0 until model.materials.size)//Some blender models comes with emissive colors...
-		//	model.materials.get(i).set(ColorAttribute(ColorAttribute.Emissive, Color.BLACK))
+		for(i in 0 until model.materials.size)//Some blender models comes with emissive colors...
+			model.materials.get(i).set(ColorAttribute(ColorAttribute.Emissive, Color.BLACK))
 		return model
 	}
 	fun iniDome() = assetManager.load(MODEL_DOME, Model::class.java)

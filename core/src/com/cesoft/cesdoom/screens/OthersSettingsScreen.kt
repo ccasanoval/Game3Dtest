@@ -180,9 +180,11 @@ class OthersSettingsScreen(private val game: CesDoom, private val assets: Assets
         return false
     }
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = stage.touchUp(screenX, screenY, pointer, button)
+    override fun touchCancelled(screenX: Int, screenY: Int, pointer: Int, button: Int) = stage.touchCancelled(screenX, screenY, pointer, button)
+
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean = stage.mouseMoved(screenX, screenY)
     override fun keyTyped(character: Char): Boolean = stage.keyTyped(character)
-    override fun scrolled(amount: Int): Boolean = stage.scrolled(amount)
+    override fun scrolled(amountX: Float, amountY: Float): Boolean = stage.scrolled(amountX, amountY)
     override fun keyUp(keycode: Int): Boolean = stage.keyUp(keycode)
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = stage.touchDragged(screenX, screenY, pointer)
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = stage.touchDown(screenX, screenY, pointer, button)
